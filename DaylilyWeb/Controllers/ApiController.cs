@@ -31,8 +31,8 @@ namespace DaylilyWeb.Controllers
                     PrivateMsg parsed_obj = JsonConvert.DeserializeObject<PrivateMsg>(JsonConvert.SerializeObject(obj));
                     try
                     {
-                        PrivateMsgHandler group_handler = new PrivateMsgHandler(parsed_obj);
-                        group_handler.HandleMessage();
+                        PrivateMsgHandler private_handler = new PrivateMsgHandler(parsed_obj);
+                        private_handler.HandleMessage();
                     }
                     catch (Exception ex)
                     {
@@ -52,6 +52,7 @@ namespace DaylilyWeb.Controllers
                     try
                     {
                         GroupMsgHandler group_handler = new GroupMsgHandler(parsed_obj);
+                        group_handler.HandleMessage();
                     }
                     catch (Exception ex)
                     {

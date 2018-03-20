@@ -1,4 +1,5 @@
-﻿using DaylilyWeb.Functions.Applications;
+﻿using DaylilyWeb.Assist;
+using DaylilyWeb.Functions.Applications;
 using DaylilyWeb.Interface.CQHttp;
 using DaylilyWeb.Models;
 using DaylilyWeb.Models.CQRequest;
@@ -12,6 +13,8 @@ namespace DaylilyWeb.Functions
     public class PrivateMsgHandler : IMsgHandler
     {
         private PrivateMsg CurrentMessageInfo { get; set; }
+        HttpApi CQApi = new HttpApi();
+
         public PrivateMsgHandler(PrivateMsg parsed_obj)
         {
             CurrentMessageInfo = parsed_obj;
@@ -26,18 +29,40 @@ namespace DaylilyWeb.Functions
                 if (message.IndexOf("roll ") == 1)
                 {
                     string command = "!roll ";
-                    message = message.Substring(command.Length, message.Length - command.Length);
+                    string result;
+                    var query = message.Substring(command.Length, message.Length - command.Length).Split(' ');
+                    if (!int.TryParse(query[0], out int a))
+                    {
+                        Task<string> msgText = CQApi.SendPrivateMessageAsync(user, Roll.Next().ToString());
+                        Log.WriteLine(msgText.Result, ToString());
+                        return;
+                    }
+                    else if (query.Length == 1)
+                    {
+                        result = Roll.Next(int.Parse(query[0])).ToString();
+                    }
+                    else if (query.Length == 2)
+                    {
+                        result = Roll.Next(int.Parse(query[0]), int.Parse(query[1])).ToString();
+                    }
+                    else if (query.Length == 3)
+                    {
+                        result = Roll.Next(int.Parse(query[0]), int.Parse(query[1]), int.Parse(query[2])).ToString();
+                    }
+                    else throw new ArgumentException();
+                    Task<string> mes = CQApi.SendPrivateMessageAsync(user, result);
+                    Log.WriteLine(mes.Result, ToString());
+                    return;
                 }
                 else if (message.IndexOf("roll") == 1)
                 {
-                    HttpApi api = new HttpApi();
-                    var result = Roll.Next().ToString();
-                    Task<string> mes = api.SendPrivateMessageAsync(user, result);
-                    Assist.Log.WriteLine(mes.Result, ToString());
+                    string result = Roll.Next().ToString();
+                    Task<string> mes = CQApi.SendPrivateMessageAsync(user, result);
+                    Log.WriteLine(mes.Result, ToString());
                     return;
                 }
+                throw new NotImplementedException();
             }
-            throw new NotImplementedException();
         }
     }
 }

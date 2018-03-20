@@ -44,14 +44,56 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
             var response = WebRequestHelper.CreatePostHttpResponseAsync("http://127.0.0.1:5700/send_private_msg_async", parameters);
-            Log.WriteLine("Sent request.", ToString());
+            Log.WriteLine("Sent request. (PrivateMessageAsync)", ToString());
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(await response);
-                Log.WriteLine("Received response.", ToString());
+                Log.WriteLine("Received response. (PrivateMessageAsync)", ToString());
+            }
+            return json_string;
+        }
+        /// <summary>
+        /// 发送群聊消息
+        /// </summary>
+        /// <param name="id">群号</param>
+        /// <param name="message">要发送的内容</param>
+        /// <returns></returns>
+        public string SendGroupMessage(string groupId, string message)
+        {
+            string json_string = null;
+            IDictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("group_id", HttpUtility.UrlEncode(groupId));
+            parameters.Add("message", HttpUtility.UrlEncode(message));
+
+            var response = WebRequestHelper.CreatePostHttpResponse("http://127.0.0.1:5700/send_group_msg", parameters);
+            if (response != null)
+            {
+                json_string = WebRequestHelper.GetResponseString(response);
             }
             return json_string;
         }
 
+        /// <summary>
+        /// 发送群聊消息（异步版本）
+        /// </summary>
+        /// <param name="id">群号</param>
+        /// <param name="message">要发送的内容</param>
+        /// <returns></returns>
+        public async Task<string> SendGroupMessageAsync(string groupId, string message)
+        {
+            string json_string = null;
+            IDictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("group_id", HttpUtility.UrlEncode(groupId));
+            parameters.Add("message", HttpUtility.UrlEncode(message));
+
+            var response = WebRequestHelper.CreatePostHttpResponseAsync("http://127.0.0.1:5700/send_group_msg_async", parameters);
+            Log.WriteLine("Sent request. (GroupMessageAsync)", ToString());
+            if (response != null)
+            {
+                json_string = WebRequestHelper.GetResponseString(await response);
+                Log.WriteLine("Received response. (GroupMessageAsync)", ToString());
+            }
+            return json_string;
+        }
     }
 }
