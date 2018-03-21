@@ -8,6 +8,7 @@ using DaylilyWeb.Models.CQResponse;
 using DaylilyWeb.Functions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using DaylilyWeb.Assist;
 
 namespace DaylilyWeb.Controllers
 {
@@ -21,6 +22,7 @@ namespace DaylilyWeb.Controllers
             {
                 string json = await sr.ReadToEndAsync();
                 obj = JsonConvert.DeserializeObject(json);
+                Log.SuccessLine(json,ToString(), "GetResponse()");
             }
             // 判断post类别
             if (obj.post_type == "message")
@@ -31,8 +33,8 @@ namespace DaylilyWeb.Controllers
                     PrivateMsg parsed_obj = JsonConvert.DeserializeObject<PrivateMsg>(JsonConvert.SerializeObject(obj));
                     try
                     {
-                        PrivateMsgHandler private_handler = new PrivateMsgHandler(parsed_obj);
-                        private_handler.HandleMessage();
+                        MsgHandler private_handler = new MsgHandler(parsed_obj);
+                        //private_handler.HandleMessage();
                     }
                     catch (Exception ex)
                     {
@@ -51,8 +53,8 @@ namespace DaylilyWeb.Controllers
                     GroupMsg parsed_obj = JsonConvert.DeserializeObject<GroupMsg>(JsonConvert.SerializeObject(obj));
                     try
                     {
-                        GroupMsgHandler group_handler = new GroupMsgHandler(parsed_obj);
-                        group_handler.HandleMessage();
+                        MsgHandler group_handler = new MsgHandler(parsed_obj);
+                        //group_handler.HandleMessage();
                     }
                     catch (Exception ex)
                     {

@@ -44,11 +44,11 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
             var response = WebRequestHelper.CreatePostHttpResponseAsync("http://127.0.0.1:5700/send_private_msg_async", parameters);
-            Log.WriteLine("Sent request. (PrivateMessageAsync)", ToString());
+            Log.DefaultLine("Sent request. (PrivateMessageAsync)", ToString());
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(await response);
-                Log.WriteLine("Received response. (PrivateMessageAsync)", ToString());
+                Log.DefaultLine("Received response. (PrivateMessageAsync)", ToString());
             }
             return json_string;
         }
@@ -87,11 +87,11 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
             var response = WebRequestHelper.CreatePostHttpResponseAsync("http://127.0.0.1:5700/send_group_msg_async", parameters);
-            Log.WriteLine("Sent request. (GroupMessageAsync)", ToString());
+            Log.DefaultLine("Sent request. (GroupMessageAsync)", ToString());
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(await response);
-                Log.WriteLine("Received response. (GroupMessageAsync)", ToString());
+                Log.DefaultLine("Received response. (GroupMessageAsync)", ToString());
             }
             return json_string;
         }

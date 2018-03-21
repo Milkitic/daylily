@@ -1,0 +1,32 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Test</title>
+</head>
+<body>
+    <form>
+        <input type="text" id="txt" value="!roll" />
+        <input type="button" id="abc" value="send" />
+    </form>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script type="text/javascript">
+        $("#abc").click(function () {
+            var jsonStr = '{"anonymous":"","anonymous_flag":"","font":92151184,"group_id":479353179,"message":"' + $("#txt").val() + '","message_id":1468,"message_type":"group","post_type":"message","self_id":2181697779,"sub_type":"normal","time":1521619317,"user_id":2241521134}';
+            $.post("/api/getresponse", jsonStr, function (e) {
+                var data = JSON.parse(e);
+                $("#display").text(data.data);
+                $("#code").text(data.code);
+                alert("success");
+            });
+            $("#txt").val('d');
+            $("#txt").focus();
+        });
+
+    </script>
+</body>
+</html>
