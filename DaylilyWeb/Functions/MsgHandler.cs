@@ -13,11 +13,15 @@ namespace DaylilyWeb.Functions
 {
     public class MsgHandler
     {
+        public static GroupList GroupInfo { get; set; } = new GroupList();
         // 多线程相关
         static Queue<PrivateMsg> pMsgQueue = new Queue<PrivateMsg>();
-        static Queue<GroupMsg> gMsgQueue = new Queue<GroupMsg>();
-        static Thread gThread; // 群聊线程
+        //static Queue<GroupMsg> gMsgQueue = new Queue<GroupMsg>();
+        //static Thread gThread; // 群聊线程
         static Thread pThread; // 私聊线程
+
+        //static GroupMsg preInfo = new GroupMsg();
+        //static string preString = "";
 
         Random rnd = new Random();
         bool gLockMsg = false, pLockMsg = false; // 用于判断是否超出消息阀值
@@ -31,9 +35,11 @@ namespace DaylilyWeb.Functions
         /// </summary>
         public MsgHandler(GroupMsg parsed_obj)
         {
+            long id = parsed_obj.group_id;
+            GroupInfo.Add(id);
             GroupMsg currentInfo = parsed_obj;
-            if (gMsgQueue.Count < gMsgLimit) // 允许缓存n条，再多的丢弃
-                gMsgQueue.Enqueue(currentInfo);
+            if (GroupInfo[id].MsgQueue.Count < gMsgLimit) // 允许缓存n条，再多的丢弃
+                GroupInfo[id].MsgQueue.Enqueue(currentInfo);
 
             else if (!gLockMsg)
             {
@@ -42,10 +48,11 @@ namespace DaylilyWeb.Functions
                 Log.PrimaryLine(response, ToString(), "MsgHandler(GroupMsg)");
             }
 
-            if (gThread == null || (gThread.ThreadState != ThreadState.Running && gThread.ThreadState != ThreadState.WaitSleepJoin))
+            if (GroupInfo[id].Thread == null ||
+                (GroupInfo[id].Thread.ThreadState != ThreadState.Running && GroupInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
             {
-                gThread = new Thread(HandleGroupMessage);
-                gThread.Start();
+                GroupInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandleGroupMessage));
+                GroupInfo[id].Thread.Start(id);
             }
         }
 
@@ -72,13 +79,14 @@ namespace DaylilyWeb.Functions
             }
         }
 
-        private void HandleGroupMessage()
+        private void HandleGroupMessage(object param)
         {
-            while (gMsgQueue.Count != 0)
+            long groupId = (long)param;
+            while (GroupInfo[groupId].MsgQueue.Count != 0)
             {
-                if (gMsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
+                if (GroupInfo[groupId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
 
-                var currentInfo = gMsgQueue.Dequeue();
+                var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
 
                 string message = currentInfo.message.Replace("\n", "").Replace("\r", "").Trim();
                 string user = currentInfo.user_id.ToString();
@@ -92,6 +100,7 @@ namespace DaylilyWeb.Functions
                 {
                     string response = _sendMsg(ex.Message, user, group);
                 }
+                GroupInfo[groupId].preInfo = currentInfo;
             }
             gLockMsg = false;
         }
@@ -120,6 +129,8 @@ namespace DaylilyWeb.Functions
         }
         private void _hdleMsg(string message, string user, string group = null)
         {
+            long groupId = Convert.ToInt64(group);
+            bool isGroup = group != null;
             Log.InfoLine(user + "：" + message, ToString(), "_hdleMsg()");
             if (message.Substring(0, 1) == "!")
             {
@@ -174,6 +185,16 @@ namespace DaylilyWeb.Functions
             }
             else
             {
+                if (isGroup)
+                {
+                    if (GroupInfo[groupId].preInfo.message == message && message != GroupInfo[groupId].preString)
+                    {
+                        string response = _sendMsg(message, null, group);
+                        Log.PrimaryLine(response, ToString(), "_hdleMsg()");
+                        GroupInfo[groupId].preString = message;
+                        return;
+                    }
+                }
                 // 如果不是命令 todo
             }
         }
