@@ -14,6 +14,7 @@ namespace DaylilyWeb
     {
         public static void Main(string[] args)
         {
+            Assist.Mapper.Init();
             BuildWebHost(args).Run();
         }
 

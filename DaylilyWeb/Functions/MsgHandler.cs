@@ -6,6 +6,7 @@ using DaylilyWeb.Models.CQRequest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -135,53 +136,39 @@ namespace DaylilyWeb.Functions
             if (message.Substring(0, 1) == "!")
             {
                 Thread.Sleep(rnd.Next(minTime, maxTime));
-                if (message.IndexOf("roll ") == 1)
+                if (!isGroup)
                 {
-                    string command = "!roll ";
-                    string result;
-                    var query = message.Substring(command.Length, message.Length - command.Length).Split(' ');
-                    if (!int.TryParse(query[0], out int a))
-                    {
-                        result = Roll.Next().ToString();
-                    }
-                    else if (query.Length == 1)
-                    {
-                        result = Roll.Next(int.Parse(query[0])).ToString();
-                    }
-                    else if (query.Length == 2)
-                    {
-                        result = Roll.Next(int.Parse(query[0]), int.Parse(query[1])).ToString();
-                    }
-                    else if (query.Length == 3)
-                    {
-                        result = Roll.Next(int.Parse(query[0]), int.Parse(query[1]), int.Parse(query[2])).ToString();
-                    }
-                    else throw new ArgumentException();
+                    string fullCmd = message.Substring(1, message.Length - 1);
+                    string cmd = fullCmd.Split(' ')[0];
+                    string param = fullCmd.IndexOf(" ") == -1 ? "" : fullCmd.Substring(fullCmd.IndexOf(" ") + 1, fullCmd.Length - cmd.Length - 1);
+                    string mCmd = Mapper.GetClassName(cmd);
+                    if (mCmd == null)
+                        throw new NotImplementedException("尚不支持命令：" + cmd);
 
-                    string response = _sendMsg(result, user, group);
+                    Type type = Type.GetType("DaylilyWeb.Functions.Applications." + mCmd);
+                    MethodInfo mi = type.GetMethod("Execute");
+                    object appClass = Activator.CreateInstance(type);
 
+                    /* 
+                     * // Can use below steps to load the dll, then get the type. 
+                     * Assembly assemblyTmp = Assembly.LoadFrom(sFileName); 
+                     * Type type = assemblyTmp.GetType("NameSpace.ClassName"); 
+                     * object testClass = assemblyTmp.CreateInstance(type); 
+                     */
+
+                    //object[] objParams = null;  
+                    //string result = (string)mi.Invoke(testClass, objParams);  
+
+                    object[] objParams = new object[1];
+                    objParams[0] = param;
+                    string result = (string)mi.Invoke(appClass, objParams);
+                    string response;
+                    if (isGroup)
+                        response = _sendMsg(result, user, group);
+                    else
+                        response = _sendMsg(result, user, null);
                     Log.PrimaryLine(response, ToString(), "_hdleMsg()");
-                    Log.InfoLine("发送消息：" + result, ToString(), "_hdleMsg()");
-                    return;
                 }
-                else if (message.IndexOf("!roll") == 0 && message.Length == "!roll".Length)
-                {
-                    var result = Roll.Next().ToString();
-                    string response = _sendMsg(result, user, group);
-
-                    Log.PrimaryLine(response, ToString(), "_hdleMsg()");
-                    Log.InfoLine("发送消息：" + result, ToString(), "_hdleMsg()");
-                    return;
-                }
-                else if (message.IndexOf("ping ") == -1 && message.IndexOf("ping") == 1)
-                {
-                    var result = "!pong";
-                    string response = _sendMsg(result, user, group);
-
-                    Log.PrimaryLine(response, ToString(), "_hdleMsg()");
-                    return;
-                }
-                //throw new NotImplementedException("尚不支持命令" + message.Split(' ')[0]);
             }
             else
             {
@@ -200,7 +187,7 @@ namespace DaylilyWeb.Functions
         }
         private string _sendMsg(string message, string user = null, string group = null)
         {
-            Thread.Sleep(message.Length * 400);
+            Thread.Sleep(message.Length * 100);
             if (group != null && user != null)
             {
                 return CQApi.SendGroupMessageAsync(group, CQCode.GetAt(user) + " " + message).Result;
