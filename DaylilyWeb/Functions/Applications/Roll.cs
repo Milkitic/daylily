@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DaylilyWeb.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +7,16 @@ using System.Threading.Tasks;
 
 namespace DaylilyWeb.Functions.Applications
 {
-    public class Roll : IApplication
+    public class Roll : Application, IApplication
     {
         static Random rnd = new Random();
 
-        public string Execute(string @params)
+        public Roll()
+        {
+            appType = AppType.Public;
+        }
+
+        public string Execute(string @params, string user, string group)
         {
             var query = @params.Split(' ');
             if (!int.TryParse(query[0], out int a))

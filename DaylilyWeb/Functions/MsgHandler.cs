@@ -136,39 +136,41 @@ namespace DaylilyWeb.Functions
             if (message.Substring(0, 1) == "!")
             {
                 Thread.Sleep(rnd.Next(minTime, maxTime));
-                if (!isGroup)
-                {
-                    string fullCmd = message.Substring(1, message.Length - 1);
-                    string cmd = fullCmd.Split(' ')[0];
-                    string param = fullCmd.IndexOf(" ") == -1 ? "" : fullCmd.Substring(fullCmd.IndexOf(" ") + 1, fullCmd.Length - cmd.Length - 1);
-                    string mCmd = Mapper.GetClassName(cmd);
-                    if (mCmd == null)
-                        throw new NotImplementedException("尚不支持命令：" + cmd);
 
-                    Type type = Type.GetType("DaylilyWeb.Functions.Applications." + mCmd);
-                    MethodInfo mi = type.GetMethod("Execute");
-                    object appClass = Activator.CreateInstance(type);
+                string fullCmd = message.Substring(1, message.Length - 1);
+                string cmd = fullCmd.Split(' ')[0];
+                string param = fullCmd.IndexOf(" ") == -1 ? "" : fullCmd.Substring(fullCmd.IndexOf(" ") + 1, fullCmd.Length - cmd.Length - 1);
+                string mCmd = Mapper.GetClassName(cmd);
+                if (mCmd == null)
+                    throw new NotImplementedException("尚不支持命令：" + cmd);
 
-                    /* 
-                     * // Can use below steps to load the dll, then get the type. 
-                     * Assembly assemblyTmp = Assembly.LoadFrom(sFileName); 
-                     * Type type = assemblyTmp.GetType("NameSpace.ClassName"); 
-                     * object testClass = assemblyTmp.CreateInstance(type); 
-                     */
+                Type type = Type.GetType("DaylilyWeb.Functions.Applications." + mCmd);
+                MethodInfo mi = type.GetMethod("Execute");
+                object appClass = Activator.CreateInstance(type);
 
-                    //object[] objParams = null;  
-                    //string result = (string)mi.Invoke(testClass, objParams);  
+                /* 
+                 * Can use below steps to load the dll, then get the type. 
+                 * Assembly assemblyTmp = Assembly.LoadFrom(sFileName); 
+                 * Type type = assemblyTmp.GetType("NameSpace.ClassName"); 
+                 * object testClass = assemblyTmp.CreateInstance(type); 
+                 */
 
-                    object[] objParams = new object[1];
-                    objParams[0] = param;
-                    string result = (string)mi.Invoke(appClass, objParams);
-                    string response;
-                    if (isGroup)
-                        response = _sendMsg(result, user, group);
-                    else
-                        response = _sendMsg(result, user, null);
-                    Log.PrimaryLine(response, ToString(), "_hdleMsg()");
-                }
+                //object[] objParams = null;  
+                //string result = (string)mi.Invoke(testClass, objParams);  
+
+                object[] objParams = new object[3];
+                objParams[0] = param;
+                objParams[1] = user;
+                objParams[2] = group;
+                string result = (string)mi.Invoke(appClass, objParams);
+                if (result == null)
+                    return;
+                string response;
+                if (isGroup)
+                    response = _sendMsg(result, user, group);
+                else
+                    response = _sendMsg(result, user, null);
+                Log.PrimaryLine(response, ToString(), "_hdleMsg()");
             }
             else
             {
