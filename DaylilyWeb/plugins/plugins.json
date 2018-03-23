@@ -1,0 +1,11 @@
+{
+    "Plugins": {
+		"Plugin.Other.dll": {
+            "echo": "Echo",
+            "calc": "Calc"
+		},
+		"xxx.dll": {
+            "xxx": "Xxx"
+		}
+    }
+}

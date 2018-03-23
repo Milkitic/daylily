@@ -140,20 +140,26 @@ namespace DaylilyWeb.Functions
                 string fullCmd = message.Substring(1, message.Length - 1);
                 string cmd = fullCmd.Split(' ')[0];
                 string param = fullCmd.IndexOf(" ") == -1 ? "" : fullCmd.Substring(fullCmd.IndexOf(" ") + 1, fullCmd.Length - cmd.Length - 1);
-                string mCmd = Mapper.GetClassName(cmd);
+                string mCmd = Mapper.GetClassName(cmd, out string file);
                 if (mCmd == null)
                     throw new NotImplementedException("尚不支持命令：" + cmd);
 
-                Type type = Type.GetType("DaylilyWeb.Functions.Applications." + mCmd);
-                MethodInfo mi = type.GetMethod("Execute");
-                object appClass = Activator.CreateInstance(type);
+                MethodInfo mi;
+                object appClass;
+                if (file == null)
+                {
+                    Type type = Type.GetType("DaylilyWeb.Functions.Applications." + mCmd);
+                    mi = type.GetMethod("Execute");
+                    appClass = Activator.CreateInstance(type);
+                }
+                else
+                {
+                    Assembly assemblyTmp = Assembly.LoadFrom(file);
+                    Type type = assemblyTmp.GetType("Daylily.Plugin." + mCmd);
+                    mi = type.GetMethod("Execute");
+                    appClass = assemblyTmp.CreateInstance(type.Namespace + "." + type.Name);
+                }
 
-                /* 
-                 * Can use below steps to load the dll, then get the type. 
-                 * Assembly assemblyTmp = Assembly.LoadFrom(sFileName); 
-                 * Type type = assemblyTmp.GetType("NameSpace.ClassName"); 
-                 * object testClass = assemblyTmp.CreateInstance(type); 
-                 */
 
                 //object[] objParams = null;  
                 //string result = (string)mi.Invoke(testClass, objParams);  
