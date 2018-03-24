@@ -183,11 +183,9 @@ namespace DaylilyWeb.Functions
                 {
                     result = (string)mi.Invoke(appClass, objParams);
                 }
-                catch (Exception ex)
+                catch (TargetParameterCountException ex)
                 {
-                    if (ex.InnerException != null)
-                        throw new Exception("插件" + fi.Name + "调用存在问题：" + ex.Message);
-                    throw new Exception("插件" + fi.Name + "调用存在问题：" + ex.Message);
+                     throw new Exception("插件" + fi.Name + "调用存在问题：" + ex.Message);
                 }
                 if (result == null)
                     return;
