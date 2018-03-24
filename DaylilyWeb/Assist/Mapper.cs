@@ -24,9 +24,9 @@ namespace DaylilyWeb.Assist
             {
                 JsonSettings js = new JsonSettings();
                 var ok = new Dictionary<string, string>();
-                ok.Add("ping", "Daylily.Plugin.Message.Ping");
-                ok.Add("cd", "Daylily.Plugin.Message.Cd");
-                ok.Add("roll", "Daylily.Plugin.Message.Roll");
+                ok.Add("ping", "Daylily.Plugin.Command.Ping");
+                ok.Add("cd", "Daylily.Plugin.Command.Cd");
+                ok.Add("roll", "Daylily.Plugin.Command.Roll");
                 var ok2 = new Dictionary<string, string>();
                 ok2.Add("echo", "Daylily.Plugin.Echo");
                 ok2.Add("calc", "Daylily.Plugin.Calc");

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Daylily.Plugin.Message
+namespace Daylily.Plugin.Command
 {
     public class Roll : Application, IApplication
     {

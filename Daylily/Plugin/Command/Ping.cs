@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Daylily.Plugin.Message
+namespace Daylily.Plugin.Command
 {
     public class Ping : Application, IApplication
     {

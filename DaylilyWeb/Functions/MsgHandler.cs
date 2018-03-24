@@ -145,14 +145,16 @@ namespace DaylilyWeb.Functions
                 string param = fullCmd.IndexOf(" ") == -1 ? "" : fullCmd.Substring(fullCmd.IndexOf(" ") + 1, fullCmd.Length - cmd.Length - 1);
                 string mCmd = Mapper.GetClassName(cmd, out string file);
                 if (mCmd == null)
-                    throw new NotImplementedException("尚不支持命令：" + cmd);
+                    return;
+                //throw new NotImplementedException("尚不支持命令：" + cmd);
 
                 MethodInfo mi;
                 object appClass;
+                Type type;
                 System.IO.FileInfo fi = null;
                 if (file == null)
                 {
-                    Type type = Type.GetType("DaylilyWeb.Functions.Applications." + mCmd);
+                    type = Type.GetType("DaylilyWeb.Functions.Applications." + mCmd);
                     mi = type.GetMethod("Execute");
                     var ok = type.GetMethods();
                     appClass = Activator.CreateInstance(type);
@@ -163,13 +165,13 @@ namespace DaylilyWeb.Functions
                     {
                         fi = new System.IO.FileInfo(file);
                         Assembly assemblyTmp = Assembly.LoadFrom(file);
-                        Type type = assemblyTmp.GetType(mCmd);
+                        type = assemblyTmp.GetType(mCmd);
                         mi = type.GetMethod("Execute");
                         appClass = assemblyTmp.CreateInstance(mCmd);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("插件" + fi.Name + "存在问题：" + ex.Message);
+                        throw new Exception("\"" + fi.Name + "\" 这东西根本就是假的，是带特技的");
                     }
                 }
 
@@ -185,7 +187,7 @@ namespace DaylilyWeb.Functions
                 }
                 catch (TargetParameterCountException ex)
                 {
-                     throw new Exception("插件" + fi.Name + "调用存在问题：" + ex.Message);
+                    throw new Exception(type.Name.ToLower() + "即使是死了，钉在棺材里了，也要在墓里，用这腐朽的声带喊出\"" + ex.Message + "\"");
                 }
                 if (result == null)
                     return;

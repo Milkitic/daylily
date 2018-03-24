@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Daylily.Plugin.Message
+namespace Daylily.Plugin.Command
 {
     class Cd : Application, IApplication
     {

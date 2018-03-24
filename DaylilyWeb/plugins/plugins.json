@@ -1,13 +1,16 @@
 {
     "Plugins": {
         "Daylily.Plugin.Core.dll": {
-            "ping": "Daylily.Plugin.Message.Ping",
-            "cd": "Daylily.Plugin.Message.Cd",
-            "roll": "Daylily.Plugin.Message.Roll"
+            "ping": "Daylily.Plugin.Command.Ping",
+            "cd": "Daylily.Plugin.Command.Cd",
+            "roll": "Daylily.Plugin.Command.Roll"
         },
         "Daylily.Plugin.Debug.dll": {
             "echo": "Daylily.Plugin.Echo",
             "calc": "Daylily.Plugin.Calc"
+        },
+		"FakePlugin.dll": {
+            "run": "Daylily.Plugin.Echo"
         }
     }
 }
