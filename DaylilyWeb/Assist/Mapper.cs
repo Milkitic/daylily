@@ -24,13 +24,14 @@ namespace DaylilyWeb.Assist
             {
                 JsonSettings js = new JsonSettings();
                 var ok = new Dictionary<string, string>();
-                ok.Add("echo", "Just");
-                ok.Add("for", "For");
+                ok.Add("ping", "Daylily.Plugin.Message.Ping");
+                ok.Add("cd", "Daylily.Plugin.Message.Cd");
+                ok.Add("roll", "Daylily.Plugin.Message.Roll");
                 var ok2 = new Dictionary<string, string>();
-                ok2.Add("templet", "Templet");
-                ok2.Add("something", "Something");
-                js.Plugins.Add("DaylilyPlugins.dll", ok);
-                js.Plugins.Add("Test.dll", ok2);
+                ok2.Add("echo", "Daylily.Plugin.Echo");
+                ok2.Add("calc", "Daylily.Plugin.Calc");
+                js.Plugins.Add("Daylily.Plugin.Core.dll", ok);
+                js.Plugins.Add("Daylily.Plugin.Debug.dll", ok2);
                 string contents = ConvertJsonString(JsonConvert.SerializeObject(js));
 
                 File.WriteAllText(Path.Combine(pluginDir, "plugins.json"), contents);

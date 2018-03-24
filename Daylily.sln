@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaylilyWeb", "DaylilyWeb\DaylilyWeb.csproj", "{71290A4C-AD40-4955-9C26-78A381525F02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaylilyWeb", "DaylilyWeb\DaylilyWeb.csproj", "{71290A4C-AD40-4955-9C26-78A381525F02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daylily", "Daylily\Daylily.csproj", "{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{71290A4C-AD40-4955-9C26-78A381525F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71290A4C-AD40-4955-9C26-78A381525F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71290A4C-AD40-4955-9C26-78A381525F02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,11 +1,10 @@
-﻿using DaylilyWeb.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DaylilyWeb.Functions.Applications
+namespace Daylily.Plugin.Message
 {
     public class Roll : Application, IApplication
     {
@@ -16,7 +15,7 @@ namespace DaylilyWeb.Functions.Applications
             appType = AppType.Public;
         }
 
-        public string Execute(string @params, string user, string group)
+        public string Execute(string @params, string user, string group, bool isRoot)
         {
             var query = @params.Split(' ');
             if (!int.TryParse(query[0], out int a))

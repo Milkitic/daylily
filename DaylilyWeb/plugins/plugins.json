@@ -1,11 +1,13 @@
 {
     "Plugins": {
-		"Plugin.Other.dll": {
-            "echo": "Echo",
-            "calc": "Calc"
-		},
-		"xxx.dll": {
-            "xxx": "Xxx"
-		}
+        "Daylily.Plugin.Core.dll": {
+            "ping": "Daylily.Plugin.Message.Ping",
+            "cd": "Daylily.Plugin.Message.Cd",
+            "roll": "Daylily.Plugin.Message.Roll"
+        },
+        "Daylily.Plugin.Debug.dll": {
+            "echo": "Daylily.Plugin.Echo",
+            "calc": "Daylily.Plugin.Calc"
+        }
     }
 }

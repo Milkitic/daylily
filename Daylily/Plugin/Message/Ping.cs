@@ -1,10 +1,9 @@
-﻿using DaylilyWeb.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DaylilyWeb.Functions.Applications
+namespace Daylily.Plugin.Message
 {
     public class Ping : Application, IApplication
     {
@@ -12,7 +11,7 @@ namespace DaylilyWeb.Functions.Applications
         {
             appType = AppType.Public;
         }
-        public string Execute(string @params, string user, string group)
+        public string Execute(string @params, string user, string group, bool isRoot)
         {
             if (group != null) // 不给予群聊权限
                 return null;

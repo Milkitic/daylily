@@ -123,7 +123,10 @@ namespace DaylilyWeb.Functions
                 }
                 catch (Exception ex)
                 {
-                    string response = _sendMsg(ex.Message, user);
+                    if (ex.InnerException != null)
+                        _sendMsg(ex.InnerException.Message, user);
+                    else
+                        _sendMsg(ex.Message, user);
                 }
             }
             pLockMsg = false;
@@ -150,24 +153,22 @@ namespace DaylilyWeb.Functions
                 {
                     Type type = Type.GetType("DaylilyWeb.Functions.Applications." + mCmd);
                     mi = type.GetMethod("Execute");
+                    var ok = type.GetMethods();
                     appClass = Activator.CreateInstance(type);
                 }
                 else
                 {
                     Assembly assemblyTmp = Assembly.LoadFrom(file);
-                    Type type = assemblyTmp.GetType("Daylily.Plugin." + mCmd);
+                    Type type = assemblyTmp.GetType(mCmd);
                     mi = type.GetMethod("Execute");
-                    appClass = assemblyTmp.CreateInstance(type.Namespace + "." + type.Name);
+                    appClass = assemblyTmp.CreateInstance(mCmd);
                 }
 
-
-                //object[] objParams = null;  
-                //string result = (string)mi.Invoke(testClass, objParams);  
-
-                object[] objParams = new object[3];
+                object[] objParams = new object[4]; //=null
                 objParams[0] = param;
                 objParams[1] = user;
                 objParams[2] = group;
+                objParams[3] = false;
                 string result = (string)mi.Invoke(appClass, objParams);
                 if (result == null)
                     return;
@@ -195,7 +196,7 @@ namespace DaylilyWeb.Functions
         }
         private string _sendMsg(string message, string user = null, string group = null)
         {
-            Thread.Sleep(message.Length * 100);
+            Thread.Sleep(message.Length * 0);
             if (group != null && user != null)
             {
                 return CQApi.SendGroupMessageAsync(group, CQCode.GetAt(user) + " " + message).Result;
