@@ -149,6 +149,7 @@ namespace DaylilyWeb.Functions
 
                 MethodInfo mi;
                 object appClass;
+                System.IO.FileInfo fi = null;
                 if (file == null)
                 {
                     Type type = Type.GetType("DaylilyWeb.Functions.Applications." + mCmd);
@@ -158,10 +159,18 @@ namespace DaylilyWeb.Functions
                 }
                 else
                 {
-                    Assembly assemblyTmp = Assembly.LoadFrom(file);
-                    Type type = assemblyTmp.GetType(mCmd);
-                    mi = type.GetMethod("Execute");
-                    appClass = assemblyTmp.CreateInstance(mCmd);
+                    try
+                    {
+                        fi = new System.IO.FileInfo(file);
+                        Assembly assemblyTmp = Assembly.LoadFrom(file);
+                        Type type = assemblyTmp.GetType(mCmd);
+                        mi = type.GetMethod("Execute");
+                        appClass = assemblyTmp.CreateInstance(mCmd);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("插件" + fi.Name + "存在问题：" + ex.Message);
+                    }
                 }
 
                 object[] objParams = new object[4]; //=null
@@ -169,7 +178,17 @@ namespace DaylilyWeb.Functions
                 objParams[1] = user;
                 objParams[2] = group;
                 objParams[3] = false;
-                string result = (string)mi.Invoke(appClass, objParams);
+                string result = null;
+                try
+                {
+                    result = (string)mi.Invoke(appClass, objParams);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException != null)
+                        throw new Exception("插件" + fi.Name + "调用存在问题：" + ex.Message);
+                    throw new Exception("插件" + fi.Name + "调用存在问题：" + ex.Message);
+                }
                 if (result == null)
                     return;
                 string response;
@@ -196,7 +215,7 @@ namespace DaylilyWeb.Functions
         }
         private string _sendMsg(string message, string user = null, string group = null)
         {
-            Thread.Sleep(message.Length * 0);
+            Thread.Sleep(message.Length * 100);
             if (group != null && user != null)
             {
                 return CQApi.SendGroupMessageAsync(group, CQCode.GetAt(user) + " " + message).Result;
