@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Daylily.Plugin
+namespace DaylilyWeb.Functions.Applications
 {
     public interface IApplication
     {

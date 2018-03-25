@@ -127,6 +127,7 @@ namespace DaylilyWeb.Functions
                         _sendMsg(ex.InnerException.Message, user);
                     else
                         _sendMsg(ex.Message, user);
+                    GC.Collect();
                 }
             }
             pLockMsg = false;
@@ -169,7 +170,7 @@ namespace DaylilyWeb.Functions
                         mi = type.GetMethod("Execute");
                         appClass = assemblyTmp.CreateInstance(mCmd);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         throw new Exception("\"" + fi.Name + "\" 这东西根本就是假的，是带特技的");
                     }
@@ -215,10 +216,10 @@ namespace DaylilyWeb.Functions
         }
         private string _sendMsg(string message, string user = null, string group = null)
         {
-            Thread.Sleep(message.Length * 100);
+            //Thread.Sleep(message.Length * 100);
             if (group != null && user != null)
             {
-                return CQApi.SendGroupMessageAsync(group, CQCode.GetAt(user) + " " + message).Result;
+                return CQApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " " + message).Result;
             }
             else if (user != null)
             {

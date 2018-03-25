@@ -99,12 +99,12 @@ namespace DaylilyWeb.Interface.CQHttp
         public Models.CQResponse.GroupList GetGroupList()
         {
             string json_string = null;
-        
+
             var response = WebRequestHelper.CreatePostHttpResponse("http://127.0.0.1:5700/get_group_list");
             Log.DefaultLine("Sent request. (GetGroupList)", ToString());
             if (response != null)
             {
-                json_string = WebRequestHelper.GetResponseString( response);
+                json_string = WebRequestHelper.GetResponseString(response);
                 Log.DefaultLine("Received response. (GroupMessageAsync)", ToString());
                 Log.DefaultLine(json_string, ToString());
             }

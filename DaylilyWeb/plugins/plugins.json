@@ -3,7 +3,8 @@
         "Daylily.Plugin.Core.dll": {
             "ping": "Daylily.Plugin.Command.Ping",
             "cd": "Daylily.Plugin.Command.Cd",
-            "roll": "Daylily.Plugin.Command.Roll"
+            "roll": "Daylily.Plugin.Command.Roll",
+            "ppp": "Daylily.Plugin.Command.PpPlus"
         },
         "Daylily.Plugin.Debug.dll": {
             "echo": "Daylily.Plugin.Echo",

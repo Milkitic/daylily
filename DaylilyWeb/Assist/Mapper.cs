@@ -15,8 +15,7 @@ namespace DaylilyWeb.Assist
         static string pluginDir = Path.Combine(Environment.CurrentDirectory, "plugins");
         public static void Init()
         {
-            dClassName.Add("roll", "Roll");
-            dClassName.Add("ping", "Ping");
+            dClassName.Add("ppp", "PpPlus");
             if (!Directory.Exists(pluginDir))
                 Directory.CreateDirectory(pluginDir);
 

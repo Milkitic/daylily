@@ -5,9 +5,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DaylilyWeb.Assist
+namespace Daylily.Assist
 {
-    class WebRequestHelper
+    partial class WebRequestHelper
     {
         /// <summary>
         /// 创建一个一般请求
@@ -83,16 +83,9 @@ namespace DaylilyWeb.Assist
                     }
                 }
                 byte[] data = Encoding.ASCII.GetBytes(buffer.ToString());
-                try
+                using (Stream stream = request.GetRequestStream())
                 {
-                    using (Stream stream = request.GetRequestStream())
-                    {
-                        stream.Write(data, 0, data.Length);
-                    }
-                }
-                catch
-                {
-                    throw new Exception("网络连接失败");
+                    stream.Write(data, 0, data.Length);
                 }
             }
 
