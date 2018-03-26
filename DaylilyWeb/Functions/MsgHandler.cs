@@ -15,15 +15,8 @@ namespace DaylilyWeb.Functions
     public class MsgHandler
     {
         public static GroupList GroupInfo { get; set; } = new GroupList();
-        // 多线程相关
-        static Queue<PrivateMsg> pMsgQueue = new Queue<PrivateMsg>();
-        //static Queue<GroupMsg> gMsgQueue = new Queue<GroupMsg>();
-        //static Thread gThread; // 群聊线程
-        static Thread pThread; // 私聊线程
-
-        //static GroupMsg preInfo = new GroupMsg();
-        //static string preString = "";
-
+        public static PrivateList PrivateInfo { get; set; } = new PrivateList();
+        
         Random rnd = new Random();
         bool gLockMsg = false, pLockMsg = false; // 用于判断是否超出消息阀值
         int gMsgLimit = 10, pMsgLimit = 4;
@@ -62,9 +55,11 @@ namespace DaylilyWeb.Functions
         /// </summary>
         public MsgHandler(PrivateMsg parsed_obj)
         {
+            long id = parsed_obj.user_id;
+            GroupInfo.Add(id);
             PrivateMsg currentInfo = parsed_obj;
-            if (pMsgQueue.Count < pMsgLimit) // 允许缓存n条，再多的丢弃
-                pMsgQueue.Enqueue(currentInfo);
+            if (PrivateInfo[id].MsgQueue.Count < pMsgLimit) // 允许缓存n条，再多的丢弃
+                PrivateInfo[id].MsgQueue.Enqueue(currentInfo);
 
             else if (!pLockMsg)
             {
@@ -73,10 +68,11 @@ namespace DaylilyWeb.Functions
                 Log.PrimaryLine(response, ToString(), "MsgHandler(PrivateMsg)");
             }
 
-            if (pThread == null || (pThread.ThreadState != ThreadState.Running && pThread.ThreadState != ThreadState.WaitSleepJoin))
+            if (PrivateInfo[id].Thread == null ||
+                (PrivateInfo[id].Thread.ThreadState != ThreadState.Running && PrivateInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
             {
-                pThread = new Thread(HandlePrivateMessage);
-                pThread.Start();
+                PrivateInfo[id].Thread = new Thread(HandlePrivateMessage);
+                PrivateInfo[id].Thread.Start();
             }
         }
 
@@ -99,20 +95,25 @@ namespace DaylilyWeb.Functions
                 }
                 catch (Exception ex)
                 {
-                    string response = _sendMsg(ex.Message, user, group);
+                    if (ex.InnerException != null)
+                        _sendMsg(ex.InnerException.Message, user, group);
+                    else
+                        _sendMsg(ex.Message, user, group);
+                    GC.Collect();
                 }
                 GroupInfo[groupId].preInfo = currentInfo;
             }
             gLockMsg = false;
         }
 
-        private void HandlePrivateMessage()
+        private void HandlePrivateMessage(object param)
         {
-            while (pMsgQueue.Count != 0)
+            long privateId = (long)param;
+            while (PrivateInfo[privateId].MsgQueue.Count != 0)
             {
-                if (pMsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
+                if (PrivateInfo[privateId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
 
-                var currentInfo = pMsgQueue.Dequeue();
+                var currentInfo = PrivateInfo[privateId].MsgQueue.Dequeue();
 
                 string message = currentInfo.message.Replace("\n", "").Replace("\r", "").Trim();
                 string user = currentInfo.user_id.ToString();
