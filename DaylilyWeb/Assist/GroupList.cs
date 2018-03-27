@@ -33,6 +33,7 @@ namespace DaylilyWeb.Assist
         public Thread Thread { get; set; }
         public GroupMsg PreInfo { get; set; } = new GroupMsg();
         public string PreString { get; set; } = "";
+        public int MsgLimit { get; set; } = 10;
         public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
     }
 }

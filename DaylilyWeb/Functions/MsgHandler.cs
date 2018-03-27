@@ -18,7 +18,6 @@ namespace DaylilyWeb.Functions
         public static PrivateList PrivateInfo { get; set; } = new PrivateList();
         
         Random rnd = new Random();
-        int gMsgLimit = 10, pMsgLimit = 4;
         int minTime = 200, maxTime = 300; // 回应的反应时间
 
         HttpApi CQApi = new HttpApi();
@@ -31,7 +30,7 @@ namespace DaylilyWeb.Functions
             long id = parsed_obj.group_id;
             GroupInfo.Add(id);
             GroupMsg currentInfo = parsed_obj;
-            if (GroupInfo[id].MsgQueue.Count < gMsgLimit) // 允许缓存n条，再多的丢弃
+            if (GroupInfo[id].MsgQueue.Count < GroupInfo[id].MsgLimit) // 允许缓存n条，再多的丢弃
                 GroupInfo[id].MsgQueue.Enqueue(currentInfo);
 
             else if (!GroupInfo[id].LockMsg)
@@ -57,7 +56,7 @@ namespace DaylilyWeb.Functions
             long id = parsed_obj.user_id;
             PrivateInfo.Add(id);
             PrivateMsg currentInfo = parsed_obj;
-            if (PrivateInfo[id].MsgQueue.Count < pMsgLimit) // 允许缓存n条，再多的丢弃
+            if (PrivateInfo[id].MsgQueue.Count < PrivateInfo[id].MsgLimit) // 允许缓存n条，再多的丢弃
                 PrivateInfo[id].MsgQueue.Enqueue(currentInfo);
 
             else if (!PrivateInfo[id].LockMsg)

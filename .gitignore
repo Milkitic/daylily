@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# My file
+DaylilyWeb/appsettings.json
+
 # User-specific files
 *.suo
 *.user
@@ -286,4 +289,3 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
-DaylilyWeb/appsettings.json

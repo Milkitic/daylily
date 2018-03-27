@@ -32,6 +32,7 @@ namespace DaylilyWeb.Assist
         public Queue<PrivateMsg> MsgQueue { get; set; } = new Queue<PrivateMsg>();
         public Thread Thread { get; set; }
         public PrivateMsg PreInfo { get; set; } = new PrivateMsg();
+        public int MsgLimit { get; set; } = 4;
         public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
     }
 }
