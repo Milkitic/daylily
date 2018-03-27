@@ -19,9 +19,6 @@ namespace Daylily.Plugin.Command
         }
         public string Execute(string @params, string user, string group, bool isRoot)
         {
-            if (group != null) // 不给予群聊权限
-                return null;
-
             @params = @params.Replace("@me", "yf_bmp");
             string json_string = null;
 
@@ -68,6 +65,7 @@ namespace Daylily.Plugin.Command
                     }
                 }
                 var resp = CQCode.EncodeImageToBase64(Draw(@params, d_value));
+                Log.InfoLine(resp);
                 return resp;
             }
             return null;
@@ -75,14 +73,13 @@ namespace Daylily.Plugin.Command
 
         private Bitmap Draw(string user, Dictionary<string, int> d_pfmance)
         {
-            Bitmap bmp = new Bitmap(230, 256);
+            Bitmap bmp = new Bitmap(230, 256, System.DrawingCore.Imaging.PixelFormat.Format32bppArgb);
             Graphics g = Graphics.FromImage(bmp);
 
             g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
             g.CompositingQuality = CompositingQuality.HighQuality;
             g.SmoothingMode = SmoothingMode.HighQuality;
             g.Clear(Color.FromArgb(244, 244, 244));
-            StringBuilder sb = new StringBuilder();
             PointF[] point_bder = new PointF[6];
             PointF _CENTER = new PointF(bmp.Width / 2f, bmp.Height / 2f + 15);
 
@@ -90,7 +87,6 @@ namespace Daylily.Plugin.Command
             Color _NET_COLOR = Color.FromArgb(204, 213, 240);
             Color _BORDER_COLOR = Color.FromArgb(169, 173, 225);
 
-            sb.AppendLine("asdfdsaf ");
             int _R_STD = 100;
             int _STEP = 25;
             for (int i = 0; i < 4; i++)

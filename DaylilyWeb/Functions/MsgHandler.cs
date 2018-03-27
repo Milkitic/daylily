@@ -16,7 +16,7 @@ namespace DaylilyWeb.Functions
     {
         public static GroupList GroupInfo { get; set; } = new GroupList();
         public static PrivateList PrivateInfo { get; set; } = new PrivateList();
-        
+
         Random rnd = new Random();
         int minTime = 200, maxTime = 300; // 回应的反应时间
 
@@ -163,6 +163,7 @@ namespace DaylilyWeb.Functions
                 {
                     try
                     {
+                        Log.PrimaryLine("读取插件信息中", ToString(), "_hdleMsg()");
                         fi = new System.IO.FileInfo(file);
                         Assembly assemblyTmp = Assembly.LoadFrom(file);
                         type = assemblyTmp.GetType(mCmd);
@@ -218,7 +219,8 @@ namespace DaylilyWeb.Functions
             //Thread.Sleep(message.Length * 100);
             if (group != null && user != null)
             {
-                return CQApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " " + message).Result;
+                return CQApi.SendGroupMessageAsync(group, message + "\r\n" + CQCode.EncodeAt(user)).Result;
+                //return CQApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " " + message).Result;
             }
             else if (user != null)
             {

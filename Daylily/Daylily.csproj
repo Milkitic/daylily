@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Daylily.Plugin.Core</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

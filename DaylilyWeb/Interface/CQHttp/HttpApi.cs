@@ -9,6 +9,7 @@ namespace DaylilyWeb.Interface.CQHttp
 {
     class HttpApi
     {
+        public static string ApiUrl { get; set; } = "http://www.mothership.top:5700";
         /// <summary>
         /// 发送私聊消息
         /// </summary>
@@ -22,7 +23,7 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("user_id", HttpUtility.UrlEncode(id));
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
-            var response = WebRequestHelper.CreatePostHttpResponse("http://127.0.0.1:5700/send_private_msg", parameters);
+            var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/send_private_msg", parameters);
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(response);
@@ -43,7 +44,7 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("user_id", HttpUtility.UrlEncode(id));
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
-            var response = WebRequestHelper.CreatePostHttpResponseAsync("http://127.0.0.1:5700/send_private_msg_async", parameters);
+            var response = WebRequestHelper.CreatePostHttpResponseAsync(ApiUrl + "/send_private_msg_async", parameters);
             Log.DefaultLine("Sent request. (PrivateMessageAsync)", ToString());
             if (response != null)
             {
@@ -65,7 +66,7 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("group_id", HttpUtility.UrlEncode(groupId));
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
-            var response = WebRequestHelper.CreatePostHttpResponse("http://127.0.0.1:5700/send_group_msg", parameters);
+            var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/send_group_msg", parameters);
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(response);
@@ -86,7 +87,7 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("group_id", HttpUtility.UrlEncode(groupId));
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
-            var response = WebRequestHelper.CreatePostHttpResponseAsync("http://127.0.0.1:5700/send_group_msg_async", parameters);
+            var response = WebRequestHelper.CreatePostHttpResponseAsync(ApiUrl + "/send_group_msg_async", parameters);
             Log.DefaultLine("Sent request. (GroupMessageAsync)", ToString());
             if (response != null)
             {
@@ -100,7 +101,7 @@ namespace DaylilyWeb.Interface.CQHttp
         {
             string json_string = null;
 
-            var response = WebRequestHelper.CreatePostHttpResponse("http://127.0.0.1:5700/get_group_list");
+            var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/get_group_list");
             Log.DefaultLine("Sent request. (GetGroupList)", ToString());
             if (response != null)
             {
