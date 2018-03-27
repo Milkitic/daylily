@@ -29,9 +29,10 @@ namespace DaylilyWeb.Assist
     }
     public class GroupInfo
     {
-        public Queue<GroupMsg> MsgQueue = new Queue<GroupMsg>();
-        public Thread Thread;
-        public GroupMsg preInfo = new GroupMsg();
-        public string preString = "";
+        public Queue<GroupMsg> MsgQueue { get; set; } = new Queue<GroupMsg>();
+        public Thread Thread { get; set; }
+        public GroupMsg PreInfo { get; set; } = new GroupMsg();
+        public string PreString { get; set; } = "";
+        public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
     }
 }

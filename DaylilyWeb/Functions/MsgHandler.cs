@@ -18,7 +18,6 @@ namespace DaylilyWeb.Functions
         public static PrivateList PrivateInfo { get; set; } = new PrivateList();
         
         Random rnd = new Random();
-        bool gLockMsg = false, pLockMsg = false; // 用于判断是否超出消息阀值
         int gMsgLimit = 10, pMsgLimit = 4;
         int minTime = 200, maxTime = 300; // 回应的反应时间
 
@@ -35,9 +34,9 @@ namespace DaylilyWeb.Functions
             if (GroupInfo[id].MsgQueue.Count < gMsgLimit) // 允许缓存n条，再多的丢弃
                 GroupInfo[id].MsgQueue.Enqueue(currentInfo);
 
-            else if (!gLockMsg)
+            else if (!GroupInfo[id].LockMsg)
             {
-                gLockMsg = true;
+                GroupInfo[id].LockMsg = true;
                 string response = _sendMsg("能不能慢点啊，你们这想整死我（", null, currentInfo.group_id.ToString());
                 Log.PrimaryLine(response, ToString(), "MsgHandler(GroupMsg)");
             }
@@ -56,14 +55,14 @@ namespace DaylilyWeb.Functions
         public MsgHandler(PrivateMsg parsed_obj)
         {
             long id = parsed_obj.user_id;
-            GroupInfo.Add(id);
+            PrivateInfo.Add(id);
             PrivateMsg currentInfo = parsed_obj;
             if (PrivateInfo[id].MsgQueue.Count < pMsgLimit) // 允许缓存n条，再多的丢弃
                 PrivateInfo[id].MsgQueue.Enqueue(currentInfo);
 
-            else if (!pLockMsg)
+            else if (!PrivateInfo[id].LockMsg)
             {
-                pLockMsg = true;
+                PrivateInfo[id].LockMsg = true;
                 string response = _sendMsg("？？求您慢点说话好吗", currentInfo.user_id.ToString());
                 Log.PrimaryLine(response, ToString(), "MsgHandler(PrivateMsg)");
             }
@@ -71,8 +70,8 @@ namespace DaylilyWeb.Functions
             if (PrivateInfo[id].Thread == null ||
                 (PrivateInfo[id].Thread.ThreadState != ThreadState.Running && PrivateInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
             {
-                PrivateInfo[id].Thread = new Thread(HandlePrivateMessage);
-                PrivateInfo[id].Thread.Start();
+                PrivateInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandlePrivateMessage));
+                PrivateInfo[id].Thread.Start(id);
             }
         }
 
@@ -101,9 +100,9 @@ namespace DaylilyWeb.Functions
                         _sendMsg(ex.Message, user, group);
                     GC.Collect();
                 }
-                GroupInfo[groupId].preInfo = currentInfo;
+                GroupInfo[groupId].PreInfo = currentInfo;
             }
-            gLockMsg = false;
+            GroupInfo[groupId].LockMsg = false;
         }
 
         private void HandlePrivateMessage(object param)
@@ -131,7 +130,7 @@ namespace DaylilyWeb.Functions
                     GC.Collect();
                 }
             }
-            pLockMsg = false;
+            PrivateInfo[privateId].LockMsg = false;
         }
         private void _hdleMsg(string message, string user, string group = null)
         {
@@ -204,11 +203,11 @@ namespace DaylilyWeb.Functions
             {
                 if (isGroup)
                 {
-                    if (GroupInfo[groupId].preInfo.message == message && message != GroupInfo[groupId].preString)
+                    if (GroupInfo[groupId].PreInfo.message == message && message != GroupInfo[groupId].PreString)
                     {
                         string response = _sendMsg(message, null, group);
                         Log.PrimaryLine(response, ToString(), "_hdleMsg()");
-                        GroupInfo[groupId].preString = message;
+                        GroupInfo[groupId].PreString = message;
                         return;
                     }
                 }

@@ -29,8 +29,9 @@ namespace DaylilyWeb.Assist
     }
     public class PrivateInfo
     {
-        public Queue<PrivateMsg> MsgQueue = new Queue<PrivateMsg>();
-        public Thread Thread;
-        public PrivateMsg preInfo = new PrivateMsg();
+        public Queue<PrivateMsg> MsgQueue { get; set; } = new Queue<PrivateMsg>();
+        public Thread Thread { get; set; }
+        public PrivateMsg PreInfo { get; set; } = new PrivateMsg();
+        public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
     }
 }
