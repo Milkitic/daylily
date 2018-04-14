@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.DrawingCore;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -19,7 +20,7 @@ namespace Daylily.Assist
             if (!Directory.Exists(Path.Combine(Environment.CurrentDirectory, "images")))
                 Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "images"));
             string path = Path.Combine(Environment.CurrentDirectory, "images", Guid.NewGuid() + ".png");
-            bmp.Save(path, System.DrawingCore.Imaging.ImageFormat.Png);
+            bmp.Save(path, ImageFormat.Png);
             return $"[CQ:image,file=file://{Escape(path)}]";
         }
         public static string EncodeImageToBase64(Bitmap bmp)
@@ -31,7 +32,7 @@ namespace Daylily.Assist
             if (!Directory.Exists(Path.Combine(Environment.CurrentDirectory, "images")))
                 Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "images"));
             string path = Path.Combine(Environment.CurrentDirectory, "images", png_file);
-            bmp.Save(path, System.DrawingCore.Imaging.ImageFormat.Png);
+            bmp.Save(path, ImageFormat.Png);
 
             string base64Str = EncodeFileToBase64(path);
 

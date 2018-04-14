@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.DrawingCore;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -19,9 +19,10 @@ namespace DaylilyWeb.Assist
             string code = ToBase64(img);
             Bitmap a = new Bitmap(ToImage(code));
             string path = Path.Combine(Environment.CurrentDirectory, "images", Guid.NewGuid() + ".png");
-            a.Save(path, System.DrawingCore.Imaging.ImageFormat.Png);
+            a.Save(path, System.Drawing.Imaging.ImageFormat.Png);
             return $"[CQ:image,file=file://{Escape(path)}]";
         }
+
         public static string Escape(string text)
         {
             return text.Replace("&", "&amp").Replace("[", "&#91").Replace("]", "&#93").Replace(",", "&#44");
@@ -42,6 +43,27 @@ namespace DaylilyWeb.Assist
             MemoryStream memStream = new MemoryStream(bytes);
             BinaryFormatter binFormatter = new BinaryFormatter();
             return (Image)binFormatter.Deserialize(memStream);
+        }
+
+        public static string[] GetImageUrls(string source)
+        {
+            List<string> url_list = new List<string>();
+            int index, index2 = 0;
+            while ((index = source.IndexOf("[CQ:image", index2)) != -1)
+            {
+                if (source.IndexOf(".gif", index) != -1)
+                {
+                    index2 = index2 + source.IndexOf(".gif", index);
+                    continue;
+                }
+                int tmp_index = source.IndexOf("url=", index) + 4;
+                int length = source.IndexOf("]", tmp_index) - tmp_index;
+                url_list.Add(source.Substring(tmp_index, length));
+                index2 = tmp_index + length;
+            }
+            if (url_list.Count == 0)
+                return null;
+            return url_list.ToArray();
         }
     }
 }

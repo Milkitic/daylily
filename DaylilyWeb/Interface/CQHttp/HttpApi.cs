@@ -97,6 +97,23 @@ namespace DaylilyWeb.Interface.CQHttp
             return json_string;
         }
 
+        public string SetGroupBan(string groupId, string userId, int duration)
+        {
+            string json_string = null;
+            IDictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("group_id", HttpUtility.UrlEncode(groupId));
+            parameters.Add("user_id", HttpUtility.UrlEncode(userId));
+            parameters.Add("duration", duration.ToString());
+
+            var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/set_group_ban", parameters);
+            Log.DefaultLine("Sent request. (SetGroupBan)", ToString());
+            if (response != null)
+            {
+                json_string = WebRequestHelper.GetResponseString(response);
+                Log.DefaultLine("Received response. (SetGroupBan)", ToString());
+            }
+            return json_string;
+        }
         public Models.CQResponse.GroupList GetGroupList()
         {
             string json_string = null;

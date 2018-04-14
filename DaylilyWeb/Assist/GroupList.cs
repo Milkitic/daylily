@@ -10,23 +10,24 @@ namespace DaylilyWeb.Assist
 {
     public class GroupList
     {
+        Dictionary<long, GroupInfo> dicGroup = new Dictionary<long, GroupInfo>();
+
         public GroupInfo this[long groupId]
         {
             get
             {
-                return di[groupId];
+                return dicGroup[groupId];
             }
         }
 
         public void Add(long groupID)
         {
-            if (di.Keys.Contains(groupID))
+            if (dicGroup.Keys.Contains(groupID))
                 return;
-            di.Add(groupID, new GroupInfo());
+            dicGroup.Add(groupID, new GroupInfo());
         }
-        Dictionary<long, GroupInfo> di = new Dictionary<long, GroupInfo>();
-
     }
+
     public class GroupInfo
     {
         public Queue<GroupMsg> MsgQueue { get; set; } = new Queue<GroupMsg>();

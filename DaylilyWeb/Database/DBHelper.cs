@@ -10,16 +10,17 @@ namespace DaylilyWeb.Database
 {
     public class DbHelper
     {
-        public string ConnectionString { get; set; }
+        public static Dictionary<string, string> ConnectionString { get; set; } = new Dictionary<string, string>();
 
-        public DbHelper(string connectionString)
+        string currentString;
+        public DbHelper(string connectionName)
         {
-            this.ConnectionString = connectionString;
+            currentString = ConnectionString[connectionName];
         }
 
         private MySqlConnection GetConnection()
         {
-            return new MySqlConnection(ConnectionString);
+            return new MySqlConnection(currentString);
         }
 
         public DataTable FillTable(string queryString, params MySqlParameter[] param)

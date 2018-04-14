@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Daylily.Plugin.Command
 {
-    public class Roll : Application, IApplication
+    public class Roll : Application
     {
         static Random rnd = new Random();
 
@@ -15,8 +15,10 @@ namespace Daylily.Plugin.Command
             appType = AppType.Public;
         }
 
-        public string Execute(string @params, string user, string group, bool isRoot)
+        public override string Execute(string @params, string user, string group, bool isRoot, ref bool ifAt)
         {
+            ifAt = true;
+
             var query = @params.Split(' ');
             if (!int.TryParse(query[0], out int a))
             {

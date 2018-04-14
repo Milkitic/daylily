@@ -22,7 +22,7 @@ namespace DaylilyWeb.Controllers
             {
                 string json = await sr.ReadToEndAsync();
                 obj = JsonConvert.DeserializeObject(json);
-                Log.SuccessLine(json,ToString(), "GetResponse()");
+                //Log.SuccessLine(json,ToString(), "GetResponse()");
             }
             // 判断post类别
             if (obj.post_type == "message")
@@ -33,7 +33,7 @@ namespace DaylilyWeb.Controllers
                     PrivateMsg parsed_obj = JsonConvert.DeserializeObject<PrivateMsg>(JsonConvert.SerializeObject(obj));
                     try
                     {
-                        MsgHandler private_handler = new MsgHandler(parsed_obj);
+                        MessageHandler private_handler = new MessageHandler(parsed_obj);
                         //private_handler.HandleMessage();
                     }
                     catch (Exception ex)
@@ -53,21 +53,22 @@ namespace DaylilyWeb.Controllers
                     GroupMsg parsed_obj = JsonConvert.DeserializeObject<GroupMsg>(JsonConvert.SerializeObject(obj));
                     try
                     {
-                        MsgHandler group_handler = new MsgHandler(parsed_obj);
+                        MessageHandler group_handler = new MessageHandler(parsed_obj);
                         //group_handler.HandleMessage();
                     }
                     catch (Exception ex)
                     {
-                        GroupMsgResponse group_resp = new GroupMsgResponse()
-                        {
-                            reply = ex.Message,
-                            auto_escape = false,
-                            at_sender = true,
-                            delete = false,
-                            kick = false,
-                            ban = false
-                        };
-                        return Json(group_resp);
+                        Log.DangerLine(ex.Message);
+                        //GroupMsgResponse group_resp = new GroupMsgResponse()
+                        //{
+                        //    reply = ex.Message,
+                        //    auto_escape = false,
+                        //    at_sender = true,
+                        //    delete = false,
+                        //    kick = false,
+                        //    ban = false
+                        //};
+                        //return Json(group_resp);
                     }
                 }
 

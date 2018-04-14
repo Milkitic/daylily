@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DaylilyWeb.Database;
+using DaylilyWeb.Interface.CQHttp;
+using DaylilyWeb.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,8 +25,13 @@ namespace DaylilyWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            DataBase.Init(Configuration.GetConnectionString("DefaultConnection"));
-            Interface.CQHttp.HttpApi.ApiUrl = Configuration.GetConnectionString("PostUrl");
+            DbHelper.ConnectionString.Add("cabbage", Configuration.GetConnectionString("DefaultConnection"));
+            DbHelper.ConnectionString.Add("daylily", Configuration.GetConnectionString("MyConnection"));
+            HttpApi.ApiUrl = Configuration.GetConnectionString("PostUrl");
+            Signature.appId = int.Parse(Configuration.GetConnectionString("appId"));
+            Signature.secretId = Configuration.GetConnectionString("secretId");
+            Signature.secretKey = Configuration.GetConnectionString("secretKey");
+            Signature.bucketName = Configuration.GetConnectionString("bucketName");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,8 +48,13 @@ namespace DaylilyWeb
             }
 
             app.UseStaticFiles();
-
             app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
+            app.UseMvc(delegate (Microsoft.AspNetCore.Routing.IRouteBuilder routes)
             {
                 routes.MapRoute(
                     name: "default",

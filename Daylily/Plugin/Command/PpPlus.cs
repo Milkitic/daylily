@@ -3,22 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.DrawingCore;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Text;
-using System.DrawingCore.Text;
-using System.DrawingCore.Drawing2D;
+using System.Drawing.Text;
 using System.IO;
+using System.Drawing.Imaging;
 
 namespace Daylily.Plugin.Command
 {
-    public class PpPlus : Application, IApplication
+    public class PpPlus : Application
     {
         public PpPlus()
         {
             appType = AppType.Public;
         }
-        public string Execute(string @params, string user, string group, bool isRoot)
+        public override string Execute(string @params, string user, string group, bool isRoot, ref bool ifAt)
         {
+            ifAt = false;
             @params = @params.Replace("@me", "yf_bmp");
             string json_string = null;
 
@@ -73,7 +75,7 @@ namespace Daylily.Plugin.Command
 
         private Bitmap Draw(string user, Dictionary<string, int> d_pfmance)
         {
-            Bitmap bmp = new Bitmap(230, 256, System.DrawingCore.Imaging.PixelFormat.Format32bppArgb);
+            Bitmap bmp = new Bitmap(230, 256, PixelFormat.Format32bppArgb);
             Graphics g = Graphics.FromImage(bmp);
 
             g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;

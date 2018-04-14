@@ -17,8 +17,9 @@ namespace DaylilyWeb.Database.BLL
         }
         private List<TblUserRole> _GetUserRole(string queryString, params MySqlParameter[] param)
         {
+            DbHelper dbCabbage = new DbHelper("cabbage");
             List<TblUserRole> parsed_list = new List<TblUserRole>();
-            DataTable dataTable = DataBase.DbHelper.FillTable(queryString, param);
+            DataTable dataTable = dbCabbage.FillTable(queryString, param);
             foreach (DataRow item in dataTable.Rows)
             {
                 parsed_list.Add(new TblUserRole

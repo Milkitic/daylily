@@ -10,56 +10,70 @@ namespace DaylilyWeb.Assist
 {
     public static class Mapper
     {
-        static Dictionary<string, string> dClassName = new Dictionary<string, string>();
-        static JsonSettings Plugins = new JsonSettings();
-        static string pluginDir = Path.Combine(Environment.CurrentDirectory, "plugins");
+        public static List<string> NormalPlugins { get; set; } = new List<string>();
+
+        private static Dictionary<string, string> InnerCmdPlugin { get; set; } = new Dictionary<string, string>();
+        private static JsonSettings FileCmdPlugins { get; set; } = new JsonSettings();
+
+        private static readonly string PLUGIN_DIR = Path.Combine(Environment.CurrentDirectory, "plugins");
+        private static readonly string SETTINGS_FILE = Path.Combine(PLUGIN_DIR, "plugins.json");
+        
         public static void Init()
         {
-            dClassName.Add("myinfo", "MyInfo");
-            if (!Directory.Exists(pluginDir))
-                Directory.CreateDirectory(pluginDir);
+            // 偷懒测试用
+            InnerCmdPlugin.Add("mykds", "MyKudosu");
 
-            if (!File.Exists(Path.Combine(pluginDir, "plugins.json")))
-            {
-                JsonSettings js = new JsonSettings();
-                var ok = new Dictionary<string, string>
-                {
-                    { "ping", "Daylily.Plugin.Command.Ping" },
-                    { "cd", "Daylily.Plugin.Command.Cd" },
-                    { "roll", "Daylily.Plugin.Command.Roll" }
-                };
-                var ok2 = new Dictionary<string, string>
-                {
-                    { "echo", "Daylily.Plugin.Echo" },
-                    { "calc", "Daylily.Plugin.Calc" }
-                };
-                js.Plugins.Add("Daylily.Plugin.Core.dll", ok);
-                js.Plugins.Add("Daylily.Plugin.Debug.dll", ok2);
-                string contents = ConvertJsonString(JsonConvert.SerializeObject(js));
+            // 内置功能
+            NormalPlugins.Add("ImageAnalyzer");
 
-                File.WriteAllText(Path.Combine(pluginDir, "plugins.json"), contents);
-            }
+            if (!Directory.Exists(PLUGIN_DIR))
+                Directory.CreateDirectory(PLUGIN_DIR);
+
+            if (!File.Exists(SETTINGS_FILE))
+                CreateJson();
             else
             {
-                string settings = File.ReadAllText(Path.Combine(pluginDir, "plugins.json"));
-                Plugins = JsonConvert.DeserializeObject<JsonSettings>(settings);
+                string jsonString = File.ReadAllText(SETTINGS_FILE);
+                FileCmdPlugins = JsonConvert.DeserializeObject<JsonSettings>(jsonString);
             }
         }
+
         public static string GetClassName(string name, out string fileName)
         {
-            foreach (KeyValuePair<string, Dictionary<string, string>> kvp in Plugins.Plugins)
+            foreach (KeyValuePair<string, Dictionary<string, string>> item in FileCmdPlugins.Plugins)
             {
-                if (kvp.Value.Keys.Contains(name))
+                if (item.Value.Keys.Contains(name))
                 {
-                    fileName = Path.Combine(pluginDir, kvp.Key);
-                    return kvp.Value[name];
+                    fileName = Path.Combine(PLUGIN_DIR, item.Key);
+                    return item.Value[name];
                 }
             }
             fileName = null;
-            if (!dClassName.Keys.Contains(name))
+            if (!InnerCmdPlugin.Keys.Contains(name))
                 return null;
-            return dClassName[name];
+            return InnerCmdPlugin[name];
         }
+
+        private static void CreateJson()
+        {
+            JsonSettings jSettings = new JsonSettings();
+            jSettings.Plugins.Add("Daylily.Plugin.Core.dll",
+                new Dictionary<string, string> {
+                { "ping", "Daylily.Plugin.Command.Ping" },
+                { "cd", "Daylily.Plugin.Command.Cd" },
+                { "roll", "Daylily.Plugin.Command.Roll" }
+                });
+
+            jSettings.Plugins.Add("Daylily.Plugin.Debug.dll",
+                new Dictionary<string, string> {
+                { "echo", "Daylily.Plugin.Echo" },
+                { "calc", "Daylily.Plugin.Calc" }
+                });
+            string jsonFile = ConvertJsonString(JsonConvert.SerializeObject(jSettings));
+
+            File.WriteAllText(Path.Combine(PLUGIN_DIR, "plugins.json"), jsonFile);
+        }
+
         private static string ConvertJsonString(string str)
         {
             //格式化json字符串  

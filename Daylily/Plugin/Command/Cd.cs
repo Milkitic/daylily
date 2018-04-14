@@ -5,19 +5,20 @@ using System.Text;
 
 namespace Daylily.Plugin.Command
 {
-    class Cd : Application, IApplication
+    class Cd : Application
     {
         public Cd()
         {
             appType = AppType.RequirePermission;
         }
-        public string Execute(string @params, string user, string group, bool isRoot)
+        public override string Execute(string @params, string user, string group, bool isRoot, ref bool ifAt)
         {
+            ifAt = false;
             if (group != null) // 不给予群聊权限
                 return null;
             this.isRoot = isRoot;
             if (appType == AppType.RequirePermission && !isRoot)
-                throw new InvalidOperationException("您不能干这事儿");
+                return "尝试命令前置!sudo";
             StringBuilder sb = new StringBuilder();
 
             DirectoryInfo di = new DirectoryInfo(@params);

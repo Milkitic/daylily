@@ -9,5 +9,7 @@ namespace Daylily.Plugin
     {
         protected AppType appType;
         protected bool isRoot;
+
+        public abstract string Execute(string @params, string user, string group, bool isRoot, ref bool ifAt);
     }
 }
