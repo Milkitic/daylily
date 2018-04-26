@@ -11,6 +11,30 @@ namespace DaylilyWeb.Assist
     class WebRequestHelper
     {
         static Random rnd = new Random();
+
+        public static string GetImageFromUrl(string url, string savePath, string ext)
+        {
+            WebResponse response = null;
+            Stream stream = null;
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+
+                response = request.GetResponse();
+                stream = response.GetResponseStream();
+
+                if (!response.ContentType.ToLower().StartsWith("text/"))
+                {
+                    return SaveBinaryFile(response,  savePath, ext);
+                }
+
+            }
+            catch (Exception e)
+            {
+                string em = e.ToString();
+            }
+            return null;
+        }
         /// <summary>
         /// 创建一个一般请求
         /// </summary>
@@ -123,8 +147,8 @@ namespace DaylilyWeb.Assist
                 request.CookieContainer = new CookieContainer();
                 request.CookieContainer.Add(cookies);
             }
-            
-         
+
+
             // 参数 
             byte[] data = Encoding.ASCII.GetBytes(param);
             //request.ContentLength = data.Length;
@@ -199,6 +223,39 @@ namespace DaylilyWeb.Assist
             string[] values = request.Headers.GetValues("Content-Type");
 
             return request;
+        }
+
+        private static string SaveBinaryFile(WebResponse response, string savePath, string ext)
+        {
+            byte[] buffer = new byte[1024];
+
+            var imagePath = Path.Combine(Environment.CurrentDirectory, "images");
+            var filePath = Path.Combine(imagePath, savePath + ext);
+
+            try
+            {
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+                Stream outStream = File.Create(filePath);
+                Stream inStream = response.GetResponseStream();
+
+                int l;
+                do
+                {
+                    l = inStream.Read(buffer, 0, buffer.Length);
+                    if (l > 0)
+                        outStream.Write(buffer, 0, l);
+                }
+                while (l > 0);
+
+                outStream.Close();
+                inStream.Close();
+            }
+            catch
+            {
+                return null;
+            }
+            return filePath;
         }
     }
 }

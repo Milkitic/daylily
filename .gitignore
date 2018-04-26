@@ -6,6 +6,7 @@
 # My file
 DaylilyWeb/appsettings.json
 images/
+DaylilyWeb/dragon/
 
 # User-specific files
 *.suo

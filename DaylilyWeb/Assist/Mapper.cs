@@ -24,7 +24,8 @@ namespace DaylilyWeb.Assist
             InnerCmdPlugin.Add("mykds", "MyKudosu");
 
             // 内置功能
-            NormalPlugins.Add("ImageAnalyzer");
+            NormalPlugins.Add("PornDetector");
+            NormalPlugins.Add("DragonDetectorAlpha");
 
             if (!Directory.Exists(PLUGIN_DIR))
                 Directory.CreateDirectory(PLUGIN_DIR);

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DaylilyWeb.Models.CQCode
+namespace Daylily.Models.CQCode
 {
     public class ImageInfo
     {

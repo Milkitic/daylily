@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace DaylilyWeb.Functions.Applications
 {
-    public class ImageAnalyzer : Application
+    public class PornDetector : Application
     {
         HttpApi CQApi = new HttpApi();
 
-        public ImageAnalyzer()
+        public PornDetector()
         {
             appType = AppType.Public;
         }
@@ -21,32 +21,12 @@ namespace DaylilyWeb.Functions.Applications
         private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> MD5List { get; set; } = new Dictionary<string, CosObject>();
 
-        private string AddCount(string user, string group, ref bool ifAt)
-        {
-            Log.WarningLine("发现好图，存了", ToString());
-            if (!UserCount.ContainsKey(user))
-                UserCount.Add(user, 2);
-            UserCount[user]--;
-            if (UserCount[user] != 0)
-            {
-                ifAt = true;
-                return "..你再多发几张试试";
-                //return "你还能发" + UserCount[user] + "张这样的图";
-            }
-            else
-            {
-                UserCount[user] = 2;
-                CQApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
-                return "88";
-            }
-        }
-
         public override string Execute(string message, string user, string group, bool isRoot, ref bool ifAt)
         {
             // 查黄图
-            //if (group != "133605766") return null;
+            if (group != "133605766") return null;
 
-            if (user != "2241521134") return null;
+            //if (user != "2241521134") return null;
             var img_list = CQCode.GetImageInfo(message);
             if (img_list == null)
                 return null;
@@ -61,7 +41,9 @@ namespace DaylilyWeb.Functions.Applications
             }
             if (url_list.Count == 0 && cache_list.Count == 0)
                 return null;
-            
+
+            Log.InfoLine("发现了" + (url_list.Count + cache_list.Count) + "张图", ToString());
+
             CosAnalyzer model = new CosAnalyzer
             {
                 result_list = new List<CosObject>()
@@ -117,6 +99,26 @@ namespace DaylilyWeb.Functions.Applications
                 }
             }
             return null;
+        }
+
+        private string AddCount(string user, string group, ref bool ifAt)
+        {
+            Log.WarningLine("发现好图，存了", ToString());
+            if (!UserCount.ContainsKey(user))
+                UserCount.Add(user, 2);
+            UserCount[user]--;
+            if (UserCount[user] != 0)
+            {
+                ifAt = true;
+                return "..你再多发几张试试";
+                //return "你还能发" + UserCount[user] + "张这样的图";
+            }
+            else
+            {
+                UserCount[user] = 2;
+                CQApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
+                return "88";
+            }
         }
     }
 }

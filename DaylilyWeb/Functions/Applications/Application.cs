@@ -11,6 +11,8 @@ namespace DaylilyWeb.Functions.Applications
         protected AppType appType;
         protected bool isRoot;
 
+        public Random rnd = new Random();
+
         public abstract string Execute(string @params, string user, string group, bool isRoot, ref bool ifAt);
     }
 }

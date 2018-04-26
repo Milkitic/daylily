@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DaylilyWeb.Interface.DaylilyAssist;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +16,16 @@ namespace DaylilyWeb.Models.CQCode
         public int Height { get; private set; }
         public long Size { get; private set; }
         public DateTime Addtime { get; private set; }
-        public string Extension { get; private set; }
+
+        public string Extension
+        {
+            get
+            {
+                var new_str = FileInfo.Name.Replace(".cqimg", "");
+                int index = new_str.LastIndexOf(".");
+                return new_str.Substring(index, new_str.Length - index);
+            }
+        }
 
         public FileInfo FileInfo { get; private set; }
         public ImageInfo(string source)
@@ -28,10 +38,17 @@ namespace DaylilyWeb.Models.CQCode
             string file = Path.Combine(Assist.CQCode.CQRoot, "data", "image", file_name);
             FileInfo = new FileInfo(file);
 
+            string[] settings = new string[0];
             if (!FileInfo.Exists)
-                throw new FileNotFoundException("找不到文件，也许是CoolQ目录配置错误。");
+            {
+                string tmp = AssistApi.GetImgFile(file_name);
+                settings = tmp.Replace("\r", "").Trim('\n').Split('\n');
+            }
+            else
+            {
+                settings = File.ReadAllLines(file);
+            }
 
-            string[] settings = File.ReadAllLines(file);
             foreach (var line in settings)
             {
                 string key, value;

@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DaylilyWeb.Assist;
-using DaylilyWeb.Database;
-using DaylilyWeb.Interface.CQHttp;
-using DaylilyWeb.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DaylilyWeb
+namespace DaylilyAssist
 {
     public class Startup
     {
@@ -25,16 +21,8 @@ namespace DaylilyWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Controllers.ApiController.CQRoot = Configuration.GetConnectionString("CQRoot");
             services.AddMvc();
-            DbHelper.ConnectionString.Add("cabbage", Configuration.GetConnectionString("DefaultConnection"));
-            DbHelper.ConnectionString.Add("daylily", Configuration.GetConnectionString("MyConnection"));
-            HttpApi.ApiUrl = Configuration.GetConnectionString("PostUrl");
-            //Interface.DaylilyAssist.AssistApi.ApiUrl = Configuration.GetConnectionString("AssistUrl");
-            Signature.appId = int.Parse(Configuration.GetConnectionString("appId"));
-            Signature.secretId = Configuration.GetConnectionString("secretId");
-            Signature.secretKey = Configuration.GetConnectionString("secretKey");
-            Signature.bucketName = Configuration.GetConnectionString("bucketName");
-            CQCode.CQRoot = Configuration.GetConnectionString("CQDir");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,8 +30,8 @@ namespace DaylilyWeb
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
+                app.UseDeveloperExceptionPage();
             }
             else
             {
@@ -51,13 +39,8 @@ namespace DaylilyWeb
             }
 
             app.UseStaticFiles();
+
             app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
-            app.UseMvc(delegate (Microsoft.AspNetCore.Routing.IRouteBuilder routes)
             {
                 routes.MapRoute(
                     name: "default",
