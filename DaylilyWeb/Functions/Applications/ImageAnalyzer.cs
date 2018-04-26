@@ -1,6 +1,7 @@
 ﻿using DaylilyWeb.Assist;
 using DaylilyWeb.Interface.CQHttp;
 using DaylilyWeb.Models;
+using DaylilyWeb.Models.CosResponse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,25 +18,77 @@ namespace DaylilyWeb.Functions.Applications
             appType = AppType.Public;
         }
 
+        private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
+        private static Dictionary<string, CosObject> MD5List { get; set; } = new Dictionary<string, CosObject>();
+
+        private string AddCount(string user, string group, ref bool ifAt)
+        {
+            Log.WarningLine("发现好图，存了", ToString());
+            if (!UserCount.ContainsKey(user))
+                UserCount.Add(user, 2);
+            UserCount[user]--;
+            if (UserCount[user] != 0)
+            {
+                ifAt = true;
+                return "..你再多发几张试试";
+                //return "你还能发" + UserCount[user] + "张这样的图";
+            }
+            else
+            {
+                UserCount[user] = 2;
+                CQApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
+                return "88";
+            }
+        }
+
         public override string Execute(string message, string user, string group, bool isRoot, ref bool ifAt)
         {
             // 查黄图
-            if (group != "133605766" && user != "2241521134") return null;
-            string[] imgs = CQCode.GetImageUrls(message);
-            if (imgs == null)
+            //if (group != "133605766") return null;
+
+            if (user != "2241521134") return null;
+            var img_list = CQCode.GetImageInfo(message);
+            if (img_list == null)
                 return null;
-            string str = Newtonsoft.Json.JsonConvert.SerializeObject(new
+            List<string> url_list = new List<string>();
+            List<CosObject> cache_list = new List<CosObject>();
+            foreach (var item in img_list)
             {
-                appid = "1252749411",
-                url_list = imgs
-            });
+                if (MD5List.Keys.Contains(item.Md5))
+                    cache_list.Add(MD5List[item.Md5]);
+                else if (item.Size > 1000 * 60) //60KB
+                    url_list.Add(item.Url);
+            }
+            if (url_list.Count == 0 && cache_list.Count == 0)
+                return null;
+            
+            CosAnalyzer model = new CosAnalyzer
+            {
+                result_list = new List<CosObject>()
+            };
 
-  
-            var abc = WebRequestHelper.CreatePostHttpResponse("http://service.image.myqcloud.com/detection/porn_detect", str, authorization: Signature.Get());
-            var resp_str = WebRequestHelper.GetResponseString(abc);
+            if (url_list.Count != 0)
+            {
+                string str = Newtonsoft.Json.JsonConvert.SerializeObject(new
+                {
+                    appid = "1252749411",
+                    url_list = url_list.ToArray()
+                });
 
-            Models.CosResponse.CosAnalyzer resp_model = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.CosResponse.CosAnalyzer>(resp_str);
-            foreach (var item in resp_model.result_list)
+                var abc = WebRequestHelper.CreatePostHttpResponse("http://service.image.myqcloud.com/detection/porn_detect", str, authorization: Signature.Get());
+                var resp_str = WebRequestHelper.GetResponseString(abc);
+
+                model = Newtonsoft.Json.JsonConvert.DeserializeObject<CosAnalyzer>(resp_str);
+            }
+
+            model.result_list.AddRange(cache_list);
+            int i = 0;
+            foreach (var item in model.result_list)
+            {
+                if (i < img_list.Length && !MD5List.Keys.Contains(img_list[i].Md5))
+                    MD5List.Add(img_list[i].Md5, item);
+                i++;
+
                 if (item.data.result == 0 && item.data.normal_score > item.data.hot_score && item.data.normal_score > item.data.porn_score && item.data.confidence > 40)
                     continue;
                 else
@@ -47,17 +100,22 @@ namespace DaylilyWeb.Functions.Applications
                     }
                     else
                     {
-                        if (item.data.porn_score >= item.data.hot_score && item.data.porn_score > 60)
+                        if (item.data.porn_score >= item.data.hot_score && item.data.porn_score > 65)
                         {
+                            //ifAt = true;
+                            return AddCount(user, group, ref ifAt);
                             //return "球球你，营养不够了";
                         }
                         if (item.data.hot_score >= item.data.porn_score && item.data.hot_score > item.data.normal_score && item.data.hot_score > 80)
                         {
+                            //ifAt = true;
+                            return AddCount(user, group, ref ifAt);
                             //return "社保";
                         }
                         break;
                     }
                 }
+            }
             return null;
         }
     }

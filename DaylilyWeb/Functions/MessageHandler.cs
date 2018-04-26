@@ -92,9 +92,11 @@ namespace DaylilyWeb.Functions
                 catch (Exception ex)
                 {
                     if (ex.InnerException != null)
-                        _sendMsg(ex.InnerException.Message, user, group);
+                        Log.DangerLine(ex.InnerException.Message, ToString(), "HandleGroupMessage");
+                    //_sendMsg(ex.InnerException.Message, user);
                     else
-                        _sendMsg(ex.Message, user, group);
+                        Log.DangerLine(ex.Message, ToString(), "HandleGroupMessage");
+                    //_sendMsg(ex.Message, user);
                     GC.Collect();
                 }
                 GroupInfo[groupId].PreInfo = currentInfo;
@@ -117,18 +119,14 @@ namespace DaylilyWeb.Functions
                 {
                     _HandleMessage(message, user, null);
                 }
-                catch (System.Net.WebException ex)
-                {
-                    // _sendMsg(WebRequestHelper.GetResponseString((System.Net.HttpWebResponse)ex.Response), user);
-                }
                 catch (Exception ex)
                 {
                     //Log.DangerLine(ex.Message);
                     if (ex.InnerException != null)
-                        Log.DangerLine(ex.InnerException.Message);
+                        Log.DangerLine(ex.InnerException.Message, ToString(), "HandlePrivateMessage");
                     //_sendMsg(ex.InnerException.Message, user);
                     else
-                        Log.DangerLine(ex.Message);
+                        Log.DangerLine(ex.Message, ToString(), "HandlePrivateMessage");
                     //_sendMsg(ex.Message, user);
                     GC.Collect();
                 }
@@ -204,7 +202,6 @@ namespace DaylilyWeb.Functions
         private void _HandleMessageCmd(string fullCommand, string user, bool isGroup, bool isRoot, string group)
         {
             Thread.Sleep(rnd.Next(minTime, maxTime));
-            group = null;
             bool enableAt = false;
 
             string command = fullCommand.Split(' ')[0];
@@ -268,6 +265,7 @@ namespace DaylilyWeb.Functions
             else if (user != null)
             {
                 return CQApi.SendPrivateMessageAsync(user, message).Result;
+                //return CQApi.SendPrivateMessage(user, message);
             }
             else
             {

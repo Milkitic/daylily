@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DaylilyWeb.Models.CQCode;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -10,6 +11,8 @@ namespace DaylilyWeb.Assist
 {
     public class CQCode
     {
+        public static string CQRoot { get; set; }
+
         public static string EncodeAt(string id)
         {
             return $"[CQ:at,qq={Escape(id)}]";
@@ -45,25 +48,19 @@ namespace DaylilyWeb.Assist
             return (Image)binFormatter.Deserialize(memStream);
         }
 
-        public static string[] GetImageUrls(string source)
+        public static ImageInfo[] GetImageInfo(string source)
         {
-            List<string> url_list = new List<string>();
+            List<ImageInfo> info_list = new List<ImageInfo>();
             int index, index2 = 0;
             while ((index = source.IndexOf("[CQ:image", index2)) != -1)
             {
-                if (source.IndexOf(".gif", index) != -1)
-                {
-                    index2 = index2 + source.IndexOf(".gif", index);
-                    continue;
-                }
-                int tmp_index = source.IndexOf("url=", index) + 4;
-                int length = source.IndexOf("]", tmp_index) - tmp_index;
-                url_list.Add(source.Substring(tmp_index, length));
-                index2 = tmp_index + length;
+                int length = source.IndexOf("]", index) - index;
+                info_list.Add(new ImageInfo(source.Substring(index, length + 1)));
+                index2 = index + length;
             }
-            if (url_list.Count == 0)
+            if (info_list.Count == 0)
                 return null;
-            return url_list.ToArray();
+            return info_list.ToArray();
         }
     }
 }

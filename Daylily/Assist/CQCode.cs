@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DaylilyWeb.Models.CQCode;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -11,54 +12,19 @@ namespace Daylily.Assist
 {
     public class CQCode
     {
+        public static string CQRoot { get; set; }
+
         public static string EncodeAt(string id)
         {
             return $"[CQ:at,qq={Escape(id)}]";
         }
-        public static string EncodeImageToFile(Bitmap bmp)
+        public static string EncodeImageToBase64(Image img)
         {
-            if (!Directory.Exists(Path.Combine(Environment.CurrentDirectory, "images")))
-                Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "images"));
+            string code = ToBase64(img);
+            Bitmap a = new Bitmap(ToImage(code));
             string path = Path.Combine(Environment.CurrentDirectory, "images", Guid.NewGuid() + ".png");
-            bmp.Save(path, ImageFormat.Png);
+            a.Save(path, System.Drawing.Imaging.ImageFormat.Png);
             return $"[CQ:image,file=file://{Escape(path)}]";
-        }
-        public static string EncodeImageToBase64(Bitmap bmp)
-        {
-            var guid = Guid.NewGuid();
-            string png_file = guid + ".png";
-            string tmp_file = guid + ".txt";
-
-            if (!Directory.Exists(Path.Combine(Environment.CurrentDirectory, "images")))
-                Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "images"));
-            string path = Path.Combine(Environment.CurrentDirectory, "images", png_file);
-            bmp.Save(path, ImageFormat.Png);
-
-            string base64Str = EncodeFileToBase64(path);
-
-            return $"[CQ:image,file=base64://{base64Str}]";
-        }
-
-        private static string EncodeFileToBase64(string path)
-        {
-            FileStream filestream = new FileStream(path, FileMode.Open);
-            byte[] bt = new byte[filestream.Length];
-            string base64Str;
-
-            filestream.Read(bt, 0, bt.Length);
-            base64Str = Convert.ToBase64String(bt);
-            filestream.Close();
-            return base64Str;
-        }
-
-        private static void EncodeBase64ToFile(string base64Str, string outPath)
-        {
-            var contents = Convert.FromBase64String(base64Str);
-            using (var fs = new FileStream(outPath, FileMode.Create, FileAccess.Write))
-            {
-                fs.Write(contents, 0, contents.Length);
-                fs.Flush();
-            }
         }
 
         public static string Escape(string text)
@@ -66,7 +32,7 @@ namespace Daylily.Assist
             return text.Replace("&", "&amp").Replace("[", "&#91").Replace("]", "&#93").Replace(",", "&#44");
         }
 
-        private static string ImageToBase64(Image img)
+        private static string ToBase64(Image img)
         {
             BinaryFormatter binFormatter = new BinaryFormatter();
             MemoryStream memStream = new MemoryStream();
@@ -75,12 +41,48 @@ namespace Daylily.Assist
             return Convert.ToBase64String(bytes);
         }
 
-        private static Image Base64ToImage(string base64)
+        private static Image ToImage(string base64)
         {
             byte[] bytes = Convert.FromBase64String(base64);
             MemoryStream memStream = new MemoryStream(bytes);
             BinaryFormatter binFormatter = new BinaryFormatter();
             return (Image)binFormatter.Deserialize(memStream);
+        }
+
+        public static ImageInfo[] GetImageInfo(string source)
+        {
+            List<ImageInfo> info_list = new List<ImageInfo>();
+            int index, index2 = 0;
+            while ((index = source.IndexOf("[CQ:image", index2)) != -1)
+            {
+                int length = source.IndexOf("]", index) - index;
+                info_list.Add(new ImageInfo(source.Substring(index, length + 1)));
+                index2 = index + length;
+            }
+            if (info_list.Count == 0)
+                return null;
+            return info_list.ToArray();
+        }
+
+        public static string[] GetImageUrls(string source)
+        {
+            List<string> url_list = new List<string>();
+            int index, index2 = 0;
+            while ((index = source.IndexOf("[CQ:image", index2)) != -1)
+            {
+                if (source.IndexOf(".gif", index) != -1)
+                {
+                    index2 = index2 + source.IndexOf(".gif", index);
+                    continue;
+                }
+                int tmp_index = source.IndexOf("url=", index) + 4;
+                int length = source.IndexOf("]", tmp_index) - tmp_index;
+                url_list.Add(source.Substring(tmp_index, length));
+                index2 = tmp_index + length;
+            }
+            if (url_list.Count == 0)
+                return null;
+            return url_list.ToArray();
         }
     }
 }

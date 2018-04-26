@@ -7,7 +7,7 @@ namespace DaylilyWeb.Models.CosResponse
 {
     class CosAnalyzer
     {
-        public CosObject[] result_list { get; set; }
+        public List<CosObject> result_list { get; set; }
     }
     class CosObject
     {

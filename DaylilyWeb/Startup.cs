@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DaylilyWeb.Assist;
 using DaylilyWeb.Database;
 using DaylilyWeb.Interface.CQHttp;
 using DaylilyWeb.Models;
@@ -32,6 +33,7 @@ namespace DaylilyWeb
             Signature.secretId = Configuration.GetConnectionString("secretId");
             Signature.secretKey = Configuration.GetConnectionString("secretKey");
             Signature.bucketName = Configuration.GetConnectionString("bucketName");
+            CQCode.CQRoot = Configuration.GetConnectionString("CQDir");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
