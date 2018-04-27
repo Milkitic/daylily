@@ -2,7 +2,8 @@
 using DaylilyWeb.Functions.Applications;
 using DaylilyWeb.Interface.CQHttp;
 using DaylilyWeb.Models;
-using DaylilyWeb.Models.CQRequest;
+using DaylilyWeb.Models.CQResponse;
+using DaylilyWeb.Models.CQResponse.Api;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace DaylilyWeb.Functions
         /// </summary>
         public MessageHandler(GroupMsg parsed_obj)
         {
-            long id = parsed_obj.group_id;
+            long id = parsed_obj.GroupId;
             GroupInfo.Add(id);
             GroupMsg currentInfo = parsed_obj;
             if (GroupInfo[id].MsgQueue.Count < GroupInfo[id].MsgLimit) // 允许缓存n条，再多的丢弃
@@ -36,8 +37,7 @@ namespace DaylilyWeb.Functions
             else if (!GroupInfo[id].LockMsg)
             {
                 GroupInfo[id].LockMsg = true;
-                string response = _sendMsg("能不能慢点啊，你们这想整死我（", null, currentInfo.group_id.ToString());
-                Log.PrimaryLine(response, ToString(), "MsgHandler(GroupMsg)");
+                SendMessage("能不能慢点啊，你们这想整死我（", null, currentInfo.GroupId.ToString());
             }
 
             if (GroupInfo[id].Thread == null ||
@@ -52,7 +52,7 @@ namespace DaylilyWeb.Functions
         /// </summary>
         public MessageHandler(PrivateMsg parsed_obj)
         {
-            long id = parsed_obj.user_id;
+            long id = parsed_obj.UserId;
             PrivateInfo.Add(id);
             PrivateMsg currentInfo = parsed_obj;
             if (PrivateInfo[id].MsgQueue.Count < PrivateInfo[id].MsgLimit) // 允许缓存n条，再多的丢弃
@@ -61,8 +61,7 @@ namespace DaylilyWeb.Functions
             else if (!PrivateInfo[id].LockMsg)
             {
                 PrivateInfo[id].LockMsg = true;
-                string response = _sendMsg("？？求您慢点说话好吗", currentInfo.user_id.ToString());
-                Log.PrimaryLine(response, ToString(), "MsgHandler(PrivateMsg)");
+                SendMessage("？？求您慢点说话好吗", currentInfo.UserId.ToString());
             }
 
             if (PrivateInfo[id].Thread == null ||
@@ -72,6 +71,7 @@ namespace DaylilyWeb.Functions
                 PrivateInfo[id].Thread.Start(id);
             }
         }
+
         private void HandleGroupMessage(object param)
         {
             long groupId = (long)param;
@@ -81,25 +81,24 @@ namespace DaylilyWeb.Functions
 
                 var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
 
-                string message = currentInfo.message.Replace("\n", "").Replace("\r", "").Trim();
-                string user = currentInfo.user_id.ToString();
-                string group = currentInfo.group_id.ToString();
+                string message = currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                string user = currentInfo.UserId.ToString();
+                string group = currentInfo.GroupId.ToString();
 
                 try
                 {
-                    _HandleMessage(message, user, group);
+                    HandleMessage(message, user, group);
                 }
                 catch (Exception ex)
                 {
                     if (ex.InnerException != null)
-                        Log.DangerLine(ex.InnerException.Message, ToString(), "HandleGroupMessage");
+                        Logger.DangerLine(ex.InnerException.Message);
                     //_sendMsg(ex.InnerException.Message, user);
                     else
-                        Log.DangerLine(ex.Message, ToString(), "HandleGroupMessage");
+                        Logger.DangerLine(ex.Message);
                     //_sendMsg(ex.Message, user);
                     GC.Collect();
                 }
-                GroupInfo[groupId].PreInfo = currentInfo;
             }
             GroupInfo[groupId].LockMsg = false;
         }
@@ -112,21 +111,21 @@ namespace DaylilyWeb.Functions
 
                 var currentInfo = PrivateInfo[privateId].MsgQueue.Dequeue();
 
-                string message = currentInfo.message.Replace("\n", "").Replace("\r", "").Trim();
-                string user = currentInfo.user_id.ToString();
+                string message = currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                string user = currentInfo.UserId.ToString();
 
                 try
                 {
-                    _HandleMessage(message, user, null);
+                    HandleMessage(message, user, null);
                 }
                 catch (Exception ex)
                 {
                     //Log.DangerLine(ex.Message);
                     if (ex.InnerException != null)
-                        Log.DangerLine(ex.InnerException.Message, ToString(), "HandlePrivateMessage");
+                        Logger.DangerLine(ex.InnerException.Message);
                     //_sendMsg(ex.InnerException.Message, user);
                     else
-                        Log.DangerLine(ex.Message, ToString(), "HandlePrivateMessage");
+                        Logger.DangerLine(ex.Message);
                     //_sendMsg(ex.Message, user);
                     GC.Collect();
                 }
@@ -134,41 +133,30 @@ namespace DaylilyWeb.Functions
             PrivateInfo[privateId].LockMsg = false;
         }
 
-        private void _HandleMessage(string message, string user, string group = null)
+        private void HandleMessage(string message, string user, string group = null)
         {
             long groupId = Convert.ToInt64(group);
             bool isGroup = group != null;
-            Log.InfoLine(user + "：" + message, ToString(), "_HandleMessage()");
+            Logger.InfoLine(user + "：" + message);
             if (message.Substring(0, 1) == "!")
             {
                 if (message.IndexOf("!sudo ") == 0)
                 {
                     if (user != "2241521134") return;
                     string fullCommand = message.Substring(6, message.Length - 6);
-                    _HandleMessageCmd(fullCommand, user, isGroup, true, group);
+                    HandleMessageCmd(fullCommand, user, isGroup, true, group);
                 }
                 else
                 {
                     string fullCommand = message.Substring(1, message.Length - 1);
-                    _HandleMessageCmd(fullCommand, user, isGroup, false, group);
+                    HandleMessageCmd(fullCommand, user, isGroup, false, group);
                 }
 
             }
-
-            //if (isGroup)
-            //{
-            //    if (GroupInfo[groupId].PreInfo.message == message && message != GroupInfo[groupId].PreString)
-            //    {
-            //        string response = _sendMsg(message, null, group);
-            //        Log.PrimaryLine(response, ToString(), "_hdleMsg()");
-            //        GroupInfo[groupId].PreString = message;
-            //        return;
-            //    }
-            //}
-            _HandleMesasgeApp(message, user, isGroup, group);
+            HandleMesasgeApp(message, user, isGroup, group);
 
         }
-        private void _HandleMesasgeApp(string message, string user, bool isGroup, string group)
+        private void HandleMesasgeApp(string message, string user, bool isGroup, string group)
         {
             foreach (var item in Mapper.NormalPlugins)
             {
@@ -183,23 +171,23 @@ namespace DaylilyWeb.Functions
 
                 #endregion
 
-                bool ifAt = false;
+                bool enableAt = false;
                 try
                 {
                     reply = (string)mi.Invoke(appClass, invokeArgs);
-                    ifAt = (bool)invokeArgs[4];
+                    enableAt = (bool)invokeArgs[4];
                 }
                 catch (TargetParameterCountException ex)
                 {
                     throw new Exception("\"" + message + "\" caused an exception: \r\n" + type.Name.ToLower() + ": " + ex.Message);
                 }
                 if (reply == null) continue;
-                string response = isGroup ? _sendMsg(reply, user, group, ifAt) : _sendMsg(reply, user, null);
-                Log.PrimaryLine(response, ToString(), "_HandleMesasgeApp()");
+                if (isGroup)
+                    SendMessage(reply, user, group, enableAt);
+                else SendMessage(reply, user, null);
             }
         }
-
-        private void _HandleMessageCmd(string fullCommand, string user, bool isGroup, bool isRoot, string group)
+        private void HandleMessageCmd(string fullCommand, string user, bool isGroup, bool isRoot, string group)
         {
             Thread.Sleep(rnd.Next(minTime, maxTime));
             bool enableAt = false;
@@ -223,7 +211,7 @@ namespace DaylilyWeb.Functions
             {
                 try
                 {
-                    Log.PrimaryLine("读取插件信息中", ToString(), "_hdleMsg()");
+                    Logger.PrimaryLine("读取插件信息中");
                     fi = new System.IO.FileInfo(file);
                     Assembly assemblyTmp = Assembly.LoadFrom(file);
                     type = assemblyTmp.GetType(className);
@@ -236,11 +224,11 @@ namespace DaylilyWeb.Functions
             }
 
             object[] invokeArgs = { param, user, group, isRoot, false };
-            string result = null;
+            string reply = null;
             try
             {
                 mi = type.GetMethod("Execute");
-                result = (string)mi.Invoke(appClass, invokeArgs);
+                reply = (string)mi.Invoke(appClass, invokeArgs);
                 enableAt = (bool)invokeArgs[4];
             }
             catch (Exception ex)
@@ -251,25 +239,29 @@ namespace DaylilyWeb.Functions
                     throw new Exception("\"" + fullCommand + "\" caused an exception: \r\n" + type.Name + ": " + ex.Message);
             }
 
-            string response = isGroup ? _sendMsg(result, user, group, enableAt) : _sendMsg(result, user, null);
-            Log.PrimaryLine(response, ToString(), "_HandleMessageCmd()");
+            if (reply == null) return;
+            if (isGroup)
+                SendMessage(reply, user, group, enableAt);
+            else SendMessage(reply, user, null);
         }
 
-        private string _sendMsg(string message, string user = null, string group = null, bool enableAt = false)
+        private void SendMessage(string message, string user = null, string group = null, bool enableAt = false)
         {
+            //var name = MethodBase.GetCurrentMethod().Name;
             if (group != null && user != null)
             {
-                return CQApi.SendGroupMessageAsync(group, (enableAt ? CQCode.EncodeAt(user) + " " : "") + message).Result;
-                //return CQApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " " + message).Result;
+                var msg = CQApi.SendGroupMessageAsync(group, (enableAt ? CQCode.EncodeAt(user) + " " : "") + message).Result;
+                Logger.InfoLine($"我: {message} {{status: {msg.Status}}})");
             }
             else if (user != null)
             {
-                return CQApi.SendPrivateMessageAsync(user, message).Result;
-                //return CQApi.SendPrivateMessage(user, message);
+                SendPrivateMsgResponse msg = CQApi.SendPrivateMessageAsync(user, message).Result;
+                Logger.InfoLine($"我: {message} {{status: {msg.Status}}})");
             }
             else
             {
-                return CQApi.SendGroupMessageAsync(group, message).Result;
+                var msg = CQApi.SendGroupMessageAsync(group, message).Result;
+                Logger.InfoLine($"我: {message} {{status: {msg.Status}}})");
             }
         }
     }

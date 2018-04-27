@@ -25,7 +25,7 @@ namespace DaylilyWeb.Assist
 
                 if (!response.ContentType.ToLower().StartsWith("text/"))
                 {
-                    return SaveBinaryFile(response,  savePath, ext);
+                    return SaveBinaryFile(response, savePath, ext);
                 }
 
             }
@@ -43,18 +43,19 @@ namespace DaylilyWeb.Assist
             // 参数
             StringBuilder buffer = new StringBuilder();
             int i = 0;
-            foreach (string key in parameters.Keys)
-            {
-                if (i > 0)
+            if (parameters != null)
+                foreach (string key in parameters.Keys)
                 {
-                    buffer.AppendFormat("&{0}={1}", key, parameters[key]);
+                    if (i > 0)
+                    {
+                        buffer.AppendFormat("&{0}={1}", key, parameters[key]);
+                    }
+                    else
+                    {
+                        buffer.AppendFormat("{0}={1}", key, parameters[key]);
+                        i++;
+                    }
                 }
-                else
-                {
-                    buffer.AppendFormat("{0}={1}", key, parameters[key]);
-                    i++;
-                }
-            }
 
             HttpWebRequest request = _GetReqPostObj("application/x-www-form-urlencoded", url, buffer.ToString(), timeout, userAgent, cookies, authorization);
             return request.GetResponse() as HttpWebResponse;

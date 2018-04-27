@@ -81,7 +81,7 @@ namespace DaylilyWeb.Database
                 }
                 catch (Exception ex)
                 {
-                    Log.DangerLine("Failed: " + ex.Message, ToString());
+                    Logger.DangerLine("Failed: " + ex.Message);
                     return -1;
                 }
             }

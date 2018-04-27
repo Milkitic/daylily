@@ -22,14 +22,13 @@ namespace DaylilyWeb.Functions.Applications
         private List<string> receivedString = new List<string>();
         List<string> pathList = new List<string>();
         int dragonCount = 0;
-
+        private static int totalCount = 0;
         string user, group;
 
         public override string Execute(string message, string user, string group, bool isRoot, ref bool ifAt)
         {
-            if (group == null)
-                return null;
-            //if (user != "2241521134") return null;
+            //if (group == null) return null;
+            if (user != "2241521134") return null;
             this.user = user;
             this.group = group;
 
@@ -50,9 +49,11 @@ namespace DaylilyWeb.Functions.Applications
                     WebRequestHelper.GetImageFromUrl(item.Url, item.Md5, item.Extension);
                     pathList.Add(Path.Combine(Environment.CurrentDirectory, "images", item.Md5 + item.Extension));
                 }
+                totalCount++;
             }
             thread = new Thread(new ParameterizedThreadStart(RunDetector));
             thread.Start(pathList);
+            Logger.WriteLine("已经发送了请求,目前队列中共" + totalCount);
             return null;
         }
 
@@ -66,6 +67,9 @@ namespace DaylilyWeb.Functions.Applications
                 var list = (List<string>)pathList;
                 foreach (var fullPath in list)
                 {
+                    Thread.Sleep(6000);
+                    totalCount--;
+                    continue;
                     if (proc != null)
                     {
                         if (!proc.HasExited) proc.Kill();
@@ -97,11 +101,12 @@ namespace DaylilyWeb.Functions.Applications
                 {
                     CQApi.SetGroupBan(group, user, rnd.Next(1, 100 * dragonCount + 1) * 60);
                     CQApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " 你龙了");
+                    return;
                 }
             }
             catch (Exception ex)
             {
-                Log.DangerLine(ex.Message, ToString(), "RunDetector");
+                Logger.DangerLine(ex.Message);
             }
         }
 
@@ -131,7 +136,7 @@ namespace DaylilyWeb.Functions.Applications
             var tmp = line.Split(' ');
             status = int.Parse(tmp[0]);
             confidence = double.Parse(tmp[1]);
-            if (status == 1 || confidence > 0.5)
+            if (status == 1 || confidence > 0.75)
             {
                 dragonCount++;
             }

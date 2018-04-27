@@ -22,7 +22,7 @@ namespace DaylilyWeb.Controllers
             {
                 string json = await sr.ReadToEndAsync();
                 obj = JsonConvert.DeserializeObject(json);
-                Log.SuccessLine(json,ToString(), "GetResponse()");
+                //Log.SuccessLine(json,ToString(), "GetResponse()");
             }
             // 判断post类别
             if (obj.post_type == "message")
@@ -40,8 +40,8 @@ namespace DaylilyWeb.Controllers
                     {
                         PrivateMsgResponse private_resp = new PrivateMsgResponse()
                         {
-                            auto_escape = false,
-                            reply = ex.Message
+                            AutoEscape = false,
+                            Reply = ex.Message
                         };
                         return Json(private_resp);
                     }
@@ -58,7 +58,7 @@ namespace DaylilyWeb.Controllers
                     }
                     catch (Exception ex)
                     {
-                        Log.DangerLine(ex.Message);
+                        Logger.DangerLine(ex.Message);
                         //GroupMsgResponse group_resp = new GroupMsgResponse()
                         //{
                         //    reply = ex.Message,

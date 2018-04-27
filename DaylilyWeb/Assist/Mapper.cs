@@ -22,6 +22,7 @@ namespace DaylilyWeb.Assist
         {
             // 偷懒测试用
             InnerCmdPlugin.Add("mykds", "MyKudosu");
+            InnerCmdPlugin.Add("test", "Test");
 
             // 内置功能
             NormalPlugins.Add("PornDetector");

@@ -42,7 +42,7 @@ namespace DaylilyWeb.Functions.Applications
             if (url_list.Count == 0 && cache_list.Count == 0)
                 return null;
 
-            Log.InfoLine("发现了" + (url_list.Count + cache_list.Count) + "张图", ToString());
+            Logger.InfoLine("发现了" + (url_list.Count + cache_list.Count) + "张图");
 
             CosAnalyzer model = new CosAnalyzer
             {
@@ -103,7 +103,7 @@ namespace DaylilyWeb.Functions.Applications
 
         private string AddCount(string user, string group, ref bool ifAt)
         {
-            Log.WarningLine("发现好图，存了", ToString());
+            Logger.WarningLine("发现好图，存了");
             if (!UserCount.ContainsKey(user))
                 UserCount.Add(user, 2);
             UserCount[user]--;

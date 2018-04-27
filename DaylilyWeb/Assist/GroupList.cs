@@ -1,5 +1,5 @@
 ﻿using DaylilyWeb.Interface.CQHttp;
-using DaylilyWeb.Models.CQRequest;
+using DaylilyWeb.Models.CQResponse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +32,6 @@ namespace DaylilyWeb.Assist
     {
         public Queue<GroupMsg> MsgQueue { get; set; } = new Queue<GroupMsg>();
         public Thread Thread { get; set; }
-        public GroupMsg PreInfo { get; set; } = new GroupMsg();
-        public string PreString { get; set; } = "";
         public int MsgLimit { get; set; } = 10;
         public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
     }
