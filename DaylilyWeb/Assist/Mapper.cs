@@ -17,12 +17,15 @@ namespace DaylilyWeb.Assist
 
         private static readonly string PLUGIN_DIR = Path.Combine(Environment.CurrentDirectory, "plugins");
         private static readonly string SETTINGS_FILE = Path.Combine(PLUGIN_DIR, "plugins.json");
-        
+
         public static void Init()
         {
             // 偷懒测试用
             InnerCmdPlugin.Add("mykds", "MyKudosu");
             InnerCmdPlugin.Add("test", "Test");
+            InnerCmdPlugin.Add("h", "Help");
+            InnerCmdPlugin.Add("help", "Help");
+            InnerCmdPlugin.Add("setid", "SetId");
 
             // 内置功能
             NormalPlugins.Add("PornDetector");

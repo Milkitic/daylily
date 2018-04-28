@@ -25,9 +25,11 @@ namespace DaylilyWeb.Assist
         {
             if (dicGroup.Keys.Contains(groupID))
                 return;
+            var abc = CQApi.GetGroupInfo(groupID.ToString());
+            string name = abc == null ? groupID.ToString() : abc.GroupName;
             dicGroup.Add(groupID, new GroupSettings()
             {
-                Name = CQApi.GetGroupInfo(groupID.ToString()).GroupName
+                Name = name
             });
         }
 

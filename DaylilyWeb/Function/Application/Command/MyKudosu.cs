@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace DaylilyWeb.Function.Application
+namespace DaylilyWeb.Function.Application.Command
 {
     public class MyKudosu : Application
     {

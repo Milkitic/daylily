@@ -137,7 +137,6 @@ namespace DaylilyWeb.Interface.CQHttp
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(response);
-                //Logger.DefaultLine("Received response.");
             }
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<GroupListInfo>(json_string);
             return obj;

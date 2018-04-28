@@ -15,6 +15,8 @@ namespace DaylilyWeb
     {
         public static void Main(string[] args)
         {
+            var app = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application;
+            Console.WriteLine($"{app.ApplicationName} {app.ApplicationVersion} based on {app.RuntimeFramework}");
             Mapper.Init();
             BuildWebHost(args).Run();
         }

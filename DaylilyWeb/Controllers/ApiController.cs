@@ -58,7 +58,10 @@ namespace DaylilyWeb.Controllers
                     }
                     catch (Exception ex)
                     {
-                        Logger.DangerLine(ex.Message);
+                        if (ex.InnerException != null)
+                            Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace.Replace("\r", "").Split('\n')[0]);
+                        else
+                            Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace.Replace("\r", "").Split('\n')[0]);
                         //GroupMsgResponse group_resp = new GroupMsgResponse()
                         //{
                         //    reply = ex.Message,

@@ -67,9 +67,8 @@ namespace DaylilyWeb.Function.Application
                 var list = (List<string>)pathList;
                 foreach (var fullPath in list)
                 {
-                    Thread.Sleep(6000);
-                    totalCount--;
-                    continue;
+                    //Thread.Sleep(6000);
+                    //continue;
                     if (proc != null)
                     {
                         if (!proc.HasExited) proc.Kill();
@@ -96,6 +95,7 @@ namespace DaylilyWeb.Function.Application
 
                     proc.WaitForExit();
                     ProcExited();
+                    totalCount--;
                 }
                 if (dragonCount > 0)
                 {

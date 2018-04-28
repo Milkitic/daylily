@@ -29,7 +29,7 @@ namespace DaylilyWeb.Function
         public MessageHandler(GroupMsg parsed_obj)
         {
             long id = parsed_obj.GroupId;
-            GroupInfo.Add(id);
+              GroupInfo.Add(id);
             GroupMsg currentInfo = parsed_obj;
             if (GroupInfo[id].MsgQueue.Count < GroupInfo[id].MsgLimit) // 允许缓存n条，再多的丢弃
                 GroupInfo[id].MsgQueue.Enqueue(currentInfo);
@@ -92,11 +92,9 @@ namespace DaylilyWeb.Function
                 catch (Exception ex)
                 {
                     if (ex.InnerException != null)
-                        Logger.DangerLine(ex.InnerException.Message);
-                    //_sendMsg(ex.InnerException.Message, user);
+                        Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace.Replace("\r", "").Split('\n')[0]);
                     else
-                        Logger.DangerLine(ex.Message);
-                    //_sendMsg(ex.Message, user);
+                        Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace.Replace("\r", "").Split('\n')[0]);
                     GC.Collect();
                 }
             }
@@ -120,13 +118,10 @@ namespace DaylilyWeb.Function
                 }
                 catch (Exception ex)
                 {
-                    //Log.DangerLine(ex.Message);
                     if (ex.InnerException != null)
-                        Logger.DangerLine(ex.InnerException.Message);
-                    //_sendMsg(ex.InnerException.Message, user);
+                        Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace.Replace("\r", "").Split('\n')[0]);
                     else
-                        Logger.DangerLine(ex.Message);
-                    //_sendMsg(ex.Message, user);
+                        Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace.Replace("\r", "").Split('\n')[0]);
                     GC.Collect();
                 }
             }
@@ -214,7 +209,7 @@ namespace DaylilyWeb.Function
             System.IO.FileInfo fi = null;
             if (file == null)
             {
-                type = Type.GetType("DaylilyWeb.Function.Application." + className);
+                type = Type.GetType("DaylilyWeb.Function.Application.Command." + className);
                 appClass = Activator.CreateInstance(type);
             }
             else
