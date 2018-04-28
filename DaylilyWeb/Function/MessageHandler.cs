@@ -173,7 +173,7 @@ namespace DaylilyWeb.Function
                 string reply = null;
 
                 #region 折叠：invoke
-                Type type = Type.GetType("DaylilyWeb.Functions.Applications." + item);
+                Type type = Type.GetType("DaylilyWeb.Function.Application." + item);
                 MethodInfo mi = type.GetMethod("Execute");
                 var ok = type.GetMethods();
                 object appClass = Activator.CreateInstance(type);
@@ -214,7 +214,7 @@ namespace DaylilyWeb.Function
             System.IO.FileInfo fi = null;
             if (file == null)
             {
-                type = Type.GetType("DaylilyWeb.Functions.Applications." + className);
+                type = Type.GetType("DaylilyWeb.Function.Application." + className);
                 appClass = Activator.CreateInstance(type);
             }
             else
