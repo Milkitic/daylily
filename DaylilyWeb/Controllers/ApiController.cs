@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DaylilyWeb.Models.CQRequest;
 using DaylilyWeb.Models.CQResponse;
-using DaylilyWeb.Functions;
+using DaylilyWeb.Function;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using DaylilyWeb.Assist;

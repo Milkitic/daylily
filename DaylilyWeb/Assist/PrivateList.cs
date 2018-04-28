@@ -10,7 +10,7 @@ namespace DaylilyWeb.Assist
 {
     public class PrivateList
     {
-        public PrivateInfo this[long groupId]
+        public PrivateSettings this[long groupId]
         {
             get
             {
@@ -22,12 +22,12 @@ namespace DaylilyWeb.Assist
         {
             if (di.Keys.Contains(privateId))
                 return;
-            di.Add(privateId, new PrivateInfo());
+            di.Add(privateId, new PrivateSettings());
         }
-        Dictionary<long, PrivateInfo> di = new Dictionary<long, PrivateInfo>();
+        Dictionary<long, PrivateSettings> di = new Dictionary<long, PrivateSettings>();
 
     }
-    public class PrivateInfo
+    public class PrivateSettings
     {
         public Queue<PrivateMsg> MsgQueue { get; set; } = new Queue<PrivateMsg>();
         public Thread Thread { get; set; }

@@ -10,9 +10,10 @@ namespace DaylilyWeb.Assist
 {
     public class GroupList
     {
-        Dictionary<long, GroupInfo> dicGroup = new Dictionary<long, GroupInfo>();
+        Dictionary<long, GroupSettings> dicGroup = new Dictionary<long, GroupSettings>();
+        HttpApi CQApi = new HttpApi();
 
-        public GroupInfo this[long groupId]
+        public GroupSettings this[long groupId]
         {
             get
             {
@@ -24,12 +25,17 @@ namespace DaylilyWeb.Assist
         {
             if (dicGroup.Keys.Contains(groupID))
                 return;
-            dicGroup.Add(groupID, new GroupInfo());
+            dicGroup.Add(groupID, new GroupSettings()
+            {
+                Name = CQApi.GetGroupInfo(groupID.ToString()).GroupName
+            });
         }
+
     }
 
-    public class GroupInfo
+    public class GroupSettings
     {
+        public string Name { get; set; }
         public Queue<GroupMsg> MsgQueue { get; set; } = new Queue<GroupMsg>();
         public Thread Thread { get; set; }
         public int MsgLimit { get; set; } = 10;

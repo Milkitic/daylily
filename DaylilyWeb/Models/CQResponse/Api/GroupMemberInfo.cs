@@ -32,9 +32,9 @@ namespace DaylilyWeb.Models.CQResponse.Api
         [JsonProperty(PropertyName = "area")]
         public string Area { get; set; }
         [JsonProperty(PropertyName = "join_time")]
-        public DateTime JoinTime { get; set; }
+        private long _JoinTime { get; set; }
         [JsonProperty(PropertyName = "last_sent_time")]
-        public DateTime LastSentTime { get; set; }
+        private long _LastSentTime { get; set; }
         [JsonProperty(PropertyName = "level")]
         public string Level { get; set; }
         [JsonProperty(PropertyName = "role")]
@@ -44,8 +44,16 @@ namespace DaylilyWeb.Models.CQResponse.Api
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
         [JsonProperty(PropertyName = "title_expire_time")]
-        public DateTime TitleExpireTime { get; set; }
+        public long _TitleExpireTime { get; set; }
         [JsonProperty(PropertyName = "card_changeable")]
         public bool CardChangeable { get; set; }
+
+        // 拓展属性
+        [JsonIgnore]
+        public DateTime JoinTime { get => new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(_JoinTime); }
+        [JsonIgnore]
+        public DateTime LastSentTime { get => new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(_LastSentTime); }
+        [JsonIgnore]
+        public DateTime TitleExpireTime { get => new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(_TitleExpireTime); }
     }
 }

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DaylilyWeb.Functions.Applications
+namespace DaylilyWeb.Function.Application
 {
     public class PornDetector : Application
     {
@@ -42,7 +42,7 @@ namespace DaylilyWeb.Functions.Applications
             if (url_list.Count == 0 && cache_list.Count == 0)
                 return null;
 
-            Logger.InfoLine("发现了" + (url_list.Count + cache_list.Count) + "张图");
+            Logger.WarningLine("发现了" + (url_list.Count + cache_list.Count) + "张图");
 
             CosAnalyzer model = new CosAnalyzer
             {

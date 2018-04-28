@@ -27,12 +27,12 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
             var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/send_private_msg", parameters);
-            Log.DefaultLine("Sent request.");
+            Logger.DefaultLine("Sent request.");
 
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(response);
-                Log.DefaultLine("Received response.");
+                Logger.DefaultLine("Received response.");
             }
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SendPrivateMsgResponse>(json_string);
             return obj;
@@ -52,12 +52,12 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
             var response = WebRequestHelper.CreatePostHttpResponseAsync(ApiUrl + "/send_private_msg_async", parameters);
-            Log.DefaultLine("Sent request.");
+            Logger.DefaultLine("Sent request.");
 
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(await response);
-                Log.DefaultLine("Received response.");
+                Logger.DefaultLine("Received response.");
             }
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SendPrivateMsgResponse>(json_string);
             return obj;
@@ -76,12 +76,12 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
             var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/send_group_msg", parameters);
-            Log.DefaultLine("Sent request.");
+            Logger.DefaultLine("Sent request.");
 
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(response);
-                Log.DefaultLine("Received response.");
+                Logger.DefaultLine("Received response.");
             }
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SendGroupMsgResponse>(json_string);
             return obj;
@@ -101,11 +101,11 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("message", HttpUtility.UrlEncode(message));
 
             var response = WebRequestHelper.CreatePostHttpResponseAsync(ApiUrl + "/send_group_msg_async", parameters);
-            Log.DefaultLine("Sent request.");
+            Logger.DefaultLine("Sent request.");
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(await response);
-                Log.DefaultLine("Received response.");
+                Logger.DefaultLine("Received response.");
             }
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SendGroupMsgResponse>(json_string);
             return obj;
@@ -120,11 +120,11 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("duration", duration.ToString());
 
             var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/set_group_ban", parameters);
-            Log.DefaultLine("Sent request.");
+            Logger.DefaultLine("Sent request.");
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(response);
-                Log.DefaultLine("Received response.");
+                Logger.DefaultLine("Received response.");
             }
             return json_string;
         }
@@ -133,11 +133,11 @@ namespace DaylilyWeb.Interface.CQHttp
             string json_string = null;
 
             var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/get_group_list");
-            Log.DefaultLine("Sent request.");
+            //Logger.DefaultLine("Sent request.");
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(response);
-                Log.DefaultLine("Received response.");
+                //Logger.DefaultLine("Received response.");
             }
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<GroupListInfo>(json_string);
             return obj;
@@ -152,15 +152,26 @@ namespace DaylilyWeb.Interface.CQHttp
             parameters.Add("user_id", HttpUtility.UrlEncode(userId));
             parameters.Add("no_cache", noCache.ToString());
 
-            var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/get_group_member_info");
-            Log.DefaultLine("Sent request.");
+            var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/get_group_member_info", parameters);
+            //Logger.DefaultLine("Sent request.");
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(response);
-                Log.DefaultLine("Received response.");
+                //Logger.DefaultLine("Received response.");
             }
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<GroupMemberInfo>(json_string);
             return obj;
+        }
+
+        /// <summary>
+        /// 拓展方法，API没有，每次都要重新查询
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public GroupInfo GetGroupInfo(string groupId)
+        {
+            var info = GetGroupList();
+            return info.Data.Find(x => x.GroupId.ToString() == groupId);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using DaylilyWeb.Assist;
-using DaylilyWeb.Functions.Applications;
+using DaylilyWeb.Function.Application;
 using DaylilyWeb.Interface.CQHttp;
 using DaylilyWeb.Models;
 using DaylilyWeb.Models.CQResponse;
@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DaylilyWeb.Functions
+namespace DaylilyWeb.Function
 {
     public class MessageHandler
     {
@@ -137,7 +137,17 @@ namespace DaylilyWeb.Functions
         {
             long groupId = Convert.ToInt64(group);
             bool isGroup = group != null;
-            Logger.InfoLine(user + "：" + message);
+            if (group == null)
+            {
+                Logger.InfoLine($"{user}: {message}");
+            }
+            else
+            {
+                var userInfo = CQApi.GetGroupMemberInfo(group, user);
+                Logger.InfoLine($"({GroupInfo[long.Parse(group)].Name}) {userInfo.Data.Nickname}: {message}");
+            }
+
+
             if (message.Substring(0, 1) == "!")
             {
                 if (message.IndexOf("!sudo ") == 0)

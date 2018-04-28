@@ -11,7 +11,7 @@ using DaylilyWeb.Interface.CQHttp;
 using DaylilyWeb.Models;
 using DaylilyWeb.Models.CosResponse;
 
-namespace DaylilyWeb.Functions.Applications
+namespace DaylilyWeb.Function.Application
 {
     public class DragonDetectorAlpha : Application
     {
@@ -27,8 +27,8 @@ namespace DaylilyWeb.Functions.Applications
 
         public override string Execute(string message, string user, string group, bool isRoot, ref bool ifAt)
         {
-            //if (group == null) return null;
-            if (user != "2241521134") return null;
+            if (group == null) return null;
+            //if (user != "2241521134") return null;
             this.user = user;
             this.group = group;
 
@@ -53,7 +53,7 @@ namespace DaylilyWeb.Functions.Applications
             }
             thread = new Thread(new ParameterizedThreadStart(RunDetector));
             thread.Start(pathList);
-            Logger.WriteLine("已经发送了请求,目前队列中共" + totalCount);
+            Logger.WarningLine("已经发送了请求,目前队列中共" + totalCount);
             return null;
         }
 

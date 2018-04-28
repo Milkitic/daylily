@@ -13,10 +13,10 @@ namespace DaylilyWeb.Models.CQResponse.Api
         [JsonProperty(PropertyName = "retcode")]
         public int Retcode { get; set; }
         [JsonProperty(PropertyName = "data")]
-        public List<_GroupListInfo> Data { get; set; }
+        public List<GroupInfo> Data { get; set; }
 
     }
-    public class _GroupListInfo
+    public class GroupInfo
     {
         [JsonProperty(PropertyName = "group_id")]
         public long GroupId { get; set; }

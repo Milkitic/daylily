@@ -24,9 +24,9 @@ namespace Daylily.Plugin.Command
             @params = @params.Replace("@me", "yf_bmp");
             string json_string = null;
 
-            Log.DefaultLine("Sent request.", ToString());
+            Logger.DefaultLine("Sent request.");
             var response = WebRequestHelper.CreatePostHttpResponse("https://syrin.me/pp+/u/" + @params);
-            Log.DefaultLine("Received request.", ToString());
+            Logger.DefaultLine("Received request.");
             if (response != null)
             {
                 json_string = WebRequestHelper.GetResponseString(response);
@@ -67,7 +67,7 @@ namespace Daylily.Plugin.Command
                     }
                 }
                 var resp = CQCode.EncodeImageToBase64(Draw(@params, d_value));
-                Log.InfoLine(resp);
+                //Logger.InfoLine(resp);
                 return resp;
             }
             return null;
