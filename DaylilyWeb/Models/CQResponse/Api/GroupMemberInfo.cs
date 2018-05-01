@@ -6,6 +6,15 @@ using System.Threading.Tasks;
 
 namespace DaylilyWeb.Models.CQResponse.Api
 {
+    public class GroupMemberList
+    {
+        [JsonProperty(PropertyName = "status")]
+        public string Status { get; set; }
+        [JsonProperty(PropertyName = "retcode")]
+        public int Retcode { get; set; }
+        [JsonProperty(PropertyName = "data")]
+        public List<_GroupMemberInfo> Data { get; set; }
+    }
     public class GroupMemberInfo
     {
         [JsonProperty(PropertyName = "status")]

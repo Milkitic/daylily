@@ -8,43 +8,42 @@ using System.Threading.Tasks;
 
 namespace DaylilyWeb.Assist
 {
-    public class GroupList
+    public class DiscussList
     {
-        Dictionary<long, GroupSettings> dicGroup = new Dictionary<long, GroupSettings>();
+        Dictionary<long, DiscussSettings> dicDiscuss = new Dictionary<long, DiscussSettings>();
 
-        public GroupSettings this[long groupId]
+        public DiscussSettings this[long discussId]
         {
             get
             {
-                return dicGroup[groupId];
+                return dicDiscuss[discussId];
             }
         }
 
-        public void Add(long groupId)
+        public void Add(long discussId)
         {
-            if (dicGroup.Keys.Contains(groupId))
+            if (dicDiscuss.Keys.Contains(discussId))
                 return;
 
-            dicGroup.Add(groupId, new GroupSettings(groupId.ToString()));
+            dicDiscuss.Add(discussId, new DiscussSettings(discussId.ToString()));
         }
 
     }
 
-    public class GroupSettings
+    public class DiscussSettings
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public Queue<GroupMsg> MsgQueue { get; set; } = new Queue<GroupMsg>();
+        public Queue<DiscussMsg> MsgQueue { get; set; } = new Queue<DiscussMsg>();
         public Thread Thread { get; set; }
         public int MsgLimit { get; set; } = 10;
         public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
-        public List<string> AdminList { get; set; } = new List<string>();
 
         HttpApi CQApi = new HttpApi();
 
-        public GroupSettings(string groupId)
+        public DiscussSettings(string discussId)
         {
-            Id = groupId;
+            Id = discussId;
             UpdateInfo();
         }
 
@@ -53,13 +52,6 @@ namespace DaylilyWeb.Assist
             var info = CQApi.GetGroupInfo(Id);
             string name = info == null ? Id : info.GroupName;
             Name = name;
-
-            var adminList = CQApi.GetGroupMemberList(Id);
-            adminList.Data.RemoveAll(x => x.Role == "member");
-            foreach(var item in adminList.Data)
-            {
-                AdminList.Add(item.UserId.ToString());
-            }
         }
     }
 }

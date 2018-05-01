@@ -7,9 +7,10 @@ namespace Daylily.Plugin
 {
     public abstract class Application
     {
-        protected AppType appType;
-        protected bool isRoot;
+        protected PermissionLevel CurrentLevel { get; set; }
 
-        public abstract string Execute(string @params, string user, string group, bool isRoot, ref bool ifAt);
+        public Random rnd = new Random();
+
+        public abstract string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt);
     }
 }

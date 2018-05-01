@@ -26,6 +26,8 @@ namespace DaylilyWeb.Assist
             InnerCmdPlugin.Add("h", "Help");
             InnerCmdPlugin.Add("help", "Help");
             InnerCmdPlugin.Add("setid", "SetId");
+            InnerCmdPlugin.Add("myelo", "MyElo");
+            InnerCmdPlugin.Add("elo", "Elo");
 
             // 内置功能
             NormalPlugins.Add("PornDetector");

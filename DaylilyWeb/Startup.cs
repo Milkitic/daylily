@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DaylilyWeb.Assist;
 using DaylilyWeb.Database;
+using DaylilyWeb.Interface;
 using DaylilyWeb.Interface.CQHttp;
 using DaylilyWeb.Models;
 using Microsoft.AspNetCore.Builder;
@@ -35,6 +36,7 @@ namespace DaylilyWeb
             Signature.secretKey = Configuration.GetConnectionString("secretKey");
             Signature.bucketName = Configuration.GetConnectionString("bucketName");
             CQCode.CQRoot = Configuration.GetConnectionString("CQDir");
+            OsuApi.ApiKey = Configuration.GetConnectionString("ApiKey");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

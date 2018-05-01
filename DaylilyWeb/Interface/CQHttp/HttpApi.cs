@@ -13,6 +13,7 @@ namespace DaylilyWeb.Interface.CQHttp
     class HttpApi
     {
         public static string ApiUrl { get; set; } = "http://www.mothership.top:5700";
+
         /// <summary>
         /// 发送私聊消息
         /// </summary>
@@ -37,7 +38,6 @@ namespace DaylilyWeb.Interface.CQHttp
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SendPrivateMsgResponse>(json_string);
             return obj;
         }
-
         /// <summary>
         /// 发送私聊消息（异步版本）
         /// </summary>
@@ -62,6 +62,55 @@ namespace DaylilyWeb.Interface.CQHttp
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SendPrivateMsgResponse>(json_string);
             return obj;
         }
+
+        /// <summary>
+        /// 发送讨论组消息
+        /// </summary>
+        /// <param name="id">讨论组号</param>
+        /// <param name="message">要发送的内容</param>
+        /// <returns></returns>
+        public SendDiscussMsgResponse SendDiscussMessage(string discussId, string message)
+        {
+            string json_string = null;
+            IDictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("discuss_id", HttpUtility.UrlEncode(discussId));
+            parameters.Add("message", HttpUtility.UrlEncode(message));
+
+            var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/send_discuss_msg", parameters);
+            Logger.DefaultLine("Sent request.");
+
+            if (response != null)
+            {
+                json_string = WebRequestHelper.GetResponseString(response);
+                Logger.DefaultLine("Received response.");
+            }
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SendDiscussMsgResponse>(json_string);
+            return obj;
+        }
+        /// <summary>
+        /// 发送讨论组消息（异步版本）
+        /// </summary>
+        /// <param name="id">讨论组号</param>
+        /// <param name="message">要发送的内容</param>
+        /// <returns></returns>
+        public async Task<SendDiscussMsgResponse> SendDiscussMessageAsync(string discussId, string message)
+        {
+            string json_string = null;
+            IDictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("discuss_id", HttpUtility.UrlEncode(discussId));
+            parameters.Add("message", HttpUtility.UrlEncode(message));
+
+            var response = WebRequestHelper.CreatePostHttpResponseAsync(ApiUrl + "/send_discuss_msg_async", parameters);
+            Logger.DefaultLine("Sent request.");
+            if (response != null)
+            {
+                json_string = WebRequestHelper.GetResponseString(await response);
+                Logger.DefaultLine("Received response.");
+            }
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SendDiscussMsgResponse>(json_string);
+            return obj;
+        }
+
         /// <summary>
         /// 发送群聊消息
         /// </summary>
@@ -86,7 +135,6 @@ namespace DaylilyWeb.Interface.CQHttp
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SendGroupMsgResponse>(json_string);
             return obj;
         }
-
         /// <summary>
         /// 发送群聊消息（异步版本）
         /// </summary>
@@ -128,6 +176,7 @@ namespace DaylilyWeb.Interface.CQHttp
             }
             return json_string;
         }
+
         public GroupListInfo GetGroupList()
         {
             string json_string = null;
@@ -159,6 +208,24 @@ namespace DaylilyWeb.Interface.CQHttp
                 //Logger.DefaultLine("Received response.");
             }
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<GroupMemberInfo>(json_string);
+            return obj;
+        }
+
+        public GroupMemberList GetGroupMemberList(string groupId)
+        {
+            string json_string = null;
+
+            IDictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("group_id", HttpUtility.UrlEncode(groupId));
+
+            var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/get_group_member_list", parameters);
+            //Logger.DefaultLine("Sent request.");
+            if (response != null)
+            {
+                json_string = WebRequestHelper.GetResponseString(response);
+                //Logger.DefaultLine("Received response.");
+            }
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<GroupMemberList>(json_string);
             return obj;
         }
 

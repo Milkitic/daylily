@@ -8,14 +8,7 @@ namespace Daylily.Plugin.Command
 {
     public class Roll : Application
     {
-        static Random rnd = new Random();
-
-        public Roll()
-        {
-            appType = AppType.Public;
-        }
-
-        public override string Execute(string @params, string user, string group, bool isRoot, ref bool ifAt)
+        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
         {
             ifAt = true;
 

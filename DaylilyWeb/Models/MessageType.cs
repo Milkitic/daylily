@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace DaylilyWeb.Models
 {
-    public enum PermissionLevel
+    public enum MessageType
     {
-        Public,
-        Admin,
-        Root
+        Private,
+        Discuss,
+        Group
     }
 }

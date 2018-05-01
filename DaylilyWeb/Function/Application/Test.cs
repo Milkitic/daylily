@@ -1,4 +1,5 @@
 ﻿using DaylilyWeb.Interface.CQHttp;
+using DaylilyWeb.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace DaylilyWeb.Function.Application
     {
         HttpApi CqApi = new HttpApi();
 
-        public override string Execute(string message, string user, string group, bool isRoot, ref bool ifAt)
+        public override string Execute(string message, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
         {
             var abc = CqApi.GetGroupList();
             return null;

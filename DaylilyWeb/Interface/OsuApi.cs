@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DaylilyWeb.Models
+namespace DaylilyWeb.Interface
 {
-    public enum PermissionLevel
+    public class OsuApi
     {
-        Public,
-        Admin,
-        Root
+        public static string ApiKey { get; set; }
     }
 }

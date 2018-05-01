@@ -11,11 +11,7 @@ namespace DaylilyWeb.Function.Application.Command
 {
     public class MyKudosu : Application
     {
-        public MyKudosu()
-        {
-            appType = AppType.Public;
-        }
-        public override string Execute(string @params, string user, string group, bool isRoot, ref bool ifAt)
+        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
         {
             //if (group != null) // 不给予群聊权限
             //    return null;

@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace Daylily.Plugin
 {
-    public enum AppType
+    public enum PermissionLevel
     {
         Public,
-        ContainPermission,
-        RequirePermission
+        Admin,
+        Root
     }
 }

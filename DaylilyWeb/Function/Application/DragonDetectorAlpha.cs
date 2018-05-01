@@ -25,7 +25,7 @@ namespace DaylilyWeb.Function.Application
         private static int totalCount = 0;
         string user, group;
 
-        public override string Execute(string message, string user, string group, bool isRoot, ref bool ifAt)
+        public override string Execute(string message, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
         {
             if (group == null) return null;
             //if (user != "2241521134") return null;
@@ -62,12 +62,12 @@ namespace DaylilyWeb.Function.Application
         /// </summary>
         private void RunDetector(object pathList)
         {
-            try
+
+            var list = (List<string>)pathList;
+            foreach (var fullPath in list)
             {
-                var list = (List<string>)pathList;
-                foreach (var fullPath in list)
-                {
-                    //Thread.Sleep(6000);
+                try
+                {     //Thread.Sleep(6000);
                     //continue;
                     if (proc != null)
                     {
@@ -95,18 +95,27 @@ namespace DaylilyWeb.Function.Application
 
                     proc.WaitForExit();
                     ProcExited();
+                }
+                catch (Exception ex)
+                {
+                    Logger.DangerLine(ex.Message);
+                }
+                finally
+                {
                     totalCount--;
                 }
-                if (dragonCount > 0)
-                {
-                    CQApi.SetGroupBan(group, user, rnd.Next(1, 100 * dragonCount + 1) * 60);
-                    CQApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " 你龙了");
-                    return;
-                }
             }
-            catch (Exception ex)
+
+            if (dragonCount > 0)
             {
-                Logger.DangerLine(ex.Message);
+                CQApi.SetGroupBan(group, user, rnd.Next(1, 100 * dragonCount + 1) * 60);
+                CQApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " 你龙了?");
+                if (dragonCount > 1)
+                {
+                    Thread.Sleep(8000);
+                    CQApi.SendGroupMessageAsync(group, "而且有好多张，送你" + dragonCount + "倍套餐!!");
+                }
+                return;
             }
         }
 
@@ -131,13 +140,14 @@ namespace DaylilyWeb.Function.Application
 
             if (receivedString.Count == 0) return;
             string line = receivedString[receivedString.Count - 1];
-            Console.WriteLine(line);
+            Logger.WarningLine(line);
 
             var tmp = line.Split(' ');
             status = int.Parse(tmp[0]);
             confidence = double.Parse(tmp[1]);
-            if (status == 1 || confidence > 0.75)
+            if (status == 1 && confidence > 75)
             {
+                //Logger.WarningLine(confidence.ToString());
                 dragonCount++;
             }
             Console.WriteLine("调用结束");

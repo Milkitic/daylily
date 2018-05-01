@@ -112,6 +112,14 @@ namespace DaylilyWeb.Assist
             return request.GetResponse() as HttpWebResponse;
         }
 
+        /// <summary>
+        /// 创建一个一般Get请求
+        /// </summary>
+        public static HttpWebResponse CreateUrlGetHttpResponse(string url, IDictionary<string, string> parameters = null)
+        {
+            HttpWebRequest request = _GetReqUrlGetObj(url, parameters);
+            return request.GetResponse() as HttpWebResponse;
+        }
 
         /// <summary>
         /// 从已创建的请求中获取字符串
@@ -214,15 +222,41 @@ namespace DaylilyWeb.Assist
                         stream.Write(data, 0, data.Length);
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    throw new Exception("网络连接失败");
+                    throw ex;
                 }
             }
 
             // 保留使用
             string[] values = request.Headers.GetValues("Content-Type");
 
+            return request;
+        }
+
+        private static HttpWebRequest _GetReqUrlGetObj(string url, IDictionary<string, string> parameters)
+        {
+            HttpWebRequest request = null;
+            if (!(parameters == null || parameters.Count == 0))
+            {
+                StringBuilder buffer = new StringBuilder();
+                int i = 0;
+                foreach (string key in parameters.Keys)
+                {
+                    if (i > 0)
+                    {
+                        buffer.AppendFormat("&{0}={1}", key, parameters[key]);
+                    }
+                    else
+                    {
+                        buffer.AppendFormat("?{0}={1}", key, parameters[key]);
+                        i++;
+                    }
+                }
+                url = url + buffer.ToString();
+            }
+
+            request = WebRequest.Create(url) as HttpWebRequest;
             return request;
         }
 

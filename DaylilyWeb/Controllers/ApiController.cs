@@ -75,6 +75,33 @@ namespace DaylilyWeb.Controllers
                     }
                 }
 
+                //讨论组
+                else if (obj.message_type == "discuss")
+                {
+                    DiscussMsg parsed_obj = JsonConvert.DeserializeObject<DiscussMsg>(JsonConvert.SerializeObject(obj));
+                    try
+                    {
+                        MessageHandler group_handler = new MessageHandler(parsed_obj);
+                        //group_handler.HandleMessage();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.InnerException != null)
+                            Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace);
+                        else
+                            Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace);
+                        //GroupMsgResponse group_resp = new GroupMsgResponse()
+                        //{
+                        //    reply = ex.Message,
+                        //    auto_escape = false,
+                        //    at_sender = true,
+                        //    delete = false,
+                        //    kick = false,
+                        //    ban = false
+                        //};
+                        //return Json(group_resp);
+                    }
+                }
             }
             else if (obj.post_type == "event")
             {

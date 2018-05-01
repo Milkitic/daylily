@@ -7,18 +7,14 @@ namespace Daylily.Plugin.Command
 {
     class Cd : Application
     {
-        public Cd()
-        {
-            appType = AppType.RequirePermission;
-        }
-        public override string Execute(string @params, string user, string group, bool isRoot, ref bool ifAt)
+        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
         {
             ifAt = false;
             if (group != null) // 不给予群聊权限
                 return null;
-            this.isRoot = isRoot;
-            if (appType == AppType.RequirePermission && !isRoot)
-                return "尝试命令前置!sudo";
+            CurrentLevel = currentLevel;
+            if (currentLevel != PermissionLevel.Root)
+                return "只有超级管理员才能发动此技能…";
             StringBuilder sb = new StringBuilder();
 
             DirectoryInfo di = new DirectoryInfo(@params);

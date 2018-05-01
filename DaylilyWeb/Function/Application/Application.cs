@@ -8,11 +8,10 @@ namespace DaylilyWeb.Function.Application
 {
     public abstract class Application
     {
-        protected AppType appType;
-        protected bool isRoot;
+        protected PermissionLevel CurrentLevel { get; set; }
 
         public Random rnd = new Random();
 
-        public abstract string Execute(string @params, string user, string group, bool isRoot, ref bool ifAt);
+        public abstract string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt);
     }
 }

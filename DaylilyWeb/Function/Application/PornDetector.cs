@@ -13,15 +13,10 @@ namespace DaylilyWeb.Function.Application
     {
         HttpApi CQApi = new HttpApi();
 
-        public PornDetector()
-        {
-            appType = AppType.Public;
-        }
-
         private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> MD5List { get; set; } = new Dictionary<string, CosObject>();
 
-        public override string Execute(string message, string user, string group, bool isRoot, ref bool ifAt)
+        public override string Execute(string message, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
         {
             // 查黄图
             if (group != "133605766") return null;
@@ -78,7 +73,7 @@ namespace DaylilyWeb.Function.Application
                     if (item.data.result == 1 || item.data.result == 2)
                     {
                         CQApi.SetGroupBan(group, user, 24 * 60 * 60);
-                        return "给我进去吧你";
+                        return "……………………";
                     }
                     else
                     {
@@ -110,14 +105,14 @@ namespace DaylilyWeb.Function.Application
             if (UserCount[user] != 0)
             {
                 ifAt = true;
-                return "..你再多发几张试试";
+                return "..黄花菜看了都脸红..求你少发点";
                 //return "你还能发" + UserCount[user] + "张这样的图";
             }
             else
             {
                 UserCount[user] = 2;
                 CQApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
-                return "88";
+                return "。。。";
             }
         }
     }
