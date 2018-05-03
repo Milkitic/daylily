@@ -1,12 +1,12 @@
-﻿using DaylilyWeb.Database.BLL;
-using DaylilyWeb.Interface.Elo;
-using DaylilyWeb.Models;
+﻿using Daylily.Database.BLL;
+using Daylily.Interface.Elo;
+using Daylily.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DaylilyWeb.Function.Application.Command
+namespace Daylily.Plugin.Command
 {
     public class MyElo : Application
     {

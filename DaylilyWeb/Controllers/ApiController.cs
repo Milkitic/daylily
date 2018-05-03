@@ -22,7 +22,6 @@ namespace DaylilyWeb.Controllers
             {
                 string json = await sr.ReadToEndAsync();
                 obj = JsonConvert.DeserializeObject(json);
-                //Log.SuccessLine(json,ToString(), "GetResponse()");
             }
             // 判断post类别
             if (obj.post_type == "message")

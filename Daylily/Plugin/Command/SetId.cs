@@ -1,15 +1,15 @@
-﻿using DaylilyWeb.Database.BLL;
+﻿using Daylily.Database.BLL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CSharpOsu;
 using CSharpOsu.Module;
-using DaylilyWeb.Database.Model;
-using DaylilyWeb.Interface;
-using DaylilyWeb.Models;
+using Daylily.Database.Model;
+using Daylily.Interface;
+using Daylily.Models;
 
-namespace DaylilyWeb.Function.Application.Command
+namespace Daylily.Plugin.Command
 {
     public class SetId : Application
     {

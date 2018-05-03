@@ -1,10 +1,10 @@
-﻿using DaylilyWeb.Models;
+﻿using Daylily.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DaylilyWeb.Function.Application.Command
+namespace Daylily.Plugin.Command
 {
     public class Help : Application
     {

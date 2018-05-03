@@ -19,10 +19,12 @@ namespace DaylilyWeb.Function
         public static DiscussList DiscussInfo { get; set; } = new DiscussList();
         public static PrivateList PrivateInfo { get; set; } = new PrivateList();
 
+        public static string COMMAND_FLAG = "!";
+
         Random rnd = new Random();
         int minTime = 200, maxTime = 300; // 回应的反应时间
-        string userId = null, groupId = null, discussId = null;
-        MessageType messageType;
+        //string UserId = null, GroupId = null, DiscussId = null;
+        //MessageType messageType;
 
         HttpApi CQApi = new HttpApi();
 
@@ -31,40 +33,30 @@ namespace DaylilyWeb.Function
         /// </summary>
         public MessageHandler(GroupMsg parsed_obj)
         {
-            messageType = MessageType.Group;
-            userId = parsed_obj.UserId.ToString();
-            groupId = parsed_obj.GroupId.ToString();
-
             long id = parsed_obj.GroupId;
 
             GroupInfo.Add(id);
-            GroupMsg currentInfo = parsed_obj;
             if (GroupInfo[id].MsgQueue.Count < GroupInfo[id].MsgLimit) // 允许缓存n条，再多的丢弃
-                GroupInfo[id].MsgQueue.Enqueue(currentInfo);
+                GroupInfo[id].MsgQueue.Enqueue(parsed_obj);
 
             else if (!GroupInfo[id].LockMsg)
             {
                 GroupInfo[id].LockMsg = true;
-                SendMessage(parsed_obj.Message, false);
+                SendMessage(parsed_obj.Message, id.ToString(), null, null, MessageType.Group, false);
             }
 
             if (GroupInfo[id].Thread == null ||
                 (GroupInfo[id].Thread.ThreadState != ThreadState.Running && GroupInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
             {
-                GroupInfo[id].Thread = new Thread(HandleGroupMessage);
-                GroupInfo[id].Thread.Start();
+                GroupInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandleGroupMessage));
+                GroupInfo[id].Thread.Start(parsed_obj);
             }
         }
-
         /// <summary>
         /// 讨论组消息
         /// </summary>
         public MessageHandler(DiscussMsg parsed_obj)
         {
-            messageType = MessageType.Discuss;
-            userId = parsed_obj.UserId.ToString();
-            discussId = parsed_obj.DiscussId.ToString();
-
             long id = parsed_obj.DiscussId;
 
             DiscussInfo.Add(id);
@@ -75,25 +67,21 @@ namespace DaylilyWeb.Function
             else if (!DiscussInfo[id].LockMsg)
             {
                 DiscussInfo[id].LockMsg = true;
-                SendMessage(parsed_obj.Message, false);
+                SendMessage(parsed_obj.Message, null, null, id.ToString(), MessageType.Discuss, false);
             }
 
             if (DiscussInfo[id].Thread == null ||
                 (DiscussInfo[id].Thread.ThreadState != ThreadState.Running && DiscussInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
             {
-                DiscussInfo[id].Thread = new Thread(HandleDiscussMessage);
-                DiscussInfo[id].Thread.Start();
+                DiscussInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandleDiscussMessage));
+                DiscussInfo[id].Thread.Start(parsed_obj);
             }
         }
-
         /// <summary>
         /// 私聊消息
         /// </summary>
         public MessageHandler(PrivateMsg parsed_obj)
         {
-            messageType = MessageType.Private;
-            userId = parsed_obj.UserId.ToString();
-
             long id = parsed_obj.UserId;
 
             PrivateInfo.Add(id);
@@ -104,20 +92,25 @@ namespace DaylilyWeb.Function
             else if (!PrivateInfo[id].LockMsg)
             {
                 PrivateInfo[id].LockMsg = true;
-                SendMessage("？？求您慢点说话好吗", false);
+                SendMessage("？？求您慢点说话好吗", null, id.ToString(), null, MessageType.Private, false);
             }
 
             if (PrivateInfo[id].Thread == null ||
                 (PrivateInfo[id].Thread.ThreadState != ThreadState.Running && PrivateInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
             {
-                PrivateInfo[id].Thread = new Thread(HandlePrivateMessage);
-                PrivateInfo[id].Thread.Start();
+                PrivateInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandlePrivateMessage));
+                PrivateInfo[id].Thread.Start(parsed_obj);
             }
         }
 
-        private void HandleGroupMessage()
+        private void HandleGroupMessage(object obj)
         {
-            long groupId = long.Parse(this.groupId);
+            var parsed_obj = (GroupMsg)obj;
+            MessageType messageType = MessageType.Group;
+            string UserId = parsed_obj.UserId.ToString(),
+                GroupId = parsed_obj.GroupId.ToString();
+           
+            long groupId = long.Parse(GroupId);
             while (GroupInfo[groupId].MsgQueue.Count != 0)
             {
                 if (GroupInfo[groupId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
@@ -128,7 +121,7 @@ namespace DaylilyWeb.Function
 
                 try
                 {
-                    HandleMessage(message);
+                    HandleMessage(message, currentInfo.GroupId.ToString(), currentInfo.UserId.ToString(), null, messageType);
                 }
                 catch (Exception ex)
                 {
@@ -141,9 +134,14 @@ namespace DaylilyWeb.Function
             }
             GroupInfo[groupId].LockMsg = false;
         }
-        private void HandleDiscussMessage()
+        private void HandleDiscussMessage(object obj)
         {
-            long discussId = long.Parse(this.discussId);
+            var parsed_obj = (DiscussMsg)obj;
+            MessageType messageType = MessageType.Discuss;
+            string UserId = parsed_obj.UserId.ToString(),
+                DiscussId = parsed_obj.DiscussId.ToString();
+      
+            long discussId = long.Parse(DiscussId);
             while (DiscussInfo[discussId].MsgQueue.Count != 0)
             {
                 if (DiscussInfo[discussId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
@@ -154,7 +152,7 @@ namespace DaylilyWeb.Function
 
                 try
                 {
-                    HandleMessage(message);
+                    HandleMessage(message, null, currentInfo.UserId.ToString(), currentInfo.DiscussId.ToString(), messageType);
                 }
                 catch (Exception ex)
                 {
@@ -167,9 +165,13 @@ namespace DaylilyWeb.Function
             }
             DiscussInfo[discussId].LockMsg = false;
         }
-        private void HandlePrivateMessage()
+        private void HandlePrivateMessage(object obj)
         {
-            long userId = long.Parse(this.userId);
+            var parsed_obj = (PrivateMsg)obj;
+            MessageType messageType = MessageType.Private;
+            string UserId = parsed_obj.UserId.ToString();
+
+            long userId = long.Parse(UserId);
             while (PrivateInfo[userId].MsgQueue.Count != 0)
             {
                 if (PrivateInfo[userId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
@@ -180,7 +182,7 @@ namespace DaylilyWeb.Function
 
                 try
                 {
-                    HandleMessage(message);
+                    HandleMessage(message, null, currentInfo.UserId.ToString(), null, messageType);
                 }
                 catch (Exception ex)
                 {
@@ -194,64 +196,63 @@ namespace DaylilyWeb.Function
             PrivateInfo[userId].LockMsg = false;
         }
 
-        private void HandleMessage(string message)
+        private void HandleMessage(string message, string GroupId, string UserId, string DiscussId, MessageType messageType)
         {
-            long groupId = Convert.ToInt64(this.groupId);
-            long userId = Convert.ToInt64(this.userId);
-            long discussId = Convert.ToInt64(this.discussId);
+            long groupId = Convert.ToInt64(GroupId);
+            long userId = Convert.ToInt64(UserId);
+            long discussId = Convert.ToInt64(DiscussId);
             if (messageType == MessageType.Private)
             {
                 Logger.InfoLine($"{userId}: {message}");
             }
             else if (messageType == MessageType.Group)
             {
-                var userInfo = CQApi.GetGroupMemberInfo(this.groupId, this.userId);
+                var userInfo = CQApi.GetGroupMemberInfo(GroupId, UserId);  // 有点费时间
                 Logger.InfoLine($"({GroupInfo[groupId].Name}) {userInfo.Data.Nickname}: {message}");
             }
             else if (messageType == MessageType.Discuss)
             {
-                var userInfo = CQApi.GetGroupMemberInfo(this.discussId, this.userId);
                 Logger.InfoLine($"({DiscussInfo[discussId].Name}) {userId}: {message}");
             }
 
-            if (message.Substring(0, 1) == "!")
+            if (message.Substring(0, 1) == COMMAND_FLAG)
             {
-                if (message.IndexOf("!root ") == 0)
+                if (message.IndexOf(COMMAND_FLAG + "root ") == 0)
                 {
-                    if (this.userId != "2241521134")
+                    if (UserId != "2241521134")
                     {
-                        SendMessage("你没有权限...", true);
+                        SendMessage("你没有权限...", GroupId, UserId, DiscussId, messageType, true);
                     }
                     else
                     {
                         string fullCommand = message.Substring(6, message.Length - 6);
-                        HandleMessageCmd(fullCommand, PermissionLevel.Root);
+                        HandleMessageCmd(fullCommand, GroupId, UserId, DiscussId, messageType, PermissionLevel.Root);
                     }
 
                 }
-                else if (message.IndexOf("!sudo ") == 0 && messageType == MessageType.Group)
+                else if (message.IndexOf(COMMAND_FLAG + "sudo ") == 0 && messageType == MessageType.Group)
                 {
-                    if (!GroupInfo[groupId].AdminList.Contains(this.userId))
+                    if (!GroupInfo[groupId].AdminList.Contains(UserId))
                     {
-                        SendMessage("你没有权限...仅本群管理员可用", true);
+                        SendMessage("你没有权限...仅本群管理员可用", GroupId, UserId, DiscussId, messageType, true);
                     }
                     else
                     {
                         string fullCommand = message.Substring(6, message.Length - 6);
-                        HandleMessageCmd(fullCommand, PermissionLevel.Admin);
+                        HandleMessageCmd(fullCommand, GroupId, UserId, DiscussId, messageType, PermissionLevel.Admin);
                     }
                 }
                 else
                 {
                     string fullCommand = message.Substring(1, message.Length - 1);
-                    HandleMessageCmd(fullCommand, PermissionLevel.Public);
+                    HandleMessageCmd(fullCommand, GroupId, UserId, DiscussId, messageType, PermissionLevel.Public);
                 }
 
             }
-            HandleMesasgeApp(message);
+            HandleMesasgeApp(message, GroupId, UserId, DiscussId, messageType);
 
         }
-        private void HandleMesasgeApp(string message)
+        private void HandleMesasgeApp(string message, string GroupId, string UserId, string DiscussId, MessageType messageType)
         {
             foreach (var item in Mapper.NormalPlugins)
             {
@@ -262,7 +263,7 @@ namespace DaylilyWeb.Function
                 MethodInfo mi = type.GetMethod("Execute");
                 var ok = type.GetMethods();
                 object appClass = Activator.CreateInstance(type);
-                object[] invokeArgs = { message, userId, groupId, PermissionLevel.Public, false };
+                object[] invokeArgs = { message, UserId, GroupId, PermissionLevel.Public, false };
 
                 #endregion
 
@@ -272,15 +273,20 @@ namespace DaylilyWeb.Function
                     reply = (string)mi.Invoke(appClass, invokeArgs);
                     enableAt = (bool)invokeArgs[4];
                 }
-                catch (TargetParameterCountException ex)
+                catch (Exception ex)
                 {
-                    throw new Exception("\"" + message + "\" caused an exception: \r\n" + type.Name.ToLower() + ": " + ex.Message);
+                    if (ex.InnerException != null)
+                        throw new Exception("\n\"" + message + "\" caused an exception: \n" +
+                            type.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
+                    else
+                        throw new Exception("\n\"" + message + "\" caused an exception: \n" +
+                            type.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
                 }
                 if (reply == null) continue;
-                SendMessage(reply, enableAt);
+                SendMessage(reply, GroupId, UserId, DiscussId, messageType, enableAt);
             }
         }
-        private void HandleMessageCmd(string fullCommand, PermissionLevel currentLevel)
+        private void HandleMessageCmd(string fullCommand, string GroupId, string UserId, string DiscussId, MessageType messageType, PermissionLevel currentLevel)
         {
             Thread.Sleep(rnd.Next(minTime, maxTime));
             bool enableAt = false;
@@ -310,13 +316,18 @@ namespace DaylilyWeb.Function
                     type = assemblyTmp.GetType(className);
                     appClass = assemblyTmp.CreateInstance(className);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw new Exception("\"" + fi.Name + "\" 这东西根本就是假的，是带特技的");
+                    if (ex.InnerException != null)
+                        throw new Exception("\n/\"" + fullCommand + "\" caused an exception: \n" +
+                            fi.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
+                    else
+                        throw new Exception("\n/\"" + fullCommand + "\" caused an exception: \n" +
+                            fi.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
                 }
             }
 
-            object[] invokeArgs = { param, userId, groupId, currentLevel, false };
+            object[] invokeArgs = { param, UserId, GroupId, currentLevel, false };
             string reply = null;
             try
             {
@@ -327,33 +338,34 @@ namespace DaylilyWeb.Function
             catch (Exception ex)
             {
                 if (ex.InnerException != null)
-                    throw new Exception("\"" + fullCommand + "\" caused an exception: \r\n" + type.Name + ": " + ex.InnerException.Message);
+                    throw new Exception("\n/\"" + fullCommand + "\" caused an exception: \n" +
+                        type.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
                 else
-                    throw new Exception("\"" + fullCommand + "\" caused an exception: \r\n" + type.Name + ": " + ex.Message);
+                    throw new Exception("\n/\"" + fullCommand + "\" caused an exception: \n" +
+                        type.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
             }
 
             if (reply == null) return;
-            SendMessage(reply, enableAt);
+            SendMessage(reply, GroupId, UserId, DiscussId, messageType, enableAt);
         }
 
-        private void SendMessage(string message, bool enableAt)
+        private void SendMessage(string message, string GroupId, string UserId, string DiscussId, MessageType messageType, bool enableAt)
         {
             if (messageType == MessageType.Group)
             {
-                SendGroupMsgResponse msg = CQApi.SendGroupMessageAsync(groupId, (enableAt ? CQCode.EncodeAt(userId) + " " : "") + message).Result;
+                SendGroupMsgResponse msg = CQApi.SendGroupMessageAsync(GroupId, (enableAt ? CQCode.EncodeAt(UserId) + " " : "") + message).Result;
                 Logger.InfoLine($"我: {message} {{status: {msg.Status}}})");
             }
             else if (messageType == MessageType.Discuss)
             {
-                SendDiscussMsgResponse msg = CQApi.SendDiscussMessageAsync(discussId, (enableAt ? CQCode.EncodeAt(userId) + " " : "") + message).Result;
+                SendDiscussMsgResponse msg = CQApi.SendDiscussMessageAsync(DiscussId, (enableAt ? CQCode.EncodeAt(UserId) + " " : "") + message).Result;
                 Logger.InfoLine($"我: {message} {{status: {msg.Status}}})");
             }
             else if (messageType == MessageType.Private)
             {
-                SendPrivateMsgResponse msg = CQApi.SendPrivateMessageAsync(userId, message).Result;
+                SendPrivateMsgResponse msg = CQApi.SendPrivateMessageAsync(UserId, message).Result;
                 Logger.InfoLine($"我: {message} {{status: {msg.Status}}})");
             }
-            //var name = MethodBase.GetCurrentMethod().Name;
         }
     }
 }

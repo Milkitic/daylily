@@ -145,7 +145,7 @@ namespace DaylilyWeb.Function.Application
             var tmp = line.Split(' ');
             status = int.Parse(tmp[0]);
             confidence = double.Parse(tmp[1]);
-            if (status == 1 && confidence > 75)
+            if (status == 1 && confidence > 80)
             {
                 //Logger.WarningLine(confidence.ToString());
                 dragonCount++;

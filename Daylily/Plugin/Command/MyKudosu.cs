@@ -1,13 +1,13 @@
-﻿using DaylilyWeb.Assist;
-using DaylilyWeb.Database.BLL;
-using DaylilyWeb.Models;
+﻿using Daylily.Assist;
+using Daylily.Database.BLL;
+using Daylily.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace DaylilyWeb.Function.Application.Command
+namespace Daylily.Plugin.Command
 {
     public class MyKudosu : Application
     {

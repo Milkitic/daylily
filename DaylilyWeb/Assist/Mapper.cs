@@ -21,13 +21,15 @@ namespace DaylilyWeb.Assist
         public static void Init()
         {
             // 偷懒测试用
-            InnerCmdPlugin.Add("mykds", "MyKudosu");
-            InnerCmdPlugin.Add("test", "Test");
-            InnerCmdPlugin.Add("h", "Help");
-            InnerCmdPlugin.Add("help", "Help");
-            InnerCmdPlugin.Add("setid", "SetId");
-            InnerCmdPlugin.Add("myelo", "MyElo");
-            InnerCmdPlugin.Add("elo", "Elo");
+            //InnerCmdPlugin.Add("mykds", "MyKudosu");
+            //InnerCmdPlugin.Add("test", "Test");
+            //InnerCmdPlugin.Add("h", "Help");
+            //InnerCmdPlugin.Add("help", "Help");
+            //InnerCmdPlugin.Add("setid", "SetId");
+            //InnerCmdPlugin.Add("myelo", "MyElo");
+            //InnerCmdPlugin.Add("elo", "Elo");
+            //InnerCmdPlugin.Add("sleep", "Sleep");
+            //InnerCmdPlugin.Add("slip", "Sleep");
 
             // 内置功能
             NormalPlugins.Add("PornDetector");

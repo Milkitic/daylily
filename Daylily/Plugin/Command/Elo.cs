@@ -1,15 +1,14 @@
 ﻿using CSharpOsu;
 using CSharpOsu.Module;
-using DaylilyWeb.Database.BLL;
-using DaylilyWeb.Interface;
-using DaylilyWeb.Interface.Elo;
-using DaylilyWeb.Models;
+using Daylily.Interface;
+using Daylily.Interface.Elo;
+using Daylily.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DaylilyWeb.Function.Application.Command
+namespace Daylily.Plugin.Command
 {
     public class Elo : Application
     {

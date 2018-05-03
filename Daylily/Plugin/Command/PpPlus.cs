@@ -9,6 +9,7 @@ using System.Text;
 using System.Drawing.Text;
 using System.IO;
 using System.Drawing.Imaging;
+using Daylily.Models;
 
 namespace Daylily.Plugin.Command
 {

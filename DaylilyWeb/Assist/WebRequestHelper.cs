@@ -10,8 +10,6 @@ namespace DaylilyWeb.Assist
 {
     class WebRequestHelper
     {
-        static Random rnd = new Random();
-
         public static string GetImageFromUrl(string url, string savePath, string ext)
         {
             WebResponse response = null;
