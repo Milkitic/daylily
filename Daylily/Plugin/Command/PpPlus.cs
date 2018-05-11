@@ -15,7 +15,7 @@ namespace Daylily.Plugin.Command
 {
     public class PpPlus : Application
     {
-        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
+        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt, long messageId)
         {
             ifAt = false;
             @params = @params.Replace("@me", "yf_bmp");

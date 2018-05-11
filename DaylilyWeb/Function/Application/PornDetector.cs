@@ -16,7 +16,7 @@ namespace DaylilyWeb.Function.Application
         private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> MD5List { get; set; } = new Dictionary<string, CosObject>();
 
-        public override string Execute(string message, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
+        public override string Execute(string message, string user, string group, PermissionLevel currentLevel, ref bool ifAt, long messageId)
         {
             // 查黄图
             if (group != "133605766") return null;

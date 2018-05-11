@@ -1,34 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DaylilyWeb.Assist;
+﻿using DaylilyWeb.Assist;
 using DaylilyWeb.Interface.CQHttp;
 using DaylilyWeb.Models;
-using DaylilyWeb.Models.CosResponse;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DaylilyWeb.Function.Application
 {
-    public class DragonDetectorAlpha : Application
+    public class PandaDetectorAlpha : Application
     {
         HttpApi CQApi = new HttpApi();
         Thread thread;
-
+        static Random rnd = new Random();
+        static Random rnd2 = new Random();
         private Process proc;
         private List<string> receivedString = new List<string>();
         List<string> pathList = new List<string>();
-        int dragonCount = 0;
+        int pandaCount = 0;
         private static int totalCount = 0;
         string user, group;
         long messageId;
 
         public override string Execute(string message, string user, string group, PermissionLevel currentLevel, ref bool ifAt, long messageId)
         {
-            if (group == null || group != "133605766") return null;
+            if (group == "133605766")
+                if (DateTime.Now.Hour < 22 && DateTime.Now.Hour > 6)
+                    return null;
 
             //if (user != "2241521134") return null;
             this.user = user;
@@ -60,6 +62,7 @@ namespace DaylilyWeb.Function.Application
             return null;
         }
 
+
         /// <summary>
         /// 核心识别by sahuang
         /// </summary>
@@ -79,7 +82,7 @@ namespace DaylilyWeb.Function.Application
                     }
                     proc = new Process();
                     proc.StartInfo.FileName = "python3";  // python3 dragon-detection.py "root"
-                    proc.StartInfo.Arguments = $"{Path.Combine(Environment.CurrentDirectory, "dragon", "dragon-detection.py")} \"{fullPath}\"";      // 参数  
+                    proc.StartInfo.Arguments = $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"";      // 参数  
 
                     proc.StartInfo.CreateNoWindow = true;
                     //proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
@@ -91,7 +94,7 @@ namespace DaylilyWeb.Function.Application
                     proc.OutputDataReceived += new DataReceivedEventHandler(ProcOutputReceived);
                     proc.ErrorDataReceived += new DataReceivedEventHandler(ProcErrorReceived);
 
-                    Console.WriteLine("正在调用中");
+                    Console.WriteLine("(熊猫)正在调用中");
                     proc.Start();
                     proc.BeginOutputReadLine();
                     proc.BeginErrorReadLine();
@@ -109,20 +112,25 @@ namespace DaylilyWeb.Function.Application
                 }
             }
 
-            if (dragonCount > 0)
+            if (pandaCount > 0)
             {
-                CQApi.DeleteMessage(messageId);
-
-                //CQApi.SetGroupBan(group, user, rnd.Next(1, 100 * dragonCount + 1) * 60);
-                //CQApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " 你龙了?");
-                if (dragonCount > 1)
+                var perc2 = rnd.NextDouble();
+                if (perc2 < 0.5)
                 {
-                    Thread.Sleep(8000);
-                    CQApi.SetGroupBan(group, user, rnd.Next(1, 100 * dragonCount + 1) * 60);
-                    //CQApi.SendGroupMessageAsync(group, "而且有好多张，送你" + dragonCount + "倍套餐!!");
+                    DirectoryInfo di = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
+                    var files = di.GetFiles();
+
+                    if (group != null) CQApi.SendGroupMessage(group, CQCode.EncodeFileToBase64(files[rnd.Next(files.Length)].FullName));
+                    else CQApi.SendPrivateMessage(user, CQCode.EncodeFileToBase64(files[rnd.Next(files.Length)].FullName));
+                    return;
                 }
-                return;
+                else
+                {
+                    Logger.WarningLine("几率不够，没有触发：" + perc2);
+                }
+
             }
+
         }
 
         private void ProcOutputReceived(object sender, DataReceivedEventArgs e)
@@ -151,12 +159,12 @@ namespace DaylilyWeb.Function.Application
             var tmp = line.Split(' ');
             status = int.Parse(tmp[0]);
             confidence = double.Parse(tmp[1]);
-            if (status == 1 && confidence > 68)
+            if (status == 1 && confidence > 50)
             {
                 //Logger.WarningLine(confidence.ToString());
-                dragonCount++;
+                pandaCount++;
             }
-            Console.WriteLine("调用结束");
+            Console.WriteLine("(熊猫)调用结束");
         }
     }
 }

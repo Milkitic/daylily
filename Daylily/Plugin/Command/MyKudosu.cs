@@ -11,7 +11,7 @@ namespace Daylily.Plugin.Command
 {
     public class MyKudosu : Application
     {
-        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
+        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt, long messageId)
         {
             //if (group != null) // 不给予群聊权限
             //    return null;

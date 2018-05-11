@@ -11,7 +11,7 @@ namespace Daylily.Plugin.Command
     {
         HttpApi CQApi = new HttpApi();
 
-        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
+        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt, long messageId)
         {
             if (group == null)
                 return null;

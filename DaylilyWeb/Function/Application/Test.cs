@@ -11,7 +11,7 @@ namespace DaylilyWeb.Function.Application
     {
         HttpApi CqApi = new HttpApi();
 
-        public override string Execute(string message, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
+        public override string Execute(string message, string user, string group, PermissionLevel currentLevel, ref bool ifAt, long messageId)
         {
             var abc = CqApi.GetGroupList();
             return null;

@@ -109,7 +109,7 @@ namespace DaylilyWeb.Function
             MessageType messageType = MessageType.Group;
             string UserId = parsed_obj.UserId.ToString(),
                 GroupId = parsed_obj.GroupId.ToString();
-           
+
             long groupId = long.Parse(GroupId);
             while (GroupInfo[groupId].MsgQueue.Count != 0)
             {
@@ -118,10 +118,11 @@ namespace DaylilyWeb.Function
                 var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
 
                 string message = currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                long messageId = currentInfo.MessageId;
 
                 try
                 {
-                    HandleMessage(message, currentInfo.GroupId.ToString(), currentInfo.UserId.ToString(), null, messageType);
+                    HandleMessage(message, currentInfo.GroupId.ToString(), currentInfo.UserId.ToString(), null, messageType, messageId);
                 }
                 catch (Exception ex)
                 {
@@ -140,7 +141,7 @@ namespace DaylilyWeb.Function
             MessageType messageType = MessageType.Discuss;
             string UserId = parsed_obj.UserId.ToString(),
                 DiscussId = parsed_obj.DiscussId.ToString();
-      
+
             long discussId = long.Parse(DiscussId);
             while (DiscussInfo[discussId].MsgQueue.Count != 0)
             {
@@ -149,10 +150,11 @@ namespace DaylilyWeb.Function
                 var currentInfo = DiscussInfo[discussId].MsgQueue.Dequeue();
 
                 string message = currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                long messageId = currentInfo.MessageId;
 
                 try
                 {
-                    HandleMessage(message, null, currentInfo.UserId.ToString(), currentInfo.DiscussId.ToString(), messageType);
+                    HandleMessage(message, null, currentInfo.UserId.ToString(), currentInfo.DiscussId.ToString(), messageType, messageId);
                 }
                 catch (Exception ex)
                 {
@@ -179,10 +181,11 @@ namespace DaylilyWeb.Function
                 var currentInfo = PrivateInfo[userId].MsgQueue.Dequeue();
 
                 string message = currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                long messageId = currentInfo.MessageId;
 
                 try
                 {
-                    HandleMessage(message, null, currentInfo.UserId.ToString(), null, messageType);
+                    HandleMessage(message, null, currentInfo.UserId.ToString(), null, messageType, messageId);
                 }
                 catch (Exception ex)
                 {
@@ -196,7 +199,7 @@ namespace DaylilyWeb.Function
             PrivateInfo[userId].LockMsg = false;
         }
 
-        private void HandleMessage(string message, string GroupId, string UserId, string DiscussId, MessageType messageType)
+        private void HandleMessage(string message, string GroupId, string UserId, string DiscussId, MessageType messageType, long messageId)
         {
             long groupId = Convert.ToInt64(GroupId);
             long userId = Convert.ToInt64(UserId);
@@ -226,7 +229,7 @@ namespace DaylilyWeb.Function
                     else
                     {
                         string fullCommand = message.Substring(6, message.Length - 6);
-                        HandleMessageCmd(fullCommand, GroupId, UserId, DiscussId, messageType, PermissionLevel.Root);
+                        HandleMessageCmd(fullCommand, GroupId, UserId, DiscussId, messageType, PermissionLevel.Root, messageId);
                     }
 
                 }
@@ -239,20 +242,20 @@ namespace DaylilyWeb.Function
                     else
                     {
                         string fullCommand = message.Substring(6, message.Length - 6);
-                        HandleMessageCmd(fullCommand, GroupId, UserId, DiscussId, messageType, PermissionLevel.Admin);
+                        HandleMessageCmd(fullCommand, GroupId, UserId, DiscussId, messageType, PermissionLevel.Admin, messageId);
                     }
                 }
                 else
                 {
                     string fullCommand = message.Substring(1, message.Length - 1);
-                    HandleMessageCmd(fullCommand, GroupId, UserId, DiscussId, messageType, PermissionLevel.Public);
+                    HandleMessageCmd(fullCommand, GroupId, UserId, DiscussId, messageType, PermissionLevel.Public, messageId);
                 }
 
             }
-            HandleMesasgeApp(message, GroupId, UserId, DiscussId, messageType);
+            HandleMesasgeApp(message, GroupId, UserId, DiscussId, messageType, messageId);
 
         }
-        private void HandleMesasgeApp(string message, string GroupId, string UserId, string DiscussId, MessageType messageType)
+        private void HandleMesasgeApp(string message, string GroupId, string UserId, string DiscussId, MessageType messageType, long messageId)
         {
             foreach (var item in Mapper.NormalPlugins)
             {
@@ -263,7 +266,7 @@ namespace DaylilyWeb.Function
                 MethodInfo mi = type.GetMethod("Execute");
                 var ok = type.GetMethods();
                 object appClass = Activator.CreateInstance(type);
-                object[] invokeArgs = { message, UserId, GroupId, PermissionLevel.Public, false };
+                object[] invokeArgs = { message, UserId, GroupId, PermissionLevel.Public, false, messageId };
 
                 #endregion
 
@@ -286,7 +289,7 @@ namespace DaylilyWeb.Function
                 SendMessage(reply, GroupId, UserId, DiscussId, messageType, enableAt);
             }
         }
-        private void HandleMessageCmd(string fullCommand, string GroupId, string UserId, string DiscussId, MessageType messageType, PermissionLevel currentLevel)
+        private void HandleMessageCmd(string fullCommand, string GroupId, string UserId, string DiscussId, MessageType messageType, PermissionLevel currentLevel, long messageId)
         {
             Thread.Sleep(rnd.Next(minTime, maxTime));
             bool enableAt = false;
@@ -327,7 +330,7 @@ namespace DaylilyWeb.Function
                 }
             }
 
-            object[] invokeArgs = { param, UserId, GroupId, currentLevel, false };
+            object[] invokeArgs = { param, UserId, GroupId, currentLevel, false, messageId };
             string reply = null;
             try
             {

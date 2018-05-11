@@ -159,6 +159,26 @@ namespace DaylilyWeb.Interface.CQHttp
             return obj;
         }
 
+        /// <summary>
+        /// 撤回消息
+        /// </summary>
+        /// <param name="messageId"></param>
+        public void DeleteMessage(long messageId)
+        {
+            string json_string = null;
+            IDictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("message_id", messageId.ToString());
+
+            var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/delete_msg", parameters);
+            Logger.DefaultLine("Sent request.");
+
+            if (response != null)
+            {
+                json_string = WebRequestHelper.GetResponseString(response);
+                Logger.DefaultLine("Received response.");
+            }
+        }
+
         public string SetGroupBan(string groupId, string userId, int duration)
         {
             string json_string = null;

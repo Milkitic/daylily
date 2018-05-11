@@ -13,6 +13,7 @@ namespace DaylilyWeb.Assist
     {
         public static string CQRoot { get; set; }
 
+        // Encode
         public static string EncodeAt(string id)
         {
             return $"[CQ:at,qq={Escape(id)}]";
@@ -23,10 +24,83 @@ namespace DaylilyWeb.Assist
             Bitmap a = new Bitmap(ToImage(code));
             string path = Path.Combine(Environment.CurrentDirectory, "images", Guid.NewGuid() + ".png");
             a.Save(path, System.Drawing.Imaging.ImageFormat.Png);
-            return $"[CQ:image,file=file://{Escape(path)}]";
+            return $"[CQ:image,file=base64://{EncodeFileToBase64(path, false)}]";
         }
 
-        public static string Escape(string text)
+        public static string EncodeFileToBase64(string path, bool abc = true)
+        {
+            FileStream filestream = new FileStream(path, FileMode.Open);
+            byte[] bt = new byte[filestream.Length];
+            string base64Str;
+
+            filestream.Read(bt, 0, bt.Length);
+            base64Str = Convert.ToBase64String(bt);
+            filestream.Close();
+            if (abc)
+                return $"[CQ:image,file=base64://{base64Str}]";
+            return base64Str;
+        }
+
+        // Get
+
+        /// <summary>
+        /// 返回一个string数组表示被at的qq号
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static string[] GetAt(string source)
+        {
+            List<string> info_list = new List<string>();
+            int index, index2 = 0;
+            string str1 = "[CQ:at,qq=";
+            while ((index = source.IndexOf(str1, index2) + str1.Length) != -1 + str1.Length)
+            {
+                int length = source.IndexOf("]", index) - index;
+                info_list.Add(source.Substring(index, length));
+                index2 = index + length;
+            }
+            if (info_list.Count == 0)
+                return null;
+            return info_list.ToArray();
+        }
+
+        public static ImageInfo[] GetImageInfo(string source)
+        {
+            List<ImageInfo> info_list = new List<ImageInfo>();
+            int index, index2 = 0;
+            while ((index = source.IndexOf("[CQ:image", index2)) != -1)
+            {
+                int length = source.IndexOf("]", index) - index;
+                info_list.Add(new ImageInfo(source.Substring(index, length + 1)));
+                index2 = index + length;
+            }
+            if (info_list.Count == 0)
+                return null;
+            return info_list.ToArray();
+        }
+
+        public static string[] GetImageUrls(string source)
+        {
+            List<string> url_list = new List<string>();
+            int index, index2 = 0;
+            while ((index = source.IndexOf("[CQ:image", index2)) != -1)
+            {
+                if (source.IndexOf(".gif", index) != -1)
+                {
+                    index2 = index2 + source.IndexOf(".gif", index);
+                    continue;
+                }
+                int tmp_index = source.IndexOf("url=", index) + 4;
+                int length = source.IndexOf("]", tmp_index) - tmp_index;
+                url_list.Add(source.Substring(tmp_index, length));
+                index2 = tmp_index + length;
+            }
+            if (url_list.Count == 0)
+                return null;
+            return url_list.ToArray();
+        }
+
+        private static string Escape(string text)
         {
             return text.Replace("&", "&amp").Replace("[", "&#91").Replace("]", "&#93").Replace(",", "&#44");
         }
@@ -46,21 +120,6 @@ namespace DaylilyWeb.Assist
             MemoryStream memStream = new MemoryStream(bytes);
             BinaryFormatter binFormatter = new BinaryFormatter();
             return (Image)binFormatter.Deserialize(memStream);
-        }
-
-        public static ImageInfo[] GetImageInfo(string source)
-        {
-            List<ImageInfo> info_list = new List<ImageInfo>();
-            int index, index2 = 0;
-            while ((index = source.IndexOf("[CQ:image", index2)) != -1)
-            {
-                int length = source.IndexOf("]", index) - index;
-                info_list.Add(new ImageInfo(source.Substring(index, length + 1)));
-                index2 = index + length;
-            }
-            if (info_list.Count == 0)
-                return null;
-            return info_list.ToArray();
         }
     }
 }

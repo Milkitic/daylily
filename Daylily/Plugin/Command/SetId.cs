@@ -13,7 +13,7 @@ namespace Daylily.Plugin.Command
 {
     public class SetId : Application
     {
-        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
+        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt, long messageId)
         {
             ifAt = true;
             if (@params == null)

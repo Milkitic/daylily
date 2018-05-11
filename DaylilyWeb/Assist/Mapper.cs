@@ -34,6 +34,8 @@ namespace DaylilyWeb.Assist
             // 内置功能
             NormalPlugins.Add("PornDetector");
             NormalPlugins.Add("DragonDetectorAlpha");
+            NormalPlugins.Add("PandaDetectorAlpha");
+            NormalPlugins.Add("CheckCqAt");
 
             if (!Directory.Exists(PLUGIN_DIR))
                 Directory.CreateDirectory(PLUGIN_DIR);

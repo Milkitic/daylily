@@ -9,7 +9,7 @@ namespace Daylily.Plugin.Command
 {
     public class Roll : Application
     {
-        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt)
+        public override string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt, long messageId)
         {
             ifAt = true;
 

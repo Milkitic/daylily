@@ -12,6 +12,7 @@ namespace DaylilyWeb.Function.Application
 
         public Random rnd = new Random();
 
-        public abstract string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt);
+        public abstract string Execute(string @params, string user, string group, PermissionLevel currentLevel, ref bool ifAt, long messageId);
+
     }
 }
