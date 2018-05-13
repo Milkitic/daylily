@@ -108,30 +108,32 @@ namespace DaylilyWeb.Function.Application.Command
                         gp.AddPolygon(points);
                         gp.CloseFigure();
                         g.FillPath(brush, gp);
+                        Logger.DebugLine("[BACK POLYGON] OK");
                     }
                 }
 
                 // 画网络
                 foreach (var item in pointBorder)
                 {
-                    using (Brush brush = new LinearGradientBrush(pointCentre, item, NET_COLOR, BORDER_COLOR))
-                    using (Pen pen = new Pen(brush, 1))
+                    //using (Brush brush = new LinearGradientBrush(pointCentre, item, NET_COLOR, BORDER_COLOR)) // 线性渐变笔刷在linux平台Out of memory
+                    using (Pen pen = new Pen(BORDER_COLOR, 1))
                     {
                         g.DrawLine(pen, pointCentre, item);
+                        Logger.DebugLine("[NET FRAME] OK");
                     }
                 }
 
-                // 画边框
-                using (Pen pen = new Pen(BORDER_COLOR, 1))
-                {
-                    for (int i = 0; i < pointBorder.Length; i++)
-                    {
-                        if (i == pointBorder.Length - 1)
-                            g.DrawLine(pen, pointBorder[i], pointBorder[0]);
-                        else
-                            g.DrawLine(pen, pointBorder[i], pointBorder[i + 1]);
-                    }
-                }
+                //// 画边框
+                //using (Pen pen = new Pen(BORDER_COLOR, 1))
+                //{
+                //    for (int i = 0; i < pointBorder.Length; i++)
+                //    {
+                //        if (i == pointBorder.Length - 1)
+                //            g.DrawLine(pen, pointBorder[i], pointBorder[0]);
+                //        else
+                //            g.DrawLine(pen, pointBorder[i], pointBorder[i + 1]);
+                //    }
+                //}
 
                 // 画数据
                 PointF[] point_static = new PointF[6];
@@ -160,6 +162,7 @@ namespace DaylilyWeb.Function.Application.Command
                     gp.CloseFigure();
                     // gp.FillPath(new SolidBrush(Color.FromArgb(128, 171, 210, 124)), gp2);
                     g.FillPath(brush, gp);
+                    Logger.DebugLine("[FORE POLYGON] OK");
                 }
 
                 // 画数据边框
@@ -178,6 +181,7 @@ namespace DaylilyWeb.Function.Application.Command
                             g.DrawLine(pen, point_static[i], point_static[0]);
                         else
                             g.DrawLine(pen, point_static[i], point_static[i + 1]);
+                        Logger.DebugLine("[FORE BORDER] OK");
                     }
                 }
 
@@ -199,6 +203,7 @@ namespace DaylilyWeb.Function.Application.Command
                         var temp_point = new PointF((float)(pointCentre.X + Math.Sin(deg) * r_current) - ok.Width / 2f, pointCentre.Y + (float)(Math.Cos(deg) * r_current) - ok.Height / 2f);
 
                         g.DrawString(item.Value.ToString(), fontMSYH, blackBrush, temp_point);
+                        Logger.DebugLine("[STRING] OK");
                         //g.DrawString(item.Key.ToString(), new Font("微软雅黑", 10), new SolidBrush(Color.Black), point_bder[ii]);
                         ii++;
                     }
@@ -217,9 +222,10 @@ namespace DaylilyWeb.Function.Application.Command
 
                     g.DrawString(str_total, font_total, brushTotal, bmp.Width - size_str_total.Width + 5, 5);
                     g.DrawString(str_title, font_title, brushTitle, 4, 4);
+                    Logger.DebugLine("[STRING] OK");
                 }
                 g.DrawImage(Image.FromFile(Path.Combine(Environment.CurrentDirectory, "static", "ForeLayer.png")), new Rectangle(0, 0, bmp.Width, bmp.Height));
-
+                Logger.DebugLine("[IMAGE] OK");
             }
             return bmp;
         }

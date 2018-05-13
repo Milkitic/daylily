@@ -58,17 +58,17 @@ namespace DaylilyWeb.Function.Application.Command
                 if (inner_group != null)
                 {
                     SendGroupMsgResponse msg = CQApi.SendGroupMessageAsync(inner_group, inner_message).Result;
-                    Logger.InfoLine($"我: {CQCode.DecodeImageToText(inner_message)} {{status: {msg.Status}}})");
+                    Logger.InfoLine($"我: {CQCode.Decode(inner_message)} {{status: {msg.Status}}})");
                 }
                 else if (inner_discuss != null)
                 {
                     SendDiscussMsgResponse msg = CQApi.SendDiscussMessageAsync(inner_discuss, inner_message).Result;
-                    Logger.InfoLine($"我: {CQCode.DecodeImageToText(inner_message)} {{status: {msg.Status}}})");
+                    Logger.InfoLine($"我: {CQCode.Decode(inner_message)} {{status: {msg.Status}}})");
                 }
                 else if (inner_user != null)
                 {
                     SendPrivateMsgResponse msg = CQApi.SendPrivateMessageAsync(inner_user, inner_message).Result;
-                    Logger.InfoLine($"我: {CQCode.DecodeImageToText(inner_message)} {{status: {msg.Status}}})");
+                    Logger.InfoLine($"我: {CQCode.Decode(inner_message)} {{status: {msg.Status}}})");
                 }
             }
 

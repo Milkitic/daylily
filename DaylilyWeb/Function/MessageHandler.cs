@@ -51,6 +51,10 @@ namespace DaylilyWeb.Function
                 GroupInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandleGroupMessage));
                 GroupInfo[id].Thread.Start(parsed_obj);
             }
+            else
+            {
+                Logger.InfoLine("当前已有" + GroupInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
+            }
         }
         /// <summary>
         /// 讨论组消息
@@ -76,6 +80,10 @@ namespace DaylilyWeb.Function
                 DiscussInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandleDiscussMessage));
                 DiscussInfo[id].Thread.Start(parsed_obj);
             }
+            else
+            {
+                Logger.InfoLine("当前已有" + DiscussInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
+            }
         }
         /// <summary>
         /// 私聊消息
@@ -100,6 +108,10 @@ namespace DaylilyWeb.Function
             {
                 PrivateInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandlePrivateMessage));
                 PrivateInfo[id].Thread.Start(parsed_obj);
+            }
+            else
+            {
+                Logger.InfoLine("当前已有" + PrivateInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
             }
         }
 
@@ -130,7 +142,7 @@ namespace DaylilyWeb.Function
                         Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace);
                     else
                         Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace);
-                    GC.Collect();
+                    //GC.Collect();
                 }
             }
             GroupInfo[groupId].LockMsg = false;
@@ -162,7 +174,7 @@ namespace DaylilyWeb.Function
                         Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace);
                     else
                         Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace);
-                    GC.Collect();
+                    //GC.Collect();
                 }
             }
             DiscussInfo[discussId].LockMsg = false;
@@ -193,7 +205,7 @@ namespace DaylilyWeb.Function
                         Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace);
                     else
                         Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace);
-                    GC.Collect();
+                    //GC.Collect();
                 }
             }
             PrivateInfo[userId].LockMsg = false;
@@ -206,16 +218,16 @@ namespace DaylilyWeb.Function
             long discussId = Convert.ToInt64(DiscussId);
             if (messageType == MessageType.Private)
             {
-                Logger.InfoLine($"{userId}: {CQCode.DecodeImageToText(message)}");
+                Logger.WriteLine($"{userId}: {CQCode.Decode(message)}");
             }
             else if (messageType == MessageType.Group)
             {
                 var userInfo = CQApi.GetGroupMemberInfo(GroupId, UserId);  // 有点费时间
-                Logger.InfoLine($"({GroupInfo[groupId].Name}) {userInfo.Data.Nickname}: {CQCode.DecodeImageToText(message)}");
+                Logger.WriteLine($"({GroupInfo[groupId].Name}) {userInfo.Data.Nickname}: {CQCode.Decode(message)}");
             }
             else if (messageType == MessageType.Discuss)
             {
-                Logger.InfoLine($"({DiscussInfo[discussId].Name}) {userId}: {CQCode.DecodeImageToText(message)}");
+                Logger.WriteLine($"({DiscussInfo[discussId].Name}) {userId}: {CQCode.Decode(message)}");
             }
 
             if (message.Substring(0, 1) == COMMAND_FLAG)
@@ -357,17 +369,17 @@ namespace DaylilyWeb.Function
             if (messageType == MessageType.Group)
             {
                 SendGroupMsgResponse msg = CQApi.SendGroupMessageAsync(GroupId, (enableAt ? CQCode.EncodeAt(UserId) + " " : "") + message).Result;
-                Logger.InfoLine($"我: {CQCode.DecodeImageToText(message)} {{status: {msg.Status}}})");
+                Logger.InfoLine($"我: {CQCode.Decode(message)} {{status: {msg.Status}}})");
             }
             else if (messageType == MessageType.Discuss)
             {
                 SendDiscussMsgResponse msg = CQApi.SendDiscussMessageAsync(DiscussId, (enableAt ? CQCode.EncodeAt(UserId) + " " : "") + message).Result;
-                Logger.InfoLine($"我: {CQCode.DecodeImageToText(message)} {{status: {msg.Status}}})");
+                Logger.InfoLine($"我: {CQCode.Decode(message)} {{status: {msg.Status}}})");
             }
             else if (messageType == MessageType.Private)
             {
                 SendPrivateMsgResponse msg = CQApi.SendPrivateMessageAsync(UserId, message).Result;
-                Logger.InfoLine($"我: {CQCode.DecodeImageToText(message)} {{status: {msg.Status}}})");
+                Logger.InfoLine($"我: {CQCode.Decode(message)} {{status: {msg.Status}}})");
             }
         }
     }

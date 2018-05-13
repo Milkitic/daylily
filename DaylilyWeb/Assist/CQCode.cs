@@ -43,7 +43,13 @@ namespace DaylilyWeb.Assist
         }
 
         // decode
-        public static string DecodeImageToText(string source)
+        public static string Decode(string source)
+        {
+            source = DecodeImageToText(source);
+            return source;
+        }
+
+        private static string DecodeImageToText(string source)
         {
             StringBuilder sb = new StringBuilder(source);
             int index = 0;

@@ -26,6 +26,18 @@ namespace DaylilyWeb.Assist
 
             WriteMessage(msg);
         }
+        public static void DebugLine(string msg)
+        {
+#if DEBUG
+            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.Black;
+            WriteSource();
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.BackgroundColor = ConsoleColor.Black;
+            WriteMessage(msg);
+#endif
+        }
         public static void PrimaryLine(string msg)
         {
             Console.BackgroundColor = ConsoleColor.DarkBlue;
@@ -82,7 +94,8 @@ namespace DaylilyWeb.Assist
             StackTrace st = new StackTrace(true);
             MethodBase mb = st.GetFrame(2).GetMethod();
             string methodName = $"{mb.DeclaringType.Namespace}.{mb.DeclaringType.Name}.{mb.Name}";
-            Console.Write($"[{DateTime.Now.ToString()}][{methodName}]");
+            var n = DateTime.Now;
+            Console.Write($"[{n.Hour}:{n.Minute}:{n.Second}][{methodName}]");
             Console.ResetColor();
         }
         private static void WriteMessage(string msg)
