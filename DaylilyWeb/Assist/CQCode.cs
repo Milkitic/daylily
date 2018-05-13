@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace DaylilyWeb.Assist
@@ -20,10 +21,10 @@ namespace DaylilyWeb.Assist
         }
         public static string EncodeImageToBase64(Image img)
         {
-            string code = ToBase64(img);
-            Bitmap a = new Bitmap(ToImage(code));
+            //string code = ToBase64(img);
+            //Bitmap a = new Bitmap(ToImage(code));
             string path = Path.Combine(Environment.CurrentDirectory, "images", Guid.NewGuid() + ".png");
-            a.Save(path, System.Drawing.Imaging.ImageFormat.Png);
+            img.Save(path, System.Drawing.Imaging.ImageFormat.Png);
             return $"[CQ:image,file=base64://{EncodeFileToBase64(path, false)}]";
         }
 
@@ -39,6 +40,21 @@ namespace DaylilyWeb.Assist
             if (abc)
                 return $"[CQ:image,file=base64://{base64Str}]";
             return base64Str;
+        }
+
+        // decode
+        public static string DecodeImageToText(string source)
+        {
+            StringBuilder sb = new StringBuilder(source);
+            int index = 0;
+            string str1 = "[CQ:image,";
+            while ((index = sb.ToString().IndexOf(str1, index)) != -1)
+            {
+                int length = source.IndexOf("]", index) - index + 1;
+                sb.Remove(index, length);
+                sb.Insert(index, "[图片]");
+            }
+            return sb.ToString();
         }
 
         // Get

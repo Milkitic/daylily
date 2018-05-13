@@ -30,6 +30,9 @@ namespace DaylilyWeb.Assist
             //InnerCmdPlugin.Add("elo", "Elo");
             //InnerCmdPlugin.Add("sleep", "Sleep");
             //InnerCmdPlugin.Add("slip", "Sleep");
+            InnerCmdPlugin.Add("pp", "PpPlus");
+            InnerCmdPlugin.Add("send", "Send");
+            InnerCmdPlugin.Add("kd", "Kudosu");
 
             // 内置功能
             NormalPlugins.Add("PornDetector");
@@ -85,7 +88,7 @@ namespace DaylilyWeb.Assist
             File.WriteAllText(Path.Combine(PLUGIN_DIR, "plugins.json"), jsonFile);
         }
 
-        private static string ConvertJsonString(string str)
+        public static string ConvertJsonString(string str)
         {
             //格式化json字符串  
             JsonSerializer serializer = new JsonSerializer();

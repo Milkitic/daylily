@@ -58,7 +58,7 @@ namespace DaylilyWeb.Function.Application
             }
             thread = new Thread(new ParameterizedThreadStart(RunDetector));
             thread.Start(pathList);
-            Logger.WarningLine("已经发送了请求,目前队列中共" + totalCount);
+            Logger.PrimaryLine("熊猫共" + totalCount);
             return null;
         }
 
@@ -94,7 +94,7 @@ namespace DaylilyWeb.Function.Application
                     proc.OutputDataReceived += new DataReceivedEventHandler(ProcOutputReceived);
                     proc.ErrorDataReceived += new DataReceivedEventHandler(ProcErrorReceived);
 
-                    Console.WriteLine("(熊猫)正在调用中");
+                    Logger.WriteLine("(熊猫)正在调用中");
                     proc.Start();
                     proc.BeginOutputReadLine();
                     proc.BeginErrorReadLine();
@@ -109,13 +109,14 @@ namespace DaylilyWeb.Function.Application
                 finally
                 {
                     totalCount--;
+                    Logger.PrimaryLine("熊猫" + (totalCount + 1) + "->" + totalCount);
                 }
             }
 
             if (pandaCount > 0)
             {
                 var perc2 = rnd.NextDouble();
-                if (perc2 < 0.5)
+                if (perc2 < 0.15)
                 {
                     DirectoryInfo di = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
                     var files = di.GetFiles();

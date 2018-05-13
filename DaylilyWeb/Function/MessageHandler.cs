@@ -206,16 +206,16 @@ namespace DaylilyWeb.Function
             long discussId = Convert.ToInt64(DiscussId);
             if (messageType == MessageType.Private)
             {
-                Logger.InfoLine($"{userId}: {message}");
+                Logger.InfoLine($"{userId}: {CQCode.DecodeImageToText(message)}");
             }
             else if (messageType == MessageType.Group)
             {
                 var userInfo = CQApi.GetGroupMemberInfo(GroupId, UserId);  // 有点费时间
-                Logger.InfoLine($"({GroupInfo[groupId].Name}) {userInfo.Data.Nickname}: {message}");
+                Logger.InfoLine($"({GroupInfo[groupId].Name}) {userInfo.Data.Nickname}: {CQCode.DecodeImageToText(message)}");
             }
             else if (messageType == MessageType.Discuss)
             {
-                Logger.InfoLine($"({DiscussInfo[discussId].Name}) {userId}: {message}");
+                Logger.InfoLine($"({DiscussInfo[discussId].Name}) {userId}: {CQCode.DecodeImageToText(message)}");
             }
 
             if (message.Substring(0, 1) == COMMAND_FLAG)
@@ -357,17 +357,17 @@ namespace DaylilyWeb.Function
             if (messageType == MessageType.Group)
             {
                 SendGroupMsgResponse msg = CQApi.SendGroupMessageAsync(GroupId, (enableAt ? CQCode.EncodeAt(UserId) + " " : "") + message).Result;
-                Logger.InfoLine($"我: {message} {{status: {msg.Status}}})");
+                Logger.InfoLine($"我: {CQCode.DecodeImageToText(message)} {{status: {msg.Status}}})");
             }
             else if (messageType == MessageType.Discuss)
             {
                 SendDiscussMsgResponse msg = CQApi.SendDiscussMessageAsync(DiscussId, (enableAt ? CQCode.EncodeAt(UserId) + " " : "") + message).Result;
-                Logger.InfoLine($"我: {message} {{status: {msg.Status}}})");
+                Logger.InfoLine($"我: {CQCode.DecodeImageToText(message)} {{status: {msg.Status}}})");
             }
             else if (messageType == MessageType.Private)
             {
                 SendPrivateMsgResponse msg = CQApi.SendPrivateMessageAsync(UserId, message).Result;
-                Logger.InfoLine($"我: {message} {{status: {msg.Status}}})");
+                Logger.InfoLine($"我: {CQCode.DecodeImageToText(message)} {{status: {msg.Status}}})");
             }
         }
     }

@@ -21,6 +21,7 @@ namespace DaylilyWeb.Controllers
             using (var sr = new StreamReader(Request.Body))
             {
                 string json = await sr.ReadToEndAsync();
+                //Logger.WriteLine(json);
                 obj = JsonConvert.DeserializeObject(json);
             }
             // 判断post类别
