@@ -1,0 +1,31 @@
+﻿using Daylily.Common.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Daylily.Plugin.Command
+{
+    public class Sleep : AppConstruct
+    {
+        public override CommonMessageResponse Execute(CommonMessage message)
+        {
+            if (message.GroupId == null)
+                return null;
+            if (message.Parameter.Trim() == "")
+                return new CommonMessageResponse("要睡多少小时呀? 你不写是要30循吗??", message, true);
+
+            DateTime dt = new DateTime();
+            if (!double.TryParse(message.Parameter, out double result))
+                return new CommonMessageResponse("我只要一个数表示小时，支持小数", message, true);
+            if (result > 12) result = 12;
+            else if (result < 0.5) result = 0.5;
+            dt = dt.AddHours(result);
+            int s = (int)(dt.Ticks / 10000000);
+            CQApi.SetGroupBan(message.GroupId, message.UserId, s);
+            string msg = "祝你一觉睡到" + DateTime.Now.AddHours(result).ToString("HH:mm") + " :D";
+
+            return new CommonMessageResponse(msg, message, true);
+        }
+    }
+}

@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaylilyWeb", "DaylilyWeb\DaylilyWeb.csproj", "{71290A4C-AD40-4955-9C26-78A381525F02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Web", "Daylily.Web\Daylily.Web.csproj", "{71290A4C-AD40-4955-9C26-78A381525F02}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Core", "Daylily\Daylily.Plugin.Core.csproj", "{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Core", "Daylily.Plugin.Core\Daylily.Plugin.Core.csproj", "{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Cabbage", "Daylily.Plugin.Cabbage\Daylily.Plugin.Cabbage.csproj", "{FC8A2C3F-7C56-478C-9D70-50C112C9A7DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Assist", "Daylily.Assist\Daylily.Assist.csproj", "{1E7A1900-414F-4424-B7E1-13B3A1297DB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaylilyAssist", "DaylilyAssist\DaylilyAssist.csproj", "{1E7A1900-414F-4424-B7E1-13B3A1297DB7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daylily.Common", "Daylily.Common\Daylily.Common.csproj", "{133C40AD-9219-4ACF-A2B8-A5D8CE7CE46B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,14 @@ Global
 		{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FC8A2C3F-7C56-478C-9D70-50C112C9A7DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FC8A2C3F-7C56-478C-9D70-50C112C9A7DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FC8A2C3F-7C56-478C-9D70-50C112C9A7DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FC8A2C3F-7C56-478C-9D70-50C112C9A7DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E7A1900-414F-4424-B7E1-13B3A1297DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1E7A1900-414F-4424-B7E1-13B3A1297DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E7A1900-414F-4424-B7E1-13B3A1297DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E7A1900-414F-4424-B7E1-13B3A1297DB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{133C40AD-9219-4ACF-A2B8-A5D8CE7CE46B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{133C40AD-9219-4ACF-A2B8-A5D8CE7CE46B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{133C40AD-9219-4ACF-A2B8-A5D8CE7CE46B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{133C40AD-9219-4ACF-A2B8-A5D8CE7CE46B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
