@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Database;
@@ -39,6 +40,60 @@ namespace Daylily.Web
             CQCode.CQRoot = Configuration.GetConnectionString("CQDir");
             OsuApi.ApiKey = Configuration.GetConnectionString("ApiKey");
             MessageHandler.COMMAND_FLAG = Configuration.GetConnectionString("commandFlag");
+            RunService();
+        }
+
+        private void RunService()
+        {
+            Logger.PrimaryLine("读取服务中...");
+            foreach (var item in Mapper.ServicePlugins)
+            {
+                string fullName = item.Value;
+                string className = item.Key.Replace(".dll", "");
+                MethodInfo mi;
+                object appClass;
+                Type type;
+                System.IO.FileInfo fi = null;
+
+                try
+                {
+                    Logger.InfoLine("读取" + item.Key + "中...");
+                    fi = new System.IO.FileInfo(fullName);
+                    Assembly assemblyTmp = Assembly.LoadFrom(fullName);
+                    type = assemblyTmp.GetType(className);
+                    appClass = assemblyTmp.CreateInstance(className);
+                }
+                catch (Exception ex)
+                {
+                    Logger.DangerLine(item.Key + " 出现了问题。");
+                    if (ex.InnerException != null)
+                        throw new Exception("\n\"" + className + "\" caused an exception: \n" +
+                            fi.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
+                    else
+                        throw new Exception("\n\"" + className + "\" caused an exception: \n" +
+                            fi.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
+                }
+
+                object[] invokeArgs = { };
+
+                CommonMessageResponse reply = null;
+                try
+                {
+                    mi = type.GetMethod("Run");
+                    reply = (CommonMessageResponse)mi.Invoke(appClass, invokeArgs);
+                }
+                catch (Exception ex)
+                {
+                    Logger.DangerLine(item.Key + " 出现了问题。");
+                    if (ex.InnerException != null)
+                        throw new Exception("\n/\"" + className + "\" caused an exception: \n" +
+                            type.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
+                    else
+                        throw new Exception("\n/\"" + className + "\" caused an exception: \n" +
+                            type.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
+                }
+                Logger.SuccessLine(item.Key + "已加载。");
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

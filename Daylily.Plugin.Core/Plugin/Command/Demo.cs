@@ -77,7 +77,7 @@ namespace Daylily.Plugin.Core.Plugin.Command
                 // 当所用参数为(string,CommonMessage)，则自动返回给所在群（组）的所在成员（通常不用其他重载，为框架所用）
                 return new CommonMessageResponse(reply, commonMsg, enableAt: true);
             }
-            else if (param[0] == "stop" && param.Length == 0)
+            else if (param[0] == "stop" && param.Length == 1)
             {
                 if (tThread != null && tThread.IsAlive)
                     tThread.Abort();

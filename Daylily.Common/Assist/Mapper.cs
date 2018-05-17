@@ -10,11 +10,13 @@ namespace Daylily.Common.Assist
 {
     public static class Mapper
     {
+        public static Dictionary<string, string> ServicePlugins { get; set; } = new Dictionary<string, string>();
         public static List<string> NormalPlugins { get; set; } = new List<string>();
 
         private static Dictionary<string, string> InnerCmdPlugin { get; set; } = new Dictionary<string, string>();
         private static JsonSettings FileCmdPlugins { get; set; } = new JsonSettings();
 
+        private static readonly string SERVICE_DIR = Path.Combine(Environment.CurrentDirectory, "services");
         private static readonly string PLUGIN_DIR = Path.Combine(Environment.CurrentDirectory, "plugins");
         private static readonly string SETTINGS_FILE = Path.Combine(PLUGIN_DIR, "plugins.json");
 
@@ -43,6 +45,16 @@ namespace Daylily.Common.Assist
 
             if (!Directory.Exists(PLUGIN_DIR))
                 Directory.CreateDirectory(PLUGIN_DIR);
+            if (!Directory.Exists(SERVICE_DIR))
+                Directory.CreateDirectory(SERVICE_DIR);
+
+            foreach (var item in new DirectoryInfo(SERVICE_DIR).GetFiles())
+            {
+                if (item.Extension.ToLower() == ".dll")
+                {
+                    ServicePlugins.Add(item.Name, item.FullName);
+                }
+            }
 
             if (!File.Exists(SETTINGS_FILE))
                 CreateJson();
