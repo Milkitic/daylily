@@ -1,24 +1,21 @@
 ﻿using Daylily.Common.Models.CQRequest.Api;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Daylily.Common.Models
 {
     public class CommonMessageResponse
     {
-        public bool EnableAt { get; private set; }
-        public string Message { get; private set; }
-        public MessageType MessageType { get; private set; }
+        public bool EnableAt { get; }
+        public string Message { get; }
+        public MessageType MessageType { get; }
 
-        public string UserId { get; private set; }
-        public string DiscussId { get; private set; }
-        public string GroupId { get; private set; }
+        public string UserId { get; }
+        public string DiscussId { get; }
+        public string GroupId { get; }
 
-        public SendPrivateMsg Private { get; private set; }
-        public SendDiscussMsg Discuss { get; private set; }
-        public SendGroupMsg Group { get; private set; }
+        public SendPrivateMsg Private { get; }
+        public SendDiscussMsg Discuss { get; }
+        public SendGroupMsg Group { get; }
 
         /// <summary>
         /// 此为指定一个特定的群时再使用
@@ -51,33 +48,35 @@ namespace Daylily.Common.Models
                     Group = new SendGroupMsg(commonMessage.Group.GroupId.ToString(), commonMessage.Group.Message);
                     GroupId = commonMessage.GroupId;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        public CommonMessageResponse(SendPrivateMsg privateMsg, string userId, bool enableAt = false)
-        {
-            UserId = privateMsg.UserId.ToString();
+        //public CommonMessageResponse(SendPrivateMsg privateMsg, string userId, bool enableAt = false)
+        //{
+        //    UserId = privateMsg.UserId.ToString();
 
-            MessageType = MessageType.Private;
-            Private = privateMsg;
-        }
+        //    MessageType = MessageType.Private;
+        //    Private = privateMsg;
+        //}
 
-        public CommonMessageResponse(SendDiscussMsg discussMsg, string userId, bool enableAt = false)
-        {
-            UserId = userId;
-            DiscussId = discussMsg.DiscussId.ToString();
+        //public CommonMessageResponse(SendDiscussMsg discussMsg, string userId, bool enableAt = false)
+        //{
+        //    UserId = userId;
+        //    DiscussId = discussMsg.DiscussId.ToString();
 
-            MessageType = MessageType.Discuss;
-            Discuss = discussMsg;
-        }
+        //    MessageType = MessageType.Discuss;
+        //    Discuss = discussMsg;
+        //}
 
-        public CommonMessageResponse(SendGroupMsg groupMsg, string userId, bool enableAt = false)
-        {
-            UserId = userId;
-            DiscussId = groupMsg.GroupId.ToString();
+        //public CommonMessageResponse(SendGroupMsg groupMsg, string userId, bool enableAt = false)
+        //{
+        //    UserId = userId;
+        //    DiscussId = groupMsg.GroupId.ToString();
 
-            MessageType = MessageType.Group;
-            Group = groupMsg;
-        }
+        //    MessageType = MessageType.Group;
+        //    Group = groupMsg;
+        //}
     }
 }

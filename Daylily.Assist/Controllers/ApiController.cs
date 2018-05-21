@@ -10,20 +10,23 @@ namespace Daylily.Assist.Controllers
 {
     public class ApiController : Controller
     {
-        public static string CQRoot { get; set; } = "";
+        public static string CqRoot { get; set; } = "";
 
         //[HttpPost]
         public IActionResult ImgFile(string fileName)
         {
             try
             {
-                string file = Path.Combine(CQRoot, "data", "image", fileName);
+                string file = Path.Combine(CqRoot, "data", "image", fileName);
                 if (System.IO.File.Exists(file))
                 {
                     return Content(System.IO.File.ReadAllText(file));
                 }
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
 
             return NotFound();
         }

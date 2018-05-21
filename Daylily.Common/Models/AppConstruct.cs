@@ -2,17 +2,15 @@
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse.Api;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Daylily.Common.Models
 {
     public abstract class AppConstruct
     {
-        protected static HttpApi CQApi = new HttpApi();
+        protected static HttpApi CqApi = new HttpApi();
         protected PermissionLevel CurrentLevel { get; set; }
 
-        public Random rnd = new Random();
+        protected Random Rnd = new Random();
 
         public abstract CommonMessageResponse Execute(CommonMessage commonMessage);
 
@@ -21,19 +19,21 @@ namespace Daylily.Common.Models
             switch (response.MessageType)
             {
                 case MessageType.Group:
-                    SendGroupMsgResponse groupMsg = CQApi.SendGroupMessageAsync(response.GroupId,
-                        (response.EnableAt ? Assist.CQCode.EncodeAt(response.UserId) + " " : "") + response.Message).Result;
-                    Logger.InfoLine($"我: {Assist.CQCode.Decode(response.Message)} {{status: {groupMsg.Status}}})");
+                    SendGroupMsgResponse groupMsg = CqApi.SendGroupMessageAsync(response.GroupId,
+                        (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message).Result;
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsg.Status}}})");
                     break;
                 case MessageType.Discuss:
-                    SendDiscussMsgResponse discussMsg = CQApi.SendDiscussMessageAsync(response.DiscussId,
-                        (response.EnableAt ? Assist.CQCode.EncodeAt(response.UserId) + " " : "") + response.Message).Result;
-                    Logger.InfoLine($"我: {Assist.CQCode.Decode(response.Message)} {{status: {discussMsg.Status}}})");
+                    SendDiscussMsgResponse discussMsg = CqApi.SendDiscussMessageAsync(response.DiscussId,
+                        (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message).Result;
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsg.Status}}})");
                     break;
                 case MessageType.Private:
-                    SendPrivateMsgResponse privateMsg = CQApi.SendPrivateMessageAsync(response.UserId, response.Message).Result;
-                    Logger.InfoLine($"我: {Assist.CQCode.Decode(response.Message)} {{status: {privateMsg.Status}}})");
+                    SendPrivateMsgResponse privateMsg = CqApi.SendPrivateMessageAsync(response.UserId, response.Message).Result;
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsg.Status}}})");
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -42,19 +42,21 @@ namespace Daylily.Common.Models
             switch (response.MessageType)
             {
                 case MessageType.Group:
-                    SendGroupMsgResponse groupMsg = CQApi.SendGroupMessageAsync(groupId.ToString(),
-                        (response.EnableAt ? Assist.CQCode.EncodeAt(response.UserId) + " " : "") + response.Message).Result;
-                    Logger.InfoLine($"我: {Assist.CQCode.Decode(response.Message)} {{status: {groupMsg.Status}}})");
+                    SendGroupMsgResponse groupMsg = CqApi.SendGroupMessageAsync(groupId,
+                        (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message).Result;
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsg.Status}}})");
                     break;
                 case MessageType.Discuss:
-                    SendDiscussMsgResponse discussMsg = CQApi.SendDiscussMessageAsync(discussId.ToString(),
-                        (response.EnableAt ? Assist.CQCode.EncodeAt(response.UserId) + " " : "") + response.Message).Result;
-                    Logger.InfoLine($"我: {Assist.CQCode.Decode(response.Message)} {{status: {discussMsg.Status}}})");
+                    SendDiscussMsgResponse discussMsg = CqApi.SendDiscussMessageAsync(discussId.ToString(),
+                        (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message).Result;
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsg.Status}}})");
                     break;
                 case MessageType.Private:
-                    SendPrivateMsgResponse privateMsg = CQApi.SendPrivateMessageAsync(response.UserId, response.Message).Result;
-                    Logger.InfoLine($"我: {Assist.CQCode.Decode(response.Message)} {{status: {privateMsg.Status}}})");
+                    SendPrivateMsgResponse privateMsg = CqApi.SendPrivateMessageAsync(response.UserId, response.Message).Result;
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsg.Status}}})");
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

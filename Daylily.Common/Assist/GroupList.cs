@@ -1,31 +1,23 @@
 ﻿using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Daylily.Common.Assist
 {
     public class GroupList
     {
-        Dictionary<long, GroupSettings> dicGroup = new Dictionary<long, GroupSettings>();
+        private readonly Dictionary<long, GroupSettings> _dicGroup = new Dictionary<long, GroupSettings>();
 
-        public GroupSettings this[long groupId]
-        {
-            get
-            {
-                return dicGroup[groupId];
-            }
-        }
+        public GroupSettings this[long groupId] => _dicGroup[groupId];
 
         public void Add(long groupId)
         {
-            if (dicGroup.Keys.Contains(groupId))
+            if (_dicGroup.Keys.Contains(groupId))
                 return;
 
-            dicGroup.Add(groupId, new GroupSettings(groupId.ToString()));
+            _dicGroup.Add(groupId, new GroupSettings(groupId.ToString()));
         }
 
     }
@@ -40,7 +32,7 @@ namespace Daylily.Common.Assist
         public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
         public List<long> AdminList { get; set; } = new List<long>();
 
-        HttpApi CQApi = new HttpApi();
+        private readonly HttpApi _cqApi = new HttpApi();
 
         public GroupSettings(string groupId)
         {
@@ -50,11 +42,11 @@ namespace Daylily.Common.Assist
 
         public void UpdateInfo()
         {
-            var info = CQApi.GetGroupInfo(Id);
+            var info = _cqApi.GetGroupInfo(Id);
             string name = info == null ? Id : info.GroupName;
             Name = name;
 
-            var adminList = CQApi.GetGroupMemberList(Id);
+            var adminList = _cqApi.GetGroupMemberList(Id);
             adminList.Data.RemoveAll(x => x.Role == "member");
             foreach(var item in adminList.Data)
             {

@@ -1,30 +1,26 @@
 ﻿using Daylily.Common.Models.CQResponse;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Daylily.Common.Models
 {
     public class CommonMessage
     {
-        public string Message { get; private set; }
+        public string Message { get; }
 
         public string FullCommand { get; set; }
         public string Command { get; set; }
         public string Parameter { get; set; }
 
-        public MessageType MessageType { get; private set; }
+        public MessageType MessageType { get; }
         public PermissionLevel PermissionLevel { get; set; }
 
-        public string UserId { get; private set; }
-        public string DiscussId { get; private set; }
-        public string GroupId { get; private set; }
-        public long MessageId { get; private set; }
+        public string UserId { get; }
+        public string DiscussId { get; }
+        public string GroupId { get; }
+        public long MessageId { get; }
 
-        public PrivateMsg Private { get; private set; }
-        public DiscussMsg Discuss { get; private set; }
-        public GroupMsg Group { get; private set; }
+        public PrivateMsg Private { get; }
+        public DiscussMsg Discuss { get; }
+        public GroupMsg Group { get; }
 
         public CommonMessage(PrivateMsg privateMsg, PermissionLevel level = PermissionLevel.Public)
         {

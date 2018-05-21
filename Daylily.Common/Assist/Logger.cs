@@ -6,12 +6,10 @@ namespace Daylily.Common.Assist
 {
     public static class Logger
     {
-
         /// <summary>
         /// 记录日志至控制台
         /// </summary>
         /// <param name="msg">消息</param>
-        /// <param name="source">程序模块名称</param>
         public static void WriteLine(string msg)
         {
             Console.ResetColor();

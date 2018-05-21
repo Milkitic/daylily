@@ -3,8 +3,6 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Daylily.Common.Database
 {
@@ -12,21 +10,22 @@ namespace Daylily.Common.Database
     {
         public static Dictionary<string, string> ConnectionString { get; set; } = new Dictionary<string, string>();
 
-        string currentString;
+        private readonly string _currentString;
+
         public DbHelper(string connectionName)
         {
-            currentString = ConnectionString[connectionName];
+            _currentString = ConnectionString[connectionName];
         }
 
         private MySqlConnection GetConnection()
         {
-            return new MySqlConnection(currentString);
+            return new MySqlConnection(_currentString);
         }
 
         public DataTable FillTable(string queryString, params MySqlParameter[] param)
         {
             DataSet dataSet = new DataSet();
-            DataTable dataTable = new DataTable();
+            DataTable dataTable;
             using (MySqlConnection connection = GetConnection())
             {
                 connection.Open();
@@ -39,34 +38,6 @@ namespace Daylily.Common.Database
             }
             return dataTable;
         }
-
-        //public List<T> FillList<T>(string queryString, params MySqlParameter[] param)
-        //{
-        //    var list_t = new List<T>();
-
-        //    DataSet dataSet = new DataSet();
-        //    DataTable dataTable = new DataTable();
-        //    using (MySqlConnection connection = GetConnection())
-        //    {
-        //        connection.Open();
-
-        //        MySqlCommand command = GetParamCommand(queryString, connection, param);
-
-        //        MySqlDataAdapter mysqlDataAdapter = new MySqlDataAdapter(command);
-        //        mysqlDataAdapter.Fill(dataSet);
-        //        dataTable = dataSet.Tables[0];
-        //        MySqlDataReader objSqlReader = command.ExecuteReader();
-        //        foreach (var dataRow in dataTable.Rows)
-        //        {
-        //            list_t.Add((T)new { dataRow });
-        //        }
-        //        while (objSqlReader.Read())
-        //        {
-        //            list_t.Add(new { 234, 234 });
-        //        }
-        //    }
-        //    return list_t;
-        //}
 
         public int ExecuteNonQuery(string queryString, params MySqlParameter[] param)
         {
@@ -91,7 +62,7 @@ namespace Daylily.Common.Database
         {
             MySqlCommand command = connection.CreateCommand();
             command.CommandText = queryString;
-            if (param != null || param.Length > 0)
+            if (param != null && param.Length > 0)
             {
                 foreach (var item in param)
                 {

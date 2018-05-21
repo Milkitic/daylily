@@ -17,7 +17,7 @@ namespace Daylily.Web.Function
         public static DiscussList DiscussInfo { get; set; } = new DiscussList();
         public static PrivateList PrivateInfo { get; set; } = new PrivateList();
 
-        public static string COMMAND_FLAG = "!";
+        public static string CommandFlag = "!";
 
         Random rnd = new Random();
         int minTime = 200, maxTime = 300; // 回应的反应时间
@@ -113,8 +113,8 @@ namespace Daylily.Web.Function
 
         private void HandleGroupMessage(object obj)
         {
-            var parsed_obj = (GroupMsg)obj;
-            long groupId = parsed_obj.GroupId;
+            var parsedObj = (GroupMsg)obj;
+            long groupId = parsedObj.GroupId;
 
             while (GroupInfo[groupId].MsgQueue.Count != 0)
             {
@@ -141,9 +141,9 @@ namespace Daylily.Web.Function
         }
         private void HandleDiscussMessage(object obj)
         {
-            var parsed_obj = (DiscussMsg)obj;
+            var parsedObj = (DiscussMsg)obj;
 
-            long discussId = parsed_obj.DiscussId;
+            long discussId = parsedObj.DiscussId;
             while (DiscussInfo[discussId].MsgQueue.Count != 0)
             {
                 if (DiscussInfo[discussId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
@@ -169,9 +169,9 @@ namespace Daylily.Web.Function
         }
         private void HandlePrivateMessage(object obj)
         {
-            var parsed_obj = (PrivateMsg)obj;
+            var parsedObj = (PrivateMsg)obj;
 
-            long userId = parsed_obj.UserId;
+            long userId = parsedObj.UserId;
             while (PrivateInfo[userId].MsgQueue.Count != 0)
             {
                 if (PrivateInfo[userId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
@@ -208,20 +208,20 @@ namespace Daylily.Web.Function
             switch (commonMessage.MessageType)
             {
                 case MessageType.Private:
-                    Logger.WriteLine($"{userId}: {CQCode.Decode(message)}");
+                    Logger.WriteLine($"{userId}: {CqCode.Decode(message)}");
                     break;
                 case MessageType.Discuss:
-                    Logger.WriteLine($"({DiscussInfo[discussId].Name}) {userId}: {CQCode.Decode(message)}");
+                    Logger.WriteLine($"({DiscussInfo[discussId].Name}) {userId}: {CqCode.Decode(message)}");
                     break;
                 case MessageType.Group:
                     var userInfo = CQApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString());  // 有点费时间
-                    Logger.WriteLine($"({GroupInfo[groupId].Name}) {userInfo.Data.Nickname}: {CQCode.Decode(message)}");
+                    Logger.WriteLine($"({GroupInfo[groupId].Name}) {userInfo.Data.Nickname}: {CqCode.Decode(message)}");
                     break;
             }
 
-            if (commonMessage.Message.Substring(0, 1) == COMMAND_FLAG)
+            if (commonMessage.Message.Substring(0, 1) == CommandFlag)
             {
-                if (commonMessage.Message.IndexOf(COMMAND_FLAG + "root ") == 0)
+                if (commonMessage.Message.IndexOf(CommandFlag + "root ") == 0)
                 {
                     if (commonMessage.UserId != "2241521134")
                     {
@@ -235,7 +235,7 @@ namespace Daylily.Web.Function
                     }
 
                 }
-                else if (message.IndexOf(COMMAND_FLAG + "sudo ") == 0 && type == MessageType.Group)
+                else if (message.IndexOf(CommandFlag + "sudo ") == 0 && type == MessageType.Group)
                 {
                     if (!GroupInfo[groupId].AdminList.Contains(userId))
                     {
@@ -266,13 +266,12 @@ namespace Daylily.Web.Function
                 #region 折叠：invoke
                 Type type = Type.GetType("Daylily.Web.Function.Application." + item);
                 MethodInfo mi = type.GetMethod("Execute");
-                var ok = type.GetMethods();
                 object appClass = Activator.CreateInstance(type);
                 object[] invokeArgs = { commonMessage };
 
                 #endregion
 
-                CommonMessageResponse reply = null;
+                CommonMessageResponse reply;
                 try
                 {
                     reply = (CommonMessageResponse)mi.Invoke(appClass, invokeArgs);
@@ -282,9 +281,8 @@ namespace Daylily.Web.Function
                     if (ex.InnerException != null)
                         throw new Exception("\n\"" + commonMessage.Message + "\" caused an exception: \n" +
                             type.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
-                    else
-                        throw new Exception("\n\"" + commonMessage.Message + "\" caused an exception: \n" +
-                            type.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
+                    throw new Exception("\n\"" + commonMessage.Message + "\" caused an exception: \n" +
+                                        type.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
                 }
                 if (reply == null) continue;
                 AppConstruct.SendMessage(reply);
@@ -327,16 +325,15 @@ namespace Daylily.Web.Function
                     if (ex.InnerException != null)
                         throw new Exception("\n\"/" + fullCmd + "\" caused an exception: \n" +
                             fi.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
-                    else
-                        throw new Exception("\n\"/" + fullCmd + "\" caused an exception: \n" +
-                            fi.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
+                    throw new Exception("\n\"/" + fullCmd + "\" caused an exception: \n" +
+                                        fi.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
                 }
             }
 
             object[] invokeArgs = { commonMessage };
             #endregion
 
-            CommonMessageResponse reply = null;
+            CommonMessageResponse reply;
             try
             {
                 mi = type.GetMethod("Execute");

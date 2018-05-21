@@ -18,13 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Daylily.Common">
-      <HintPath>..\Daylily.Common\bin\Release\netcoreapp2.0\Daylily.Common.dll</HintPath>
-    </Reference>
+    <Folder Include="services\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="services\" />
+    <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
   </ItemGroup>
 
 </Project>

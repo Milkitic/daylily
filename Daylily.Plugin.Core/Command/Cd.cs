@@ -1,10 +1,8 @@
-﻿using Daylily.Common.Models;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Text;
+using Daylily.Common.Models;
 
-namespace Daylily.Plugin.Command
+namespace Daylily.Plugin.Core.Command
 {
     class Cd : AppConstruct
     {

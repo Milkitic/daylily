@@ -30,30 +30,30 @@ namespace Daylily.Web.Controllers
                 // 私聊
                 if (obj.message_type == "private")
                 {
-                    PrivateMsg parsed_obj = JsonConvert.DeserializeObject<PrivateMsg>(JsonConvert.SerializeObject(obj));
+                    PrivateMsg parsedObj = JsonConvert.DeserializeObject<PrivateMsg>(JsonConvert.SerializeObject(obj));
                     try
                     {
-                        MessageHandler private_handler = new MessageHandler(parsed_obj);
+                        MessageHandler privateHandler = new MessageHandler(parsedObj);
                         //private_handler.HandleMessage();
                     }
                     catch (Exception ex)
                     {
-                        PrivateMsgResponse private_resp = new PrivateMsgResponse()
+                        PrivateMsgResponse privateResp = new PrivateMsgResponse()
                         {
                             AutoEscape = false,
                             Reply = ex.Message
                         };
-                        return Json(private_resp);
+                        return Json(privateResp);
                     }
                 }
 
                 //群聊
                 else if (obj.message_type == "group")
                 {
-                    GroupMsg parsed_obj = JsonConvert.DeserializeObject<GroupMsg>(JsonConvert.SerializeObject(obj));
+                    GroupMsg parsedObj = JsonConvert.DeserializeObject<GroupMsg>(JsonConvert.SerializeObject(obj));
                     try
                     {
-                        MessageHandler group_handler = new MessageHandler(parsed_obj);
+                        MessageHandler groupHandler = new MessageHandler(parsedObj);
                         //group_handler.HandleMessage();
                     }
                     catch (Exception ex)
@@ -78,10 +78,10 @@ namespace Daylily.Web.Controllers
                 //讨论组
                 else if (obj.message_type == "discuss")
                 {
-                    DiscussMsg parsed_obj = JsonConvert.DeserializeObject<DiscussMsg>(JsonConvert.SerializeObject(obj));
+                    DiscussMsg parsedObj = JsonConvert.DeserializeObject<DiscussMsg>(JsonConvert.SerializeObject(obj));
                     try
                     {
-                        MessageHandler group_handler = new MessageHandler(parsed_obj);
+                        MessageHandler discussHandler = new MessageHandler(parsedObj);
                         //group_handler.HandleMessage();
                     }
                     catch (Exception ex)

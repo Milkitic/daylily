@@ -11,7 +11,7 @@ namespace Daylily.Service
             Thread t = new Thread(Async);
             t.Start();
         }
-        private void Async()
+        private static void Async()
         {
             while (true)
             {

@@ -13,9 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Daylily.Common">
-      <HintPath>..\Daylily.Common\bin\Release\netcoreapp2.0\Daylily.Common.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

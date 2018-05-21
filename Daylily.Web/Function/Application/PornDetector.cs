@@ -1,17 +1,15 @@
 ﻿using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.CosResponse;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Daylily.Web.Function.Application
 {
     public class PornDetector : AppConstruct
     {
-        private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
-        private static Dictionary<string, CosObject> MD5List { get; set; } = new Dictionary<string, CosObject>();
+        private static Dictionary<string, int> UserCount { get; } = new Dictionary<string, int>();
+        private static Dictionary<string, CosObject> Md5List { get; } = new Dictionary<string, CosObject>();
 
         public override CommonMessageResponse Execute(CommonMessage message)
         {
@@ -19,76 +17,74 @@ namespace Daylily.Web.Function.Application
             if (message.Group != null && message.GroupId != "133605766") return null;
 
             //if (user != "2241521134") return null;
-            var img_list = CQCode.GetImageInfo(message.Message);
-            if (img_list == null)
+            var imgList = CqCode.GetImageInfo(message.Message);
+            if (imgList == null)
                 return null;
-            List<string> url_list = new List<string>();
-            List<CosObject> cache_list = new List<CosObject>();
-            foreach (var item in img_list)
+            List<string> urlList = new List<string>();
+            List<CosObject> cacheList = new List<CosObject>();
+            foreach (var item in imgList)
             {
-                if (MD5List.Keys.Contains(item.Md5))
-                    cache_list.Add(MD5List[item.Md5]);
+                if (Md5List.Keys.Contains(item.Md5))
+                    cacheList.Add(Md5List[item.Md5]);
                 else if (item.Size > 1000 * 60) //60KB
-                    url_list.Add(item.Url);
+                    urlList.Add(item.Url);
             }
-            if (url_list.Count == 0 && cache_list.Count == 0)
+            if (urlList.Count == 0 && cacheList.Count == 0)
                 return null;
 
-            Logger.WarningLine("发现了" + (url_list.Count + cache_list.Count) + "张图");
+            Logger.WarningLine("发现了" + (urlList.Count + cacheList.Count) + "张图");
 
             CosAnalyzer model = new CosAnalyzer
             {
                 result_list = new List<CosObject>()
             };
 
-            if (url_list.Count != 0)
+            if (urlList.Count != 0)
             {
                 string str = Newtonsoft.Json.JsonConvert.SerializeObject(new
                 {
                     appid = "1252749411",
-                    url_list = url_list.ToArray()
+                    url_list = urlList.ToArray()
                 });
 
                 var abc = WebRequestHelper.CreatePostHttpResponse("http://service.image.myqcloud.com/detection/porn_detect", str, authorization: Signature.Get());
-                var resp_str = WebRequestHelper.GetResponseString(abc);
+                var respStr = WebRequestHelper.GetResponseString(abc);
 
-                model = Newtonsoft.Json.JsonConvert.DeserializeObject<CosAnalyzer>(resp_str);
+                model = Newtonsoft.Json.JsonConvert.DeserializeObject<CosAnalyzer>(respStr);
             }
 
-            model.result_list.AddRange(cache_list);
+            model.result_list.AddRange(cacheList);
             int i = 0;
             foreach (var item in model.result_list)
             {
-                if (i < img_list.Length && !MD5List.Keys.Contains(img_list[i].Md5))
-                    MD5List.Add(img_list[i].Md5, item);
+                if (i < imgList.Length && !Md5List.Keys.Contains(imgList[i].Md5))
+                    Md5List.Add(imgList[i].Md5, item);
                 i++;
 
-                if (item.data.result == 0 && item.data.normal_score > item.data.hot_score && item.data.normal_score > item.data.porn_score && item.data.confidence > 40)
-                    continue;
-                else
+                switch (item.data.result)
                 {
-                    if (item.data.result == 1 || item.data.result == 2)
-                    {
-                        CQApi.SetGroupBan(message.GroupId, message.UserId, 24 * 60 * 60);
+                    case 0 when item.data.normal_score > item.data.hot_score && item.data.normal_score > item.data.porn_score && item.data.confidence > 40:
+                        continue;
+                    case 1:
+                    case 2:
+                        CqApi.SetGroupBan(message.GroupId, message.UserId, 24 * 60 * 60);
                         return new CommonMessageResponse("……………………");
-                    }
-                    else
-                    {
-                        if (item.data.porn_score >= item.data.hot_score && item.data.porn_score > 65)
-                        {
-                            //ifAt = true;
-                            return AddCount(message.UserId, message.GroupId);
-                            //return "球球你，营养不够了";
-                        }
-                        if (item.data.hot_score >= item.data.porn_score && item.data.hot_score > item.data.normal_score && item.data.hot_score > 80)
-                        {
-                            //ifAt = true;
-                            return AddCount(message.UserId, message.GroupId);
-                            //return "社保";
-                        }
-                        break;
-                    }
                 }
+
+                if (item.data.porn_score >= item.data.hot_score && item.data.porn_score > 65)
+                {
+                    //ifAt = true;
+                    return AddCount(message.UserId, message.GroupId);
+                    //return "球球你，营养不够了";
+                }
+
+                if (item.data.hot_score >= item.data.porn_score && item.data.hot_score > item.data.normal_score && item.data.hot_score > 80)
+                {
+                    //ifAt = true;
+                    return AddCount(message.UserId, message.GroupId);
+                    //return "社保";
+                }
+                break;
             }
             return null;
         }
@@ -107,7 +103,7 @@ namespace Daylily.Web.Function.Application
             else
             {
                 UserCount[user] = 2;
-                CQApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
+                CqApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
                 return new CommonMessageResponse("...");
             }
         }

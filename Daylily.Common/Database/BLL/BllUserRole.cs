@@ -3,8 +3,6 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Daylily.Common.Database.BLL
 {
@@ -28,18 +26,18 @@ VALUES(@user_id,@role,@qq,@legacy_uname,@current_uname,@is_banned,@repeat_count,
                     new MySqlParameter("@mode", role.Mode));
         }
 
-        public List<TblUserRole> GetUserRoleByQQ(long qq) =>
+        public List<TblUserRole> GetUserRoleByQq(long qq) =>
            _GetUserRole("SELECT * FROM userrole WHERE qq = @qq",
               new MySqlParameter("@qq", qq));
 
         private List<TblUserRole> _GetUserRole(string queryString, params MySqlParameter[] param)
         {
             DbHelper dbCabbage = new DbHelper("cabbage");
-            List<TblUserRole> parsed_list = new List<TblUserRole>();
+            List<TblUserRole> parsedList = new List<TblUserRole>();
             DataTable dataTable = dbCabbage.FillTable(queryString, param);
             foreach (DataRow item in dataTable.Rows)
             {
-                parsed_list.Add(new TblUserRole
+                parsedList.Add(new TblUserRole
                 {
                     Id = Convert.ToInt32(item["id"]),
                     UserId = Convert.ToInt64(item["user_id"]),
@@ -53,7 +51,7 @@ VALUES(@user_id,@role,@qq,@legacy_uname,@current_uname,@is_banned,@repeat_count,
                     Mode = Convert.ToInt32(item["mode"])
                 });
             }
-            return parsed_list;
+            return parsedList;
         }
     }
 }

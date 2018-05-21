@@ -1,8 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Daylily.Common.Models.CQResponse
 {
@@ -14,6 +10,7 @@ namespace Daylily.Common.Models.CQResponse
         public string PostType { get; set; }
         [JsonProperty(PropertyName = "message_type")]
         public string MessageType { get; set; }
+        [JsonProperty(PropertyName = "sub_type")]
         public string SubType { get; set; }
         [JsonProperty(PropertyName = "message_id")]
         public long MessageId { get; set; }

@@ -1,10 +1,6 @@
 ﻿using Daylily.Common.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Daylily.Plugin.Command
+namespace Daylily.Plugin.Core.Command
 {
     public class Ping : AppConstruct
     {

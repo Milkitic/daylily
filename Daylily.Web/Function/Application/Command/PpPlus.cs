@@ -61,7 +61,7 @@ namespace Daylily.Web.Function.Application.Command
                         d_value.Add(kvp.Key, pp);
                     }
                 }
-                var resp = CQCode.EncodeImageToBase64(Draw(@params, d_value));
+                var resp = CqCode.EncodeImageToBase64(Draw(@params, d_value));
                 //Logger.InfoLine(resp);
                 return new CommonMessageResponse(resp, commonMessage);
             }

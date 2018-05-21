@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,26 +11,13 @@ namespace Daylily.Common.Assist
     {
         public static string GetImageFromUrl(string url, string savePath, string ext)
         {
-            WebResponse response = null;
-            Stream stream = null;
-            try
-            {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            WebResponse response = request.GetResponse();
 
-                response = request.GetResponse();
-                stream = response.GetResponseStream();
+            //Stream stream = response.GetResponseStream();
+            response.GetResponseStream();
 
-                if (!response.ContentType.ToLower().StartsWith("text/"))
-                {
-                    return SaveBinaryFile(response, savePath, ext);
-                }
-
-            }
-            catch (Exception e)
-            {
-                string em = e.ToString();
-            }
-            return null;
+            return !response.ContentType.ToLower().StartsWith("text/") ? SaveBinaryFile(response, savePath, ext) : null;
         }
         /// <summary>
         /// 创建一个一般请求
@@ -42,18 +28,13 @@ namespace Daylily.Common.Assist
             StringBuilder buffer = new StringBuilder();
             int i = 0;
             if (parameters != null)
-                foreach (string key in parameters.Keys)
+            {
+                foreach (var key in parameters.Keys)
                 {
-                    if (i > 0)
-                    {
-                        buffer.AppendFormat("&{0}={1}", key, parameters[key]);
-                    }
-                    else
-                    {
-                        buffer.AppendFormat("{0}={1}", key, parameters[key]);
-                        i++;
-                    }
+                    buffer.AppendFormat(i > 0 ? "&{0}={1}" : "{0}={1}", key, parameters[key]);
+                    i++;
                 }
+            }
 
             HttpWebRequest request = _GetReqPostObj("application/x-www-form-urlencoded", url, buffer.ToString(), timeout, userAgent, cookies, authorization);
             return request.GetResponse() as HttpWebResponse;
@@ -84,16 +65,19 @@ namespace Daylily.Common.Assist
             // 参数
             StringBuilder buffer = new StringBuilder();
             int i = 0;
-            foreach (string key in parameters.Keys)
+            if (parameters != null)
             {
-                if (i > 0)
+                foreach (var key in parameters.Keys)
                 {
-                    buffer.AppendFormat("&{0}={1}", key, parameters[key]);
-                }
-                else
-                {
-                    buffer.AppendFormat("{0}={1}", key, parameters[key]);
-                    i++;
+                    if (i > 0)
+                    {
+                        buffer.AppendFormat("&{0}={1}", key, parameters[key]);
+                    }
+                    else
+                    {
+                        buffer.AppendFormat("{0}={1}", key, parameters[key]);
+                        i++;
+                    }
                 }
             }
 
@@ -126,14 +110,14 @@ namespace Daylily.Common.Assist
         {
             using (Stream s = webresponse.GetResponseStream())
             {
-                StreamReader reader = new StreamReader(s, Encoding.UTF8);
+                StreamReader reader = new StreamReader(s ?? throw new InvalidOperationException(), Encoding.UTF8);
                 return reader.ReadToEnd();
             }
         }
 
         private static HttpWebRequest _GetReqPostObj(string contentType, string url, string param, int timeout, string userAgent, CookieCollection cookies, string authorization)
         {
-            HttpWebRequest request = null;
+            HttpWebRequest request;
 
             // HTTPS? 保留
             if (url.StartsWith("https", StringComparison.OrdinalIgnoreCase))
@@ -144,6 +128,8 @@ namespace Daylily.Common.Assist
             {
                 request = WebRequest.Create(url) as HttpWebRequest;
             }
+            if (request == null) throw new NullReferenceException();
+
             request.Method = "POST";
             // 设定UserAgent以及超时
             if (userAgent != null) request.UserAgent = userAgent;
@@ -181,17 +167,17 @@ namespace Daylily.Common.Assist
             {
                 request.ContentType = contentType;
             }
+
             // 保留使用
-            string[] values = request.Headers.GetValues("Content-Type");
+            // string[] values = request.Headers.GetValues("Content-Type");
 
             return request;
         }
 
         private static HttpWebRequest _GetReqGetObj(string url, IDictionary<string, string> parameters)
         {
-            HttpWebRequest request = null;
-
-            request = WebRequest.Create(url) as HttpWebRequest;
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            if (request == null) throw new NullReferenceException();
 
             //request.ContentType = "application/x-www-form-urlencoded";
 
@@ -213,33 +199,25 @@ namespace Daylily.Common.Assist
                     }
                 }
                 byte[] data = Encoding.ASCII.GetBytes(buffer.ToString());
-                try
+                using (Stream stream = request.GetRequestStream())
                 {
-                    using (Stream stream = request.GetRequestStream())
-                    {
-                        stream.Write(data, 0, data.Length);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
+                    stream.Write(data, 0, data.Length);
                 }
             }
 
             // 保留使用
-            string[] values = request.Headers.GetValues("Content-Type");
+            // string[] values = request.Headers.GetValues("Content-Type");
 
             return request;
         }
 
         private static HttpWebRequest _GetReqUrlGetObj(string url, IDictionary<string, string> parameters)
         {
-            HttpWebRequest request = null;
             if (!(parameters == null || parameters.Count == 0))
             {
                 StringBuilder buffer = new StringBuilder();
                 int i = 0;
-                foreach (string key in parameters.Keys)
+                foreach (var key in parameters.Keys)
                 {
                     if (i > 0)
                     {
@@ -251,10 +229,10 @@ namespace Daylily.Common.Assist
                         i++;
                     }
                 }
-                url = url + buffer.ToString();
+                url = url + buffer;
             }
 
-            request = WebRequest.Create(url) as HttpWebRequest;
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             return request;
         }
 
@@ -271,6 +249,7 @@ namespace Daylily.Common.Assist
                     File.Delete(filePath);
                 Stream outStream = File.Create(filePath);
                 Stream inStream = response.GetResponseStream();
+                if (inStream == null) throw new NullReferenceException();
 
                 int l;
                 do

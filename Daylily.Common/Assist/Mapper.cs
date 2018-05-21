@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Daylily.Common.Assist
 {
@@ -16,26 +15,18 @@ namespace Daylily.Common.Assist
         private static Dictionary<string, string> InnerCmdPlugin { get; set; } = new Dictionary<string, string>();
         private static JsonSettings FileCmdPlugins { get; set; } = new JsonSettings();
 
-        private static readonly string SERVICE_DIR = Path.Combine(Environment.CurrentDirectory, "services");
-        private static readonly string PLUGIN_DIR = Path.Combine(Environment.CurrentDirectory, "plugins");
-        private static readonly string SETTINGS_FILE = Path.Combine(PLUGIN_DIR, "plugins.json");
+        private static readonly string ServiceDir = Path.Combine(Environment.CurrentDirectory, "services");
+        private static readonly string PluginDir = Path.Combine(Environment.CurrentDirectory, "plugins");
+        private static readonly string SettingsFile = Path.Combine(PluginDir, "plugins.json");
 
         public static void Init()
         {
             // 偷懒测试用
-            //InnerCmdPlugin.Add("mykds", "MyKudosu");
-            //InnerCmdPlugin.Add("test", "Test");
-            //InnerCmdPlugin.Add("h", "Help");
-            //InnerCmdPlugin.Add("help", "Help");
-            //InnerCmdPlugin.Add("setid", "SetId");
-            //InnerCmdPlugin.Add("myelo", "MyElo");
-            //InnerCmdPlugin.Add("elo", "Elo");
-            //InnerCmdPlugin.Add("sleep", "Sleep");
-            //InnerCmdPlugin.Add("slip", "Sleep");
             InnerCmdPlugin.Add("pp", "PpPlus");
             InnerCmdPlugin.Add("send", "Send");
             InnerCmdPlugin.Add("kd", "Kudosu");
             InnerCmdPlugin.Add("sdown", "Shutdown");
+            InnerCmdPlugin.Add("rcon", "Rcon");
 
             // 内置功能
             NormalPlugins.Add("PornDetector");
@@ -43,12 +34,12 @@ namespace Daylily.Common.Assist
             NormalPlugins.Add("PandaDetectorAlpha");
             NormalPlugins.Add("CheckCqAt");
 
-            if (!Directory.Exists(PLUGIN_DIR))
-                Directory.CreateDirectory(PLUGIN_DIR);
-            if (!Directory.Exists(SERVICE_DIR))
-                Directory.CreateDirectory(SERVICE_DIR);
+            if (!Directory.Exists(PluginDir))
+                Directory.CreateDirectory(PluginDir);
+            if (!Directory.Exists(ServiceDir))
+                Directory.CreateDirectory(ServiceDir);
 
-            foreach (var item in new DirectoryInfo(SERVICE_DIR).GetFiles())
+            foreach (var item in new DirectoryInfo(ServiceDir).GetFiles())
             {
                 if (item.Extension.ToLower() == ".dll")
                 {
@@ -56,29 +47,26 @@ namespace Daylily.Common.Assist
                 }
             }
 
-            if (!File.Exists(SETTINGS_FILE))
+            if (!File.Exists(SettingsFile))
                 CreateJson();
             else
             {
-                string jsonString = File.ReadAllText(SETTINGS_FILE);
+                string jsonString = File.ReadAllText(SettingsFile);
                 FileCmdPlugins = JsonConvert.DeserializeObject<JsonSettings>(jsonString);
             }
         }
 
         public static string GetClassName(string name, out string fileName)
         {
-            foreach (KeyValuePair<string, Dictionary<string, string>> item in FileCmdPlugins.Plugins)
+            foreach (var item in FileCmdPlugins.Plugins)
             {
-                if (item.Value.Keys.Contains(name))
-                {
-                    fileName = Path.Combine(PLUGIN_DIR, item.Key);
-                    return item.Value[name];
-                }
+                if (!item.Value.Keys.Contains(name))
+                    continue;
+                fileName = Path.Combine(PluginDir, item.Key);
+                return item.Value[name];
             }
             fileName = null;
-            if (!InnerCmdPlugin.Keys.Contains(name))
-                return null;
-            return InnerCmdPlugin[name];
+            return !InnerCmdPlugin.Keys.Contains(name) ? null : InnerCmdPlugin[name];
         }
 
         private static void CreateJson()
@@ -98,7 +86,7 @@ namespace Daylily.Common.Assist
                 });
             string jsonFile = ConvertJsonString(JsonConvert.SerializeObject(jSettings));
 
-            File.WriteAllText(Path.Combine(PLUGIN_DIR, "plugins.json"), jsonFile);
+            File.WriteAllText(Path.Combine(PluginDir, "plugins.json"), jsonFile);
         }
 
         public static string ConvertJsonString(string str)
@@ -120,10 +108,7 @@ namespace Daylily.Common.Assist
                 serializer.Serialize(jsonWriter, obj);
                 return textWriter.ToString();
             }
-            else
-            {
-                return str;
-            }
+            return str;
         }
     }
 }

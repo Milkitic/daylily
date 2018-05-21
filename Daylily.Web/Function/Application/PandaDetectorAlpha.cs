@@ -3,24 +3,23 @@ using Daylily.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Daylily.Web.Function.Application
 {
     public class PandaDetectorAlpha : AppConstruct
     {
-        Thread thread;
+        private readonly List<string> _receivedString = new List<string>();
+        private readonly List<string> _pathList = new List<string>();
 
-        private Process proc;
-        private List<string> receivedString = new List<string>();
-        List<string> pathList = new List<string>();
-        int pandaCount = 0;
-        private static int totalCount = 0;
-        CommonMessage message;
+        private Thread _thread;
+        private Process _proc;
+
+        private int _pandaCount;
+        private static int _totalCount;
+
+        private CommonMessage _message;
 
         public override CommonMessageResponse Execute(CommonMessage message)
         {
@@ -29,30 +28,30 @@ namespace Daylily.Web.Function.Application
                     return null;
 
             //if (user != "2241521134") return null;
-            this.message = message;
+            _message = message;
 
-            var img_list = CQCode.GetImageInfo(message.Message);
-            if (img_list == null)
+            var imgList = CqCode.GetImageInfo(message.Message);
+            if (imgList == null)
                 return null;
 
-            foreach (var item in img_list)
+            foreach (var item in imgList)
             {
                 if (item.Extension.ToLower() == ".gif")
                     continue;
                 if (item.FileInfo.Exists)
                 {
-                    pathList.Add(item.FileInfo.FullName);
+                    _pathList.Add(item.FileInfo.FullName);
                 }
                 else
                 {
                     WebRequestHelper.GetImageFromUrl(item.Url, item.Md5, item.Extension);
-                    pathList.Add(Path.Combine(Environment.CurrentDirectory, "images", item.Md5 + item.Extension));
+                    _pathList.Add(Path.Combine(Environment.CurrentDirectory, "images", item.Md5 + item.Extension));
                 }
-                totalCount++;
+                _totalCount++;
             }
-            thread = new Thread(new ParameterizedThreadStart(RunDetector));
-            thread.Start(pathList);
-            Logger.PrimaryLine("熊猫共" + totalCount);
+            _thread = new Thread(new ParameterizedThreadStart(RunDetector));
+            _thread.Start(_pathList);
+            Logger.PrimaryLine("熊猫共" + _totalCount);
             return null;
         }
 
@@ -60,39 +59,39 @@ namespace Daylily.Web.Function.Application
         /// <summary>
         /// 核心识别by sahuang
         /// </summary>
-        private void RunDetector(object pathList)
+        private void RunDetector(object newPathList)
         {
 
-            var list = (List<string>)pathList;
+            var list = (List<string>)newPathList;
             foreach (var fullPath in list)
             {
                 try
                 {
-                    if (proc != null)
+                    if (_proc != null)
                     {
-                        if (!proc.HasExited) proc.Kill();
-                        proc = null;
+                        if (!_proc.HasExited) _proc.Kill();
+                        _proc = null;
                     }
-                    proc = new Process();
-                    proc.StartInfo.FileName = "python3";  // python3 dragon-detection.py "root"
-                    proc.StartInfo.Arguments = $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"";      // 参数  
+                    _proc = new Process();
+                    _proc.StartInfo.FileName = "python3";  // python3 dragon-detection.py "root"
+                    _proc.StartInfo.Arguments = $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"";      // 参数  
 
-                    proc.StartInfo.CreateNoWindow = true;
+                    _proc.StartInfo.CreateNoWindow = true;
                     //proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                    proc.StartInfo.UseShellExecute = false;
-                    proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    _proc.StartInfo.UseShellExecute = false;
+                    _proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-                    proc.StartInfo.RedirectStandardOutput = true; // 重定向标准输出  
-                    proc.StartInfo.RedirectStandardError = true;  // 重定向错误输出  
-                    proc.OutputDataReceived += new DataReceivedEventHandler(ProcOutputReceived);
-                    proc.ErrorDataReceived += new DataReceivedEventHandler(ProcErrorReceived);
+                    _proc.StartInfo.RedirectStandardOutput = true; // 重定向标准输出  
+                    _proc.StartInfo.RedirectStandardError = true;  // 重定向错误输出  
+                    _proc.OutputDataReceived += ProcOutputReceived;
+                    _proc.ErrorDataReceived += ProcErrorReceived;
 
                     Logger.WriteLine("(熊猫)正在调用中");
-                    proc.Start();
-                    proc.BeginOutputReadLine();
-                    proc.BeginErrorReadLine();
+                    _proc.Start();
+                    _proc.BeginOutputReadLine();
+                    _proc.BeginErrorReadLine();
 
-                    proc.WaitForExit();
+                    _proc.WaitForExit();
                     ProcExited();
                 }
                 catch (Exception ex)
@@ -101,21 +100,20 @@ namespace Daylily.Web.Function.Application
                 }
                 finally
                 {
-                    totalCount--;
-                    Logger.PrimaryLine("熊猫" + (totalCount + 1) + "->" + totalCount);
+                    _totalCount--;
+                    Logger.PrimaryLine("熊猫" + (_totalCount + 1) + "->" + _totalCount);
                 }
             }
 
-            if (pandaCount > 0)
+            if (_pandaCount > 0)
             {
-                var perc = rnd.NextDouble();
-                if (perc < 0.15 || (perc < 0.5 && message.GroupId == "428274344"))
+                var perc = Rnd.NextDouble();
+                if (perc < 0.15 || (perc < 0.5 && _message.GroupId == "428274344"))
                 {
                     DirectoryInfo di = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
                     var files = di.GetFiles();
-                    string msg = CQCode.EncodeFileToBase64(files[rnd.Next(files.Length)].FullName);
-                    SendMessage(new CommonMessageResponse(msg, message));
-                    return;
+                    string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
+                    SendMessage(new CommonMessageResponse(msg, _message));
                 }
                 else
                 {
@@ -128,13 +126,13 @@ namespace Daylily.Web.Function.Application
         private void ProcOutputReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data == null || e.Data.Trim() == "") return;
-            receivedString.Add(e.Data);
+            _receivedString.Add(e.Data);
             //Console.WriteLine(e.Data);
         }
         private void ProcErrorReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data == null || e.Data.Trim() == "") return;
-            receivedString.Add(e.Data);
+            _receivedString.Add(e.Data);
             //Console.WriteLine(e.Data);
         }
         private void ProcExited()
@@ -144,8 +142,8 @@ namespace Daylily.Web.Function.Application
 
             //receivedString.RemoveAll(x => x == null);
 
-            if (receivedString.Count == 0) return;
-            string line = receivedString[receivedString.Count - 1];
+            if (_receivedString.Count == 0) return;
+            string line = _receivedString[_receivedString.Count - 1];
             Logger.WarningLine(line);
 
             var tmp = line.Split(' ');
@@ -154,7 +152,7 @@ namespace Daylily.Web.Function.Application
             if (status == 1 && confidence > 50)
             {
                 //Logger.WarningLine(confidence.ToString());
-                pandaCount++;
+                _pandaCount++;
             }
             Console.WriteLine("(熊猫)调用结束");
         }

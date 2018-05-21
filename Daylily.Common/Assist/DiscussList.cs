@@ -1,31 +1,23 @@
 ﻿using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Daylily.Common.Assist
 {
     public class DiscussList
     {
-        Dictionary<long, DiscussSettings> dicDiscuss = new Dictionary<long, DiscussSettings>();
+        private readonly Dictionary<long, DiscussSettings> _dicDiscuss = new Dictionary<long, DiscussSettings>();
 
-        public DiscussSettings this[long discussId]
-        {
-            get
-            {
-                return dicDiscuss[discussId];
-            }
-        }
+        public DiscussSettings this[long discussId] => _dicDiscuss[discussId];
 
         public void Add(long discussId)
         {
-            if (dicDiscuss.Keys.Contains(discussId))
+            if (_dicDiscuss.Keys.Contains(discussId))
                 return;
 
-            dicDiscuss.Add(discussId, new DiscussSettings(discussId.ToString()));
+            _dicDiscuss.Add(discussId, new DiscussSettings(discussId.ToString()));
         }
 
     }
@@ -39,7 +31,7 @@ namespace Daylily.Common.Assist
         public int MsgLimit { get; set; } = 10;
         public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
 
-        HttpApi CQApi = new HttpApi();
+        private readonly HttpApi _cqApi = new HttpApi();
 
         public DiscussSettings(string discussId)
         {
@@ -49,7 +41,7 @@ namespace Daylily.Common.Assist
 
         public void UpdateInfo()
         {
-            var info = CQApi.GetGroupInfo(Id);
+            var info = _cqApi.GetGroupInfo(Id);
             string name = info == null ? Id : info.GroupName;
             Name = name;
         }

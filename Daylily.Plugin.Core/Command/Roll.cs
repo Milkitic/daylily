@@ -1,50 +1,45 @@
-﻿using Daylily.Common.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
+using Daylily.Common.Models;
 
-namespace Daylily.Plugin.Command
+namespace Daylily.Plugin.Core.Command
 {
     public class Roll : AppConstruct
     {
         public override CommonMessageResponse Execute(CommonMessage message)
         {
             var query = message.Parameter.Split(' ');
-            if (!int.TryParse(query[0], out int a))
+            if (!int.TryParse(query[0], out _))
             {
                 return new CommonMessageResponse(Next().ToString(), message, true);
             }
-            else if (query.Length == 1)
+
+            switch (query.Length)
             {
-                return new CommonMessageResponse(Next(int.Parse(query[0])).ToString(), message, true);
+                case 1:
+                    return new CommonMessageResponse(Next(int.Parse(query[0])).ToString(), message, true);
+                case 2:
+                    return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1])).ToString(), message, true);
+                case 3:
+                    return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1]), int.Parse(query[2])), message, true);
+                default:
+                    return new CommonMessageResponse("参数不对...", message, true);
             }
-            else if (query.Length == 2)
-            {
-                return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1])).ToString(), message, true);
-            }
-            else if (query.Length == 3)
-            {
-                return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1]), int.Parse(query[2])), message, true);
-            }
-            else
-                return new CommonMessageResponse("参数不对...", message, true);
         }
 
         private int Next()
         {
-            return rnd.Next(0, 101);
+            return Rnd.Next(0, 101);
         }
 
         private int Next(int uBound)
         {
-            return rnd.Next(0, uBound + 1);
+            return Rnd.Next(0, uBound + 1);
         }
 
         private int Next(int lBound, int uBound)
         {
-            return rnd.Next(lBound, uBound + 1);
+            return Rnd.Next(lBound, uBound + 1);
         }
 
         private string Next(int lBound, int uBound, int times)
@@ -61,7 +56,7 @@ namespace Daylily.Plugin.Command
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < times; i++)
             {
-                int index = rnd.Next(0, list.Count);
+                int index = Rnd.Next(0, list.Count);
                 sb.Append(list[index] + ", ");
                 list.RemoveAt(index);
             }

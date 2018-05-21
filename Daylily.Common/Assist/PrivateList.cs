@@ -1,30 +1,22 @@
-﻿using Daylily.Common.Interface.CQHttp;
-using Daylily.Common.Models.CQResponse;
-using System;
+﻿using Daylily.Common.Models.CQResponse;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Daylily.Common.Assist
 {
     public class PrivateList
     {
-        public PrivateSettings this[long groupId]
-        {
-            get
-            {
-                return di[groupId];
-            }
-        }
+        public PrivateSettings this[long groupId] => _di[groupId];
 
         public void Add(long privateId)
         {
-            if (di.Keys.Contains(privateId))
+            if (_di.Keys.Contains(privateId))
                 return;
-            di.Add(privateId, new PrivateSettings());
+            _di.Add(privateId, new PrivateSettings());
         }
-        Dictionary<long, PrivateSettings> di = new Dictionary<long, PrivateSettings>();
+
+        private readonly Dictionary<long, PrivateSettings> _di = new Dictionary<long, PrivateSettings>();
 
     }
     public class PrivateSettings

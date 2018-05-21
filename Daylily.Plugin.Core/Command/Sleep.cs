@@ -1,10 +1,7 @@
-﻿using Daylily.Common.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using Daylily.Common.Models;
 
-namespace Daylily.Plugin.Command
+namespace Daylily.Plugin.Core.Command
 {
     public class Sleep : AppConstruct
     {
@@ -22,7 +19,7 @@ namespace Daylily.Plugin.Command
             else if (result < 0.5) result = 0.5;
             dt = dt.AddHours(result);
             int s = (int)(dt.Ticks / 10000000);
-            CQApi.SetGroupBan(message.GroupId, message.UserId, s);
+            CqApi.SetGroupBan(message.GroupId, message.UserId, s);
             string msg = "祝你一觉睡到" + DateTime.Now.AddHours(result).ToString("HH:mm") + " :D";
 
             return new CommonMessageResponse(msg, message, true);

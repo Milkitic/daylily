@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Daylily.Common.Database.Model
+﻿namespace Daylily.Common.Database.Model
 {
     public class TblUserRole
     {

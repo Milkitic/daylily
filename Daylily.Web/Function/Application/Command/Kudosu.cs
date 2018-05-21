@@ -38,7 +38,7 @@ namespace Daylily.Web.Function.Application.Command
             if (string.IsNullOrEmpty(message.Parameter))
             {
                 BllUserRole bllUserRole = new BllUserRole();
-                List<TblUserRole> user_info = bllUserRole.GetUserRoleByQQ(long.Parse(message.UserId));
+                List<TblUserRole> user_info = bllUserRole.GetUserRoleByQq(long.Parse(message.UserId));
                 if (user_info.Count == 0)
                 {
                     SendMessage(new CommonMessageResponse("你还没有绑ID. 请用/setid", message, true));
@@ -83,7 +83,7 @@ namespace Daylily.Web.Function.Application.Command
                     return;
                 }
             } while (tmp_list.Count != 0);
-            string msg = CQCode.EncodeImageToBase64(Draw(total_list, uname));
+            string msg = CqCode.EncodeImageToBase64(Draw(total_list, uname));
 
             SendMessage(new CommonMessageResponse(msg, message));
         }

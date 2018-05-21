@@ -1,16 +1,14 @@
-﻿using Daylily.Common.Assist;
+﻿using System;
+using System.Threading;
+using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.CQResponse;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
-namespace Daylily.Plugin.Core.Plugin.Command
+namespace Daylily.Plugin.Core.Command
 {
     class Demo : AppConstruct  // 继承此类，详细可查看Daylily.Common.Models.AppConstruct类
     {
-        static Thread tThread;
+        static Thread _tThread;
         static string UserId { get; set; }
 
         public override CommonMessageResponse Execute(CommonMessage commonMsg)  // 必要方法
@@ -67,11 +65,11 @@ namespace Daylily.Plugin.Core.Plugin.Command
             {
                 // 默认处理机制为单线程，返回一个对象主线程继续工作
                 // 若需新建线程，则手动处理：
-                if (tThread != null && tThread.IsAlive)
+                if (_tThread != null && _tThread.IsAlive)
                     return new CommonMessageResponse("计时器正在工作，请先停止", commonMsg, enableAt: true);
 
-                tThread = new Thread(new ParameterizedThreadStart(MultiThread));
-                tThread.Start(sleepTime);
+                _tThread = new Thread(new ParameterizedThreadStart(MultiThread));
+                _tThread.Start(sleepTime);
 
                 string reply = "启动了计时器";
                 // 当所用参数为(string,CommonMessage)，则自动返回给所在群（组）的所在成员（通常不用其他重载，为框架所用）
@@ -79,8 +77,8 @@ namespace Daylily.Plugin.Core.Plugin.Command
             }
             else if (param[0] == "stop" && param.Length == 1)
             {
-                if (tThread != null && tThread.IsAlive)
-                    tThread.Abort();
+                if (_tThread != null && _tThread.IsAlive)
+                    _tThread.Abort();
                 string reply = "计时器已经停止";
                 return new CommonMessageResponse(reply, commonMsg, enableAt: true);
             }
