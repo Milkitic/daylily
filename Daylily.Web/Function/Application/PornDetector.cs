@@ -74,16 +74,12 @@ namespace Daylily.Web.Function.Application
 
                 if (item.data.porn_score >= item.data.hot_score && item.data.porn_score > 65)
                 {
-                    //ifAt = true;
                     return AddCount(message.UserId, message.GroupId);
-                    //return "球球你，营养不够了";
                 }
 
                 if (item.data.hot_score >= item.data.porn_score && item.data.hot_score > item.data.normal_score && item.data.hot_score > 80)
                 {
-                    //ifAt = true;
                     return AddCount(message.UserId, message.GroupId);
-                    //return "社保";
                 }
                 break;
             }
@@ -97,15 +93,12 @@ namespace Daylily.Web.Function.Application
                 UserCount.Add(user, 2);
             UserCount[user]--;
             if (UserCount[user] != 0)
-            {
                 return new CommonMessageResponse("..黄花菜看了都脸红..求你少发点", user, true);
-                //return "你还能发" + UserCount[user] + "张这样的图";
-            }
             else
             {
                 UserCount[user] = 2;
                 CqApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
-                return new CommonMessageResponse("...");
+                return new CommonMessageResponse("...", user, true);
             }
         }
     }

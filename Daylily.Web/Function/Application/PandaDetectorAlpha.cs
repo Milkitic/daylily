@@ -49,7 +49,7 @@ namespace Daylily.Web.Function.Application
                 }
                 _totalCount++;
             }
-            _thread = new Thread(new ParameterizedThreadStart(RunDetector));
+            _thread = new Thread(RunDetector);
             _thread.Start(_pathList);
             Logger.PrimaryLine("熊猫共" + _totalCount);
             return null;
@@ -72,21 +72,25 @@ namespace Daylily.Web.Function.Application
                         if (!_proc.HasExited) _proc.Kill();
                         _proc = null;
                     }
-                    _proc = new Process();
-                    _proc.StartInfo.FileName = "python3";  // python3 dragon-detection.py "root"
-                    _proc.StartInfo.Arguments = $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"";      // 参数  
 
-                    _proc.StartInfo.CreateNoWindow = true;
-                    //proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                    _proc.StartInfo.UseShellExecute = false;
-                    _proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-
-                    _proc.StartInfo.RedirectStandardOutput = true; // 重定向标准输出  
-                    _proc.StartInfo.RedirectStandardError = true;  // 重定向错误输出  
+                    _proc = new Process
+                    {
+                        StartInfo =
+                        {
+                            FileName = "python3",
+                            Arguments =
+                                $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
+                            CreateNoWindow = true,
+                            UseShellExecute = false,
+                            WindowStyle = ProcessWindowStyle.Hidden,
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true
+                        }
+                    };
                     _proc.OutputDataReceived += ProcOutputReceived;
                     _proc.ErrorDataReceived += ProcErrorReceived;
 
-                    Logger.WriteLine("(熊猫)正在调用中");
+                    Logger.PrimaryLine("(熊猫)正在调用中");
                     _proc.Start();
                     _proc.BeginOutputReadLine();
                     _proc.BeginErrorReadLine();
@@ -105,21 +109,18 @@ namespace Daylily.Web.Function.Application
                 }
             }
 
-            if (_pandaCount > 0)
+            if (_pandaCount <= 0) return;
+
+            var perc = Rnd.NextDouble();
+            if (perc < 0.15 || (perc < 0.5 && _message.GroupId == "428274344"))
             {
-                var perc = Rnd.NextDouble();
-                if (perc < 0.15 || (perc < 0.5 && _message.GroupId == "428274344"))
-                {
-                    DirectoryInfo di = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
-                    var files = di.GetFiles();
-                    string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
-                    SendMessage(new CommonMessageResponse(msg, _message));
-                }
-                else
-                {
-                    Logger.WarningLine("几率不够，没有触发：" + perc);
-                }
+                DirectoryInfo di = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
+                var files = di.GetFiles();
+                string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
+                SendMessage(new CommonMessageResponse(msg, _message));
             }
+            else
+                Logger.WarningLine("几率不够，没有触发：" + perc);
 
         }
 
@@ -127,33 +128,24 @@ namespace Daylily.Web.Function.Application
         {
             if (e.Data == null || e.Data.Trim() == "") return;
             _receivedString.Add(e.Data);
-            //Console.WriteLine(e.Data);
         }
         private void ProcErrorReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data == null || e.Data.Trim() == "") return;
             _receivedString.Add(e.Data);
-            //Console.WriteLine(e.Data);
         }
         private void ProcExited()
         {
-            int status;
-            double confidence;
-
-            //receivedString.RemoveAll(x => x == null);
-
             if (_receivedString.Count == 0) return;
             string line = _receivedString[_receivedString.Count - 1];
             Logger.WarningLine(line);
 
             var tmp = line.Split(' ');
-            status = int.Parse(tmp[0]);
-            confidence = double.Parse(tmp[1]);
+            var status = int.Parse(tmp[0]);
+            var confidence = double.Parse(tmp[1]);
             if (status == 1 && confidence > 50)
-            {
-                //Logger.WarningLine(confidence.ToString());
                 _pandaCount++;
-            }
+            
             Console.WriteLine("(熊猫)调用结束");
         }
     }
