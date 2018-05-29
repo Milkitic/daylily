@@ -3,6 +3,7 @@ using Daylily.Common.Models;
 using Daylily.Common.Models.CosResponse;
 using System.Collections.Generic;
 using System.Linq;
+using Daylily.Common.Interface.CQHttp;
 
 namespace Daylily.Web.Function.Application
 {

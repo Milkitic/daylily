@@ -28,7 +28,7 @@ namespace Daylily.Web
             services.AddMvc();
             DbHelper.ConnectionString.Add("cabbage", Configuration.GetConnectionString("DefaultConnection"));
             DbHelper.ConnectionString.Add("daylily", Configuration.GetConnectionString("MyConnection"));
-            HttpApi.ApiUrl = Configuration.GetConnectionString("PostUrl");
+            CqApi.ApiUrl = Configuration.GetConnectionString("PostUrl");
             //Interface.DaylilyAssist.AssistApi.ApiUrl = Configuration.GetConnectionString("AssistUrl");
             Signature.AppId = int.Parse(Configuration.GetConnectionString("appId"));
             Signature.SecretId = Configuration.GetConnectionString("secretId");

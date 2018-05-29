@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using Daylily.Common.Models;
 using Daylily.Common.Assist;
+using Daylily.Common.Interface.CQHttp;
 
 namespace Daylily.Web.Function.Application
 {
@@ -18,7 +19,7 @@ namespace Daylily.Web.Function.Application
 
         private static int _totalCount;
         private int _currentCount;
-        
+
         private string _user, _group;
         private long _messageId;
 
@@ -50,7 +51,7 @@ namespace Daylily.Web.Function.Application
                 }
                 _totalCount++;
             }
-            _thread = new Thread(new ParameterizedThreadStart(RunDetector));
+            _thread = new Thread(RunDetector);
             _thread.Start(_pathList);
             Logger.WarningLine("已经发送了请求,目前队列中共" + _totalCount);
             return null;
@@ -73,21 +74,27 @@ namespace Daylily.Web.Function.Application
                         if (!_proc.HasExited) _proc.Kill();
                         _proc = null;
                     }
-                    _proc = new Process();
-                    _proc.StartInfo.FileName = "python3";  // python3 dragon-detection.py "root"
-                    _proc.StartInfo.Arguments = $"{Path.Combine(Environment.CurrentDirectory, "dragon", "dragon-detection.py")} \"{fullPath}\"";      // 参数  
 
-                    _proc.StartInfo.CreateNoWindow = true;
-                    //proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                    _proc.StartInfo.UseShellExecute = false;
-                    _proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    _proc = new Process
+                    {
+                        StartInfo =
+                        {
+                            FileName = "python3",  // python3 dragon-detection.py "root"
+                            Arguments =
+                                $"{Path.Combine(Environment.CurrentDirectory, "dragon", "dragon-detection.py")} \"{fullPath}\"",
+                            CreateNoWindow = true,
+                            UseShellExecute = false,
+                            WindowStyle = ProcessWindowStyle.Hidden,
+                            RedirectStandardOutput = true,  // 重定向标准输出  
+                            RedirectStandardError = true  // 重定向错误输出  
+                            //StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                        }
+                    };
 
-                    _proc.StartInfo.RedirectStandardOutput = true; // 重定向标准输出  
-                    _proc.StartInfo.RedirectStandardError = true;  // 重定向错误输出  
                     _proc.OutputDataReceived += ProcOutputReceived;
                     _proc.ErrorDataReceived += ProcErrorReceived;
 
-                    Console.WriteLine("正在调用中");
+                    Logger.PrimaryLine("正在调用中");
                     _proc.Start();
                     _proc.BeginOutputReadLine();
                     _proc.BeginErrorReadLine();
@@ -105,54 +112,41 @@ namespace Daylily.Web.Function.Application
                 }
             }
 
-            if (_currentCount > 0)
-            {
-                CqApi.DeleteMessage(_messageId);
+            if (_currentCount <= 0) return;
+            CqApi.DeleteMessage(_messageId);
 
-                //CQApi.SetGroupBan(group, user, rnd.Next(1, 100 * dragonCount + 1) * 60);
-                //if (group != "133605766")
-                //    CQApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " 你龙了?");
-                if (_currentCount > 1)
-                {
-                    Thread.Sleep(8000);
-                    CqApi.SetGroupBan(_group, _user, Rnd.Next(1, 100 * _currentCount + 1) * 60);
-                    //CQApi.SendGroupMessageAsync(group, "而且有好多张，送你" + dragonCount + "倍套餐!!");
-                }
-            }
+            //CqApi.SetGroupBan(group, user, rnd.Next(1, 100 * dragonCount + 1) * 60);
+            //if (group != "133605766")
+            //    CqApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " 你龙了?");
+            if (_currentCount <= 1) return;
+            Thread.Sleep(8000);
+            CqApi.SetGroupBan(_group, _user, Rnd.Next(1, 100 * _currentCount + 1) * 60);
+            //CqApi.SendGroupMessageAsync(group, "而且有好多张，送你" + dragonCount + "倍套餐!!");
         }
 
         private void ProcOutputReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data == null || e.Data.Trim() == "") return;
             _receivedString.Add(e.Data);
-            //Console.WriteLine(e.Data);
         }
         private void ProcErrorReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data == null || e.Data.Trim() == "") return;
             _receivedString.Add(e.Data);
-            //Console.WriteLine(e.Data);
         }
         private void ProcExited()
         {
-            int status;
-            double confidence;
-
-            //receivedString.RemoveAll(x => x == null);
-
             if (_receivedString.Count == 0) return;
             string line = _receivedString[_receivedString.Count - 1];
             Logger.WarningLine(line);
 
             var tmp = line.Split(' ');
-            status = int.Parse(tmp[0]);
-            confidence = double.Parse(tmp[1]);
+            var status = int.Parse(tmp[0]);
+            var confidence = double.Parse(tmp[1]);
             if (status == 1 && confidence > 68)
-            {
-                //Logger.WarningLine(confidence.ToString());
                 _currentCount++;
-            }
-            Console.WriteLine("调用结束");
+
+            Logger.PrimaryLine("调用结束");
         }
     }
 }

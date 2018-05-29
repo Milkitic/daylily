@@ -53,6 +53,11 @@ namespace Daylily.Web.Function.Application.Command
                 {
                     OsuClient osu = new OsuClient(OsuApi.ApiKey);
                     OsuUser[] userList = osu.GetUser(message.Parameter);
+                    if (userList.Length == 0)
+                    {
+                        SendMessage(new CommonMessageResponse("不存在的id呢...", message, true));
+                        return;
+                    }
                     OsuUser userObj = userList[0];
                     id = userObj.user_id;
                     uname = userObj.username;

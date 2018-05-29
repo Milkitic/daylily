@@ -1,30 +1,25 @@
-﻿using Daylily.Common.Assist;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Threading;
+using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
 using Daylily.Common.Models.CQResponse;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Daylily.Web.Function
 {
     public class MessageHandler
     {
-        public static GroupList GroupInfo { get; set; } = new GroupList();
-        public static DiscussList DiscussInfo { get; set; } = new DiscussList();
-        public static PrivateList PrivateInfo { get; set; } = new PrivateList();
+        private static GroupList GroupInfo { get; } = new GroupList();
+        private static DiscussList DiscussInfo { get; } = new DiscussList();
+        private static PrivateList PrivateInfo { get; } = new PrivateList();
 
         public static string CommandFlag = "!";
 
-        Random rnd = new Random();
-        int minTime = 200, maxTime = 300; // 回应的反应时间
-        //string UserId = null, GroupId = null, DiscussId = null;
-        //MessageType messageType;
-
-        HttpApi CQApi = new HttpApi();
+        private readonly Random _rnd = new Random();
+        private const int MinTime = 200; // 回应的反应时间
+        private const int MaxTime = 300; // 回应的反应时间
 
         /// <summary>
         /// 群聊消息
@@ -46,7 +41,7 @@ namespace Daylily.Web.Function
             if (GroupInfo[id].Thread == null ||
                 (GroupInfo[id].Thread.ThreadState != ThreadState.Running && GroupInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
             {
-                GroupInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandleGroupMessage));
+                GroupInfo[id].Thread = new Thread(HandleGroupMessage);
                 GroupInfo[id].Thread.Start(parsedObj);
             }
             else
@@ -74,7 +69,7 @@ namespace Daylily.Web.Function
             if (DiscussInfo[id].Thread == null ||
                 (DiscussInfo[id].Thread.ThreadState != ThreadState.Running && DiscussInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
             {
-                DiscussInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandleDiscussMessage));
+                DiscussInfo[id].Thread = new Thread(HandleDiscussMessage);
                 DiscussInfo[id].Thread.Start(parsedObj);
             }
             else
@@ -102,7 +97,7 @@ namespace Daylily.Web.Function
             if (PrivateInfo[id].Thread == null ||
                 (PrivateInfo[id].Thread.ThreadState != ThreadState.Running && PrivateInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
             {
-                PrivateInfo[id].Thread = new Thread(new ParameterizedThreadStart(HandlePrivateMessage));
+                PrivateInfo[id].Thread = new Thread(HandlePrivateMessage);
                 PrivateInfo[id].Thread.Start(parsedObj);
             }
             else
@@ -113,20 +108,29 @@ namespace Daylily.Web.Function
 
         private void HandleGroupMessage(object obj)
         {
+            Console.Write(0);
             var parsedObj = (GroupMsg)obj;
+            Console.Write(1);
             long groupId = parsedObj.GroupId;
+            Console.Write(2);
 
             while (GroupInfo[groupId].MsgQueue.Count != 0)
             {
+                Console.Write(3);
                 if (GroupInfo[groupId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
+                Console.Write(4);
 
                 var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
+                Console.Write(5);
 
                 currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                Console.Write(6);
                 CommonMessage commonMessage = new CommonMessage(currentInfo);
+                Console.Write(7);
                 try
                 {
                     HandleMessage(commonMessage);
+                    Console.Write(8);
                 }
                 catch (Exception ex)
                 {
@@ -135,9 +139,11 @@ namespace Daylily.Web.Function
                     else
                         Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace);
                     //GC.Collect();
+                    Console.Write(9);
                 }
             }
             GroupInfo[groupId].LockMsg = false;
+            Console.Write("a");
         }
         private void HandleDiscussMessage(object obj)
         {
@@ -214,14 +220,14 @@ namespace Daylily.Web.Function
                     Logger.WriteLine($"({DiscussInfo[discussId].Name}) {userId}: {CqCode.Decode(message)}");
                     break;
                 case MessageType.Group:
-                    var userInfo = CQApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString());  // 有点费时间
-                    Logger.WriteLine($"({GroupInfo[groupId].Name}) {userInfo.Data.Nickname}: {CqCode.Decode(message)}");
+                    var userInfo = CqApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString());  // 有点费时间
+                    Logger.WriteLine($"({GroupInfo[groupId].Name}) {(string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card)}: {CqCode.Decode(message)}");
                     break;
             }
 
             if (commonMessage.Message.Substring(0, 1) == CommandFlag)
             {
-                if (commonMessage.Message.IndexOf(CommandFlag + "root ") == 0)
+                if (commonMessage.Message.IndexOf(CommandFlag + "root ", StringComparison.Ordinal) == 0)
                 {
                     if (commonMessage.UserId != "2241521134")
                     {
@@ -235,7 +241,7 @@ namespace Daylily.Web.Function
                     }
 
                 }
-                else if (message.IndexOf(CommandFlag + "sudo ") == 0 && type == MessageType.Group)
+                else if (message.IndexOf(CommandFlag + "sudo ", StringComparison.Ordinal) == 0 && type == MessageType.Group)
                 {
                     if (!GroupInfo[groupId].AdminList.Contains(userId))
                     {
@@ -291,20 +297,20 @@ namespace Daylily.Web.Function
         private void HandleMessageCmd(CommonMessage commonMessage)
         {
             string fullCmd = commonMessage.FullCommand;
-            Thread.Sleep(rnd.Next(minTime, maxTime));
+            Thread.Sleep(_rnd.Next(MinTime, MaxTime));
 
             commonMessage.Command = fullCmd.Split(' ')[0].Trim();
-            commonMessage.Parameter = fullCmd.IndexOf(" ") == -1 ? "" :
-                fullCmd.Substring(fullCmd.IndexOf(" ") + 1, fullCmd.Length - commonMessage.Command.Length - 1).Trim();
+            commonMessage.Parameter = fullCmd.IndexOf(" ", StringComparison.Ordinal) == -1 ? "" :
+                fullCmd.Substring(fullCmd.IndexOf(" ", StringComparison.Ordinal) + 1, fullCmd.Length - commonMessage.Command.Length - 1).Trim();
             string className = Mapper.GetClassName(commonMessage.Command, out string file);
             if (className == null)
                 return;
 
             #region 折叠：invoke
-            MethodInfo mi;
+
             object appClass;
             Type type;
-            System.IO.FileInfo fi = null;
+            FileInfo fi = null;
             if (file == null)
             {
                 type = Type.GetType("Daylily.Web.Function.Application.Command." + className);
@@ -315,13 +321,14 @@ namespace Daylily.Web.Function
                 try
                 {
                     Logger.PrimaryLine("读取插件信息中");
-                    fi = new System.IO.FileInfo(file);
+                    fi = new FileInfo(file);
                     Assembly assemblyTmp = Assembly.LoadFrom(file);
                     type = assemblyTmp.GetType(className);
                     appClass = assemblyTmp.CreateInstance(className);
                 }
                 catch (Exception ex)
                 {
+                    if (fi == null) throw new NullReferenceException("fi都成null了");
                     if (ex.InnerException != null)
                         throw new Exception("\n\"/" + fullCmd + "\" caused an exception: \n" +
                             fi.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
@@ -336,7 +343,7 @@ namespace Daylily.Web.Function
             CommonMessageResponse reply;
             try
             {
-                mi = type.GetMethod("Execute");
+                MethodInfo mi = type.GetMethod("Execute");
                 reply = (CommonMessageResponse)mi.Invoke(appClass, invokeArgs);
             }
             catch (Exception ex)
@@ -344,9 +351,8 @@ namespace Daylily.Web.Function
                 if (ex.InnerException != null)
                     throw new Exception("\n/\"" + fullCmd + "\" caused an exception: \n" +
                         type.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
-                else
-                    throw new Exception("\n/\"" + fullCmd + "\" caused an exception: \n" +
-                        type.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
+                throw new Exception("\n/\"" + fullCmd + "\" caused an exception: \n" +
+                                    type.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
             }
 
             if (reply == null) return;

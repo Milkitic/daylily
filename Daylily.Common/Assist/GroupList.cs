@@ -32,25 +32,28 @@ namespace Daylily.Common.Assist
         public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
         public List<long> AdminList { get; set; } = new List<long>();
 
-        private readonly HttpApi _cqApi = new HttpApi();
-
         public GroupSettings(string groupId)
         {
             Id = groupId;
             UpdateInfo();
         }
 
-        public void UpdateInfo()
+        private void UpdateInfo()
         {
-            var info = _cqApi.GetGroupInfo(Id);
+            var info = CqApi.GetGroupInfo(Id);
             string name = info == null ? Id : info.GroupName;
             Name = name;
 
-            var adminList = _cqApi.GetGroupMemberList(Id);
-            adminList.Data.RemoveAll(x => x.Role == "member");
-            foreach(var item in adminList.Data)
+            var adminList = CqApi.GetGroupMemberList(Id);
+            if (adminList.Data == null)
+                Logger.PrimaryLine("adminList.Data is null!!!!");
+            else
             {
-                AdminList.Add(item.UserId);
+                adminList.Data.RemoveAll(x => x.Role == "member");
+                foreach (var item in adminList.Data)
+                {
+                    AdminList.Add(item.UserId);
+                }
             }
         }
     }

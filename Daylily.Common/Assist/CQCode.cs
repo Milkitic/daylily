@@ -13,10 +13,9 @@ namespace Daylily.Common.Assist
         public static string CqRoot { get; set; }
 
         // Encode
-        public static string EncodeAt(string id)
-        {
-            return $"[CQ:at,qq={Escape(id)}]";
-        }
+        public static string EncodeAt(string id) =>
+            id == null ? "" : $"[CQ:at,qq={Escape(id)}]";
+
         public static string EncodeImageToBase64(Image img)
         {
             //string code = ToBase64(img);

@@ -31,17 +31,15 @@ namespace Daylily.Common.Assist
         public int MsgLimit { get; set; } = 10;
         public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
 
-        private readonly HttpApi _cqApi = new HttpApi();
-
         public DiscussSettings(string discussId)
         {
             Id = discussId;
             UpdateInfo();
         }
 
-        public void UpdateInfo()
+        private void UpdateInfo()
         {
-            var info = _cqApi.GetGroupInfo(Id);
+            var info = CqApi.GetGroupInfo(Id);
             string name = info == null ? Id : info.GroupName;
             Name = name;
         }

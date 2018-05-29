@@ -1,4 +1,5 @@
 ﻿using System;
+using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
 
 namespace Daylily.Plugin.Core.Command
