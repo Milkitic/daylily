@@ -8,6 +8,8 @@ namespace Daylily.Plugin.Core.Command
     {
         public override CommonMessageResponse Execute(CommonMessage message)
         {
+            if (message.GroupId == "133605766")
+                return null;
             if (message.GroupId == null)
                 return null;
             if (message.Parameter.Trim() == "")

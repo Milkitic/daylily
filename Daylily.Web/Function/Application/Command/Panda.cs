@@ -18,6 +18,8 @@ namespace Daylily.Web.Function.Application.Command
 
         public override CommonMessageResponse Execute(CommonMessage message)
         {
+            if (message.GroupId == "133605766")
+                return null;
             var resp = CqCode.EncodeImageToBase64(Draw(message.Parameter));
             //Logger.InfoLine(resp);
             return new CommonMessageResponse(resp, message);
