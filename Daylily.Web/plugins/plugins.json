@@ -1,15 +1,15 @@
 {
     "Plugins": {
         "Daylily.Plugin.Core.dll": {
-            "roll": "Daylily.Plugin.Command.Roll",
-            "mykds": "Daylily.Plugin.Command.MyKudosu",
-            "h": "Daylily.Plugin.Command.Help",
-            "help": "Daylily.Plugin.Command.Help",
-            "setid": "Daylily.Plugin.Command.SetId",
-            "myelo": "Daylily.Plugin.Command.MyElo",
-            "elo": "Daylily.Plugin.Command.Elo",
-            "sleep": "Daylily.Plugin.Command.Sleep",
-            "slip": "Daylily.Plugin.Command.Sleep"
+            "roll": "Daylily.Plugin.Core.Command.Roll",
+            "mykds": "Daylily.Plugin.Core.Command.MyKudosu",
+            "h": "Daylily.Plugin.Core.Command.Help",
+            "help": "Daylily.Plugin.Core.Command.Help",
+            "setid": "Daylily.Plugin.Core.Command.SetId",
+            "myelo": "Daylily.Plugin.Core.Command.MyElo",
+            "elo": "Daylily.Plugin.Core.Command.Elo",
+            "sleep": "Daylily.Plugin.Core.Command.Sleep",
+            "slip": "Daylily.Plugin.Core.Command.Sleep"
         }
     }
 }

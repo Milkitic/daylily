@@ -27,6 +27,7 @@ namespace Daylily.Common.Assist
             InnerCmdPlugin.Add("kd", "Kudosu");
             InnerCmdPlugin.Add("sdown", "Shutdown");
             InnerCmdPlugin.Add("rcon", "Rcon");
+            InnerCmdPlugin.Add("panda", "Panda");
 
             // 内置功能
             NormalPlugins.Add("PornDetector");
