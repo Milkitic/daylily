@@ -46,7 +46,7 @@ namespace Daylily.Web.Function
             }
             else
             {
-                Logger.InfoLine("当前已有" + GroupInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
+                Logger.InfoLine("当前已有" + GroupInfo[id].MsgQueue.Count + "条消息在" + GroupInfo[id].Name + "排队");
             }
         }
         /// <summary>
@@ -117,7 +117,7 @@ namespace Daylily.Web.Function
 
                 var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
 
-                currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                //currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
                 CommonMessage commonMessage = new CommonMessage(currentInfo);
                 try
                 {
@@ -125,11 +125,7 @@ namespace Daylily.Web.Function
                 }
                 catch (Exception ex)
                 {
-                    if (ex.InnerException != null)
-                        Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace);
-                    else
-                        Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace);
-                    //GC.Collect();
+                    Logger.WriteException(ex);
                 }
             }
             GroupInfo[groupId].LockMsg = false;
@@ -145,7 +141,7 @@ namespace Daylily.Web.Function
 
                 var currentInfo = DiscussInfo[discussId].MsgQueue.Dequeue();
 
-                currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                //currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
                 CommonMessage commonMessage = new CommonMessage(currentInfo);
                 try
                 {
@@ -153,11 +149,7 @@ namespace Daylily.Web.Function
                 }
                 catch (Exception ex)
                 {
-                    if (ex.InnerException != null)
-                        Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace);
-                    else
-                        Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace);
-                    //GC.Collect();
+                        Logger.WriteException(ex);
                 }
             }
             DiscussInfo[discussId].LockMsg = false;
@@ -173,7 +165,7 @@ namespace Daylily.Web.Function
 
                 var currentInfo = PrivateInfo[userId].MsgQueue.Dequeue();
 
-                currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                //currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
                 CommonMessage commonMessage = new CommonMessage(currentInfo);
 
                 try
@@ -182,11 +174,7 @@ namespace Daylily.Web.Function
                 }
                 catch (Exception ex)
                 {
-                    if (ex.InnerException != null)
-                        Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace);
-                    else
-                        Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace);
-                    //GC.Collect();
+                    Logger.WriteException(ex);
                 }
             }
             PrivateInfo[userId].LockMsg = false;
@@ -203,14 +191,15 @@ namespace Daylily.Web.Function
             switch (commonMessage.MessageType)
             {
                 case MessageType.Private:
-                    Logger.WriteLine($"{userId}: {CqCode.Decode(message)}");
+                    Logger.WriteMessage($"{userId}:\r\n  {CqCode.Decode(message)}");
                     break;
                 case MessageType.Discuss:
-                    Logger.WriteLine($"({DiscussInfo[discussId].Name}) {userId}: {CqCode.Decode(message)}");
+                    Logger.WriteMessage($"({DiscussInfo[discussId].Name}) {userId}:\r\n  {CqCode.Decode(message)}");
                     break;
                 case MessageType.Group:
-                    var userInfo = CqApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString());  // 有点费时间
-                    Logger.WriteLine($"({GroupInfo[groupId].Name}) {(string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card)}: {CqCode.Decode(message)}");
+                    var userInfo = CqApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString()); // 有点费时间
+                    Logger.WriteMessage(
+                        $"({GroupInfo[groupId].Name}) {(string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card)}:\r\n  {CqCode.Decode(message)}");
                     break;
             }
 
@@ -273,11 +262,8 @@ namespace Daylily.Web.Function
                 }
                 catch (Exception ex)
                 {
-                    if (ex.InnerException != null)
-                        throw new Exception("\n\"" + commonMessage.Message + "\" caused an exception: \n" +
-                            type.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
-                    throw new Exception("\n\"" + commonMessage.Message + "\" caused an exception: \n" +
-                                        type.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
+                    Logger.WriteException(ex, commonMessage.Message, type.Name);
+                    return;
                 }
                 if (reply == null) continue;
                 AppConstruct.SendMessage(reply);
@@ -317,12 +303,8 @@ namespace Daylily.Web.Function
                 }
                 catch (Exception ex)
                 {
-                    if (fi == null) throw new NullReferenceException("fi都成null了");
-                    if (ex.InnerException != null)
-                        throw new Exception("\n\"/" + fullCmd + "\" caused an exception: \n" +
-                            fi.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
-                    throw new Exception("\n\"/" + fullCmd + "\" caused an exception: \n" +
-                                        fi.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
+                    Logger.WriteException(ex, commonMessage.Message, fi == null ? "Unknown Plugin" : fi.Name);
+                    return;
                 }
             }
 
@@ -337,11 +319,8 @@ namespace Daylily.Web.Function
             }
             catch (Exception ex)
             {
-                if (ex.InnerException != null)
-                    throw new Exception("\n/\"" + fullCmd + "\" caused an exception: \n" +
-                        type.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
-                throw new Exception("\n/\"" + fullCmd + "\" caused an exception: \n" +
-                                    type.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
+                Logger.WriteException(ex, commonMessage.Message, fi == null ? "Unknown Plugin" : fi.Name);
+                return;
             }
 
             if (reply == null) return;

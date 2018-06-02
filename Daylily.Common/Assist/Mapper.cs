@@ -30,7 +30,7 @@ namespace Daylily.Common.Assist
 
             // 内置功能
             NormalPlugins.Add("PornDetector");
-            NormalPlugins.Add("DragonDetectorAlpha");
+            //NormalPlugins.Add("DragonDetectorAlpha");
             NormalPlugins.Add("PandaDetectorAlpha");
             NormalPlugins.Add("CheckCqAt");
 

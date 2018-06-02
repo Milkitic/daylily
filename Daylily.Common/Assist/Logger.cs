@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text;
 
 namespace Daylily.Common.Assist
 {
@@ -14,15 +15,43 @@ namespace Daylily.Common.Assist
         {
             Console.ResetColor();
             WriteSource();
-            WriteMessage(msg);
+            WriteInfo(msg);
         }
+
+        public static void WriteMessage(string msg)
+        {
+            Console.ResetColor();
+            WriteSource(true);
+            WriteInfo(msg);
+        }
+
+        public static void WriteException(Exception ex)
+        {
+            if (ex.InnerException != null)
+                DangerLine(ex.InnerException.ToString(), 1);
+            else
+                DangerLine(ex.ToString(), 1);
+        }
+
+        public static void WriteException(Exception ex, string pluginInfo, string pluginName)
+        {
+            if (pluginInfo.Length >= 1000)
+                pluginInfo = pluginInfo.Remove(1000) + ".....(Too long)";
+            string pluginHint = Environment.NewLine + $"\"/{pluginInfo}\" caused an exception: {Environment.NewLine} ---> {pluginName}:" + Environment.NewLine;
+
+            //if (ex.InnerException != null)
+            //    DangerLine(pluginHint + ex.InnerException, 1);
+            //else
+            DangerLine(pluginHint + ex, 1);
+        }
+
         public static void DefaultLine(string msg)
         {
             Console.BackgroundColor = ConsoleColor.White;
             Console.ForegroundColor = ConsoleColor.Black;
             WriteSource();
 
-            WriteMessage(msg);
+            WriteInfo(msg);
         }
         public static void DebugLine(string msg)
         {
@@ -33,7 +62,7 @@ namespace Daylily.Common.Assist
 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteMessage(msg);
+            WriteInfo(pluginInfo);
 #endif
         }
         public static void PrimaryLine(string msg)
@@ -44,7 +73,7 @@ namespace Daylily.Common.Assist
 
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteMessage(msg);
+            WriteInfo(msg);
         }
         public static void SuccessLine(string msg)
         {
@@ -54,7 +83,7 @@ namespace Daylily.Common.Assist
 
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteMessage(msg);
+            WriteInfo(msg);
         }
         public static void InfoLine(string msg)
         {
@@ -64,7 +93,7 @@ namespace Daylily.Common.Assist
 
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteMessage(msg);
+            WriteInfo(msg);
         }
         public static void WarningLine(string msg)
         {
@@ -74,30 +103,36 @@ namespace Daylily.Common.Assist
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteMessage(msg);
+            WriteInfo(msg);
             Console.ResetColor();
         }
-        public static void DangerLine(string msg)
+        public static void DangerLine(string msg, int offset = 0)
         {
             Console.BackgroundColor = ConsoleColor.Red;
             Console.ForegroundColor = ConsoleColor.Gray;
-            WriteSource();
+            WriteSource(offset: offset);
 
             Console.ForegroundColor = ConsoleColor.Red;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteMessage(msg);
+            WriteInfo(msg);
         }
-        private static void WriteSource()
+        private static void WriteSource(bool ignoreMethod = false, int offset = 0)
         {
-            StackTrace st = new StackTrace(true);
-            MethodBase mb = st.GetFrame(2).GetMethod();
-            string methodName = $"{mb.DeclaringType.Namespace}.{mb.DeclaringType.Name}.{mb.Name}";
+            string methodName = "";
+            if (!ignoreMethod)
+            {
+                StackTrace st = new StackTrace(true);
+                MethodBase mb = st.GetFrame(2 + offset).GetMethod();
+                methodName = $"[{mb.DeclaringType.Namespace}.{mb.DeclaringType.Name}.{mb.Name}]";
+            }
             var n = DateTime.Now;
-            Console.Write($"[{n.Hour}:{n.Minute}:{n.Second}][{methodName}]");
+            Console.Write($"[{n.Hour:00}:{n.Minute:00}:{n.Second:00}]{methodName}");
             Console.ResetColor();
         }
-        private static void WriteMessage(string msg)
+        private static void WriteInfo(string msg)
         {
+            if (msg.Length >= 2000)
+                msg = msg.Remove(2000) + ".....(Too long)";
             Console.WriteLine(" " + msg);
             Console.ResetColor();
         }

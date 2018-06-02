@@ -12,9 +12,10 @@ namespace Daylily.Common.Assist
         public static string GetImageFromUrl(string url, string savePath, string ext)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Timeout = 5000;
             WebResponse response = request.GetResponse();
 
-            //Stream stream = response.GetResponseStream();
+            //Logger.DefaultLine("Get response.");
             response.GetResponseStream();
 
             return !response.ContentType.ToLower().StartsWith("text/") ? SaveBinaryFile(response, savePath, ext) : null;

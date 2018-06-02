@@ -62,7 +62,6 @@ namespace Daylily.Web.Function.Application
         /// </summary>
         private void RunDetector(object pathList)
         {
-
             var list = (List<string>)pathList;
             foreach (var fullPath in list)
             {

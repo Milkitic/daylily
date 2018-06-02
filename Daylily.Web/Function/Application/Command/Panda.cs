@@ -45,7 +45,7 @@ namespace Daylily.Web.Function.Application.Command
             FileInfo panda = pandaArray[rnd.Next(0, pandaArray.Length)];
 
             string[] blankReply = { "傻逼，动动脑子写参数", "你倒是说话啊" };
-            string[] invalidReply = { "你字写的太多了，沙雕" };
+            string[] invalidReply = { "你话太多了，沙雕" };
 
             if (word.Replace("\n", "").Replace("\r", "").Trim() == "")
                 word = blankReply[rnd.Next(0, blankReply.Length)];
