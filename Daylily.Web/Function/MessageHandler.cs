@@ -108,29 +108,20 @@ namespace Daylily.Web.Function
 
         private void HandleGroupMessage(object obj)
         {
-            Console.Write(0);
             var parsedObj = (GroupMsg)obj;
-            Console.Write(1);
             long groupId = parsedObj.GroupId;
-            Console.Write(2);
 
             while (GroupInfo[groupId].MsgQueue.Count != 0)
             {
-                Console.Write(3);
                 if (GroupInfo[groupId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
-                Console.Write(4);
 
                 var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
-                Console.Write(5);
 
                 currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
-                Console.Write(6);
                 CommonMessage commonMessage = new CommonMessage(currentInfo);
-                Console.Write(7);
                 try
                 {
                     HandleMessage(commonMessage);
-                    Console.Write(8);
                 }
                 catch (Exception ex)
                 {
@@ -139,11 +130,9 @@ namespace Daylily.Web.Function
                     else
                         Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace);
                     //GC.Collect();
-                    Console.Write(9);
                 }
             }
             GroupInfo[groupId].LockMsg = false;
-            Console.Write("a");
         }
         private void HandleDiscussMessage(object obj)
         {
