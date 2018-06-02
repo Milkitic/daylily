@@ -38,12 +38,13 @@ namespace Daylily.Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        PrivateMsgResponse privateResp = new PrivateMsgResponse()
-                        {
-                            AutoEscape = false,
-                            Reply = ex.Message
-                        };
-                        return Json(privateResp);
+                        Logger.WriteException(ex);
+                        //PrivateMsgResponse privateResp = new PrivateMsgResponse()
+                        //{
+                        //    AutoEscape = false,
+                        //    Reply = ex.Message
+                        //};
+                        //return Json(privateResp);
                     }
                 }
 
@@ -58,10 +59,7 @@ namespace Daylily.Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        if (ex.InnerException != null)
-                            Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace.Replace("\r", "").Split('\n')[0]);
-                        else
-                            Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace.Replace("\r", "").Split('\n')[0]);
+                        Logger.WriteException(ex);
                         //GroupMsgResponse group_resp = new GroupMsgResponse()
                         //{
                         //    reply = ex.Message,
@@ -86,10 +84,7 @@ namespace Daylily.Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        if (ex.InnerException != null)
-                            Logger.DangerLine(ex.InnerException.Message + Environment.NewLine + ex.InnerException.StackTrace);
-                        else
-                            Logger.DangerLine(ex.Message + Environment.NewLine + ex.StackTrace);
+                        Logger.WriteException(ex);
                         //GroupMsgResponse group_resp = new GroupMsgResponse()
                         //{
                         //    reply = ex.Message,
@@ -105,11 +100,11 @@ namespace Daylily.Web.Controllers
             }
             else if (obj.post_type == "event")
             {
-                // todo
+                // TODO
             }
             else if (obj.post_type == "request")
             {
-                // todo
+                // TODO
             }
             return Json(new { });
         }
