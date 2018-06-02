@@ -26,6 +26,7 @@ namespace Daylily.Common.Models
                 return exp[Random.Next(0, exp.Length)];
             }
         }
+
         public const string FakeAdmin = "你不是这个群的管理员. 人家可不是小孩子可以被你骗!";
 
         private static readonly Random Random = new Random();

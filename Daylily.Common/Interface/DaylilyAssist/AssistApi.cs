@@ -19,6 +19,7 @@ namespace Daylily.Common.Interface.DaylilyAssist
             {
                 str = WebRequestHelper.GetResponseString(response);
             }
+
             return str;
         }
 

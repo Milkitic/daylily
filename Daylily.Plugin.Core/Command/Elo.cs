@@ -23,11 +23,13 @@ namespace Daylily.Plugin.Core.Command
             switch (obj.Result.ToLower())
             {
                 case "fail" when obj.Message.ToLower() == "unranked":
-                    return new CommonMessageResponse(userList[0].username + "大概没有参加什么mapping赛事..所以没有数据..", message, true);
+                    return new CommonMessageResponse(userList[0].username + "大概没有参加什么mapping赛事..所以没有数据..", message,
+                        true);
                 case "fail":
                     return new CommonMessageResponse("未知错误..查询不到..", message, true);
                 default:
-                    return new CommonMessageResponse($"{obj.User.Name}，有elo点{Math.Round(obj.User.Elo)}，当前#{obj.User.Ranking}.", message, true);
+                    return new CommonMessageResponse(
+                        $"{obj.User.Name}，有elo点{Math.Round(obj.User.Elo)}，当前#{obj.User.Ranking}.", message, true);
             }
         }
     }

@@ -24,6 +24,7 @@ namespace Daylily.Web.Controllers
                 //Logger.WriteLine(json);
                 obj = JsonConvert.DeserializeObject(json);
             }
+
             // 判断post类别
             if (obj.post_type == "message")
             {
@@ -106,6 +107,7 @@ namespace Daylily.Web.Controllers
             {
                 // TODO
             }
+
             return Json(new { });
         }
     }

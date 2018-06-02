@@ -19,9 +19,11 @@ namespace Daylily.Plugin.Core.Command
                 case 1:
                     return new CommonMessageResponse(Next(int.Parse(query[0])).ToString(), message, true);
                 case 2:
-                    return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1])).ToString(), message, true);
+                    return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1])).ToString(), message,
+                        true);
                 case 3:
-                    return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1]), int.Parse(query[2])), message, true);
+                    return new CommonMessageResponse(
+                        Next(int.Parse(query[0]), int.Parse(query[1]), int.Parse(query[2])), message, true);
                 default:
                     return new CommonMessageResponse(LoliReply.ParamError, message, true);
             }
@@ -53,6 +55,7 @@ namespace Daylily.Plugin.Core.Command
             {
                 list.Add(i);
             }
+
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < times; i++)
             {

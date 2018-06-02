@@ -15,20 +15,20 @@ namespace Daylily.Common.Database.BLL
             return dbCabbage.ExecuteNonQuery(@"INSERT INTO userrole
 (user_id,role,qq,legacy_uname,current_uname,is_banned,repeat_count,speaking_count,mode)
 VALUES(@user_id,@role,@qq,@legacy_uname,@current_uname,@is_banned,@repeat_count,@speaking_count,@mode)",
-                    new MySqlParameter("@user_id", role.UserId),
-                    new MySqlParameter("@role", role.Role),
-                    new MySqlParameter("@qq", role.QQ),
-                    new MySqlParameter("@legacy_uname", role.LegacyUname),
-                    new MySqlParameter("@current_uname", role.CurrentUname),
-                    new MySqlParameter("@is_banned", role.IsBanned),
-                    new MySqlParameter("@repeat_count", role.RepeatCount),
-                    new MySqlParameter("@speaking_count", role.SpeakingCount),
-                    new MySqlParameter("@mode", role.Mode));
+                new MySqlParameter("@user_id", role.UserId),
+                new MySqlParameter("@role", role.Role),
+                new MySqlParameter("@qq", role.QQ),
+                new MySqlParameter("@legacy_uname", role.LegacyUname),
+                new MySqlParameter("@current_uname", role.CurrentUname),
+                new MySqlParameter("@is_banned", role.IsBanned),
+                new MySqlParameter("@repeat_count", role.RepeatCount),
+                new MySqlParameter("@speaking_count", role.SpeakingCount),
+                new MySqlParameter("@mode", role.Mode));
         }
 
         public List<TblUserRole> GetUserRoleByQq(long qq) =>
-           _GetUserRole("SELECT * FROM userrole WHERE qq = @qq",
-              new MySqlParameter("@qq", qq));
+            _GetUserRole("SELECT * FROM userrole WHERE qq = @qq",
+                new MySqlParameter("@qq", qq));
 
         private List<TblUserRole> _GetUserRole(string queryString, params MySqlParameter[] param)
         {
@@ -51,6 +51,7 @@ VALUES(@user_id,@role,@qq,@legacy_uname,@current_uname,@is_banned,@repeat_count,
                     Mode = Convert.ToInt32(item["mode"])
                 });
             }
+
             return parsedList;
         }
     }

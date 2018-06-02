@@ -43,6 +43,7 @@ namespace Daylily.Web.Function.Application.Command
                         return new CommonMessageResponse("未知的参数: " + cmd + "...", message);
                 }
             }
+
             if (innerMessage == null)
                 return new CommonMessageResponse("你还没有填写消息...", message);
 

@@ -6,12 +6,12 @@ using Daylily.Common.Models.CQResponse;
 
 namespace Daylily.Plugin.Core.Command
 {
-    class Demo : AppConstruct  // 继承此类，详细可查看Daylily.Common.Models.AppConstruct类
+    class Demo : AppConstruct // 继承此类，详细可查看Daylily.Common.Models.AppConstruct类
     {
         static Thread _tThread;
         static string UserId { get; set; }
 
-        public override CommonMessageResponse Execute(CommonMessage commonMsg)  // 必要方法
+        public override CommonMessageResponse Execute(CommonMessage commonMsg) // 必要方法
         {
             // 接收的信息
             string message = commonMsg.Message;
@@ -29,6 +29,7 @@ namespace Daylily.Plugin.Core.Command
                 Logger.DangerLine("不能非私聊");
                 //return null;  // 返回null则不返回消息
             }
+
             // 接收的信息的Id，用于撤回等操作
             long msgId = commonMsg.MessageId;
 

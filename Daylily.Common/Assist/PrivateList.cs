@@ -19,11 +19,12 @@ namespace Daylily.Common.Assist
         private readonly Dictionary<long, PrivateSettings> _di = new Dictionary<long, PrivateSettings>();
 
     }
+
     public class PrivateSettings
     {
         public Queue<PrivateMsg> MsgQueue { get; set; } = new Queue<PrivateMsg>();
         public Thread Thread { get; set; }
         public int MsgLimit { get; set; } = 4;
-        public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
+        public bool LockMsg { get; set; } = false; // 用于判断是否超出消息阀值
     }
 }

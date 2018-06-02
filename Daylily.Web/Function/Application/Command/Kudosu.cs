@@ -46,6 +46,7 @@ namespace Daylily.Web.Function.Application.Command
                         SendMessage(new CommonMessageResponse(LoliReply.IdNotBound, _message, true));
                         return;
                     }
+
                     id = userInfo[0].UserId.ToString();
                     uname = userInfo[0].CurrentUname;
                 }
@@ -81,7 +82,9 @@ namespace Daylily.Web.Function.Application.Command
                 const int count = 20;
                 do
                 {
-                    string json = WebRequestHelper.GetResponseString(WebRequestHelper.CreateGetHttpResponse("https://osu.ppy.sh/users/" + id + "/kudosu?offset=" + page + "&limit=" + count));
+                    string json = WebRequestHelper.GetResponseString(
+                        WebRequestHelper.CreateGetHttpResponse(
+                            "https://osu.ppy.sh/users/" + id + "/kudosu?offset=" + page + "&limit=" + count));
                     Logger.DebugLine("GET JSON");
 
                     tmpList = JsonConvert.DeserializeObject<List<KudosuInfo>>(json);
@@ -93,6 +96,7 @@ namespace Daylily.Web.Function.Application.Command
                     SendMessage(new CommonMessageResponse("竟然连一张图都没摸过...", _message, true));
                     return;
                 } while (tmpList.Count != 0);
+
                 string msg = CqCode.EncodeImageToBase64(Draw(totalList, uname));
 
                 SendMessage(new CommonMessageResponse(msg, _message));
@@ -124,6 +128,7 @@ namespace Daylily.Web.Function.Application.Command
 
                 if (info != null) info.Count++;
             }
+
             if (info != null) kdInfoList.Add(info);
 
             int max = kdInfoList.Max(x => x.Count);
@@ -156,12 +161,14 @@ namespace Daylily.Web.Function.Application.Command
                 {
                     SizeF sAvg = g.MeasureString(avg, f4);
                     SizeF sTitle = g.MeasureString(uname, f3);
-                    g.DrawString(uname, f3, whiteBrush, imgWidth / 2f - sTitle.Width / 2f, panels[0].Y - sTitle.Height - 30);
+                    g.DrawString(uname, f3, whiteBrush, imgWidth / 2f - sTitle.Width / 2f,
+                        panels[0].Y - sTitle.Height - 30);
                     g.DrawString(avg, f4, whiteBrush, imgWidth / 2f - sAvg.Width / 2f, panels[0].Y - sAvg.Height - 14);
 
                     // g.DrawRectangles(blackPen, panels);
                     g.DrawLine(yellowPen2, panels[0].X, panels[0].Y, panels[0].X, panels[0].Y + panels[0].Height);
-                    g.DrawLine(yellowPen2, panels[0].X, panels[0].Y + panels[0].Height, panels[0].X + panels[0].Width, panels[0].Y + panels[0].Height);
+                    g.DrawLine(yellowPen2, panels[0].X, panels[0].Y + panels[0].Height, panels[0].X + panels[0].Width,
+                        panels[0].Y + panels[0].Height);
                     const float circleWidth = 5;
 
                     int loopStep = (max - (max % splitedCount)) / splitedCount;
@@ -178,7 +185,8 @@ namespace Daylily.Web.Function.Application.Command
                                 float pTop2 = top + maxHeight * (max - i * loopStep) / max;
                                 string num2 = (i * loopStep).ToString();
                                 SizeF size2 = g.MeasureString(num2, f);
-                                g.DrawString(num2, f, shadowBrush, left - size2.Width - 2 + 1, pTop2 - size2.Height / 2 + 1);
+                                g.DrawString(num2, f, shadowBrush, left - size2.Width - 2 + 1,
+                                    pTop2 - size2.Height / 2 + 1);
                                 g.DrawString(num2, f, whiteBrush2, left - size2.Width - 2, pTop2 - size2.Height / 2);
                             }
                         }
@@ -187,6 +195,7 @@ namespace Daylily.Web.Function.Application.Command
                             pTop = top + maxHeight * (max - i * loopStep) / max;
                             num = (i * loopStep).ToString();
                         }
+
                         SizeF size = g.MeasureString(num, f);
                         g.DrawString(num, f, shadowBrush, left - size.Width - 2 + 1, pTop - size.Height / 2 + 1);
                         g.DrawString(num, f, whiteBrush2, left - size.Width - 2, pTop - size.Height / 2);
@@ -197,8 +206,10 @@ namespace Daylily.Web.Function.Application.Command
                         float pTopNext = top + maxHeight * (max - kdInfoList[i + 1].Count) / max;
                         float pLeftNext = left + (i + 1) * splitedWidth;
                         g.DrawLine(yellowPen,
-                            left + i * splitedWidth, top + maxHeight * (max - kdInfoList[i].Count) / max, pLeftNext, pTopNext);
+                            left + i * splitedWidth, top + maxHeight * (max - kdInfoList[i].Count) / max, pLeftNext,
+                            pTopNext);
                     }
+
                     for (int i = 0; i < kdInfoList.Count; i++)
                     {
                         var cur = kdInfoList[i];
@@ -208,16 +219,19 @@ namespace Daylily.Web.Function.Application.Command
                         SizeF size1 = g.MeasureString(count, f2);
                         g.DrawString(count, f2, shadowBrush, x - size1.Width / 2f + 1, y - size1.Height - 3 + 1);
                         g.DrawString(count, f2, whiteBrush2, x - size1.Width / 2f, y - size1.Height - 3);
-                        g.FillEllipse(yellowBrush, new RectangleF(x - circleWidth / 2, y - circleWidth / 2, circleWidth, circleWidth));
+                        g.FillEllipse(yellowBrush,
+                            new RectangleF(x - circleWidth / 2, y - circleWidth / 2, circleWidth, circleWidth));
 
                         string mon = ConvertMonth(cur.Time);
                         SizeF size2 = g.MeasureString(mon, f);
-                        g.DrawString(mon, f, shadowBrush, x - size2.Width / 2f + 1, panels[0].Top + panels[0].Height + 5 + 1);
+                        g.DrawString(mon, f, shadowBrush, x - size2.Width / 2f + 1,
+                            panels[0].Top + panels[0].Height + 5 + 1);
                         g.DrawString(mon, f, whiteBrush2, x - size2.Width / 2f, panels[0].Top + panels[0].Height + 5);
                     }
                 }
 
             }
+
             return bmp;
         }
 

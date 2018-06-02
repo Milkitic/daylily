@@ -22,6 +22,7 @@ namespace Daylily.Plugin.Core.Command
             {
                 sb.Append(item.Name + "*   ");
             }
+
             foreach (var item in files)
             {
                 sb.Append(item.Name + "   ");

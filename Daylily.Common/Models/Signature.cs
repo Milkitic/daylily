@@ -12,8 +12,8 @@ namespace Daylily.Common.Models
 
         public static string Get()
         {
-            return Sign.Signature(AppId, SecretId, SecretKey, DateTime.Now.AddMonths(1).ToUnixTime() / 1000, BucketName);
+            return Sign.Signature(AppId, SecretId, SecretKey, DateTime.Now.AddMonths(1).ToUnixTime() / 1000,
+                BucketName);
         }
-
     }
 }

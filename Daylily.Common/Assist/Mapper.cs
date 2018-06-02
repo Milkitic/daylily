@@ -65,6 +65,7 @@ namespace Daylily.Common.Assist
                 fileName = Path.Combine(PluginDir, item.Key);
                 return item.Value[name];
             }
+
             fileName = null;
             return !InnerCmdPlugin.Keys.Contains(name) ? null : InnerCmdPlugin[name];
         }
@@ -73,16 +74,18 @@ namespace Daylily.Common.Assist
         {
             JsonSettings jSettings = new JsonSettings();
             jSettings.Plugins.Add("Daylily.Plugin.Core.dll",
-                new Dictionary<string, string> {
-                { "ping", "Daylily.Plugin.Command.Ping" },
-                { "cd", "Daylily.Plugin.Command.Cd" },
-                { "roll", "Daylily.Plugin.Command.Roll" }
+                new Dictionary<string, string>
+                {
+                    {"ping", "Daylily.Plugin.Command.Ping"},
+                    {"cd", "Daylily.Plugin.Command.Cd"},
+                    {"roll", "Daylily.Plugin.Command.Roll"}
                 });
 
             jSettings.Plugins.Add("Daylily.Plugin.Debug.dll",
-                new Dictionary<string, string> {
-                { "echo", "Daylily.Plugin.Echo" },
-                { "calc", "Daylily.Plugin.Calc" }
+                new Dictionary<string, string>
+                {
+                    {"echo", "Daylily.Plugin.Echo"},
+                    {"calc", "Daylily.Plugin.Calc"}
                 });
             string jsonFile = ConvertJsonString(JsonConvert.SerializeObject(jSettings));
 
@@ -108,6 +111,7 @@ namespace Daylily.Common.Assist
                 serializer.Serialize(jsonWriter, obj);
                 return textWriter.ToString();
             }
+
             return str;
         }
     }

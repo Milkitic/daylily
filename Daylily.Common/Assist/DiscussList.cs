@@ -29,7 +29,7 @@ namespace Daylily.Common.Assist
         public Queue<DiscussMsg> MsgQueue { get; set; } = new Queue<DiscussMsg>();
         public Thread Thread { get; set; }
         public int MsgLimit { get; set; } = 10;
-        public bool LockMsg { get; set; } = false;  // 用于判断是否超出消息阀值
+        public bool LockMsg { get; set; } = false; // 用于判断是否超出消息阀值
 
         public DiscussSettings(string discussId)
         {

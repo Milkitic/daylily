@@ -37,7 +37,9 @@ namespace Daylily.Common.Assist
         {
             if (pluginInfo.Length >= 1000)
                 pluginInfo = pluginInfo.Remove(1000) + ".....(Too long)";
-            string pluginHint = Environment.NewLine + $"\"/{pluginInfo}\" caused an exception: {Environment.NewLine} ---> {pluginName}:" + Environment.NewLine;
+            string pluginHint = Environment.NewLine +
+                                $"\"/{pluginInfo}\" caused an exception: {Environment.NewLine} ---> {pluginName}:" +
+                                Environment.NewLine;
 
             //if (ex.InnerException != null)
             //    DangerLine(pluginHint + ex.InnerException, 1);
@@ -53,6 +55,7 @@ namespace Daylily.Common.Assist
 
             WriteInfo(msg);
         }
+
         public static void DebugLine(string msg)
         {
 #if DEBUG
@@ -65,6 +68,7 @@ namespace Daylily.Common.Assist
             WriteInfo(pluginInfo);
 #endif
         }
+
         public static void PrimaryLine(string msg)
         {
             Console.BackgroundColor = ConsoleColor.DarkBlue;
@@ -75,6 +79,7 @@ namespace Daylily.Common.Assist
             Console.BackgroundColor = ConsoleColor.Black;
             WriteInfo(msg);
         }
+
         public static void SuccessLine(string msg)
         {
             Console.BackgroundColor = ConsoleColor.DarkGreen;
@@ -85,6 +90,7 @@ namespace Daylily.Common.Assist
             Console.BackgroundColor = ConsoleColor.Black;
             WriteInfo(msg);
         }
+
         public static void InfoLine(string msg)
         {
             Console.BackgroundColor = ConsoleColor.Blue;
@@ -95,6 +101,7 @@ namespace Daylily.Common.Assist
             Console.BackgroundColor = ConsoleColor.Black;
             WriteInfo(msg);
         }
+
         public static void WarningLine(string msg)
         {
             Console.BackgroundColor = ConsoleColor.Yellow;
@@ -106,6 +113,7 @@ namespace Daylily.Common.Assist
             WriteInfo(msg);
             Console.ResetColor();
         }
+
         public static void DangerLine(string msg, int offset = 0)
         {
             Console.BackgroundColor = ConsoleColor.Red;
@@ -116,6 +124,7 @@ namespace Daylily.Common.Assist
             Console.BackgroundColor = ConsoleColor.Black;
             WriteInfo(msg);
         }
+
         private static void WriteSource(bool ignoreMethod = false, int offset = 0)
         {
             string methodName = "";
@@ -125,10 +134,12 @@ namespace Daylily.Common.Assist
                 MethodBase mb = st.GetFrame(2 + offset).GetMethod();
                 methodName = $"[{mb.DeclaringType.Namespace}.{mb.DeclaringType.Name}.{mb.Name}]";
             }
+
             var n = DateTime.Now;
             Console.Write($"[{n.Hour:00}:{n.Minute:00}:{n.Second:00}]{methodName}");
             Console.ResetColor();
         }
+
         private static void WriteInfo(string msg)
         {
             if (msg.Length >= 2000)

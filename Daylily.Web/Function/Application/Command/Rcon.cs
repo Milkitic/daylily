@@ -11,7 +11,7 @@ namespace Daylily.Web.Function.Application.Command
         private static Thread _tThread;
         private string _message;
 
-        public override CommonMessageResponse Execute(CommonMessage commonMsg)  // 必要方法
+        public override CommonMessageResponse Execute(CommonMessage commonMsg) // 必要方法
         {
             // 发送者的QQ
             string userId = commonMsg.UserId;
@@ -52,7 +52,8 @@ namespace Daylily.Web.Function.Application.Command
                 _tThread = new Thread(MultiThread);
                 _tThread.Start(sleepTime);
 
-                string reply = "启动了计时器，" + DateTime.Now.AddMinutes(sleepTime).ToString("HH:mm:ss") + "后会通知你：" + param[2];
+                string reply = "启动了计时器，" + DateTime.Now.AddMinutes(sleepTime).ToString("HH:mm:ss") + "后会通知你：" +
+                               param[2];
                 // 当所用参数为(string,CommonMessage)，则自动返回给所在群（组）的所在成员（通常不用其他重载，为框架所用）
                 return new CommonMessageResponse(reply, commonMsg, true);
             }

@@ -23,7 +23,8 @@ namespace Daylily.Plugin.Core.Command
             const int count = 20;
             //do
             //{
-            string json = WebRequestHelper.GetResponseString(WebRequestHelper.CreateGetHttpResponse("https://osu.ppy.sh/users/" + userInfo[0].UserId + "/kudosu?offset=" + page + "&limit=" + count));
+            string json = WebRequestHelper.GetResponseString(WebRequestHelper.CreateGetHttpResponse(
+                "https://osu.ppy.sh/users/" + userInfo[0].UserId + "/kudosu?offset=" + page + "&limit=" + count));
             List<KudosuInfo> tmpList = JsonConvert.DeserializeObject<List<KudosuInfo>>(json);
             foreach (var item in tmpList)
             {
@@ -37,11 +38,13 @@ namespace Daylily.Plugin.Core.Command
             var recent = totalList[0];
             if (recent.Giver == null)
             {
-                string msg = recent.Created_At.ToLongDateString() + "那天，你在" + recent.Post.Title + $"({recent.Post.Url})" + (recent.Action == "vote.reset" ? "中的赞被取消了" : "中被点了个赞");
+                string msg = recent.Created_At.ToLongDateString() + "那天，你在" + recent.Post.Title +
+                             $"({recent.Post.Url})" + (recent.Action == "vote.reset" ? "中的赞被取消了" : "中被点了个赞");
                 return new CommonMessageResponse(msg, message, true);
             }
 
-            string msg2 = recent.Created_At.ToLongDateString() + "那天，你通过" + recent.Post.Title + $"的v1摸({recent.Post.Url})中{(recent.Action == "give" ? "向" : "被")}{recent.Giver.Username}{(recent.Action == "give" ? "买" : "扣")}了个币";
+            string msg2 = recent.Created_At.ToLongDateString() + "那天，你通过" + recent.Post.Title +
+                          $"的v1摸({recent.Post.Url})中{(recent.Action == "give" ? "向" : "被")}{recent.Giver.Username}{(recent.Action == "give" ? "买" : "扣")}了个币";
             return new CommonMessageResponse(msg2, message, true);
         }
 
@@ -56,16 +59,19 @@ namespace Daylily.Plugin.Core.Command
             public Post Post { get; set; }
             public Details Details { get; set; }
         }
+
         class Giver
         {
             public string Url { get; set; }
             public string Username { get; set; }
         }
+
         class Post
         {
             public string Url { get; set; }
             public string Title { get; set; }
         }
+
         class Details
         {
             public string Event { get; set; }

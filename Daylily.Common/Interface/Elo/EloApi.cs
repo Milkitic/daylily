@@ -13,7 +13,7 @@ namespace Daylily.Common.Interface.Elo
             string jsonString = null;
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "user_id", uid.ToString() }
+                {"user_id", uid.ToString()}
             };
 
             var response = WebRequestHelper.CreateUrlGetHttpResponse(ApiUrl + "/user", parameters);
@@ -24,6 +24,7 @@ namespace Daylily.Common.Interface.Elo
                 jsonString = WebRequestHelper.GetResponseString(response);
                 Logger.DefaultLine("Received response.");
             }
+
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<EloUserInfo>(jsonString);
             return obj;
         }

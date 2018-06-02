@@ -17,11 +17,12 @@ namespace Daylily.Web.Function.Application
                     DateTime.Now.Hour < 22 && DateTime.Now.Hour > 6)
                     return null;
                 string[] ids = CqCode.GetAt(message.Message);
-                if (ids != null && (ids.Contains("2181697779")|| ids.Contains("3421735167")))
+                if (ids != null && (ids.Contains("2181697779") || ids.Contains("3421735167")))
                 {
                     return new CommonMessageResponse("", message, true);
                 }
             }
+
             return null;
         }
     }

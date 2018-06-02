@@ -56,6 +56,7 @@ namespace Daylily.Common.Assist
                 sb.Remove(index, length);
                 sb.Insert(index, "[图片]");
             }
+
             return sb.ToString();
         }
 
@@ -78,6 +79,7 @@ namespace Daylily.Common.Assist
                 infoList.Add(source.Substring(index, length));
                 index2 = index + length;
             }
+
             return infoList.Count == 0 ? null : infoList.ToArray();
         }
 
@@ -91,6 +93,7 @@ namespace Daylily.Common.Assist
                 infoList.Add(new ImageInfo(source.Substring(index, length + 1)));
                 index2 = index + length;
             }
+
             return infoList.Count == 0 ? null : infoList.ToArray();
         }
 
@@ -105,11 +108,13 @@ namespace Daylily.Common.Assist
                     index2 = index2 + source.IndexOf(".gif", index, StringComparison.Ordinal);
                     continue;
                 }
+
                 int tmpIndex = source.IndexOf("url=", index, StringComparison.Ordinal) + 4;
                 int length = source.IndexOf("]", tmpIndex, StringComparison.Ordinal) - tmpIndex;
                 urlList.Add(source.Substring(tmpIndex, length));
                 index2 = tmpIndex + length;
             }
+
             return urlList.Count == 0 ? null : urlList.ToArray();
         }
 

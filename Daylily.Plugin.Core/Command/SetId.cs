@@ -29,6 +29,7 @@ namespace Daylily.Plugin.Core.Command
                 string msg = role[0].CurrentUname + "先森，别以为我不认识你哦. 嗯? 你真不是? 那请找Mother Ship吧..";
                 return new CommonMessageResponse(msg, message, true);
             }
+
             var newRole = new TblUserRole
             {
                 UserId = long.Parse(userObj.user_id),
@@ -42,9 +43,9 @@ namespace Daylily.Plugin.Core.Command
                 Mode = 0,
             };
             int c = bllUserRole.InsertUserRole(newRole);
-            return c < 1 ?
-                new CommonMessageResponse("由于各种强大的原因，绑定失败..", message) :
-                new CommonMessageResponse("明白了，" + userObj.username + "，多好的名字呢.", message);
+            return c < 1
+                ? new CommonMessageResponse("由于各种强大的原因，绑定失败..", message)
+                : new CommonMessageResponse("明白了，" + userObj.username + "，多好的名字呢.", message);
         }
     }
 }

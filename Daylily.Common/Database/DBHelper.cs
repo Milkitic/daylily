@@ -36,6 +36,7 @@ namespace Daylily.Common.Database
                 mysqlDataAdapter.Fill(dataSet);
                 dataTable = dataSet.Tables[0];
             }
+
             return dataTable;
         }
 
@@ -58,7 +59,8 @@ namespace Daylily.Common.Database
             }
         }
 
-        private static MySqlCommand GetParamCommand(string queryString, MySqlConnection connection, params MySqlParameter[] param)
+        private static MySqlCommand GetParamCommand(string queryString, MySqlConnection connection,
+            params MySqlParameter[] param)
         {
             MySqlCommand command = connection.CreateCommand();
             command.CommandText = queryString;

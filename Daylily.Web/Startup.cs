@@ -60,11 +60,8 @@ namespace Daylily.Web
                 catch (Exception ex)
                 {
                     Logger.DangerLine(item.Key + " 出现了问题。");
-                    if (ex.InnerException != null)
-                        throw new Exception("\n\"" + className + "\" caused an exception: \n" +
-                                            className + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
-                    throw new Exception("\n\"" + className + "\" caused an exception: \n" +
-                                        className + ": " + ex.Message + "\n\n" + ex.StackTrace);
+                    Logger.WriteException(ex);
+                    return;
                 }
 
                 object[] invokeArgs = { };
@@ -77,12 +74,10 @@ namespace Daylily.Web
                 catch (Exception ex)
                 {
                     Logger.DangerLine(item.Key + " 出现了问题。");
-                    if (ex.InnerException != null)
-                        throw new Exception("\n/\"" + className + "\" caused an exception: \n" +
-                                            type.Name + ": " + ex.InnerException.Message + "\n\n" + ex.InnerException.StackTrace);
-                    throw new Exception("\n/\"" + className + "\" caused an exception: \n" +
-                                        type.Name + ": " + ex.Message + "\n\n" + ex.StackTrace);
+                    Logger.WriteException(ex);
+                    return;
                 }
+
                 Logger.SuccessLine(item.Key + "已加载。");
             }
         }

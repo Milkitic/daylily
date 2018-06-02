@@ -31,14 +31,14 @@ namespace Daylily.Plugin.Core.Command
 
             Dictionary<string, int> dIndex = new Dictionary<string, int>
             {
-                { "Performance", innerText.IndexOf("Performance", StringComparison.Ordinal) },
-                { "Total", innerText.IndexOf("Total", StringComparison.Ordinal) },
-                { "Jump", innerText.IndexOf("Jump", StringComparison.Ordinal) },
-                { "Flow", innerText.IndexOf("Flow", StringComparison.Ordinal) },
-                { "Precision", innerText.IndexOf("Precision", StringComparison.Ordinal) },
-                { "Speed", innerText.IndexOf("Speed", StringComparison.Ordinal) },
-                { "Stamina", innerText.IndexOf("Stamina", StringComparison.Ordinal) },
-                { "Accuracy", innerText.IndexOf("Accuracy", StringComparison.Ordinal) }
+                {"Performance", innerText.IndexOf("Performance", StringComparison.Ordinal)},
+                {"Total", innerText.IndexOf("Total", StringComparison.Ordinal)},
+                {"Jump", innerText.IndexOf("Jump", StringComparison.Ordinal)},
+                {"Flow", innerText.IndexOf("Flow", StringComparison.Ordinal)},
+                {"Precision", innerText.IndexOf("Precision", StringComparison.Ordinal)},
+                {"Speed", innerText.IndexOf("Speed", StringComparison.Ordinal)},
+                {"Stamina", innerText.IndexOf("Stamina", StringComparison.Ordinal)},
+                {"Accuracy", innerText.IndexOf("Accuracy", StringComparison.Ordinal)}
             };
 
             Dictionary<string, int> dValue = new Dictionary<string, int>();
@@ -47,18 +47,21 @@ namespace Daylily.Plugin.Core.Command
                 if (kvp.Key == "Performance")
                 {
                     int tmp = innerText.IndexOf("<th>", kvp.Value, StringComparison.Ordinal) + 4;
-                    var str = innerText.Substring(tmp, innerText.IndexOf("pp", kvp.Value, StringComparison.Ordinal) - tmp);
+                    var str = innerText.Substring(tmp,
+                        innerText.IndexOf("pp", kvp.Value, StringComparison.Ordinal) - tmp);
                     int pp = int.Parse(str.Replace(",", ""));
                     dValue.Add(kvp.Key, pp);
                 }
                 else
                 {
                     int tmp = innerText.IndexOf("<td>", kvp.Value, StringComparison.Ordinal) + 4;
-                    var str = innerText.Substring(tmp, innerText.IndexOf("pp", kvp.Value, StringComparison.Ordinal) - tmp);
+                    var str = innerText.Substring(tmp,
+                        innerText.IndexOf("pp", kvp.Value, StringComparison.Ordinal) - tmp);
                     int pp = int.Parse(str.Replace(",", ""));
                     dValue.Add(kvp.Key, pp);
                 }
             }
+
             var resp = CqCode.EncodeImageToBase64(Draw(userId, dValue));
             //Logger.InfoLine(resp);
             return new CommonMessageResponse(resp, commonMessage);
@@ -94,9 +97,11 @@ namespace Daylily.Plugin.Core.Command
                         for (int j = 0; j < 6; j++)
                         {
                             float deg = (float)(j * 60d / 180d * Math.PI);
-                            points[j] = new PointF((float)(pointCentre.X + Math.Sin(deg) * r), pointCentre.Y + (float)(Math.Cos(deg) * r));
+                            points[j] = new PointF((float)(pointCentre.X + Math.Sin(deg) * r),
+                                pointCentre.Y + (float)(Math.Cos(deg) * r));
                             if (i == 0)
-                                pointBorder[j] = new PointF((float)(pointCentre.X + Math.Sin(deg) * r), pointCentre.Y + (float)(Math.Cos(deg) * r));
+                                pointBorder[j] = new PointF((float)(pointCentre.X + Math.Sin(deg) * r),
+                                    pointCentre.Y + (float)(Math.Cos(deg) * r));
                         }
 
                         gp.AddPolygon(points);
@@ -141,7 +146,8 @@ namespace Daylily.Plugin.Core.Command
                     float rCurrent = (float)(rMax * pcent);
 
                     float deg = (float)(ii * 60d / 180d * Math.PI);
-                    pointStatic[ii] = new PointF((float)(pointCentre.X + Math.Sin(deg) * rCurrent), pointCentre.Y + (float)(Math.Cos(deg) * rCurrent));
+                    pointStatic[ii] = new PointF((float)(pointCentre.X + Math.Sin(deg) * rCurrent),
+                        pointCentre.Y + (float)(Math.Cos(deg) * rCurrent));
 
                     ii++;
                 }
@@ -161,8 +167,8 @@ namespace Daylily.Plugin.Core.Command
 
                 // 画数据边框
                 Color cBorderStatic = Color.FromArgb(90 + (int)((241 - 90) * dPfmance["Performance"] / maxPp),
-                                            180 + (int)((139 - 180) * dPfmance["Performance"] / maxPp),
-                                             49 + (int)((37 - 49) * dPfmance["Performance"] / maxPp));
+                    180 + (int)((139 - 180) * dPfmance["Performance"] / maxPp),
+                    49 + (int)((37 - 49) * dPfmance["Performance"] / maxPp));
 
                 using (Brush brush = new SolidBrush(cBorderStatic))
                 using (Pen pen = new Pen(cBorderStatic, 2))
@@ -191,7 +197,8 @@ namespace Daylily.Plugin.Core.Command
                         SizeF ok = g.MeasureString(str, fontMsyh);
 
                         float deg = (float)(ii * 60d / 180d * Math.PI);
-                        var tempPoint = new PointF((float)(pointCentre.X + Math.Sin(deg) * rCurrent) - ok.Width / 2f, pointCentre.Y + (float)(Math.Cos(deg) * rCurrent) - ok.Height / 2f);
+                        var tempPoint = new PointF((float)(pointCentre.X + Math.Sin(deg) * rCurrent) - ok.Width / 2f,
+                            pointCentre.Y + (float)(Math.Cos(deg) * rCurrent) - ok.Height / 2f);
 
                         g.DrawString(item.Value.ToString(), fontMsyh, blackBrush, tempPoint);
                         Logger.DebugLine("[STRING] OK");
@@ -205,7 +212,8 @@ namespace Daylily.Plugin.Core.Command
 
                 using (Font fontTitle = new Font("Arial", 10, FontStyle.Bold))
                 using (Font fontTotal = new Font("Arial", 35))
-                using (Brush brushTotal = new SolidBrush(Color.FromArgb(70, cBorderStatic.R, cBorderStatic.G, cBorderStatic.B)))
+                using (Brush brushTotal =
+                    new SolidBrush(Color.FromArgb(70, cBorderStatic.R, cBorderStatic.G, cBorderStatic.B)))
                 using (Brush brushTitle = new SolidBrush(Color.FromArgb(200, 79, 103, 175)))
                 {
                     //SizeF sizeStrTitle = g.MeasureString(strTitle, fontTitle);
@@ -215,9 +223,12 @@ namespace Daylily.Plugin.Core.Command
                     g.DrawString(strTitle, fontTitle, brushTitle, 4, 4);
                     Logger.DebugLine("[STRING] OK");
                 }
-                g.DrawImage(Image.FromFile(Path.Combine(Environment.CurrentDirectory, "static", "ForeLayer.png")), new Rectangle(0, 0, bmp.Width, bmp.Height));
+
+                g.DrawImage(Image.FromFile(Path.Combine(Environment.CurrentDirectory, "static", "ForeLayer.png")),
+                    new Rectangle(0, 0, bmp.Width, bmp.Height));
                 Logger.DebugLine("[IMAGE] OK");
             }
+
             return bmp;
         }
     }

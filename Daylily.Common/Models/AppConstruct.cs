@@ -28,7 +28,8 @@ namespace Daylily.Common.Models
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsg.Status}}})");
                     break;
                 case MessageType.Private:
-                    SendPrivateMsgResponse privateMsg = CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
+                    SendPrivateMsgResponse privateMsg =
+                        CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsg.Status}}})");
                     break;
                 default:
@@ -36,7 +37,8 @@ namespace Daylily.Common.Models
             }
         }
 
-        public static void SendMessage(CommonMessageResponse response, string groupId, string discussId, MessageType messageType)
+        public static void SendMessage(CommonMessageResponse response, string groupId, string discussId,
+            MessageType messageType)
         {
             switch (messageType)
             {
@@ -51,7 +53,8 @@ namespace Daylily.Common.Models
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsg.Status}}})");
                     break;
                 case MessageType.Private:
-                    SendPrivateMsgResponse privateMsg = CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
+                    SendPrivateMsgResponse privateMsg =
+                        CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsg.Status}}})");
                     break;
                 default:

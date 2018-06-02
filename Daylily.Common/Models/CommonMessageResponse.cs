@@ -29,6 +29,7 @@ namespace Daylily.Common.Models
             Message = message;
             EnableAt = enableAt;
         }
+
         public CommonMessageResponse(string message, CommonMessage commonMessage, bool enableAt = false)
         {
             Message = message;
@@ -38,10 +39,12 @@ namespace Daylily.Common.Models
             switch (commonMessage.MessageType)
             {
                 case MessageType.Private:
-                    Private = new SendPrivateMsg(commonMessage.Private.UserId.ToString(), commonMessage.Private.Message);
+                    Private = new SendPrivateMsg(commonMessage.Private.UserId.ToString(),
+                        commonMessage.Private.Message);
                     break;
                 case MessageType.Discuss:
-                    Discuss = new SendDiscussMsg(commonMessage.Discuss.DiscussId.ToString(), commonMessage.Discuss.Message);
+                    Discuss = new SendDiscussMsg(commonMessage.Discuss.DiscussId.ToString(),
+                        commonMessage.Discuss.Message);
                     DiscussId = commonMessage.DiscussId;
                     break;
                 case MessageType.Group:

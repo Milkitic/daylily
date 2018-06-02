@@ -49,8 +49,10 @@ namespace Daylily.Web.Function.Application
                     WebRequestHelper.GetImageFromUrl(item.Url, item.Md5, item.Extension);
                     _pathList.Add(Path.Combine(Environment.CurrentDirectory, "images", item.Md5 + item.Extension));
                 }
+
                 _totalCount++;
             }
+
             _thread = new Thread(RunDetector);
             _thread.Start(_pathList);
             Logger.WarningLine("已经发送了请求,目前队列中共" + _totalCount);
@@ -66,7 +68,8 @@ namespace Daylily.Web.Function.Application
             foreach (var fullPath in list)
             {
                 try
-                {     //Thread.Sleep(6000);
+                {
+                    //Thread.Sleep(6000);
                     //continue;
                     if (_proc != null)
                     {
@@ -78,14 +81,14 @@ namespace Daylily.Web.Function.Application
                     {
                         StartInfo =
                         {
-                            FileName = "python3",  // python3 dragon-detection.py "root"
+                            FileName = "python3", // python3 dragon-detection.py "root"
                             Arguments =
                                 $"{Path.Combine(Environment.CurrentDirectory, "dragon", "dragon-detection.py")} \"{fullPath}\"",
                             CreateNoWindow = true,
                             UseShellExecute = false,
                             WindowStyle = ProcessWindowStyle.Hidden,
-                            RedirectStandardOutput = true,  // 重定向标准输出  
-                            RedirectStandardError = true  // 重定向错误输出  
+                            RedirectStandardOutput = true, // 重定向标准输出  
+                            RedirectStandardError = true // 重定向错误输出  
                             //StartInfo.StandardOutputEncoding = Encoding.UTF8;
                         }
                     };
@@ -128,11 +131,13 @@ namespace Daylily.Web.Function.Application
             if (e.Data == null || e.Data.Trim() == "") return;
             _receivedString.Add(e.Data);
         }
+
         private void ProcErrorReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data == null || e.Data.Trim() == "") return;
             _receivedString.Add(e.Data);
         }
+
         private void ProcExited()
         {
             if (_receivedString.Count == 0) return;
