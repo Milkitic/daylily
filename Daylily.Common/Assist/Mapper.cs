@@ -22,7 +22,6 @@ namespace Daylily.Common.Assist
         public static void Init()
         {
             // 偷懒测试用
-            InnerCmdPlugin.Add("pp", "PpPlus");
             InnerCmdPlugin.Add("send", "Send");
             InnerCmdPlugin.Add("kd", "Kudosu");
             InnerCmdPlugin.Add("sdown", "Shutdown");

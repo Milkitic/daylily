@@ -14,58 +14,57 @@ namespace Daylily.Plugin.Core.Command
     {
         public override CommonMessageResponse Execute(CommonMessage commonMessage)
         {
-            string @params = commonMessage.Parameter.Replace("@me", "yf_bmp");
+            string userId = commonMessage.Parameter;
 
             Logger.DefaultLine("Sent request.");
-            var response = WebRequestHelper.CreatePostHttpResponse("https://syrin.me/pp+/u/" + @params);
+            var response = WebRequestHelper.CreatePostHttpResponse("https://syrin.me/pp+/u/" + userId);
             Logger.DefaultLine("Received request.");
-            if (response != null)
+            if (response == null)
+                return null;
+
+            string jsonString = WebRequestHelper.GetResponseString(response);
+            if (jsonString.IndexOf("Oops!", StringComparison.Ordinal) != -1)
+                throw new Exception(LoliReply.IdNotFound);
+            int index = jsonString.IndexOf("<div class=\"performance-table\">", StringComparison.Ordinal);
+            int length = jsonString.IndexOf("</div>", index, StringComparison.Ordinal) - index;
+            string innerText = jsonString.Substring(index, length);
+
+            Dictionary<string, int> dIndex = new Dictionary<string, int>
             {
-                string jsonString = WebRequestHelper.GetResponseString(response);
-                if (jsonString.IndexOf("Oops!", StringComparison.Ordinal) != -1)
-                    throw new Exception("不存在的");
-                int index = jsonString.IndexOf("<div class=\"performance-table\">", StringComparison.Ordinal);
-                int length = jsonString.IndexOf("</div>", index, StringComparison.Ordinal) - index;
-                string innerText = jsonString.Substring(index, length);
+                { "Performance", innerText.IndexOf("Performance", StringComparison.Ordinal) },
+                { "Total", innerText.IndexOf("Total", StringComparison.Ordinal) },
+                { "Jump", innerText.IndexOf("Jump", StringComparison.Ordinal) },
+                { "Flow", innerText.IndexOf("Flow", StringComparison.Ordinal) },
+                { "Precision", innerText.IndexOf("Precision", StringComparison.Ordinal) },
+                { "Speed", innerText.IndexOf("Speed", StringComparison.Ordinal) },
+                { "Stamina", innerText.IndexOf("Stamina", StringComparison.Ordinal) },
+                { "Accuracy", innerText.IndexOf("Accuracy", StringComparison.Ordinal) }
+            };
 
-                Dictionary<string, int> dIndex = new Dictionary<string, int>
+            Dictionary<string, int> dValue = new Dictionary<string, int>();
+            foreach (var kvp in dIndex)
+            {
+                if (kvp.Key == "Performance")
                 {
-                    { "Performance", innerText.IndexOf("Performance", StringComparison.Ordinal) },
-                    { "Total", innerText.IndexOf("Total", StringComparison.Ordinal) },
-                    { "Jump", innerText.IndexOf("Jump", StringComparison.Ordinal) },
-                    { "Flow", innerText.IndexOf("Flow", StringComparison.Ordinal) },
-                    { "Precision", innerText.IndexOf("Precision", StringComparison.Ordinal) },
-                    { "Speed", innerText.IndexOf("Speed", StringComparison.Ordinal) },
-                    { "Stamina", innerText.IndexOf("Stamina", StringComparison.Ordinal) },
-                    { "Accuracy", innerText.IndexOf("Accuracy", StringComparison.Ordinal) }
-                };
-
-                Dictionary<string, int> dValue = new Dictionary<string, int>();
-                foreach (var kvp in dIndex)
-                {
-                    if (kvp.Key == "Performance")
-                    {
-                        int tmp = innerText.IndexOf("<th>", kvp.Value, StringComparison.Ordinal) + 4;
-                        var str = innerText.Substring(tmp, innerText.IndexOf("pp", kvp.Value, StringComparison.Ordinal) - tmp);
-                        int pp = int.Parse(str.Replace(",", ""));
-                        dValue.Add(kvp.Key, pp);
-                    }
-                    else
-                    {
-                        int tmp = innerText.IndexOf("<td>", kvp.Value, StringComparison.Ordinal) + 4;
-                        var str = innerText.Substring(tmp, innerText.IndexOf("pp", kvp.Value, StringComparison.Ordinal) - tmp);
-                        int pp = int.Parse(str.Replace(",", ""));
-                        dValue.Add(kvp.Key, pp);
-                    }
+                    int tmp = innerText.IndexOf("<th>", kvp.Value, StringComparison.Ordinal) + 4;
+                    var str = innerText.Substring(tmp, innerText.IndexOf("pp", kvp.Value, StringComparison.Ordinal) - tmp);
+                    int pp = int.Parse(str.Replace(",", ""));
+                    dValue.Add(kvp.Key, pp);
                 }
-                var resp = CqCode.EncodeImageToBase64(Draw(@params, dValue));
-                //Logger.InfoLine(resp);
-                return new CommonMessageResponse(resp, commonMessage);
+                else
+                {
+                    int tmp = innerText.IndexOf("<td>", kvp.Value, StringComparison.Ordinal) + 4;
+                    var str = innerText.Substring(tmp, innerText.IndexOf("pp", kvp.Value, StringComparison.Ordinal) - tmp);
+                    int pp = int.Parse(str.Replace(",", ""));
+                    dValue.Add(kvp.Key, pp);
+                }
             }
-            return null;
+            var resp = CqCode.EncodeImageToBase64(Draw(userId, dValue));
+            //Logger.InfoLine(resp);
+            return new CommonMessageResponse(resp, commonMessage);
         }
 
-        private Bitmap Draw(string user, Dictionary<string, int> dPfmance)
+        private static Bitmap Draw(string user, IReadOnlyDictionary<string, int> dPfmance)
         {
             Bitmap bmp = new Bitmap(230, 256, PixelFormat.Format32bppArgb);
             using (Graphics g = Graphics.FromImage(bmp))

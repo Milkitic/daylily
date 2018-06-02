@@ -220,7 +220,7 @@ namespace Daylily.Web.Function
                 {
                     if (commonMessage.UserId != "2241521134")
                     {
-                        AppConstruct.SendMessage(new CommonMessageResponse("你没有权限...", commonMessage));
+                        AppConstruct.SendMessage(new CommonMessageResponse(LoliReply.FakeRoot, commonMessage));
                     }
                     else
                     {
@@ -234,7 +234,7 @@ namespace Daylily.Web.Function
                 {
                     if (!GroupInfo[groupId].AdminList.Contains(userId))
                     {
-                        AppConstruct.SendMessage(new CommonMessageResponse("你没有权限...仅本群管理员可用", commonMessage));
+                        AppConstruct.SendMessage(new CommonMessageResponse(LoliReply.FakeAdmin, commonMessage));
                     }
                     else
                     {

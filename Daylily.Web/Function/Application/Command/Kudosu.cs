@@ -43,7 +43,7 @@ namespace Daylily.Web.Function.Application.Command
                     List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(_message.UserId));
                     if (userInfo.Count == 0)
                     {
-                        SendMessage(new CommonMessageResponse("你还没有绑ID. 请用/setid", _message, true));
+                        SendMessage(new CommonMessageResponse(LoliReply.IdNotBound, _message, true));
                         return;
                     }
                     id = userInfo[0].UserId.ToString();
@@ -57,18 +57,22 @@ namespace Daylily.Web.Function.Application.Command
                         OsuUser[] userList = osu.GetUser(_message.Parameter);
                         if (userList.Length == 0)
                         {
-                            SendMessage(new CommonMessageResponse("不存在的id呢...", _message, true));
+                            SendMessage(new CommonMessageResponse(LoliReply.IdNotFound, _message, true));
                             return;
                         }
+
                         OsuUser userObj = userList[0];
                         id = userObj.user_id;
                         uname = userObj.username;
                     }
                     else
-                    {
-                        SendMessage(new CommonMessageResponse("你还没有绑ID. 请用/setid", _message, true));
                         return;
-                    }
+
+                    //else
+                    //{
+                    //    SendMessage(new CommonMessageResponse("你还没有绑ID. 请用/setid", _message, true));
+                    //    return;
+                    //}
                 }
 
                 List<KudosuInfo> totalList = new List<KudosuInfo>();

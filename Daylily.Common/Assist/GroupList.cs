@@ -46,7 +46,7 @@ namespace Daylily.Common.Assist
 
             var adminList = CqApi.GetGroupMemberList(Id);
             if (adminList.Data == null)
-                Logger.PrimaryLine("adminList.Data is null!!!!");
+                Logger.PrimaryLine(Id + ": adminList.Data is null!!!!");
             else
             {
                 adminList.Data.RemoveAll(x => x.Role == "member");

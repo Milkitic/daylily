@@ -21,8 +21,8 @@ namespace Daylily.Web.Function.Application.Command
             MessageType type = commonMsg.MessageType;
             if (type != MessageType.Private)
             {
-                Logger.DangerLine("不能非私聊");
-                return null;  // 返回null则不返回消息
+                return new CommonMessageResponse(LoliReply.PrivateOnly, commonMsg);
+                //return null;  // 返回null则不返回消息
             }
 
             string parameter = commonMsg.Parameter;
@@ -31,14 +31,14 @@ namespace Daylily.Web.Function.Application.Command
             PermissionLevel level = commonMsg.PermissionLevel;
 
             if (level != PermissionLevel.Root)
-                return new CommonMessageResponse("不支持非root执行", commonMsg);
+                return new CommonMessageResponse(LoliReply.RootOnly, commonMsg);
 
             // 假设做一个定时报告程序（此仅为全局共享，对于用户用途不大）
             if (string.IsNullOrEmpty(parameter))
-                return new CommonMessageResponse("请填写参数", commonMsg, true);
+                return new CommonMessageResponse(LoliReply.ParamError, commonMsg, true);
             string[] param = parameter.Split(" ");
             if (param.Length > 3)
-                return new CommonMessageResponse("参数不正确", commonMsg, true);
+                return new CommonMessageResponse(LoliReply.ParamMissing, commonMsg, true);
 
             if (param[0] == "start" && double.TryParse(param[1], out double sleepTime) && param[2] != null)
             {
@@ -58,7 +58,7 @@ namespace Daylily.Web.Function.Application.Command
             }
 
             if (param[0] != "stop" || param.Length != 1)
-                return new CommonMessageResponse("参数不正确", commonMsg, true);
+                return new CommonMessageResponse(LoliReply.ParamError, commonMsg, true);
             {
                 if (_tThread != null && _tThread.IsAlive)
                     _tThread.Interrupt();

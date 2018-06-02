@@ -18,7 +18,7 @@ namespace Daylily.Plugin.Core.Command
             OsuUser[] userList = osu.GetUser(message.Parameter);
 
             if (userList.Length == 0)
-                return new CommonMessageResponse("官网没找到..不要乱填啊", message);
+                return new CommonMessageResponse(LoliReply.IdNotFound, message);
 
             OsuUser userObj = userList[0];
             var role = bllUserRole.GetUserRoleByQq(long.Parse(message.UserId));

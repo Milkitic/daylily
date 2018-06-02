@@ -23,7 +23,7 @@ namespace Daylily.Plugin.Core.Command
                 case 3:
                     return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1]), int.Parse(query[2])), message, true);
                 default:
-                    return new CommonMessageResponse("参数不对...", message, true);
+                    return new CommonMessageResponse(LoliReply.ParamError, message, true);
             }
         }
 

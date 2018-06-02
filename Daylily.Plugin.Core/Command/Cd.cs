@@ -12,7 +12,7 @@ namespace Daylily.Plugin.Core.Command
                 return null;
 
             if (message.PermissionLevel != PermissionLevel.Root)
-                return new CommonMessageResponse("只有超级管理员才能发动此技能…", message);
+                return new CommonMessageResponse(LoliReply.RootOnly, message);
             StringBuilder sb = new StringBuilder();
 
             DirectoryInfo di = new DirectoryInfo(message.Parameter);

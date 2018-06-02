@@ -17,9 +17,9 @@ namespace Daylily.Plugin.Core.Command
             var userInfo = bllUserRole.GetUserRoleByQq(long.Parse(message.UserId));
 
             if (userInfo.Count == 0)
-                return new CommonMessageResponse("你都还没有绑ID，用白菜的setid +id", message, true);
+                return new CommonMessageResponse(LoliReply.IdNotBound, message, true);
             List<KudosuInfo> totalList = new List<KudosuInfo>();
-            int page = 0;
+            const int page = 0;
             const int count = 20;
             //do
             //{

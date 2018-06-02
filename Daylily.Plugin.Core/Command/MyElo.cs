@@ -14,7 +14,7 @@ namespace Daylily.Plugin.Core.Command
 
             var userInfo = bllUserRole.GetUserRoleByQq(long.Parse(message.UserId));
             if (userInfo.Count == 0)
-                return new CommonMessageResponse("还不知道你是哪位呢..用setid命令?", message, true);
+                return new CommonMessageResponse(LoliReply.IdNotBound, message, true);
 
             var obj = eloApi.GetEloByUid(userInfo[0].UserId);
             if (obj.Result.ToLower() == "fail")
