@@ -20,86 +20,92 @@ namespace Daylily.Web.Function.Application.Command
 {
     public class Kudosu : AppConstruct
     {
-        CommonMessage message;
-        Thread t;
+        private CommonMessage _message;
+        private Thread _t;
 
         public override CommonMessageResponse Execute(CommonMessage message)
         {
-            this.message = message;
-            t = new Thread(Async);
-            t.Start();
+            _message = message;
+            _t = new Thread(Async);
+            _t.Start();
             return null;
         }
 
         private void Async()
         {
-            string id;
-            string uname;
-            if (string.IsNullOrEmpty(message.Parameter))
+            try
             {
-                BllUserRole bllUserRole = new BllUserRole();
-                List<TblUserRole> user_info = bllUserRole.GetUserRoleByQq(long.Parse(message.UserId));
-                if (user_info.Count == 0)
+                string id;
+                string uname;
+                if (string.IsNullOrEmpty(_message.Parameter))
                 {
-                    SendMessage(new CommonMessageResponse("你还没有绑ID. 请用/setid", message, true));
-                    return;
-                }
-                id = user_info[0].UserId.ToString();
-                uname = user_info[0].CurrentUname.ToString();
-            }
-            else
-            {
-                if (message.PermissionLevel != PermissionLevel.Public)
-                {
-                    OsuClient osu = new OsuClient(OsuApi.ApiKey);
-                    OsuUser[] userList = osu.GetUser(message.Parameter);
-                    if (userList.Length == 0)
+                    BllUserRole bllUserRole = new BllUserRole();
+                    List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(_message.UserId));
+                    if (userInfo.Count == 0)
                     {
-                        SendMessage(new CommonMessageResponse("不存在的id呢...", message, true));
+                        SendMessage(new CommonMessageResponse("你还没有绑ID. 请用/setid", _message, true));
                         return;
                     }
-                    OsuUser userObj = userList[0];
-                    id = userObj.user_id;
-                    uname = userObj.username;
+                    id = userInfo[0].UserId.ToString();
+                    uname = userInfo[0].CurrentUname;
                 }
                 else
                 {
-                    SendMessage(new CommonMessageResponse("你还没有绑ID. 请用/setid", message, true));
-                    return;
+                    if (_message.PermissionLevel != PermissionLevel.Public)
+                    {
+                        OsuClient osu = new OsuClient(OsuApi.ApiKey);
+                        OsuUser[] userList = osu.GetUser(_message.Parameter);
+                        if (userList.Length == 0)
+                        {
+                            SendMessage(new CommonMessageResponse("不存在的id呢...", _message, true));
+                            return;
+                        }
+                        OsuUser userObj = userList[0];
+                        id = userObj.user_id;
+                        uname = userObj.username;
+                    }
+                    else
+                    {
+                        SendMessage(new CommonMessageResponse("你还没有绑ID. 请用/setid", _message, true));
+                        return;
+                    }
                 }
-            }
 
-            List<KudosuInfo> total_list = new List<KudosuInfo>();
-            List<KudosuInfo> tmp_list = new List<KudosuInfo>();
-            int page = 0;
-            int count = 20;
-            do
-            {
-                string json = WebRequestHelper.GetResponseString(WebRequestHelper.CreateGetHttpResponse("https://osu.ppy.sh/users/" + id + "/kudosu?offset=" + page + "&limit=" + count));
-                Logger.DebugLine("GET JSON");
-
-                tmp_list = JsonConvert.DeserializeObject<List<KudosuInfo>>(json);
-                total_list.AddRange(tmp_list);
-                page += count;
-
-                if (total_list.Count == 0)
+                List<KudosuInfo> totalList = new List<KudosuInfo>();
+                List<KudosuInfo> tmpList;
+                int page = 0;
+                const int count = 20;
+                do
                 {
-                    SendMessage(new CommonMessageResponse("竟然连一张图都没摸过...", message, true));
-                    return;
-                }
-            } while (tmp_list.Count != 0);
-            string msg = CqCode.EncodeImageToBase64(Draw(total_list, uname));
+                    string json = WebRequestHelper.GetResponseString(WebRequestHelper.CreateGetHttpResponse("https://osu.ppy.sh/users/" + id + "/kudosu?offset=" + page + "&limit=" + count));
+                    Logger.DebugLine("GET JSON");
 
-            SendMessage(new CommonMessageResponse(msg, message));
+                    tmpList = JsonConvert.DeserializeObject<List<KudosuInfo>>(json);
+                    totalList.AddRange(tmpList);
+                    page += count;
+
+                    if (totalList.Count != 0) continue;
+
+                    SendMessage(new CommonMessageResponse("竟然连一张图都没摸过...", _message, true));
+                    return;
+                } while (tmpList.Count != 0);
+                string msg = CqCode.EncodeImageToBase64(Draw(totalList, uname));
+
+                SendMessage(new CommonMessageResponse(msg, _message));
+            }
+            catch (Exception ex)
+            {
+                Logger.DangerLine(ex.ToString());
+            }
         }
 
-        private Bitmap Draw(List<KudosuInfo> total_list, string uname)
+        private static Bitmap Draw(List<KudosuInfo> totalList, string uname)
         {
             List<KdInfo> kdInfoList = new List<KdInfo>();
             int pastMonth = -1;
             KdInfo info = null;
-            total_list.Reverse();
-            foreach (var item in total_list)
+            totalList.Reverse();
+            foreach (var item in totalList)
             {
                 if (item.Created_At.Month != pastMonth)
                 {
@@ -111,25 +117,26 @@ namespace Daylily.Web.Function.Application.Command
                     };
                     pastMonth = item.Created_At.Month;
                 }
-                info.Count++;
+
+                if (info != null) info.Count++;
             }
             if (info != null) kdInfoList.Add(info);
-            //kdInfoList.Reverse();
-            //kdInfoList[1].Count = 113;
+
             int max = kdInfoList.Max(x => x.Count);
             string avg = "AVG: " + Math.Round(kdInfoList.Average(x => x.Count), 2);
-            int IMG_WIDTH = 430, IMG_HEIGHT = 250;
-            Bitmap bmp = new Bitmap(IMG_WIDTH, IMG_HEIGHT, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            const int imgWidth = 430, imgHeight = 250;
+
+            Bitmap bmp = new Bitmap(imgWidth, imgHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
                 g.CompositingQuality = CompositingQuality.HighQuality;
                 g.SmoothingMode = SmoothingMode.HighQuality;
                 g.Clear(Color.FromArgb(34, 34, 34));
-                float maxHeight = IMG_HEIGHT * 0.6F, maxWidth = IMG_WIDTH * 0.9F;
+                const float maxHeight = imgHeight * 0.6F, maxWidth = imgWidth * 0.9F;
                 float splitedWidth = maxWidth / (kdInfoList.Count - 1);
-                int splitedCount = 5;
-                float left = (IMG_WIDTH - maxWidth) / 2, top = (IMG_HEIGHT - maxHeight) / 1.4F;
+                const int splitedCount = 5;
+                const float left = (imgWidth - maxWidth) / 2, top = (imgHeight - maxHeight) / 1.4F;
                 RectangleF[] panels = { new RectangleF(left, top, maxWidth, maxHeight) };
                 //max = (int)(max * 1.1);
                 using (Brush yellowBrush = new SolidBrush(Color.FromArgb(255, 204, 34)))
@@ -145,13 +152,13 @@ namespace Daylily.Web.Function.Application.Command
                 {
                     SizeF sAvg = g.MeasureString(avg, f4);
                     SizeF sTitle = g.MeasureString(uname, f3);
-                    g.DrawString(uname, f3, whiteBrush, IMG_WIDTH / 2f - sTitle.Width / 2f, panels[0].Y - sTitle.Height - 30);
-                    g.DrawString(avg, f4, whiteBrush, IMG_WIDTH / 2f - sAvg.Width / 2f, panels[0].Y - sAvg.Height - 14);
+                    g.DrawString(uname, f3, whiteBrush, imgWidth / 2f - sTitle.Width / 2f, panels[0].Y - sTitle.Height - 30);
+                    g.DrawString(avg, f4, whiteBrush, imgWidth / 2f - sAvg.Width / 2f, panels[0].Y - sAvg.Height - 14);
 
                     // g.DrawRectangles(blackPen, panels);
                     g.DrawLine(yellowPen2, panels[0].X, panels[0].Y, panels[0].X, panels[0].Y + panels[0].Height);
                     g.DrawLine(yellowPen2, panels[0].X, panels[0].Y + panels[0].Height, panels[0].X + panels[0].Width, panels[0].Y + panels[0].Height);
-                    float circleWidth = 5;
+                    const float circleWidth = 5;
 
                     int loopStep = (max - (max % splitedCount)) / splitedCount;
                     for (int i = 0; i <= splitedCount; i++)
@@ -210,7 +217,7 @@ namespace Daylily.Web.Function.Application.Command
             return bmp;
         }
 
-        private string ConvertMonth(DateTime dt)
+        private static string ConvertMonth(DateTime dt)
         {
             switch (dt.Month)
             {
@@ -254,21 +261,25 @@ namespace Daylily.Web.Function.Application.Command
             public Post Post { get; set; }
             public Details Details { get; set; }
         }
-        class Giver
+
+        private class Giver
         {
             public string Url { get; set; }
             public string Username { get; set; }
         }
-        class Post
+
+        private class Post
         {
             public string Url { get; set; }
             public string Title { get; set; }
         }
-        class Details
+
+        private class Details
         {
             public string Event { get; set; }
         }
-        class KdInfo
+
+        private class KdInfo
         {
             public DateTime Time { get; set; }
             public int Count { get; set; }

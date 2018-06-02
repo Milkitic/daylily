@@ -49,7 +49,7 @@ namespace Daylily.Web.Function.Application.Command
 
                 _message = param[2];
 
-                _tThread = new Thread(new ParameterizedThreadStart(MultiThread));
+                _tThread = new Thread(MultiThread);
                 _tThread.Start(sleepTime);
 
                 string reply = "启动了计时器，" + DateTime.Now.AddMinutes(sleepTime).ToString("HH:mm:ss") + "后会通知你：" + param[2];
