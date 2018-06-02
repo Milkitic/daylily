@@ -15,9 +15,7 @@ namespace Daylily.Web.Function.Application
         public override CommonMessageResponse Execute(CommonMessage message)
         {
             // 查黄图
-            if (message.Group != null && message.GroupId != "133605766") return null;
-
-            //if (user != "2241521134") return null;
+            if (message.Group == null || message.GroupId != "133605766") return null;
             var imgList = CqCode.GetImageInfo(message.Message);
             if (imgList == null)
                 return null;
@@ -30,6 +28,7 @@ namespace Daylily.Web.Function.Application
                 else if (item.Size > 1000 * 60) //60KB
                     urlList.Add(item.Url);
             }
+
             if (urlList.Count == 0 && cacheList.Count == 0)
                 return null;
 
@@ -48,7 +47,8 @@ namespace Daylily.Web.Function.Application
                     url_list = urlList.ToArray()
                 });
 
-                var abc = WebRequestHelper.CreatePostHttpResponse("http://service.image.myqcloud.com/detection/porn_detect", str, authorization: Signature.Get());
+                var abc = WebRequestHelper.CreatePostHttpResponse(
+                    "http://service.image.myqcloud.com/detection/porn_detect", str, authorization: Signature.Get());
                 var respStr = WebRequestHelper.GetResponseString(abc);
 
                 model = Newtonsoft.Json.JsonConvert.DeserializeObject<CosAnalyzer>(respStr);
@@ -64,26 +64,30 @@ namespace Daylily.Web.Function.Application
 
                 switch (item.data.result)
                 {
-                    case 0 when item.data.normal_score > item.data.hot_score && item.data.normal_score > item.data.porn_score && item.data.confidence > 40:
+                    case 0 when item.data.normal_score > item.data.hot_score &&
+                                item.data.normal_score > item.data.porn_score && item.data.confidence > 40:
                         continue;
                     case 1:
                     case 2:
                         CqApi.SetGroupBan(message.GroupId, message.UserId, 24 * 60 * 60);
                         return new CommonMessageResponse("……………………");
+                    default:
+                        break;
                 }
 
                 if (item.data.porn_score >= item.data.hot_score && item.data.porn_score > 65)
-                {
                     return AddCount(message.UserId, message.GroupId);
-                }
 
-                if (item.data.hot_score >= item.data.porn_score && item.data.hot_score > item.data.normal_score && item.data.hot_score > 80)
-                {
+                if (item.data.hot_score >= item.data.porn_score && item.data.hot_score > item.data.normal_score &&
+                    item.data.hot_score > 80)
                     return AddCount(message.UserId, message.GroupId);
-                }
+
                 break;
             }
+
             return null;
+
+            //if (user != "2241521134") return null;
         }
 
         private CommonMessageResponse AddCount(string user, string group)
