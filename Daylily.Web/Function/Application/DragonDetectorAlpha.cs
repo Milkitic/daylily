@@ -144,8 +144,6 @@ namespace Daylily.Web.Function.Application
             var confidence = double.Parse(tmp[1]);
             if (status == 1 && confidence > 68)
                 _currentCount++;
-
-            Logger.PrimaryLine("调用结束");
         }
     }
 }

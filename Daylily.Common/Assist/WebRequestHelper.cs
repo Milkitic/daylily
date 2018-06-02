@@ -13,17 +13,17 @@ namespace Daylily.Common.Assist
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Timeout = 5000;
-            WebResponse response = request.GetResponse();
+            var response = TryGetResponse(request);
 
-            //Logger.DefaultLine("Get response.");
             response.GetResponseStream();
-
             return !response.ContentType.ToLower().StartsWith("text/") ? SaveBinaryFile(response, savePath, ext) : null;
         }
+
         /// <summary>
         /// 创建一个一般请求
         /// </summary>
-        public static HttpWebResponse CreatePostHttpResponse(string url, IDictionary<string, string> parameters = null, int timeout = -1, string userAgent = null, CookieCollection cookies = null, string authorization = null)
+        public static HttpWebResponse CreatePostHttpResponse(string url, IDictionary<string, string> parameters = null,
+            int timeout = -1, string userAgent = null, CookieCollection cookies = null, string authorization = null)
         {
             // 参数
             StringBuilder buffer = new StringBuilder();
@@ -37,31 +37,42 @@ namespace Daylily.Common.Assist
                 }
             }
 
-            HttpWebRequest request = _GetReqPostObj("application/x-www-form-urlencoded", url, buffer.ToString(), timeout, userAgent, cookies, authorization);
-            return request.GetResponse() as HttpWebResponse;
+            HttpWebRequest request = _GetReqPostObj("application/x-www-form-urlencoded", url, buffer.ToString(),
+                timeout, userAgent, cookies, authorization);
+            return TryGetResponse(request);
         }
+
         /// <summary>
         /// 创建一个一般请求
         /// </summary>
-        public static HttpWebResponse CreatePostHttpResponse(string url, object jsonObj, int timeout = -1, string userAgent = null, CookieCollection cookies = null, string authorization = null)
+        public static HttpWebResponse CreatePostHttpResponse(string url, object jsonObj, int timeout = -1,
+            string userAgent = null, CookieCollection cookies = null, string authorization = null)
         {
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(jsonObj);
 
-            HttpWebRequest request = _GetReqPostObj("application/json", url, json, timeout, userAgent, cookies, authorization);
-            return request.GetResponse() as HttpWebResponse;
+            HttpWebRequest request =
+                _GetReqPostObj("application/json", url, json, timeout, userAgent, cookies, authorization);
+
+            return TryGetResponse(request);
         }
+
         /// <summary>
         /// 创建一个一般请求
         /// </summary>
-        public static HttpWebResponse CreatePostHttpResponse(string url, string json, int timeout = -1, string userAgent = null, CookieCollection cookies = null, string authorization = null)
+        public static HttpWebResponse CreatePostHttpResponse(string url, string json, int timeout = -1,
+            string userAgent = null, CookieCollection cookies = null, string authorization = null)
         {
-            HttpWebRequest request = _GetReqPostObj("application/json", url, json, timeout, userAgent, cookies, authorization);
-            return request.GetResponse() as HttpWebResponse;
+            HttpWebRequest request =
+                _GetReqPostObj("application/json", url, json, timeout, userAgent, cookies, authorization);
+            return TryGetResponse(request);
         }
+
         /// <summary>
         /// 创建一个异步请求
         /// </summary>
-        public static async Task<HttpWebResponse> CreatePostHttpResponseAsync(string url, IDictionary<string, string> parameters = null, int timeout = -1, string userAgent = null, CookieCollection cookies = null, string authorization = null)
+        public static async Task<HttpWebResponse> CreatePostHttpResponseAsync(string url,
+            IDictionary<string, string> parameters = null, int timeout = -1, string userAgent = null,
+            CookieCollection cookies = null, string authorization = null)
         {
             // 参数
             StringBuilder buffer = new StringBuilder();
@@ -82,8 +93,9 @@ namespace Daylily.Common.Assist
                 }
             }
 
-            HttpWebRequest request = _GetReqPostObj("application/x-www-form-urlencoded", url, buffer.ToString(), timeout, userAgent, cookies, authorization);
-            return await request.GetResponseAsync() as HttpWebResponse;
+            HttpWebRequest request = _GetReqPostObj("application/x-www-form-urlencoded", url, buffer.ToString(),
+                timeout, userAgent, cookies, authorization);
+            return await TryGetResponseAsync(request);
         }
 
         /// <summary>
@@ -92,16 +104,17 @@ namespace Daylily.Common.Assist
         public static HttpWebResponse CreateGetHttpResponse(string url, IDictionary<string, string> parameters = null)
         {
             HttpWebRequest request = _GetReqGetObj(url, parameters);
-            return request.GetResponse() as HttpWebResponse;
+            return TryGetResponse(request);
         }
 
         /// <summary>
         /// 创建一个一般Get请求
         /// </summary>
-        public static HttpWebResponse CreateUrlGetHttpResponse(string url, IDictionary<string, string> parameters = null)
+        public static HttpWebResponse CreateUrlGetHttpResponse(string url,
+            IDictionary<string, string> parameters = null)
         {
             HttpWebRequest request = _GetReqUrlGetObj(url, parameters);
-            return request.GetResponse() as HttpWebResponse;
+            return TryGetResponse(request);
         }
 
         /// <summary>
@@ -116,7 +129,8 @@ namespace Daylily.Common.Assist
             }
         }
 
-        private static HttpWebRequest _GetReqPostObj(string contentType, string url, string param, int timeout, string userAgent, CookieCollection cookies, string authorization)
+        private static HttpWebRequest _GetReqPostObj(string contentType, string url, string param, int timeout,
+            string userAgent, CookieCollection cookies, string authorization)
         {
             HttpWebRequest request;
 
@@ -129,6 +143,7 @@ namespace Daylily.Common.Assist
             {
                 request = WebRequest.Create(url) as HttpWebRequest;
             }
+
             if (request == null) throw new NullReferenceException();
 
             request.Method = "POST";
@@ -157,6 +172,7 @@ namespace Daylily.Common.Assist
             {
                 throw new Exception("网络连接失败");
             }
+
             if (authorization != null)
             {
                 request.Headers.Add("authorization", authorization);
@@ -199,6 +215,7 @@ namespace Daylily.Common.Assist
                         i++;
                     }
                 }
+
                 byte[] data = Encoding.ASCII.GetBytes(buffer.ToString());
                 using (Stream stream = request.GetRequestStream())
                 {
@@ -230,6 +247,7 @@ namespace Daylily.Common.Assist
                         i++;
                     }
                 }
+
                 url = url + buffer;
             }
 
@@ -258,8 +276,7 @@ namespace Daylily.Common.Assist
                     l = inStream.Read(buffer, 0, buffer.Length);
                     if (l > 0)
                         outStream.Write(buffer, 0, l);
-                }
-                while (l > 0);
+                } while (l > 0);
 
                 outStream.Close();
                 inStream.Close();
@@ -268,7 +285,52 @@ namespace Daylily.Common.Assist
             {
                 return null;
             }
+
             return filePath;
+        }
+
+        private static HttpWebResponse TryGetResponse(WebRequest request)
+        {
+            HttpWebResponse response = null;
+            const int count = 3;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    response = request.GetResponse() as HttpWebResponse;
+                    break;
+                }
+                catch (Exception)
+                {
+                    Logger.DangerLine($"尝试了{i}次，请求超时 (>{request.Timeout}ms)");
+                    if (i == count - 1)
+                        throw;
+                }
+            }
+
+            return response;
+        }
+
+        private static async Task<HttpWebResponse> TryGetResponseAsync(WebRequest request)
+        {
+            HttpWebResponse response = null;
+            const int count = 3;
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    response = await request.GetResponseAsync() as HttpWebResponse;
+                    break;
+                }
+                catch (Exception)
+                {
+                    Logger.DangerLine($"尝试了{i}次，请求超时 (>{request.Timeout}ms)");
+                    if (i == count - 1)
+                        throw;
+                }
+            }
+
+            return response;
         }
     }
 }

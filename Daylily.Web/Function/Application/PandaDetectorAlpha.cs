@@ -51,7 +51,7 @@ namespace Daylily.Web.Function.Application
             }
             _thread = new Thread(RunDetector);
             _thread.Start(_pathList);
-            Logger.PrimaryLine("熊猫共" + _totalCount);
+            Logger.PrimaryLine("(熊猫) 共 " + _totalCount);
             return null;
         }
 
@@ -90,7 +90,6 @@ namespace Daylily.Web.Function.Application
                     _proc.OutputDataReceived += ProcOutputReceived;
                     _proc.ErrorDataReceived += ProcErrorReceived;
 
-                    Logger.PrimaryLine("(熊猫)正在调用中");
                     _proc.Start();
                     _proc.BeginOutputReadLine();
                     _proc.BeginErrorReadLine();
@@ -105,7 +104,7 @@ namespace Daylily.Web.Function.Application
                 finally
                 {
                     _totalCount--;
-                    Logger.PrimaryLine("熊猫" + (_totalCount + 1) + "->" + _totalCount);
+                    Logger.PrimaryLine("(熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
                 }
             }
 
@@ -120,7 +119,7 @@ namespace Daylily.Web.Function.Application
                 SendMessage(new CommonMessageResponse(msg, _message));
             }
             else
-                Logger.WarningLine("几率不够，没有触发：" + perc);
+                Logger.WarningLine("(熊猫) 几率: " + perc);
 
         }
 
@@ -138,15 +137,13 @@ namespace Daylily.Web.Function.Application
         {
             if (_receivedString.Count == 0) return;
             string line = _receivedString[_receivedString.Count - 1];
-            Logger.WarningLine(line);
+            //Logger.WarningLine(line);
 
             var tmp = line.Split(' ');
             var status = int.Parse(tmp[0]);
             var confidence = double.Parse(tmp[1]);
             if (status == 1 && confidence > 50)
                 _pandaCount++;
-            
-            Console.WriteLine("(熊猫)调用结束");
         }
     }
 }
