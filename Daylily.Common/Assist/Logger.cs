@@ -27,10 +27,7 @@ namespace Daylily.Common.Assist
 
         public static void WriteException(Exception ex)
         {
-            if (ex.InnerException != null)
-                DangerLine(ex.InnerException.ToString(), 1);
-            else
-                DangerLine(ex.ToString(), 1);
+            DangerLine(Environment.NewLine + ex, 1);
         }
 
         public static void WriteException(Exception ex, string pluginInfo, string pluginName)
