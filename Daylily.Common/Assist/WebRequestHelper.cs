@@ -7,10 +7,19 @@ using System.Threading.Tasks;
 
 namespace Daylily.Common.Assist
 {
-    public class WebRequestHelper
+    /// <summary>
+    /// Web请求帮助类
+    /// </summary>
+    public static class WebRequestHelper
     {
-        private const int Timeout = 5000;
-
+        private const int Timeout = 5000; // 整体的一次请求超时时间
+        /// <summary>
+        /// 从URL中提取图片
+        /// </summary>
+        /// <param name="url">原始URL地址</param>
+        /// <param name="savePath">要保存的文件名（不包含扩展名）</param>
+        /// <param name="ext">要保存的扩展名</param>
+        /// <returns></returns>
         public static string GetImageFromUrl(string url, string savePath, string ext)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -21,8 +30,15 @@ namespace Daylily.Common.Assist
         }
 
         /// <summary>
-        /// 创建一个一般请求
+        /// 创建一个POST请求（键值对形式）
         /// </summary>
+        /// <param name="url">需要请求的地址</param>
+        /// <param name="parameters">请求的参数</param>
+        /// <param name="timeout">超时时间</param>
+        /// <param name="userAgent"></param>
+        /// <param name="cookies">Cookie</param>
+        /// <param name="authorization"></param>
+        /// <returns></returns>
         public static HttpWebResponse CreatePostHttpResponse(string url, IDictionary<string, string> parameters = null,
             int timeout = -1, string userAgent = null, CookieCollection cookies = null, string authorization = null)
         {
@@ -121,6 +137,8 @@ namespace Daylily.Common.Assist
         /// <summary>
         /// 从已创建的请求中获取字符串
         /// </summary>
+        /// <param name="webresponse">已创建的请求</param>
+        /// <returns></returns>
         public static string GetResponseString(HttpWebResponse webresponse)
         {
             using (Stream s = webresponse.GetResponseStream())

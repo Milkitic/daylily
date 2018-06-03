@@ -39,20 +39,13 @@ namespace Daylily.Web
             if (!Directory.Exists(ServiceDir))
                 Directory.CreateDirectory(ServiceDir);
 
-            foreach (var item in new DirectoryInfo(ServiceDir).GetFiles())
-            {
-                if (item.Extension.ToLower() == ".dll")
-                {
-                    ServicePlugins.Add(item.Name, item.FullName);
-                }
-            }
+            LoadServices();
 
             if (!File.Exists(SettingsFile))
                 CreateJson();
             else
             {
-                string jsonString = File.ReadAllText(SettingsFile);
-                FileCmdPlugins = JsonConvert.DeserializeObject<JsonSettings>(jsonString);
+                LoadPlugins();
             }
         }
 
@@ -60,14 +53,33 @@ namespace Daylily.Web
         {
             foreach (var item in FileCmdPlugins.Plugins)
             {
-                if (!item.Value.Keys.Contains(name))
-                    continue;
+                if (!item.Value.Keys.Contains(name)) continue;
                 fileName = Path.Combine(PluginDir, item.Key);
                 return item.Value[name];
             }
 
             fileName = null;
             return !InnerCmdPlugin.Keys.Contains(name) ? null : InnerCmdPlugin[name];
+        }
+
+        private static string ConvertJsonString(string str)
+        {
+            //格式化json字符串  
+            JsonSerializer serializer = new JsonSerializer();
+            TextReader tr = new StringReader(str);
+            JsonTextReader jtr = new JsonTextReader(tr);
+            object obj = serializer.Deserialize(jtr);
+            if (obj == null)
+                return str;
+            StringWriter textWriter = new StringWriter();
+            JsonTextWriter jsonWriter = new JsonTextWriter(textWriter)
+            {
+                Formatting = Formatting.Indented,
+                Indentation = 4,
+                IndentChar = ' '
+            };
+            serializer.Serialize(jsonWriter, obj);
+            return textWriter.ToString();
         }
 
         private static void CreateJson()
@@ -89,30 +101,23 @@ namespace Daylily.Web
                 });
             string jsonFile = ConvertJsonString(JsonConvert.SerializeObject(jSettings));
 
-            File.WriteAllText(Path.Combine(PluginDir, "plugins.json"), jsonFile);
+            //File.WriteAllText(Path.Combine(PluginDir, "plugins.json"), jsonFile);
         }
 
-        public static string ConvertJsonString(string str)
+        private static void LoadPlugins()
         {
-            //格式化json字符串  
-            JsonSerializer serializer = new JsonSerializer();
-            TextReader tr = new StringReader(str);
-            JsonTextReader jtr = new JsonTextReader(tr);
-            object obj = serializer.Deserialize(jtr);
-            if (obj != null)
-            {
-                StringWriter textWriter = new StringWriter();
-                JsonTextWriter jsonWriter = new JsonTextWriter(textWriter)
-                {
-                    Formatting = Formatting.Indented,
-                    Indentation = 4,
-                    IndentChar = ' '
-                };
-                serializer.Serialize(jsonWriter, obj);
-                return textWriter.ToString();
-            }
-
-            return str;
+            string jsonString = File.ReadAllText(SettingsFile);
+            FileCmdPlugins = JsonConvert.DeserializeObject<JsonSettings>(jsonString);
         }
+
+        private static void LoadServices()
+        {
+            foreach (var item in new DirectoryInfo(ServiceDir).GetFiles())
+            {
+                if (item.Extension.ToLower() != ".dll") continue;
+                ServicePlugins.Add(item.Name, item.FullName);
+            }
+        }
+
     }
 }

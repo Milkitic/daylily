@@ -8,14 +8,31 @@ using System.Text;
 
 namespace Daylily.Common.Assist
 {
-    public class CqCode
+    /// <summary>
+    /// CQ码帮助类，可用于编码成CQ码、将CQ码解码以及从文本中提取CQ码。
+    /// </summary>
+    public static class CqCode
     {
+        /// <summary>
+        /// CoolQ所在的目录，由appsettings.json配置，若CQ与本程序在同一平台，此属性有效，可节省网络请求。
+        /// </summary>
         public static string CqRoot { get; set; }
 
-        // Encode
+        #region Encode
+
+        /// <summary>
+        /// 将功能“AT一个人”编码为CQ码。
+        /// </summary>
+        /// <param name="id">需要at的QQ号</param>
+        /// <returns></returns>
         public static string EncodeAt(string id) =>
             id == null ? "" : $"[CQ:at,qq={Escape(id)}]";
 
+        /// <summary>
+        /// 将功能“发送图片”编码为CQ码（Base64形式）。
+        /// </summary>
+        /// <param name="img">需要发送的图片</param>
+        /// <returns></returns>
         public static string EncodeImageToBase64(Image img)
         {
             //string code = ToBase64(img);
@@ -25,7 +42,13 @@ namespace Daylily.Common.Assist
             return $"[CQ:image,file=base64://{EncodeFileToBase64(path, false)}]";
         }
 
-        public static string EncodeFileToBase64(string path, bool abc = true)
+        /// <summary>
+        /// 将功能“发送本地已存在的图片”编码为CQ码（Base64形式）。
+        /// </summary>
+        /// <param name="path">需要发送的图片</param>
+        /// <param name="notOnlyBase64">是否仅包含Base64</param>
+        /// <returns></returns>
+        public static string EncodeFileToBase64(string path, bool notOnlyBase64 = true)
         {
             FileStream filestream = new FileStream(path, FileMode.Open);
             byte[] bt = new byte[filestream.Length];
@@ -33,18 +56,32 @@ namespace Daylily.Common.Assist
             filestream.Read(bt, 0, bt.Length);
             string base64Str = Convert.ToBase64String(bt);
             filestream.Close();
-            if (abc)
+            if (notOnlyBase64)
                 return $"[CQ:image,file=base64://{base64Str}]";
             return base64Str;
         }
 
-        // decode
+        #endregion
+
+        #region Decode
+
+        /// <summary>
+        /// 将消息中所有可能出现的CQ码转换为可读形式。
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
         public static string Decode(string source)
         {
             source = DecodeImageToText(source);
+            // TODO
             return source;
         }
 
+        /// <summary>
+        /// 将消息中出现的图片类型CQ码转换为可读形式。
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
         private static string DecodeImageToText(string source)
         {
             StringBuilder sb = new StringBuilder(source);
@@ -60,10 +97,12 @@ namespace Daylily.Common.Assist
             return sb.ToString();
         }
 
-        // Get
+        #endregion
+
+        #region Get
 
         /// <summary>
-        /// 返回一个string数组表示被at的qq号
+        /// 提取消息中被At的QQ号。返回一个string数组。
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
@@ -83,6 +122,11 @@ namespace Daylily.Common.Assist
             return infoList.Count == 0 ? null : infoList.ToArray();
         }
 
+        /// <summary>
+        /// 提取消息中的图片。返回一个string数组。
+        /// </summary>
+        /// <param name="source">消息文本</param>
+        /// <returns></returns>
         public static ImageInfo[] GetImageInfo(string source)
         {
             List<ImageInfo> infoList = new List<ImageInfo>();
@@ -97,6 +141,12 @@ namespace Daylily.Common.Assist
             return infoList.Count == 0 ? null : infoList.ToArray();
         }
 
+        /// <summary>
+        /// 提取消息中的图片网址。返回一个string数组。（已弃用）
+        /// </summary>
+        /// <param name="source">消息文本</param>
+        /// <returns></returns>
+        [Obsolete]
         public static string[] GetImageUrls(string source)
         {
             List<string> urlList = new List<string>();
@@ -117,6 +167,8 @@ namespace Daylily.Common.Assist
 
             return urlList.Count == 0 ? null : urlList.ToArray();
         }
+
+        #endregion
 
         private static string Escape(string text)
         {

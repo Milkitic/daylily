@@ -27,6 +27,7 @@ namespace Daylily.Common.Models.CQCode
         public FileInfo FileInfo { get; private set; }
         public ImageInfo(string source)
         {
+            // TODO 这里还没考虑 file=base64:// 的情况
             const string file = "file=";
             var index = source.IndexOf(file, StringComparison.Ordinal) + file.Length;
             var index2 = source.IndexOf(",", index, StringComparison.Ordinal);
