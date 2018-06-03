@@ -115,7 +115,7 @@ namespace Daylily.Plugin.Core.Command
                 }
                 catch (Exception ex)
                 {
-                    Logger.DangerLine(ex.ToString());
+                    Logger.WriteException(ex);
                 }
             }
         }

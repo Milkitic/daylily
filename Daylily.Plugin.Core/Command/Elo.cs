@@ -13,11 +13,14 @@ namespace Daylily.Plugin.Core.Command
         {
             if (message.PermissionLevel == PermissionLevel.Public)
                 return new CommonMessageResponse(LoliReply.AdminOnly, message, true);
+            if (string.IsNullOrEmpty(message.Parameter))
+                return new CommonMessageResponse(LoliReply.ParamMissing, message, true);
+
             EloApi eloApi = new EloApi();
             OsuClient osu = new OsuClient(OsuApi.ApiKey);
             OsuUser[] userList = osu.GetUser(message.Parameter);
             if (userList.Length == 0)
-                return new CommonMessageResponse(LoliReply.IdNotBound, message, true);
+                return new CommonMessageResponse(LoliReply.IdNotFound, message, true);
 
             var obj = eloApi.GetEloByUid(long.Parse(userList[0].user_id));
             switch (obj.Result.ToLower())

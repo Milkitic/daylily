@@ -103,7 +103,7 @@ namespace Daylily.Web.Function.Application.Command
             }
             catch (Exception ex)
             {
-                Logger.DangerLine(ex.ToString());
+                Logger.WriteException(ex);
             }
         }
 

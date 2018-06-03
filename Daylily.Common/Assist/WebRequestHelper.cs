@@ -162,16 +162,9 @@ namespace Daylily.Common.Assist
             // 参数 
             byte[] data = Encoding.ASCII.GetBytes(param);
             //request.ContentLength = data.Length;
-            try
+            using (Stream stream = request.GetRequestStream())
             {
-                using (Stream stream = request.GetRequestStream())
-                {
-                    stream.Write(data, 0, data.Length);
-                }
-            }
-            catch
-            {
-                throw new Exception("网络连接失败");
+                stream.Write(data, 0, data.Length);
             }
 
             if (authorization != null)
@@ -282,8 +275,9 @@ namespace Daylily.Common.Assist
                 outStream.Close();
                 inStream.Close();
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.WriteException(ex);
                 return null;
             }
 

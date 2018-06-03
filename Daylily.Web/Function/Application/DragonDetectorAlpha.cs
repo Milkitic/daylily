@@ -106,7 +106,7 @@ namespace Daylily.Web.Function.Application
                 }
                 catch (Exception ex)
                 {
-                    Logger.DangerLine(ex.Message);
+                    Logger.WriteException(ex);
                 }
                 finally
                 {

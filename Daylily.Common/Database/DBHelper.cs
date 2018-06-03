@@ -53,7 +53,7 @@ namespace Daylily.Common.Database
                 }
                 catch (Exception ex)
                 {
-                    Logger.DangerLine("Failed: " + ex.Message);
+                    Logger.WriteException(ex);
                     return -1;
                 }
             }

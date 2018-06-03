@@ -208,6 +208,10 @@ namespace Daylily.Web.Function
                     break;
                 case MessageType.Group:
                     var userInfo = CqApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString()); // 有点费时间
+                    if (userInfo == null)
+                        Logger.WarningLine("userInfo is null!!");
+                    if (userInfo.Data == null)
+                        Logger.WarningLine("userInfo.Data is null!!");
                     Logger.WriteMessage(
                         $"({GroupInfo[groupId].Name}) {(string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card)}:\r\n  {CqCode.Decode(message)}");
                     break;
