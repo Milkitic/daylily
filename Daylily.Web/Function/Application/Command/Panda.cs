@@ -32,25 +32,24 @@ namespace Daylily.Web.Function.Application.Command
 
         private Bitmap Draw(string word)
         {
-            Random rnd = new Random();
 
             FileInfo[] pandaArray = GetPandas().ToArray();
             FileInfo[] fontArray = GetFonts().ToArray();
 
-            FileInfo fontInfo = fontArray[rnd.Next(0, fontArray.Length)];
+            FileInfo fontInfo = fontArray[Rnd.Next(0, fontArray.Length)];
             PrivateFontCollection pfc = new PrivateFontCollection();
             pfc.AddFontFile(fontInfo.FullName);
 
             FontFamily font = pfc.Families[0];
-            FileInfo panda = pandaArray[rnd.Next(0, pandaArray.Length)];
+            FileInfo panda = pandaArray[Rnd.Next(0, pandaArray.Length)];
 
             string[] blankReply = { "傻逼，动动脑子写参数", "你倒是说话啊" };
             string[] invalidReply = { "你话太多了，沙雕" };
 
             if (word.Replace("\n", "").Replace("\r", "").Trim() == "")
-                word = blankReply[rnd.Next(0, blankReply.Length)];
+                word = blankReply[Rnd.Next(0, blankReply.Length)];
             else if (!IsValid(word, panda, font))
-                word = invalidReply[rnd.Next(0, invalidReply.Length)];
+                word = invalidReply[Rnd.Next(0, invalidReply.Length)];
 
             string[] lines = word.Split(',', '，');
 
@@ -115,7 +114,7 @@ namespace Daylily.Web.Function.Application.Command
             return SmFontSize;
         }
 
-        private static IEnumerable<FileInfo> GetPandas() => new DirectoryInfo(PandaDir).GetFiles();
+        private static IEnumerable<FileInfo> GetPandas() => new DirectoryInfo(PandaDir).GetFiles("d*.png");
         private static IEnumerable<FileInfo> GetFonts() => new DirectoryInfo(FontDir).GetFiles("*.tt?");
 
         private void SetGraphicStyle(ref Graphics g, FontFamily font)

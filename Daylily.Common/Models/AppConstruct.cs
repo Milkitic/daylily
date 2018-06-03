@@ -9,7 +9,7 @@ namespace Daylily.Common.Models
     {
         protected PermissionLevel CurrentLevel { get; set; }
 
-        protected readonly Random Rnd = new Random();
+        protected static readonly Random Rnd = new Random();
 
         public abstract CommonMessageResponse Execute(CommonMessage commonMessage);
 
