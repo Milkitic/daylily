@@ -9,10 +9,11 @@ namespace Daylily.Common.Assist
 {
     public class WebRequestHelper
     {
+        private const int Timeout = 5000;
+
         public static string GetImageFromUrl(string url, string savePath, string ext)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Timeout = 5000;
             var response = TryGetResponse(request);
 
             response.GetResponseStream();
@@ -291,6 +292,7 @@ namespace Daylily.Common.Assist
 
         private static HttpWebResponse TryGetResponse(WebRequest request)
         {
+            request.Timeout = Timeout;
             HttpWebResponse response = null;
             const int count = 3;
             for (int i = 0; i < count; i++)
@@ -313,6 +315,7 @@ namespace Daylily.Common.Assist
 
         private static async Task<HttpWebResponse> TryGetResponseAsync(WebRequest request)
         {
+            request.Timeout = Timeout;
             HttpWebResponse response = null;
             const int count = 3;
             for (int i = 0; i < count; i++)
