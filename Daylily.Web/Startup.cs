@@ -25,19 +25,21 @@ namespace Daylily.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
             DbHelper.ConnectionString.Add("cabbage", Configuration.GetConnectionString("DefaultConnection"));
             DbHelper.ConnectionString.Add("daylily", Configuration.GetConnectionString("MyConnection"));
-            CqApi.ApiUrl = Configuration.GetConnectionString("PostUrl");
-            //Interface.DaylilyAssist.AssistApi.ApiUrl = Configuration.GetConnectionString("AssistUrl");
-            Signature.AppId = int.Parse(Configuration.GetConnectionString("appId"));
-            Signature.SecretId = Configuration.GetConnectionString("secretId");
-            Signature.SecretKey = Configuration.GetConnectionString("secretKey");
-            Signature.BucketName = Configuration.GetConnectionString("bucketName");
-            CqCode.CqRoot = Configuration.GetConnectionString("CQDir");
-            OsuApi.ApiKey = Configuration.GetConnectionString("ApiKey");
-            MessageHandler.CommandFlag = Configuration.GetConnectionString("commandFlag");
+
+            OsuApi.ApiKey = (string)Configuration.GetSection("OsuSettings").GetValue(typeof(string), "ApiKey");
+
+            Signature.AppId = (int)Configuration.GetSection("CosSettings").GetValue(typeof(int), "appId");
+            Signature.SecretId = (string)Configuration.GetSection("CosSettings").GetValue(typeof(string), "secretId");
+            Signature.SecretKey = (string)Configuration.GetSection("CosSettings").GetValue(typeof(string), "secretKey");
+            Signature.BucketName = (string)Configuration.GetSection("CosSettings").GetValue(typeof(string), "bucketName");
+
+            CqApi.ApiUrl = (string)Configuration.GetSection("BotSettings").GetValue(typeof(string), "PostUrl");
+            CqCode.CqRoot = (string)Configuration.GetSection("BotSettings").GetValue(typeof(string), "CQDir");
+            MessageHandler.CommandFlag = (string)Configuration.GetSection("BotSettings").GetValue(typeof(string), "commandFlag");
             RunService();
+            services.AddMvc();
         }
 
         private void RunService()

@@ -62,7 +62,7 @@ namespace Daylily.Common.Assist
 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteInfo(pluginInfo);
+            WriteInfo(msg);
 #endif
         }
 
