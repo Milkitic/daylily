@@ -64,7 +64,7 @@ namespace Daylily.Web.Function.Application
         private void RunDetector(object newPathList)
         {
 
-            var list = (List<string>) newPathList;
+            var list = (List<string>)newPathList;
             foreach (var fullPath in list)
             {
                 try
@@ -115,15 +115,13 @@ namespace Daylily.Web.Function.Application
             var perc = Rnd.NextDouble();
             if (perc < 0.15 || (perc < 0.5 && _message.GroupId == "428274344"))
             {
+                Logger.SuccessLine("(熊猫) 几率: " + perc);
                 DirectoryInfo di =
                     new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
                 var files = di.GetFiles();
                 string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
                 SendMessage(new CommonMessageResponse(msg, _message));
             }
-            else
-                Logger.WarningLine("(熊猫) 几率: " + perc);
-
         }
 
         private void ProcOutputReceived(object sender, DataReceivedEventArgs e)
