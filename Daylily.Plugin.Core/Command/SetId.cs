@@ -4,6 +4,8 @@ using Daylily.Common.Database.BLL;
 using Daylily.Common.Database.Model;
 using Daylily.Common.Interface;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Enum;
+using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {

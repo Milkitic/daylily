@@ -2,6 +2,8 @@
 using Daylily.Common.Database.BLL;
 using Daylily.Common.Interface.Elo;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Enum;
+using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {

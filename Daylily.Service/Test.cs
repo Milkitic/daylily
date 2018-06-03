@@ -1,6 +1,7 @@
 ﻿using Daylily.Common.Models;
 using System;
 using System.Threading;
+using Daylily.Common.Models.Interface;
 
 namespace Daylily.Service
 {

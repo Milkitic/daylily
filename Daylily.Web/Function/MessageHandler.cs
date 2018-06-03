@@ -6,6 +6,8 @@ using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
 using Daylily.Common.Models.CQResponse;
+using Daylily.Common.Models.Enum;
+using Daylily.Common.Models.Interface;
 
 namespace Daylily.Web.Function
 {
@@ -208,12 +210,15 @@ namespace Daylily.Web.Function
                     break;
                 case MessageType.Group:
                     var userInfo = CqApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString()); // 有点费时间
-                    if (userInfo == null)
-                        Logger.WarningLine("userInfo is null!!");
-                    if (userInfo.Data == null)
+                    if (userInfo?.Data == null)
+                    {
                         Logger.WarningLine("userInfo.Data is null!!");
-                    Logger.WriteMessage(
-                        $"({GroupInfo[groupId].Name}) {(string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card)}:\r\n  {CqCode.Decode(message)}");
+                        Logger.WriteMessage($"({GroupInfo[groupId].Name}) {userId}:\r\n  {CqCode.Decode(message)}");
+                    }
+                    else
+                        Logger.WriteMessage(
+                            $"({GroupInfo[groupId].Name}) {(string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card)}:\r\n  {CqCode.Decode(message)}");
+
                     break;
             }
 

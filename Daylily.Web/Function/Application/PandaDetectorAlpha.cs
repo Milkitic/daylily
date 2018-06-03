@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using Daylily.Common.Models.Interface;
 
 namespace Daylily.Web.Function.Application
 {

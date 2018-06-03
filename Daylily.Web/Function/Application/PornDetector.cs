@@ -4,6 +4,7 @@ using Daylily.Common.Models.CosResponse;
 using System.Collections.Generic;
 using System.Linq;
 using Daylily.Common.Interface.CQHttp;
+using Daylily.Common.Models.Interface;
 
 namespace Daylily.Web.Function.Application
 {

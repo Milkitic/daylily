@@ -1,4 +1,5 @@
 ﻿using Daylily.Common.Models.CQResponse;
+using Daylily.Common.Models.Enum;
 
 namespace Daylily.Common.Models
 {

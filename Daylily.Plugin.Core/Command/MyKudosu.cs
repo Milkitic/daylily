@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Daylily.Common.Assist;
 using Daylily.Common.Database.BLL;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Enum;
+using Daylily.Common.Models.Interface;
 using Newtonsoft.Json;
 
 namespace Daylily.Plugin.Core.Command

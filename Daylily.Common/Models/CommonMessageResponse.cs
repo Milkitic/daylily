@@ -1,5 +1,6 @@
 ﻿using Daylily.Common.Models.CQRequest.Api;
 using System;
+using Daylily.Common.Models.Enum;
 
 namespace Daylily.Common.Models
 {
