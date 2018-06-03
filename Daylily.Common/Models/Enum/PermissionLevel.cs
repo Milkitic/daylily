@@ -1,4 +1,4 @@
-﻿namespace Daylily.Common.Models
+﻿namespace Daylily.Common.Models.Enum
 {
     public enum PermissionLevel
     {

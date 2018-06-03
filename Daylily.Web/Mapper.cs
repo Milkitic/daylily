@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Daylily.Common.Assist
+namespace Daylily.Web
 {
     public static class Mapper
     {

@@ -1,9 +1,10 @@
-﻿using Daylily.Common.Assist;
+﻿using System;
+using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse.Api;
-using System;
+using Daylily.Common.Models.Enum;
 
-namespace Daylily.Common.Models
+namespace Daylily.Common.Models.Interface
 {
     public abstract class AppConstruct
     {
