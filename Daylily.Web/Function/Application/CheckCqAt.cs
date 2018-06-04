@@ -24,17 +24,17 @@ namespace Daylily.Web.Function.Application
             throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            if (message.MessageType != MessageType.Private)
+            if (messageObj.MessageType != MessageType.Private)
             {
-                if (message.Group != null && message.GroupId == "133605766" &&
+                if (messageObj.Group != null && messageObj.GroupId == "133605766" &&
                     DateTime.Now.Hour < 22 && DateTime.Now.Hour > 6)
                     return null;
-                string[] ids = CqCode.GetAt(message.Message);
+                string[] ids = CqCode.GetAt(messageObj.Message);
                 if (ids != null && (ids.Contains("2181697779") || ids.Contains("3421735167")))
                 {
-                    return new CommonMessageResponse("", message, true);
+                    return new CommonMessageResponse("", messageObj, true);
                 }
             }
 

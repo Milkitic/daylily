@@ -22,26 +22,26 @@ namespace Daylily.Plugin.Core.Command
             throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            var query = message.Parameter.Split(' ');
+            var query = messageObj.Parameter.Split(' ');
             if (!int.TryParse(query[0], out _))
             {
-                return new CommonMessageResponse(Next().ToString(), message, true);
+                return new CommonMessageResponse(Next().ToString(), messageObj, true);
             }
 
             switch (query.Length)
             {
                 case 1:
-                    return new CommonMessageResponse(Next(int.Parse(query[0])).ToString(), message, true);
+                    return new CommonMessageResponse(Next(int.Parse(query[0])).ToString(), messageObj, true);
                 case 2:
-                    return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1])).ToString(), message,
+                    return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1])).ToString(), messageObj,
                         true);
                 case 3:
                     return new CommonMessageResponse(
-                        Next(int.Parse(query[0]), int.Parse(query[1]), int.Parse(query[2])), message, true);
+                        Next(int.Parse(query[0]), int.Parse(query[1]), int.Parse(query[2])), messageObj, true);
                 default:
-                    return new CommonMessageResponse(LoliReply.ParamError, message, true);
+                    return new CommonMessageResponse(LoliReply.ParamError, messageObj, true);
             }
         }
 

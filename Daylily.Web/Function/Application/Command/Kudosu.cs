@@ -38,9 +38,9 @@ namespace Daylily.Web.Function.Application.Command
             throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            _message = message;
+            _message = messageObj;
             _t = new Thread(Async);
             _t.Start();
             return null;

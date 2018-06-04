@@ -20,20 +20,20 @@ namespace Daylily.Web.Function.Application.Command
             throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            if (message.PermissionLevel != PermissionLevel.Root)
+            if (messageObj.PermissionLevel != PermissionLevel.Root)
                 return null;
 
-            string[] split = message.Parameter.Split("|");
+            string[] split = messageObj.Parameter.Split("|");
             if (split.Length == 1)
-                return new CommonMessageResponse(Transform(message.Message), message);
+                return new CommonMessageResponse(Transform(messageObj.Message), messageObj);
             string innerUser = null, innerGroup = null, innerDiscuss = null, innerMessage = null;
             MessageType innerType = MessageType.Private;
             for (int i = 0; i < split.Length; i += 2)
             {
                 if (i + 1 == split.Length)
-                    return new CommonMessageResponse(split[i] + "缺少参数...", message);
+                    return new CommonMessageResponse(split[i] + "缺少参数...", messageObj);
                 string cmd = split[i], par = split[i + 1];
                 switch (cmd)
                 {
@@ -41,13 +41,13 @@ namespace Daylily.Web.Function.Application.Command
                         innerUser = par;
                         break;
                     case "-g" when innerDiscuss != null:
-                        return new CommonMessageResponse("不能同时选择群和讨论组...", message);
+                        return new CommonMessageResponse("不能同时选择群和讨论组...", messageObj);
                     case "-g":
                         innerGroup = par;
                         innerType = MessageType.Group;
                         break;
                     case "-d" when innerGroup != null:
-                        return new CommonMessageResponse("不能同时选择群和讨论组...", message);
+                        return new CommonMessageResponse("不能同时选择群和讨论组...", messageObj);
                     case "-d":
                         innerDiscuss = par;
                         innerType = MessageType.Discuss;
@@ -56,12 +56,12 @@ namespace Daylily.Web.Function.Application.Command
                         innerMessage = Transform(par);
                         break;
                     default:
-                        return new CommonMessageResponse("未知的参数: " + cmd + "...", message);
+                        return new CommonMessageResponse("未知的参数: " + cmd + "...", messageObj);
                 }
             }
 
             if (innerMessage == null)
-                return new CommonMessageResponse("你还没有填写消息...", message);
+                return new CommonMessageResponse("你还没有填写消息...", messageObj);
 
             SendMessage(new CommonMessageResponse(innerMessage, innerUser, true), innerGroup, innerDiscuss, innerType);
 

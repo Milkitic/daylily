@@ -20,10 +20,10 @@ namespace Daylily.Web.Function.Application.Command
             throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            if (message.PermissionLevel != PermissionLevel.Root)
-                return new CommonMessageResponse(LoliReply.RootOnly, message, true);
+            if (messageObj.PermissionLevel != PermissionLevel.Root)
+                return new CommonMessageResponse(LoliReply.RootOnly, messageObj, true);
             Environment.Exit(0);
             return null;
         }

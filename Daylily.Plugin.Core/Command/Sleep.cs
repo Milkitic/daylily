@@ -21,26 +21,26 @@ namespace Daylily.Plugin.Core.Command
             throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            if (message.GroupId == "133605766")
+            if (messageObj.GroupId == "133605766")
                 return null;
-            if (message.GroupId == null)
+            if (messageObj.GroupId == null)
                 return null;
-            if (message.Parameter.Trim() == "")
-                return new CommonMessageResponse("要睡多少小时呀? 你不写是要30循吗??", message, true);
+            if (messageObj.Parameter.Trim() == "")
+                return new CommonMessageResponse("要睡多少小时呀? 你不写是要30循吗??", messageObj, true);
 
             DateTime dt = new DateTime();
-            if (!double.TryParse(message.Parameter, out double result))
-                return new CommonMessageResponse("我只要一个数表示小时，支持小数", message, true);
+            if (!double.TryParse(messageObj.Parameter, out double result))
+                return new CommonMessageResponse("我只要一个数表示小时，支持小数", messageObj, true);
             if (result > 12) result = 12;
             else if (result < 0.5) result = 0.5;
             dt = dt.AddHours(result);
             int s = (int)(dt.Ticks / 10000000);
-            CqApi.SetGroupBan(message.GroupId, message.UserId, s);
+            CqApi.SetGroupBan(messageObj.GroupId, messageObj.UserId, s);
             string msg = "祝你一觉睡到" + DateTime.Now.AddHours(result).ToString("HH:mm") + " :D";
 
-            return new CommonMessageResponse(msg, message, true);
+            return new CommonMessageResponse(msg, messageObj, true);
         }
     }
 }

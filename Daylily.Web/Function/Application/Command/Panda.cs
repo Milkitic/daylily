@@ -37,12 +37,12 @@ namespace Daylily.Web.Function.Application.Command
             throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            if (message.MessageType == MessageType.Group && message.GroupId != "672076603")
-                return new CommonMessageResponse(LoliReply.PrivateOnly, message);
-            var resp = CqCode.EncodeImageToBase64(Draw(message.Parameter));
-            return new CommonMessageResponse(resp, message);
+            if (messageObj.MessageType == MessageType.Group && messageObj.GroupId != "672076603")
+                return new CommonMessageResponse(LoliReply.PrivateOnly, messageObj);
+            var resp = CqCode.EncodeImageToBase64(Draw(messageObj.Parameter));
+            return new CommonMessageResponse(resp, messageObj);
         }
 
         private Bitmap Draw(string word)

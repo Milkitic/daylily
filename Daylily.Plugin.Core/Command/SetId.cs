@@ -25,32 +25,32 @@ namespace Daylily.Plugin.Core.Command
             throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            if (string.IsNullOrEmpty(message.Parameter))
+            if (string.IsNullOrEmpty(messageObj.Parameter))
                 return null;
             BllUserRole bllUserRole = new BllUserRole();
             OsuClient osu = new OsuClient(OsuApi.ApiKey);
-            OsuUser[] userList = osu.GetUser(message.Parameter);
+            OsuUser[] userList = osu.GetUser(messageObj.Parameter);
 
             if (userList.Length == 0)
-                return new CommonMessageResponse(LoliReply.IdNotFound, message);
+                return new CommonMessageResponse(LoliReply.IdNotFound, messageObj);
 
             OsuUser userObj = userList[0];
-            var role = bllUserRole.GetUserRoleByQq(long.Parse(message.UserId));
+            var role = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
             if (role.Count != 0)
             {
-                if (role[0].CurrentUname.ToLower() == message.Parameter.ToLower())
-                    return new CommonMessageResponse("我认识你，" + role[0].CurrentUname + ".", message, true);
+                if (role[0].CurrentUname.ToLower() == messageObj.Parameter.ToLower())
+                    return new CommonMessageResponse("我认识你，" + role[0].CurrentUname + ".", messageObj, true);
                 string msg = role[0].CurrentUname + "先森，别以为我不认识你哦. 嗯? 你真不是? 那请找Mother Ship吧..";
-                return new CommonMessageResponse(msg, message, true);
+                return new CommonMessageResponse(msg, messageObj, true);
             }
 
             var newRole = new TblUserRole
             {
                 UserId = long.Parse(userObj.user_id),
                 Role = "creep",
-                QQ = long.Parse(message.UserId),
+                QQ = long.Parse(messageObj.UserId),
                 LegacyUname = "[]",
                 CurrentUname = userObj.username,
                 IsBanned = false,
@@ -60,8 +60,8 @@ namespace Daylily.Plugin.Core.Command
             };
             int c = bllUserRole.InsertUserRole(newRole);
             return c < 1
-                ? new CommonMessageResponse("由于各种强大的原因，绑定失败..", message)
-                : new CommonMessageResponse("明白了，" + userObj.username + "，多好的名字呢.", message);
+                ? new CommonMessageResponse("由于各种强大的原因，绑定失败..", messageObj)
+                : new CommonMessageResponse("明白了，" + userObj.username + "，多好的名字呢.", messageObj);
         }
     }
 }

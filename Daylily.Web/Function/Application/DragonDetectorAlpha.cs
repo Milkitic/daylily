@@ -38,16 +38,16 @@ namespace Daylily.Web.Function.Application
             throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            if (message.Group == null && message.GroupId != "133605766") return null;
+            if (messageObj.Group == null && messageObj.GroupId != "133605766") return null;
 
             //if (user != "2241521134") return null;
-            _user = message.UserId;
-            _group = message.GroupId;
-            _messageId = message.MessageId;
+            _user = messageObj.UserId;
+            _group = messageObj.GroupId;
+            _messageId = messageObj.MessageId;
 
-            var imgList = CqCode.GetImageInfo(message.Message);
+            var imgList = CqCode.GetImageInfo(messageObj.Message);
             if (imgList == null)
                 return null;
 

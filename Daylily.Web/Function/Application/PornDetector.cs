@@ -28,11 +28,11 @@ namespace Daylily.Web.Function.Application
             throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
             // 查黄图
-            if (message.Group == null || message.GroupId != "133605766") return null;
-            var imgList = CqCode.GetImageInfo(message.Message);
+            if (messageObj.Group == null || messageObj.GroupId != "133605766") return null;
+            var imgList = CqCode.GetImageInfo(messageObj.Message);
             if (imgList == null)
                 return null;
             List<string> urlList = new List<string>();
@@ -85,18 +85,18 @@ namespace Daylily.Web.Function.Application
                         continue;
                     case 1:
                     case 2:
-                        CqApi.SetGroupBan(message.GroupId, message.UserId, 24 * 60 * 60);
+                        CqApi.SetGroupBan(messageObj.GroupId, messageObj.UserId, 24 * 60 * 60);
                         return new CommonMessageResponse("……………………");
                     default:
                         break;
                 }
 
                 if (item.data.porn_score >= item.data.hot_score && item.data.porn_score > 65)
-                    return AddCount(message.UserId, message.GroupId);
+                    return AddCount(messageObj.UserId, messageObj.GroupId);
 
                 if (item.data.hot_score >= item.data.porn_score && item.data.hot_score > item.data.normal_score &&
                     item.data.hot_score > 80)
-                    return AddCount(message.UserId, message.GroupId);
+                    return AddCount(messageObj.UserId, messageObj.GroupId);
 
                 break;
             }
