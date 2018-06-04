@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
@@ -8,7 +9,20 @@ namespace Daylily.Plugin.Core.Command
 {
     class Cd : AppConstruct
     {
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override string Name => "文件浏览器";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Alpha;
+        public override string VersionNumber => "1.0";
+        public override string Description => "浏览磁盘目录";
+        public override string Command => "cd";
+        public override AppType AppType => AppType.Command;
+
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             if (message.GroupId != null) // 不给予群聊权限
                 return null;

@@ -7,7 +7,20 @@ namespace Daylily.Web.Function.Application.Command
 {
     public class Shutdown : AppConstruct
     {
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override string Name => "强行停止黄花菜";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Stable;
+        public override string VersionNumber => "1.0";
+        public override string Description => "收到消息就自毁";
+        public override string Command => "sdown";
+        public override AppType AppType => AppType.Command;
+
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             if (message.PermissionLevel != PermissionLevel.Root)
                 return new CommonMessageResponse(LoliReply.RootOnly, message, true);

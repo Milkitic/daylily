@@ -5,12 +5,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
 namespace Daylily.Web.Function.Application
 {
     public class PandaDetectorAlpha : AppConstruct
     {
+        public override string Name => "斗图";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Beta;
+        public override string VersionNumber => "1.0";
+        public override string Description => "发现各类熊猫图时有几率返回一张熊猫图";
+        public override string Command => null;
+        public override AppType AppType => AppType.Application;
+
         private readonly List<string> _receivedString = new List<string>();
         private readonly List<string> _pathList = new List<string>();
 
@@ -22,7 +31,12 @@ namespace Daylily.Web.Function.Application
 
         private CommonMessage _message;
 
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             if (message.GroupId == "133605766")
                 if (DateTime.Now.Hour < 22 && DateTime.Now.Hour > 6)

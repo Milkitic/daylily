@@ -12,7 +12,19 @@ namespace Daylily.Common.Models.Interface
 
         protected static readonly Random Rnd = new Random();
 
-        public abstract CommonMessageResponse Execute(CommonMessage commonMessage);
+        /// <summary>
+        /// 以逗号分隔 如"sleep,slip"
+        /// </summary>
+        public abstract string Name { get; }
+        public abstract string Author { get; }
+        public abstract PluginVersion Version { get; }
+        public abstract string VersionNumber { get; }
+        public abstract string Description { get; }
+        public abstract string Command { get; }
+        public abstract AppType AppType { get; }
+
+        public abstract void OnLoad(CommonMessage commonMessage);
+        public abstract CommonMessageResponse OnExecute(CommonMessage commonMessage);
 
         public static void SendMessage(CommonMessageResponse response)
         {

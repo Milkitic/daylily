@@ -1,4 +1,5 @@
-﻿using Daylily.Common.Models;
+﻿using System;
+using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
@@ -6,7 +7,20 @@ namespace Daylily.Web.Function.Application.Command
 {
     public class Send : AppConstruct
     {
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override string Name => "发送自定义消息";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Stable;
+        public override string VersionNumber => "1.0";
+        public override string Description => "支持发送任意格式的消息（包含cq码），支持群聊私聊";
+        public override string Command => "send";
+        public override AppType AppType => AppType.Command;
+
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             if (message.PermissionLevel != PermissionLevel.Root)
                 return null;

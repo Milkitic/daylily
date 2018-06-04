@@ -22,10 +22,23 @@ namespace Daylily.Web.Function.Application.Command
 {
     public class Kudosu : AppConstruct
     {
+        public override string Name => "Modding查询";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Stable;
+        public override string VersionNumber => "1.0";
+        public override string Description => "查询modding（被点赞或给与kd），并生成对应统计图";
+        public override string Command => "kd";
+        public override AppType AppType => AppType.Command;
+
         private CommonMessage _message;
         private Thread _t;
 
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             _message = message;
             _t = new Thread(Async);

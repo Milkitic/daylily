@@ -1,4 +1,5 @@
-﻿using CSharpOsu;
+﻿using System;
+using CSharpOsu;
 using CSharpOsu.Module;
 using Daylily.Common.Database.BLL;
 using Daylily.Common.Database.Model;
@@ -11,7 +12,20 @@ namespace Daylily.Plugin.Core.Command
 {
     public class SetId : AppConstruct
     {
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override string Name => "绑定id";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Stable;
+        public override string VersionNumber => "1.0";
+        public override string Description => "绑定osu id";
+        public override string Command => "setid";
+        public override AppType AppType => AppType.Command;
+
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             if (string.IsNullOrEmpty(message.Parameter))
                 return null;

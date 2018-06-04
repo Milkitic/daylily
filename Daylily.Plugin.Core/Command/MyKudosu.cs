@@ -11,7 +11,20 @@ namespace Daylily.Plugin.Core.Command
 {
     public class MyKudosu : AppConstruct
     {
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override string Name => "Modding查询";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Alpha;
+        public override string VersionNumber => "1.0";
+        public override string Description => "获取最近modding信息";
+        public override string Command => null; // 弃用，准备删了
+        public override AppType AppType => AppType.Command;
+
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             //if (group != null) // 不给予群聊权限
             //    return null;

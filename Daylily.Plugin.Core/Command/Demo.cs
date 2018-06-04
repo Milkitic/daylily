@@ -10,10 +10,23 @@ namespace Daylily.Plugin.Core.Command
 {
     class Demo : AppConstruct // 继承此类，详细可查看Daylily.Common.Models.AppConstruct类
     {
+        public override string Name => "测试Demo插件";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Stable;
+        public override string VersionNumber => "1.0";
+        public override string Description => "用于对于插件开发进行Demo演示";
+        public override string Command => null;
+        public override AppType AppType => AppType.Command;
+
         static Thread _tThread;
         static string UserId { get; set; }
 
-        public override CommonMessageResponse Execute(CommonMessage commonMsg) // 必要方法
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage commonMsg) // 必要方法
         {
             // 接收的信息
             string message = commonMsg.Message;

@@ -272,7 +272,7 @@ namespace Daylily.Web.Function
                 #region 折叠：invoke
 
                 Type type = Type.GetType("Daylily.Web.Function.Application." + item);
-                MethodInfo mi = type.GetMethod("Execute");
+                MethodInfo mi = type.GetMethod("OnExecute");
                 object appClass = Activator.CreateInstance(type);
                 object[] invokeArgs = { commonMessage };
 
@@ -344,7 +344,7 @@ namespace Daylily.Web.Function
 
             try
             {
-                MethodInfo mi = type.GetMethod("Execute");
+                MethodInfo mi = type.GetMethod("OnExecute");
                 replyObj = (CommonMessageResponse)mi.Invoke(appClass, invokeArgs);
             }
             catch (Exception ex)

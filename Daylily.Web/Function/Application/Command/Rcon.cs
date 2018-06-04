@@ -9,11 +9,24 @@ namespace Daylily.Web.Function.Application.Command
 {
     public class Rcon : AppConstruct
     {
+        public override string Name => "日程提醒";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Alpha;
+        public override string VersionNumber => "1.0";
+        public override string Description => "建立一个日程提醒";
+        public override string Command => "rcon";
+        public override AppType AppType => AppType.Command;
+
         private static string UserId { get; set; }
         private static Thread _tThread;
         private string _message;
 
-        public override CommonMessageResponse Execute(CommonMessage commonMsg) // 必要方法
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage commonMsg) // 必要方法
         {
             // 发送者的QQ
             string userId = commonMsg.UserId;

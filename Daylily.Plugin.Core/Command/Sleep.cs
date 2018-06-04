@@ -1,13 +1,27 @@
 ﻿using System;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {
     public class Sleep : AppConstruct
     {
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override string Name => "自我禁言";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Stable;
+        public override string VersionNumber => "1.0";
+        public override string Description => "只允许30分钟到12小时";
+        public override string Command => "sleep,slip";
+        public override AppType AppType => AppType.Command;
+
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             if (message.GroupId == "133605766")
                 return null;

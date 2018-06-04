@@ -14,7 +14,20 @@ namespace Daylily.Plugin.Core.Command
 {
     public class PpPlus : AppConstruct
     {
-        public override CommonMessageResponse Execute(CommonMessage commonMessage)
+        public override string Name => "PP+查询";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Beta;
+        public override string VersionNumber => "1.0";
+        public override string Description => "获取自己的PP+信息，并生成六维图";
+        public override string Command => "pp";
+        public override AppType AppType => AppType.Command;
+
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage commonMessage)
         {
             string userId = commonMessage.Parameter;
 

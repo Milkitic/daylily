@@ -6,12 +6,21 @@ using System.Threading;
 using Daylily.Common.Models;
 using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
+using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
 namespace Daylily.Web.Function.Application
 {
     public class DragonDetectorAlpha : AppConstruct
     {
+        public override string Name => "嗅探龙图";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Alpha;
+        public override string VersionNumber => "1.0";
+        public override string Description => "发现龙图时做出不同操作";
+        public override string Command => null;
+        public override AppType AppType => AppType.Application;
+
         private readonly List<string> _pathList = new List<string>();
         private readonly List<string> _receivedString = new List<string>();
 
@@ -24,7 +33,12 @@ namespace Daylily.Web.Function.Application
         private string _user, _group;
         private long _messageId;
 
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             if (message.Group == null && message.GroupId != "133605766") return null;
 

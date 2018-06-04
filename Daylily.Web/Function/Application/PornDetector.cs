@@ -1,19 +1,34 @@
-﻿using Daylily.Common.Assist;
+﻿using System;
+using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.CosResponse;
 using System.Collections.Generic;
 using System.Linq;
 using Daylily.Common.Interface.CQHttp;
+using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
 namespace Daylily.Web.Function.Application
 {
     public class PornDetector : AppConstruct
     {
+        public override string Name => "嗅探黄图";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Beta;
+        public override string VersionNumber => "1.0";
+        public override string Description => "发现福利图和黄图时进行提醒和禁言（仅新人mapper群）";
+        public override string Command => null;
+        public override AppType AppType => AppType.Application;
+
         private static Dictionary<string, int> UserCount { get; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> Md5List { get; } = new Dictionary<string, CosObject>();
 
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             // 查黄图
             if (message.Group == null || message.GroupId != "133605766") return null;

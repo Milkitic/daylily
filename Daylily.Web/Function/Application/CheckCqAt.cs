@@ -11,7 +11,20 @@ namespace Daylily.Web.Function.Application
 {
     public class CheckCqAt : AppConstruct
     {
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override string Name => "嗅探at";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Stable;
+        public override string VersionNumber => "1.0";
+        public override string Description => "当自己被at时回击at对方";
+        public override string Command => null;
+        public override AppType AppType => AppType.Application;
+
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             if (message.MessageType != MessageType.Private)
             {

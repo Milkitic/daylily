@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
@@ -8,7 +9,20 @@ namespace Daylily.Plugin.Core.Command
 {
     public class Roll : AppConstruct
     {
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override string Name => "获取随机数";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Stable;
+        public override string VersionNumber => "1.0";
+        public override string Description => "获取一个随机数";
+        public override string Command => "roll";
+        public override AppType AppType => AppType.Command;
+
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             var query = message.Parameter.Split(' ');
             if (!int.TryParse(query[0], out _))

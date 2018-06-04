@@ -11,7 +11,20 @@ namespace Daylily.Plugin.Core.Command
 {
     public class Elo : AppConstruct
     {
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override string Name => "ELO查询";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Stable;
+        public override string VersionNumber => "1.0";
+        public override string Description => "获取玩家的elo信息";
+        public override string Command => "elo";
+        public override AppType AppType => AppType.Command;
+
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             if (message.PermissionLevel == PermissionLevel.Public)
                 return new CommonMessageResponse(LoliReply.AdminOnly, message, true);

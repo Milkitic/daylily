@@ -15,6 +15,14 @@ namespace Daylily.Web.Function.Application.Command
 {
     public class Panda : AppConstruct
     {
+        public override string Name => "熊猫生成器";
+        public override string Author => "yf_extension";
+        public override PluginVersion Version => PluginVersion.Beta;
+        public override string VersionNumber => "1.0";
+        public override string Description => "生成熊猫图，表情随机";
+        public override string Command => "panda";
+        public override AppType AppType => AppType.Command;
+
         private static readonly string PandaDir = Path.Combine(Environment.CurrentDirectory, "panda");
         private static readonly string FontDir = Path.Combine(Environment.CurrentDirectory, "font");
 
@@ -24,7 +32,12 @@ namespace Daylily.Web.Function.Application.Command
         private const FontStyle FontStyle = System.Drawing.FontStyle.Bold;
         private const int SmFontSize = 13, NmFontSize = 16, LgFontSize = 26;
 
-        public override CommonMessageResponse Execute(CommonMessage message)
+        public override void OnLoad(CommonMessage commonMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override CommonMessageResponse OnExecute(CommonMessage message)
         {
             if (message.MessageType == MessageType.Group && message.GroupId != "672076603")
                 return new CommonMessageResponse(LoliReply.PrivateOnly, message);
