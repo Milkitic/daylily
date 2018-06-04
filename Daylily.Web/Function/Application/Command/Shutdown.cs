@@ -15,7 +15,7 @@ namespace Daylily.Web.Function.Application.Command
         public override string Command => "sdown";
         public override AppType AppType => AppType.Command;
 
-        public override void OnLoad(CommonMessage commonMessage)
+        public override void OnLoad(string[] args)
         {
             throw new NotImplementedException();
         }

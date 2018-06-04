@@ -23,7 +23,7 @@ namespace Daylily.Common.Models.Interface
         public abstract string Command { get; }
         public abstract AppType AppType { get; }
 
-        public abstract void OnLoad(CommonMessage commonMessage);
+        public abstract void OnLoad(string[] args);
         public abstract CommonMessageResponse OnExecute(CommonMessage commonMessage);
 
         public static void SendMessage(CommonMessageResponse response)

@@ -21,7 +21,7 @@ namespace Daylily.Web.Function.Application.Command
         private static Thread _tThread;
         private string _message;
 
-        public override void OnLoad(CommonMessage commonMessage)
+        public override void OnLoad(string[] args)
         {
             throw new NotImplementedException();
         }

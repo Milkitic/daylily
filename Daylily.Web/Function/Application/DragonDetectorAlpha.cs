@@ -33,7 +33,7 @@ namespace Daylily.Web.Function.Application
         private string _user, _group;
         private long _messageId;
 
-        public override void OnLoad(CommonMessage commonMessage)
+        public override void OnLoad(string[] args)
         {
             throw new NotImplementedException();
         }

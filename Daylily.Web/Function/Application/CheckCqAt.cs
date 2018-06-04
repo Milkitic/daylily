@@ -19,7 +19,7 @@ namespace Daylily.Web.Function.Application
         public override string Command => null;
         public override AppType AppType => AppType.Application;
 
-        public override void OnLoad(CommonMessage commonMessage)
+        public override void OnLoad(string[] args)
         {
             throw new NotImplementedException();
         }

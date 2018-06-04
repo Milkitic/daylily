@@ -23,7 +23,7 @@ namespace Daylily.Web.Function.Application
         private static Dictionary<string, int> UserCount { get; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> Md5List { get; } = new Dictionary<string, CosObject>();
 
-        public override void OnLoad(CommonMessage commonMessage)
+        public override void OnLoad(string[] args)
         {
             throw new NotImplementedException();
         }

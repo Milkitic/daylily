@@ -21,7 +21,7 @@ namespace Daylily.Plugin.Core.Command
         static Thread _tThread;
         static string UserId { get; set; }
 
-        public override void OnLoad(CommonMessage commonMessage)
+        public override void OnLoad(string[] args)
         {
             throw new NotImplementedException();
         }

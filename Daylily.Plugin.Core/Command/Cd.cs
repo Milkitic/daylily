@@ -17,7 +17,7 @@ namespace Daylily.Plugin.Core.Command
         public override string Command => "cd";
         public override AppType AppType => AppType.Command;
 
-        public override void OnLoad(CommonMessage commonMessage)
+        public override void OnLoad(string[] args)
         {
             throw new NotImplementedException();
         }

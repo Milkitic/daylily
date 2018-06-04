@@ -32,7 +32,7 @@ namespace Daylily.Web.Function.Application.Command
         private const FontStyle FontStyle = System.Drawing.FontStyle.Bold;
         private const int SmFontSize = 13, NmFontSize = 16, LgFontSize = 26;
 
-        public override void OnLoad(CommonMessage commonMessage)
+        public override void OnLoad(string[] args)
         {
             throw new NotImplementedException();
         }
