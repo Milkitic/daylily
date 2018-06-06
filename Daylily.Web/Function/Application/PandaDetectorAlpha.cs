@@ -78,64 +78,71 @@ namespace Daylily.Web.Function.Application
         /// </summary>
         private void RunDetector(object newPathList)
         {
-
-            var list = (List<string>)newPathList;
-            foreach (var fullPath in list)
+            try
             {
-                try
+                
+                var list = (List<string>) newPathList;
+                foreach (var fullPath in list)
                 {
-                    if (_proc != null)
+                    try
                     {
-                        if (!_proc.HasExited) _proc.Kill();
-                        _proc = null;
-                    }
-
-                    _proc = new Process
-                    {
-                        StartInfo =
+                        if (_proc != null)
                         {
-                            FileName = "python3",
-                            Arguments =
-                                $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
-                            CreateNoWindow = true,
-                            UseShellExecute = false,
-                            WindowStyle = ProcessWindowStyle.Hidden,
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true
+                            if (!_proc.HasExited) _proc.Kill();
+                            _proc = null;
                         }
-                    };
-                    _proc.OutputDataReceived += ProcOutputReceived;
-                    _proc.ErrorDataReceived += ProcErrorReceived;
 
-                    _proc.Start();
-                    _proc.BeginOutputReadLine();
-                    _proc.BeginErrorReadLine();
+                        _proc = new Process
+                        {
+                            StartInfo =
+                            {
+                                FileName = "python3",
+                                Arguments =
+                                    $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
+                                CreateNoWindow = true,
+                                UseShellExecute = false,
+                                WindowStyle = ProcessWindowStyle.Hidden,
+                                RedirectStandardOutput = true,
+                                RedirectStandardError = true
+                            }
+                        };
+                        _proc.OutputDataReceived += ProcOutputReceived;
+                        _proc.ErrorDataReceived += ProcErrorReceived;
 
-                    _proc.WaitForExit();
-                    ProcExited();
+                        _proc.Start();
+                        _proc.BeginOutputReadLine();
+                        _proc.BeginErrorReadLine();
+
+                        _proc.WaitForExit();
+                        ProcExited();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.WriteException(ex);
+                    }
+                    finally
+                    {
+                        _totalCount--;
+                        Logger.PrimaryLine("(熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
+                    }
                 }
-                catch (Exception ex)
+
+                if (_pandaCount <= 0) return;
+
+                var perc = Rnd.NextDouble();
+                if (perc < 0.15 || (perc < 0.5 && _message.GroupId == "428274344"))
                 {
-                    Logger.WriteException(ex);
-                }
-                finally
-                {
-                    _totalCount--;
-                    Logger.PrimaryLine("(熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
+                    Logger.SuccessLine("(熊猫) 几率: " + perc);
+                    DirectoryInfo di =
+                        new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
+                    var files = di.GetFiles();
+                    string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
+                    SendMessage(new CommonMessageResponse(msg, _message));
                 }
             }
-
-            if (_pandaCount <= 0) return;
-
-            var perc = Rnd.NextDouble();
-            if (perc < 0.15 || (perc < 0.5 && _message.GroupId == "428274344"))
+            catch (Exception ex)
             {
-                Logger.SuccessLine("(熊猫) 几率: " + perc);
-                DirectoryInfo di =
-                    new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
-                var files = di.GetFiles();
-                string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
-                SendMessage(new CommonMessageResponse(msg, _message));
+                Logger.WriteException(ex);
             }
         }
 
