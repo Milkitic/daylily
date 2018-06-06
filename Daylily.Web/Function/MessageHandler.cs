@@ -115,7 +115,7 @@ namespace Daylily.Web.Function
 
         private void HandleGroupMessage(object obj)
         {
-            var parsedObj = (GroupMsg)obj;
+            var parsedObj = obj as GroupMsg;
             long groupId = parsedObj.GroupId;
 
             while (GroupInfo[groupId].MsgQueue.Count != 0)
@@ -123,8 +123,7 @@ namespace Daylily.Web.Function
                 if (GroupInfo[groupId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
 
                 var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
-
-                //currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                
                 CommonMessage commonMessage = new CommonMessage(currentInfo);
                 try
                 {
@@ -141,7 +140,7 @@ namespace Daylily.Web.Function
 
         private void HandleDiscussMessage(object obj)
         {
-            var parsedObj = (DiscussMsg)obj;
+            var parsedObj = obj as DiscussMsg;
 
             long discussId = parsedObj.DiscussId;
             while (DiscussInfo[discussId].MsgQueue.Count != 0)
@@ -150,7 +149,6 @@ namespace Daylily.Web.Function
 
                 var currentInfo = DiscussInfo[discussId].MsgQueue.Dequeue();
 
-                //currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
                 CommonMessage commonMessage = new CommonMessage(currentInfo);
                 try
                 {
@@ -167,7 +165,7 @@ namespace Daylily.Web.Function
 
         private void HandlePrivateMessage(object obj)
         {
-            var parsedObj = (PrivateMsg)obj;
+            var parsedObj = obj as PrivateMsg;
 
             long userId = parsedObj.UserId;
             while (PrivateInfo[userId].MsgQueue.Count != 0)
@@ -175,8 +173,7 @@ namespace Daylily.Web.Function
                 if (PrivateInfo[userId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
 
                 var currentInfo = PrivateInfo[userId].MsgQueue.Dequeue();
-
-                //currentInfo.Message.Replace("\n", "").Replace("\r", "").Trim();
+                
                 CommonMessage commonMessage = new CommonMessage(currentInfo);
 
                 try
@@ -266,28 +263,9 @@ namespace Daylily.Web.Function
 
         private void HandleMesasgeApp(CommonMessage commonMessage)
         {
-            foreach (var item in Mapper.NormalPlugins)
+            foreach (var item in PluginManager.ApplicationList)
             {
-
-                #region 折叠：invoke
-
-                Type type = Type.GetType("Daylily.Web.Function.Application." + item);
-                MethodInfo mi = type.GetMethod("OnExecute");
-                object appClass = Activator.CreateInstance(type);
-                object[] invokeArgs = { commonMessage };
-
-                #endregion
-
-                CommonMessageResponse replyObj;
-                try
-                {
-                    replyObj = (CommonMessageResponse)mi.Invoke(appClass, invokeArgs);
-                }
-                catch (Exception ex)
-                {
-                    Logger.WriteException(ex, commonMessage.Message, type.Name);
-                    return;
-                }
+                CommonMessageResponse replyObj = item.OnExecute(commonMessage);
 
                 if (replyObj == null) continue;
                 AppConstruct.SendMessage(replyObj);
@@ -304,55 +282,9 @@ namespace Daylily.Web.Function
                 ? ""
                 : fullCmd.Substring(fullCmd.IndexOf(" ", StringComparison.Ordinal) + 1,
                     fullCmd.Length - commonMessage.Command.Length - 1).Trim();
+            if (!PluginManager.CommandMap.ContainsKey(commonMessage.Command)) return;
 
-            string className = Mapper.GetClassName(commonMessage.Command, out string file);
-            if (className == null)
-                return;
-
-            #region 折叠：invoke
-
-            object appClass;
-            Type type;
-            FileInfo fi = null;
-            if (file == null)
-            {
-                type = Type.GetType("Daylily.Web.Function.Application.Command." + className);
-                appClass = Activator.CreateInstance(type);
-            }
-            else
-            {
-                try
-                {
-                    Logger.PrimaryLine("读取插件信息中");
-                    fi = new FileInfo(file);
-                    Assembly assemblyTmp = Assembly.LoadFrom(file);
-                    type = assemblyTmp.GetType(className);
-                    appClass = assemblyTmp.CreateInstance(className);
-                }
-                catch (Exception ex)
-                {
-                    Logger.WriteException(ex, commonMessage.Message, fi == null ? "Unknown Plugin" : fi.Name);
-                    return;
-                }
-            }
-
-            object[] invokeArgs = { commonMessage };
-
-            #endregion
-
-            CommonMessageResponse replyObj;
-
-            try
-            {
-                MethodInfo mi = type.GetMethod("OnExecute");
-                replyObj = (CommonMessageResponse)mi.Invoke(appClass, invokeArgs);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteException(ex, commonMessage.Message, fi == null ? "Unknown Plugin" : fi.Name);
-                return;
-            }
-
+            CommonMessageResponse replyObj = PluginManager.CommandMap[commonMessage.Command].OnExecute(commonMessage);
             if (replyObj == null) return;
             AppConstruct.SendMessage(replyObj);
         }

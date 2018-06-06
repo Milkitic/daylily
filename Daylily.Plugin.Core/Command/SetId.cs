@@ -22,7 +22,7 @@ namespace Daylily.Plugin.Core.Command
 
         public override void OnLoad(string[] args)
         {
-            throw new NotImplementedException();
+
         }
 
         public override CommonMessageResponse OnExecute(CommonMessage messageObj)

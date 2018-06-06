@@ -17,12 +17,12 @@ namespace Daylily.Plugin.Core.Command
 
         public override void OnLoad(string[] args)
         {
-            throw new NotImplementedException();
+
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            return new CommonMessageResponse("太多了哇..都在这里：https://www.zybuluo.com/milkitic/note/1130078", message);
+            return new CommonMessageResponse("太多了哇..都在这里：https://www.zybuluo.com/milkitic/note/1130078", messageObj);
         }
     }
 }

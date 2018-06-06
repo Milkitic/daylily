@@ -19,19 +19,19 @@ namespace Daylily.Plugin.Core.Command
 
         public override void OnLoad(string[] args)
         {
-            throw new NotImplementedException();
+
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            if (message.GroupId != null) // 不给予群聊权限
+            if (messageObj.GroupId != null) // 不给予群聊权限
                 return null;
 
-            if (message.PermissionLevel != PermissionLevel.Root)
-                return new CommonMessageResponse(LoliReply.RootOnly, message);
+            if (messageObj.PermissionLevel != PermissionLevel.Root)
+                return new CommonMessageResponse(LoliReply.RootOnly, messageObj);
             StringBuilder sb = new StringBuilder();
 
-            DirectoryInfo di = new DirectoryInfo(message.Parameter);
+            DirectoryInfo di = new DirectoryInfo(messageObj.Parameter);
             var files = di.GetFiles();
             var dirs = di.GetDirectories();
             foreach (var item in dirs)
@@ -44,7 +44,7 @@ namespace Daylily.Plugin.Core.Command
                 sb.Append(item.Name + "   ");
             }
 
-            return new CommonMessageResponse(sb.ToString().Trim(), message);
+            return new CommonMessageResponse(sb.ToString().Trim(), messageObj);
         }
     }
 }

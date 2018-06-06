@@ -35,12 +35,12 @@ namespace Daylily.Web.Function.Application
 
         public override void OnLoad(string[] args)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            if (messageObj.Group == null && messageObj.GroupId != "133605766") return null;
+            if (messageObj.Group == null) return null;
 
             //if (user != "2241521134") return null;
             _user = messageObj.UserId;
@@ -130,11 +130,12 @@ namespace Daylily.Web.Function.Application
             }
 
             if (_currentCount <= 0) return;
-            CqApi.DeleteMessage(_messageId);
 
             //CqApi.SetGroupBan(group, user, rnd.Next(1, 100 * dragonCount + 1) * 60);
-            //if (group != "133605766")
-            //    CqApi.SendGroupMessageAsync(group, CQCode.EncodeAt(user) + " 你龙了?");
+            if (_group != "133605766")
+                CqApi.SendGroupMessageAsync(_group, CqCode.EncodeAt(_user) + " 你龙了?");
+            else
+                CqApi.DeleteMessage(_messageId);
             if (_currentCount <= 1) return;
             Thread.Sleep(8000);
             CqApi.SetGroupBan(_group, _user, Rnd.Next(1, 100 * _currentCount + 1) * 60);

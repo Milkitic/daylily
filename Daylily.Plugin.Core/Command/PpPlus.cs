@@ -24,12 +24,12 @@ namespace Daylily.Plugin.Core.Command
 
         public override void OnLoad(string[] args)
         {
-            throw new NotImplementedException();
+
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage commonMessage)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            string userId = commonMessage.Parameter;
+            string userId = messageObj.Parameter;
 
             Logger.DefaultLine("Sent request.");
             var response = WebRequestHelper.CreatePostHttpResponse("https://syrin.me/pp+/u/" + userId);
@@ -79,7 +79,7 @@ namespace Daylily.Plugin.Core.Command
 
             var resp = CqCode.EncodeImageToBase64(Draw(userId, dValue));
             //Logger.InfoLine(resp);
-            return new CommonMessageResponse(resp, commonMessage);
+            return new CommonMessageResponse(resp, messageObj);
         }
 
         private static Bitmap Draw(string user, IReadOnlyDictionary<string, int> dPfmance)

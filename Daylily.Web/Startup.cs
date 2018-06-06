@@ -39,50 +39,7 @@ namespace Daylily.Web
             CqApi.ApiUrl = (string)Configuration.GetSection("BotSettings").GetValue(typeof(string), "PostUrl");
             CqCode.CqRoot = (string)Configuration.GetSection("BotSettings").GetValue(typeof(string), "CQDir");
             MessageHandler.CommandFlag = (string)Configuration.GetSection("BotSettings").GetValue(typeof(string), "commandFlag");
-            RunService();
             services.AddMvc();
-        }
-
-        private void RunService()
-        {
-            Logger.PrimaryLine("读取服务中...");
-            foreach (var item in Mapper.ServicePlugins)
-            {
-                string fullName = item.Value;
-                string className = item.Key.Replace(".dll", "");
-                object appClass;
-                Type type;
-
-                try
-                {
-                    Logger.InfoLine("读取" + item.Key + "中...");
-                    Assembly assemblyTmp = Assembly.LoadFrom(fullName);
-                    type = assemblyTmp.GetType(className);
-                    appClass = assemblyTmp.CreateInstance(className);
-                }
-                catch (Exception ex)
-                {
-                    Logger.DangerLine(item.Key + " 出现了问题。");
-                    Logger.WriteException(ex);
-                    return;
-                }
-
-                object[] invokeArgs = { };
-
-                try
-                {
-                    MethodInfo mi = type.GetMethod("Run");
-                    mi.Invoke(appClass, invokeArgs);
-                }
-                catch (Exception ex)
-                {
-                    Logger.DangerLine(item.Key + " 出现了问题。");
-                    Logger.WriteException(ex);
-                    return;
-                }
-
-                Logger.SuccessLine(item.Key + "已加载。");
-            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

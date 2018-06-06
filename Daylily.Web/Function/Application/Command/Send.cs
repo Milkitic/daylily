@@ -17,7 +17,7 @@ namespace Daylily.Web.Function.Application.Command
 
         public override void OnLoad(string[] args)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override CommonMessageResponse OnExecute(CommonMessage messageObj)

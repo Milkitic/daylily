@@ -1,4 +1,5 @@
 ﻿using System;
+using Daylily.Web.Function;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
@@ -10,8 +11,11 @@ namespace Daylily.Web
         {
             var app = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application;
             Console.WriteLine($"{app.ApplicationName} {app.ApplicationVersion} based on {app.RuntimeFramework}");
-            Mapper.Init();
+            //AppDomain ad = AppDomain.CreateDomain("Load library");
+            PluginManager.LoadAllPlugins(args);
+            //AppDomain.Unload(ad);
             BuildWebHost(args).Run();
+
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

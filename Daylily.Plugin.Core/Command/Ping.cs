@@ -17,14 +17,14 @@ namespace Daylily.Plugin.Core.Command
 
         public override void OnLoad(string[] args)
         {
-            throw new NotImplementedException();
+
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
-            if (message.GroupId != null) // 不给予群聊权限
+            if (messageObj.GroupId != null) // 不给予群聊权限
                 return null;
-            return new CommonMessageResponse("pong", message);
+            return new CommonMessageResponse("pong", messageObj);
         }
     }
 }

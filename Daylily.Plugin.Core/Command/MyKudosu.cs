@@ -21,18 +21,18 @@ namespace Daylily.Plugin.Core.Command
 
         public override void OnLoad(string[] args)
         {
-            throw new NotImplementedException();
+
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage message)
+        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
             //if (group != null) // 不给予群聊权限
             //    return null;
             BllUserRole bllUserRole = new BllUserRole();
-            var userInfo = bllUserRole.GetUserRoleByQq(long.Parse(message.UserId));
+            var userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
 
             if (userInfo.Count == 0)
-                return new CommonMessageResponse(LoliReply.IdNotBound, message, true);
+                return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
             List<KudosuInfo> totalList = new List<KudosuInfo>();
             const int page = 0;
             const int count = 20;
@@ -48,19 +48,19 @@ namespace Daylily.Plugin.Core.Command
 
             //} while (tmp_list.Count != 0);
             if (totalList.Count == 0)
-                return new CommonMessageResponse("你竟然连一张图都没摸过？？", message, true);
+                return new CommonMessageResponse("你竟然连一张图都没摸过？？", messageObj, true);
 
             var recent = totalList[0];
             if (recent.Giver == null)
             {
                 string msg = recent.Created_At.ToLongDateString() + "那天，你在" + recent.Post.Title +
                              $"({recent.Post.Url})" + (recent.Action == "vote.reset" ? "中的赞被取消了" : "中被点了个赞");
-                return new CommonMessageResponse(msg, message, true);
+                return new CommonMessageResponse(msg, messageObj, true);
             }
 
             string msg2 = recent.Created_At.ToLongDateString() + "那天，你通过" + recent.Post.Title +
                           $"的v1摸({recent.Post.Url})中{(recent.Action == "give" ? "向" : "被")}{recent.Giver.Username}{(recent.Action == "give" ? "买" : "扣")}了个币";
-            return new CommonMessageResponse(msg2, message, true);
+            return new CommonMessageResponse(msg2, messageObj, true);
         }
 
         class KudosuInfo
