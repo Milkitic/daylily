@@ -10,12 +10,19 @@ namespace Daylily.Plugin.Core.Command
 {
     class Demo : AppConstruct // 继承此类，详细可查看Daylily.Common.Models.AppConstruct类
     {
+        //插件名
         public override string Name => "测试Demo插件";
+        //插件作者
         public override string Author => "yf_extension";
+        //插件版本
         public override PluginVersion Version => PluginVersion.Stable;
+        //插件版本号
         public override string VersionNumber => "1.0";
+        //插件说明，用于help查询
         public override string Description => "用于对于插件开发进行Demo演示";
+        //激活插件的命令（仅当AppType为Command的时候有效，英文逗号分隔）
         public override string Command => null;
+        //插件的类别是命令、应用还是服务
         public override AppType AppType => AppType.Command;
 
         static Thread _tThread;
@@ -48,7 +55,7 @@ namespace Daylily.Plugin.Core.Command
             // 接收的信息的Id，用于撤回等操作
             long msgId = messageObj.MessageId;
 
-            // 若是命令，则需在配置文件(plugins.json)中配置映射关系(demo->Demo)（前者为用户输入，后者为类名），下面两个字段不为null，当接收消息是 "/demo asdf 1234" 的情况：
+            // 若是命令，下面两个字段不为null，当接收消息是 "/demo asdf 1234" 的情况：
             // 此字段为 "demo"
             string command = messageObj.Command;
             // 此字段为 "asdf 1234"
