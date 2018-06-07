@@ -116,7 +116,7 @@ namespace Daylily.Web.Function.Application
             if (gSets.PandaCount < 1) return;
 
             var perc = Rnd.NextDouble();
-            if (perc >= 1)
+            if (perc >= 0.15)
                 return;
             Logger.SuccessLine("[" + gSets.GroupId + "] (熊猫) 几率: " + perc);
             DirectoryInfo di =
