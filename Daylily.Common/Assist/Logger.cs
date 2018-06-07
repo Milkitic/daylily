@@ -139,7 +139,7 @@ namespace Daylily.Common.Assist
 
         private static void WriteInfo(string msg)
         {
-            if (msg.Length >= 2000)
+            if (msg != null && msg.Length >= 2000)
                 msg = msg.Remove(2000) + ".....(Too long)";
             Console.WriteLine(" " + msg);
             Console.ResetColor();

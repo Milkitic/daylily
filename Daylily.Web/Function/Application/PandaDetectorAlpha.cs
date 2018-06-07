@@ -20,16 +20,9 @@ namespace Daylily.Web.Function.Application
         public override string Command => null;
         public override AppType AppType => AppType.Application;
 
-        private readonly List<string> _receivedString = new List<string>();
-        private readonly List<string> _pathList = new List<string>();
+        private static readonly Dictionary<string, GroupSettings> GroupDic = new Dictionary<string, GroupSettings>();
 
-        private Thread _thread;
-        private Process _proc;
-
-        private int _pandaCount;
         private static int _totalCount;
-
-        private CommonMessage _message;
 
         public override void OnLoad(string[] args)
         {
@@ -38,12 +31,21 @@ namespace Daylily.Web.Function.Application
 
         public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
+            if (messageObj.MessageType == MessageType.Private) return null;
             if (messageObj.GroupId == "133605766")
                 if (DateTime.Now.Hour < 22 && DateTime.Now.Hour > 6)
                     return null;
 
             //if (user != "2241521134") return null;
-            _message = messageObj;
+            string groupId = messageObj.GroupId ?? messageObj.DiscussId;
+
+            if (!GroupDic.ContainsKey(groupId))
+                GroupDic.Add(groupId, new GroupSettings
+                {
+                    GroupId = groupId,
+                    MessageObj = messageObj
+                });
+            //GroupDic[groupId].GroupType = messageObj.GroupId == null ? MessageType.Discuss : MessageType.Group;
 
             var imgList = CqCode.GetImageInfo(messageObj.Message);
             if (imgList == null)
@@ -55,120 +57,157 @@ namespace Daylily.Web.Function.Application
                     continue;
                 if (item.FileInfo.Exists)
                 {
-                    _pathList.Add(item.FileInfo.FullName);
+                    GroupDic[groupId].PathQueue.Enqueue(item.FileInfo.FullName);
                 }
                 else
                 {
                     WebRequestHelper.GetImageFromUrl(item.Url, item.Md5, item.Extension);
-                    _pathList.Add(Path.Combine(Environment.CurrentDirectory, "images", item.Md5 + item.Extension));
+                    GroupDic[groupId].PathQueue.Enqueue(Path.Combine(Environment.CurrentDirectory, "images",
+                        item.Md5 + item.Extension));
                 }
 
                 _totalCount++;
             }
 
-            _thread = new Thread(RunDetector);
-            _thread.Start(_pathList);
-            Logger.PrimaryLine("(熊猫) 共 " + _totalCount);
+            if (GroupDic[groupId].Thread == null)
+            {
+                GroupDic[groupId].Thread = new Thread(RunDetector);
+                GroupDic[groupId].Thread.Start(GroupDic[groupId]);
+            }
+            else
+
+            {
+                if (!GroupDic[groupId].Thread.IsAlive)
+                {
+                    GroupDic[groupId].Thread = new Thread(RunDetector);
+                    GroupDic[groupId].Thread.Start(GroupDic[groupId]);
+                    Logger.PrimaryLine("[" + groupId + "] (熊猫) 共 " + _totalCount);
+                }
+            }
+
             return null;
         }
-
 
         /// <summary>
         /// 核心识别by sahuang
         /// </summary>
-        private void RunDetector(object newPathList)
+        private static void RunDetector(object groupSets)
         {
-            try
+            var gSets = groupSets as GroupSettings;
+
+            while (gSets.PathQueue.Count != 0)
             {
-                
-                var list = (List<string>) newPathList;
-                foreach (var fullPath in list)
+                try
                 {
-                    try
-                    {
-                        if (_proc != null)
-                        {
-                            if (!_proc.HasExited) _proc.Kill();
-                            _proc = null;
-                        }
-
-                        _proc = new Process
-                        {
-                            StartInfo =
-                            {
-                                FileName = "python3",
-                                Arguments =
-                                    $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
-                                CreateNoWindow = true,
-                                UseShellExecute = false,
-                                WindowStyle = ProcessWindowStyle.Hidden,
-                                RedirectStandardOutput = true,
-                                RedirectStandardError = true
-                            }
-                        };
-                        _proc.OutputDataReceived += ProcOutputReceived;
-                        _proc.ErrorDataReceived += ProcErrorReceived;
-
-                        _proc.Start();
-                        _proc.BeginOutputReadLine();
-                        _proc.BeginErrorReadLine();
-
-                        _proc.WaitForExit();
-                        ProcExited();
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.WriteException(ex);
-                    }
-                    finally
-                    {
-                        _totalCount--;
-                        Logger.PrimaryLine("(熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
-                    }
+                    CreateProc(gSets);
+                    ProcExited(gSets);
                 }
-
-                if (_pandaCount <= 0) return;
-
-                var perc = Rnd.NextDouble();
-                if (perc < 0.15 || (perc < 0.5 && _message.GroupId == "428274344"))
+                catch (Exception ex)
                 {
-                    Logger.SuccessLine("(熊猫) 几率: " + perc);
-                    DirectoryInfo di =
-                        new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
-                    var files = di.GetFiles();
-                    string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
-                    SendMessage(new CommonMessageResponse(msg, _message));
+                    Logger.WriteException(ex);
+                }
+                finally
+                {
+                    _totalCount--;
+                    Logger.PrimaryLine("[" + gSets.GroupId + "] (熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
                 }
             }
-            catch (Exception ex)
+
+            if (gSets.PandaCount < 1) return;
+
+            var perc = Rnd.NextDouble();
+            if (perc >= 1)
+                return;
+            Logger.SuccessLine("[" + gSets.GroupId + "] (熊猫) 几率: " + perc);
+            DirectoryInfo di =
+                new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
+            var files = di.GetFiles();
+            string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
+            SendMessage(new CommonMessageResponse(msg, gSets.MessageObj));
+        }
+
+        private static void CreateProc(GroupSettings gSets)
+        {
+            if (gSets.Process != null)
             {
-                Logger.WriteException(ex);
+                try
+                {
+                    if (!gSets.Process.HasExited) gSets.Process.Kill();
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                gSets.Process = null;
             }
+
+            string fullPath = gSets.PathQueue.Dequeue();
+
+            gSets.Process = new Process
+            {
+                StartInfo =
+                {
+                    FileName = "python3",
+                    Arguments = $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
+                    //FileName = "ping",
+                    //Arguments = "127.0.0.1",
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                }
+            };
+
+            gSets.Process.OutputDataReceived += (sender, e) =>
+            {
+                Logger.DebugLine(e.Data);
+                if (e.Data != null && e.Data.Trim() != "") gSets.ReceivedString.Add(e.Data);
+            };
+
+            gSets.Process.ErrorDataReceived += (sender, e) =>
+            {
+                Logger.DebugLine(e.Data);
+                if (e.Data != null && e.Data.Trim() != "") gSets.ReceivedString.Add(e.Data);
+            };
+
+            gSets.Process.Start();
+            gSets.Process.BeginOutputReadLine();
+            gSets.Process.BeginErrorReadLine();
+
+            gSets.Process.WaitForExit();
         }
 
-        private void ProcOutputReceived(object sender, DataReceivedEventArgs e)
+        private static void ProcExited(GroupSettings gSets)
         {
-            if (e.Data == null || e.Data.Trim() == "") return;
-            _receivedString.Add(e.Data);
-        }
-
-        private void ProcErrorReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data == null || e.Data.Trim() == "") return;
-            _receivedString.Add(e.Data);
-        }
-
-        private void ProcExited()
-        {
-            if (_receivedString.Count == 0) return;
-            string line = _receivedString[_receivedString.Count - 1];
+            if (gSets.ReceivedString.Count == 0) return;
+            string line = gSets.ReceivedString[gSets.ReceivedString.Count - 1];
             //Logger.WarningLine(line);
 
             var tmp = line.Split(' ');
-            var status = int.Parse(tmp[0]);
-            var confidence = double.Parse(tmp[1]);
-            if (status == 1 && confidence > 50)
-                _pandaCount++;
+            if (int.TryParse(tmp[0], out int status))
+            {
+                if (double.TryParse(tmp[1], out double confidence))
+                {
+                    if (status == 1 && confidence > 50)
+                        gSets.PandaCount++;
+                    return;
+                }
+            }
+
+            Logger.DangerLine("检测图片失败。");
+        }
+
+        private class GroupSettings
+        {
+            public CommonMessage MessageObj { get; set; }
+            public string GroupId { get; set; }
+            public List<string> ReceivedString { get; set; } = new List<string>();
+            public Queue<string> PathQueue { get; set; } = new Queue<string>();
+            public Thread Thread { get; set; }
+            public Process Process { get; set; }
+            public int PandaCount { get; set; }
         }
     }
 }
