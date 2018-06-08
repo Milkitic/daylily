@@ -1,10 +1,10 @@
-﻿using Daylily.Common.Assist;
-using Daylily.Common.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using Daylily.Common.Assist;
+using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
@@ -75,14 +75,12 @@ namespace Daylily.Web.Function.Application
                 GroupDic[groupId].Thread.Start(GroupDic[groupId]);
             }
             else
-
             {
-                if (!GroupDic[groupId].Thread.IsAlive)
-                {
-                    GroupDic[groupId].Thread = new Thread(RunDetector);
-                    GroupDic[groupId].Thread.Start(GroupDic[groupId]);
-                    Logger.PrimaryLine("[" + groupId + "] (熊猫) 共 " + _totalCount);
-                }
+                if (GroupDic[groupId].Thread.IsAlive) return null;
+
+                GroupDic[groupId].Thread = new Thread(RunDetector);
+                GroupDic[groupId].Thread.Start(GroupDic[groupId]);
+                Logger.PrimaryLine("[" + groupId + "] (熊猫) 共 " + _totalCount);
             }
 
             return null;
@@ -93,7 +91,7 @@ namespace Daylily.Web.Function.Application
         /// </summary>
         private static void RunDetector(object groupSets)
         {
-            var gSets = groupSets as GroupSettings;
+            var gSets = (GroupSettings)groupSets;
 
             while (gSets.PathQueue.Count != 0)
             {
@@ -109,21 +107,27 @@ namespace Daylily.Web.Function.Application
                 finally
                 {
                     _totalCount--;
-                    Logger.PrimaryLine("[" + gSets.GroupId + "] (熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
+                    Logger.PrimaryLine("(熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
                 }
             }
 
             if (gSets.PandaCount < 1) return;
+            Logger.PrimaryLine("[" + gSets.GroupId + "] (熊猫) " + gSets.PandaCount);
 
-            var perc = Rnd.NextDouble();
-            if (perc >= 0.15)
-                return;
-            Logger.SuccessLine("[" + gSets.GroupId + "] (熊猫) 几率: " + perc);
-            DirectoryInfo di =
-                new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send"));
-            var files = di.GetFiles();
-            string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
-            SendMessage(new CommonMessageResponse(msg, gSets.MessageObj));
+            for (int i = 0; i < gSets.PandaCount; i++)
+            {
+                var perc = Rnd.NextDouble();
+                if (perc >= 0.15)
+                    continue;
+                Logger.SuccessLine("[" + gSets.GroupId + "] (熊猫) 几率: " + perc);
+
+                string resPath = Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send");
+                FileInfo[] files = new DirectoryInfo(resPath).GetFiles();
+                string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
+                SendMessage(new CommonMessageResponse(msg, gSets.MessageObj));
+            }
+
+            gSets.PandaCount = 0;
         }
 
         private static void CreateProc(GroupSettings gSets)
@@ -149,7 +153,8 @@ namespace Daylily.Web.Function.Application
                 StartInfo =
                 {
                     FileName = "python3",
-                    Arguments = $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
+                    Arguments =
+                        $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
                     //FileName = "ping",
                     //Arguments = "127.0.0.1",
                     CreateNoWindow = true,
@@ -203,8 +208,8 @@ namespace Daylily.Web.Function.Application
         {
             public CommonMessage MessageObj { get; set; }
             public string GroupId { get; set; }
-            public List<string> ReceivedString { get; set; } = new List<string>();
-            public Queue<string> PathQueue { get; set; } = new Queue<string>();
+            public List<string> ReceivedString { get; } = new List<string>();
+            public Queue<string> PathQueue { get; } = new Queue<string>();
             public Thread Thread { get; set; }
             public Process Process { get; set; }
             public int PandaCount { get; set; }

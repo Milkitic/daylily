@@ -23,7 +23,7 @@ namespace Daylily.Web.Function.Application.Command
 
         public override void OnLoad(string[] args)
         {
-            //throw new NotImplementedException();
+            Logger.WarningLine("当前" + Name + "仅为" + Version + "版！");
         }
 
         public override CommonMessageResponse OnExecute(CommonMessage messageObj) // 必要方法
