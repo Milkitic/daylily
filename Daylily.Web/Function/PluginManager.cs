@@ -16,6 +16,7 @@ namespace Daylily.Web.Function
     {
         public static Dictionary<string, AppConstruct> CommandMap { get; set; } =
             new Dictionary<string, AppConstruct>();
+
         public static List<AppConstruct> ServiceList { get; set; } = new List<AppConstruct>();
         public static List<AppConstruct> ApplicationList { get; set; } = new List<AppConstruct>();
 
@@ -37,12 +38,12 @@ namespace Daylily.Web.Function
                 typeof(Rcon),
                 typeof(Send),
                 typeof(Shutdown),
+                typeof(Plugin),
             };
 
             foreach (var item in iType)
             {
-                AppConstruct plugin = Activator.CreateInstance(item) as AppConstruct;
-                InsertPlugin(plugin, args);
+                InsertPlugin(item, args);
             }
 
             foreach (var item in Directory.GetFiles(PluginDir, "*.dll"))
@@ -63,10 +64,10 @@ namespace Daylily.Web.Function
                         string typeName = "";
                         try
                         {
+                            if (type.BaseType != typeof(AppConstruct)) continue;
+
                             typeName = type.Name ?? "";
-                            if (type?.BaseType != typeof(AppConstruct)) continue;
-                            AppConstruct plugin = Activator.CreateInstance(type) as AppConstruct;
-                            InsertPlugin(plugin, args);
+                            InsertPlugin(type, args);
 
                             isValid = true;
                         }
@@ -89,7 +90,42 @@ namespace Daylily.Web.Function
                     Logger.WarningLine($"\"{fi.Name}\" 不是合法的插件扩展。");
 
             }
+
             //throw new NotImplementedException();
+        }
+
+        public static void RemovePlugin<T>()
+        {
+            foreach (var item in CommandMap)
+            {
+                if (typeof(T) != item.Value.GetType()) continue;
+                CommandMap.Remove(item.Key);
+            }
+
+            foreach (var item in ServiceList)
+            {
+                if (typeof(T) != item.GetType()) continue;
+                ServiceList.Remove(item);
+            }
+
+            foreach (var item in ApplicationList)
+            {
+                if (typeof(T) != item.GetType()) continue;
+                ApplicationList.Remove(item);
+            }
+        }
+
+        public static void AddPlugin<T>(string[] args)
+        {
+            Type type = typeof(T);
+            AppConstruct plugin = Activator.CreateInstance(type) as AppConstruct;
+            InsertPlugin(plugin, args);
+        }
+
+        private static void InsertPlugin(Type type, string[] args)
+        {
+            AppConstruct plugin = Activator.CreateInstance(type) as AppConstruct;
+            InsertPlugin(plugin, args);
         }
 
         private static void InsertPlugin(AppConstruct plugin, string[] args)
@@ -105,9 +141,7 @@ namespace Daylily.Web.Function
                     {
                         string[] cmds = plugin.Command.Split(',');
                         foreach (var cmd in cmds)
-                        {
                             CommandMap.Add(cmd, plugin);
-                        }
                     }
 
                     Logger.WriteLine($"命令 \"{plugin.Name}\" ({plugin.Command}) 已经加载完毕。");
@@ -116,7 +150,6 @@ namespace Daylily.Web.Function
                     ApplicationList.Add(plugin);
                     Logger.WriteLine($"应用 \"{plugin.Name}\" 已经加载完毕。");
                     break;
-                case AppType.Service:
                 default:
                     ServiceList.Add(plugin);
                     Logger.WriteLine($"服务 \"{plugin.Name}\" 已经加载完毕。");

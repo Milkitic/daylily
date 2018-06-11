@@ -18,6 +18,15 @@ namespace Daylily.Web.Controllers
         public async Task<JsonResult> GetResponse()
         {
             dynamic obj;
+            Logger.WriteLine((HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() == "127.0.0.1").ToString());
+
+            var ip = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            if (ip != "127.0.0.1" && ip != "74.120.171.198" && ip != "123.207.137.177")
+            {
+                Response.StatusCode = 403;
+                return Json(new { });
+            }
+
             using (var sr = new StreamReader(Request.Body))
             {
                 string json = await sr.ReadToEndAsync();
