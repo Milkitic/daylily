@@ -32,6 +32,7 @@ namespace Daylily.Web.Function
                 //typeof(DragonDetectorAlpha),
                 typeof(PandaDetectorAlpha),
                 typeof(PornDetector),
+                typeof(Repeat),
 
                 typeof(Kudosu),
                 typeof(Panda),
