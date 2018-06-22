@@ -123,10 +123,10 @@ namespace Daylily.Web.Function
                 if (GroupInfo[groupId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
 
                 var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
-                
-                CommonMessage commonMessage = new CommonMessage(currentInfo);
+
                 try
                 {
+                    CommonMessage commonMessage = new CommonMessage(currentInfo);
                     HandleMessage(commonMessage);
                 }
                 catch (Exception ex)
@@ -149,9 +149,9 @@ namespace Daylily.Web.Function
 
                 var currentInfo = DiscussInfo[discussId].MsgQueue.Dequeue();
 
-                CommonMessage commonMessage = new CommonMessage(currentInfo);
                 try
                 {
+                    CommonMessage commonMessage = new CommonMessage(currentInfo);
                     HandleMessage(commonMessage);
                 }
                 catch (Exception ex)
@@ -173,11 +173,10 @@ namespace Daylily.Web.Function
                 if (PrivateInfo[userId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
 
                 var currentInfo = PrivateInfo[userId].MsgQueue.Dequeue();
-                
-                CommonMessage commonMessage = new CommonMessage(currentInfo);
 
                 try
                 {
+                    CommonMessage commonMessage = new CommonMessage(currentInfo);
                     HandleMessage(commonMessage);
                 }
                 catch (Exception ex)

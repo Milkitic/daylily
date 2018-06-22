@@ -14,18 +14,22 @@ namespace Daylily.Web.Function
 {
     public static class PluginManager
     {
-        public static Dictionary<string, AppConstruct> CommandMap { get; set; } =
+        public static Dictionary<string, AppConstruct> CommandMap { get; } =
             new Dictionary<string, AppConstruct>();
 
-        public static List<AppConstruct> ServiceList { get; set; } = new List<AppConstruct>();
-        public static List<AppConstruct> ApplicationList { get; set; } = new List<AppConstruct>();
+        public static List<AppConstruct> ServiceList { get; } = new List<AppConstruct>();
+        public static List<AppConstruct> ApplicationList { get; } = new List<AppConstruct>();
 
-        public static Dictionary<string, Assembly> AssemblyList { get; set; } = new Dictionary<string, Assembly>();
+        public static Dictionary<string, Assembly> AssemblyList { get; } = new Dictionary<string, Assembly>();
 
         private static readonly string PluginDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins");
 
         public static void LoadAllPlugins(string[] args)
         {
+            int i = 0;
+            i++;
+            ++i;
+
             Type[] iType =
             {
                 typeof(CheckCqAt),

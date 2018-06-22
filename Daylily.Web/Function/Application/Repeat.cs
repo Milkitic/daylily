@@ -43,7 +43,7 @@ namespace Daylily.Web.Function.Application
                 {
                     while (true)
                     {
-                        Thread.Sleep(Rnd.Next(1000, 5000));
+                        Thread.Sleep(Rnd.Next(1000, 10000));
                         if (GroupDic[groupId].IntQueue <= 0)
                         {
                             if (GroupDic[groupId].Locked)
@@ -53,9 +53,9 @@ namespace Daylily.Web.Function.Application
                             }
                             continue;
                         }
-                        //if (Rnd.NextDouble() < 0.02)
+                        if (Rnd.NextDouble() < 0.02)
+                            Thread.Sleep(Rnd.Next(30000, 45000));
 
-                        //    Thread.Sleep(Rnd.Next(30000, 45000));
                         GroupDic[groupId].IntQueue--;
                         Logger.DebugLine(groupId + " decresed to " + GroupDic[groupId].IntQueue);
                     }
@@ -68,6 +68,8 @@ namespace Daylily.Web.Function.Application
             {
                 GroupDic[groupId].Locked = true;
                 Logger.DebugLine(groupId + " locked");
+                Logger.SuccessLine(groupId + "的" + messageObj.UserId + "触发了复读");
+                Thread.Sleep(Rnd.Next(1000, 8000));
                 return new CommonMessageResponse(messageObj.Message, messageObj);
             }
 
