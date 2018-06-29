@@ -2,10 +2,10 @@
 using System.Reflection;
 using Daylily.Common.Assist;
 using Daylily.Common.Database;
+using Daylily.Common.Function;
 using Daylily.Common.Interface;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
-using Daylily.Web.Function;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

@@ -1,24 +1,22 @@
-﻿using CSharpOsu;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
+using System.Linq;
+using System.Threading;
+using CSharpOsu;
 using CSharpOsu.Module;
 using Daylily.Common.Assist;
 using Daylily.Common.Database.BLL;
 using Daylily.Common.Database.Model;
 using Daylily.Common.Interface;
 using Daylily.Common.Models;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Newtonsoft.Json;
 
-namespace Daylily.Web.Function.Application.Command
+namespace Daylily.Common.Function.Application.Command
 {
     public class Kudosu : AppConstruct
     {

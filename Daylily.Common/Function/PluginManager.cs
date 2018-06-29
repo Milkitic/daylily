@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Daylily.Common.Assist;
+using Daylily.Common.Function.Application;
+using Daylily.Common.Function.Application.Command;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
-using Daylily.Web.Function.Application;
-using Daylily.Web.Function.Application.Command;
 
-namespace Daylily.Web.Function
+namespace Daylily.Common.Function
 {
     public static class PluginManager
     {

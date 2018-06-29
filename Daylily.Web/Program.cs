@@ -1,5 +1,5 @@
 ﻿using System;
-using Daylily.Web.Function;
+using Daylily.Common.Function;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 

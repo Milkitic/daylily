@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Threading;
 using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
@@ -9,7 +7,7 @@ using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
-namespace Daylily.Web.Function
+namespace Daylily.Common.Function
 {
     public class MessageHandler
     {

@@ -1,13 +1,11 @@
-﻿using Daylily.Common.Assist;
-using Daylily.Common.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
+using Daylily.Common.Assist;
+using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
-namespace Daylily.Web.Function.Application
+namespace Daylily.Common.Function.Application
 {
     public class CheckCqAt : AppConstruct
     {

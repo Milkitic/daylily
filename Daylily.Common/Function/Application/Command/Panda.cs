@@ -5,13 +5,12 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
-namespace Daylily.Web.Function.Application.Command
+namespace Daylily.Common.Function.Application.Command
 {
     public class Panda : AppConstruct
     {
