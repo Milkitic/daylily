@@ -39,9 +39,17 @@ namespace Daylily.Common.Assist
 
         private void UpdateInfo()
         {
-            var info = CqApi.GetGroupInfo(Id);
-            string name = info == null ? Id : info.GroupName;
-            Name = name;
+            if (Id == null) Logger.PrimaryLine("Id is null!!!!");
+            try
+            {
+                var info = CqApi.GetGroupInfo(Id);
+                string name = info == null ? Id : info.GroupName;
+                Name = name;
+            }
+            catch
+            {
+                Name = "组" + Id;
+            }
         }
     }
 }

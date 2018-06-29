@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Daylily.Common.Assist
     /// </summary>
     public static class WebRequestHelper
     {
-        private const int Timeout = 5000; // 整体的一次请求超时时间
+        private const int Timeout = 3000; // 整体的一次请求超时时间
         /// <summary>
         /// 从URL中提取图片
         /// </summary>
@@ -144,6 +145,7 @@ namespace Daylily.Common.Assist
             using (Stream s = webresponse.GetResponseStream())
             {
                 StreamReader reader = new StreamReader(s ?? throw new InvalidOperationException(), Encoding.UTF8);
+                //webresponse.Close();
                 return reader.ReadToEnd();
             }
         }
@@ -304,6 +306,7 @@ namespace Daylily.Common.Assist
 
         private static HttpWebResponse TryGetResponse(WebRequest request)
         {
+            Stopwatch sw = new Stopwatch();
             request.Timeout = Timeout;
             HttpWebResponse response = null;
             const int count = 3;
@@ -311,17 +314,22 @@ namespace Daylily.Common.Assist
             {
                 try
                 {
+                    sw.Restart();
                     response = request.GetResponse() as HttpWebResponse;
+                    sw.Stop();
+                    Logger.SuccessLine($"{request.RequestUri.AbsoluteUri}: {sw.ElapsedMilliseconds}ms");
                     break;
                 }
                 catch (Exception)
                 {
                     Logger.DangerLine($"尝试了{i}次，请求超时 (>{request.Timeout}ms)");
+                    Logger.DangerLine($"{request.RequestUri.AbsoluteUri}: {sw.ElapsedMilliseconds}ms");
                     if (i == count - 1)
                         throw;
                 }
             }
 
+            sw.Stop();
             return response;
         }
 

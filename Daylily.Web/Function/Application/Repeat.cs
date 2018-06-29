@@ -31,6 +31,8 @@ namespace Daylily.Web.Function.Application
 
         public override CommonMessageResponse OnExecute(CommonMessage messageObj)
         {
+            if (messageObj.MessageType == MessageType.Private)
+                return null;
             string groupId = messageObj.GroupId ?? messageObj.DiscussId;
 
             if (!GroupDic.ContainsKey(groupId))
