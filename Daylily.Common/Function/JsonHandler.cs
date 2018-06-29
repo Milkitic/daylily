@@ -19,6 +19,7 @@ namespace Daylily.Common.Function
                 if (obj.message_type == "private")
                 {
                     PrivateMsg parsedObj = JsonConvert.DeserializeObject<PrivateMsg>(JsonConvert.SerializeObject(obj));
+                    //PrivateMsg parsedObj = obj as PrivateMsg;
                     try
                     {
                         MessageHandler privateHandler = new MessageHandler(parsedObj);
@@ -40,6 +41,7 @@ namespace Daylily.Common.Function
                 else if (obj.message_type == "group")
                 {
                     GroupMsg parsedObj = JsonConvert.DeserializeObject<GroupMsg>(JsonConvert.SerializeObject(obj));
+                    //GroupMsg parsedObj = obj as GroupMsg;
                     try
                     {
                         MessageHandler groupHandler = new MessageHandler(parsedObj);
@@ -65,6 +67,7 @@ namespace Daylily.Common.Function
                 else if (obj.message_type == "discuss")
                 {
                     DiscussMsg parsedObj = JsonConvert.DeserializeObject<DiscussMsg>(JsonConvert.SerializeObject(obj));
+                    //DiscussMsg parsedObj = (DiscussMsg)obj;
                     try
                     {
                         MessageHandler discussHandler = new MessageHandler(parsedObj);

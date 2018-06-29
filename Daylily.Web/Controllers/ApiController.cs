@@ -32,7 +32,6 @@ namespace Daylily.Web.Controllers
             }
 
             object ret = JsonHandler.HandleReportJson(json);
-            // 判断post类别
 
             return Json(ret ?? new { });
         }

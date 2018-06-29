@@ -2,12 +2,8 @@
 
 namespace Daylily.Common.Models.CQResponse
 {
-    public class PrivateMsg
+    public class PrivateMsg : Base
     {
-        [JsonProperty(PropertyName = "time")]
-        public long Time { get; set; }
-        [JsonProperty(PropertyName = "post_type")]
-        public string PostType { get; set; }
         [JsonProperty(PropertyName = "message_type")]
         public string MessageType { get; set; }
         [JsonProperty(PropertyName = "sub_type")]
@@ -20,7 +16,5 @@ namespace Daylily.Common.Models.CQResponse
         public string Message { get; set; }
         [JsonProperty(PropertyName = "font")]
         public long Font { get; set; }
-        [JsonProperty(PropertyName = "self_id")]
-        public string SelfId { get; set; }
     }
 }

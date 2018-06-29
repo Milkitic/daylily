@@ -4,25 +4,7 @@ using System.Collections.Generic;
 
 namespace Daylily.Common.Models.CQResponse.Api
 {
-    public class GroupMemberList
-    {
-        [JsonProperty(PropertyName = "status")]
-        public string Status { get; set; }
-        [JsonProperty(PropertyName = "retcode")]
-        public int Retcode { get; set; }
-        [JsonProperty(PropertyName = "data")]
-        public List<_GroupMemberInfo> Data { get; set; }
-    }
-    public class GroupMemberInfo
-    {
-        [JsonProperty(PropertyName = "status")]
-        public string Status { get; set; }
-        [JsonProperty(PropertyName = "retcode")]
-        public int Retcode { get; set; }
-        [JsonProperty(PropertyName = "data")]
-        public _GroupMemberInfo Data { get; set; }
-    }
-    public class _GroupMemberInfo
+    public class GroupMember
     {
         [JsonProperty(PropertyName = "group_id")]
         public long GroupId { get; set; }
@@ -39,9 +21,9 @@ namespace Daylily.Common.Models.CQResponse.Api
         [JsonProperty(PropertyName = "area")]
         public string Area { get; set; }
         [JsonProperty(PropertyName = "join_time")]
-        private long _JoinTime { get; set; }
+        public long TsJoinTime { get; set; }
         [JsonProperty(PropertyName = "last_sent_time")]
-        private long _LastSentTime { get; set; }
+        public long TsLastSentTime { get; set; }
         [JsonProperty(PropertyName = "level")]
         public string Level { get; set; }
         [JsonProperty(PropertyName = "role")]
@@ -51,16 +33,18 @@ namespace Daylily.Common.Models.CQResponse.Api
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
         [JsonProperty(PropertyName = "title_expire_time")]
-        public long _TitleExpireTime { get; set; }
+        public long TsTitleExpireTime { get; set; }
         [JsonProperty(PropertyName = "card_changeable")]
         public bool CardChangeable { get; set; }
 
         // 拓展属性
         [JsonIgnore]
-        public DateTime JoinTime { get => new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(_JoinTime); }
+        public DateTime JoinTime => new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(TsJoinTime);
+
         [JsonIgnore]
-        public DateTime LastSentTime { get => new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(_LastSentTime); }
+        public DateTime LastSentTime => new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(TsLastSentTime);
+
         [JsonIgnore]
-        public DateTime TitleExpireTime { get => new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(_TitleExpireTime); }
+        public DateTime TitleExpireTime => new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(TsTitleExpireTime);
     }
 }

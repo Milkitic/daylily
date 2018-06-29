@@ -1,19 +1,17 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Daylily.Common.Models.CQResponse.Api
 {
-    public class SendGroupMsgResponse
+    public class Base<T>
     {
         [JsonProperty(PropertyName = "status")]
         public string Status { get; set; }
         [JsonProperty(PropertyName = "retcode")]
         public int Retcode { get; set; }
         [JsonProperty(PropertyName = "data")]
-        public _SendGroupMsgResponse Data { get; set; }
-    }
-    public class _SendGroupMsgResponse
-    {
-        [JsonProperty(PropertyName = "message_id")]
-        public long MessageId { get; set; }
+        public T Data { get; set; }
     }
 }

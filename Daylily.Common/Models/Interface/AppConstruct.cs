@@ -2,6 +2,7 @@
 using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse.Api;
+using Daylily.Common.Models.CQResponse.Api.Abstract;
 using Daylily.Common.Models.Enum;
 
 namespace Daylily.Common.Models.Interface

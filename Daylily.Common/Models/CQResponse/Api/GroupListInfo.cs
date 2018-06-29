@@ -3,16 +3,6 @@ using System.Collections.Generic;
 
 namespace Daylily.Common.Models.CQResponse.Api
 {
-    public class GroupListInfo
-    {
-        [JsonProperty(PropertyName = "status")]
-        public string Status { get; set; }
-        [JsonProperty(PropertyName = "retcode")]
-        public int Retcode { get; set; }
-        [JsonProperty(PropertyName = "data")]
-        public List<GroupInfo> Data { get; set; }
-
-    }
     public class GroupInfo
     {
         [JsonProperty(PropertyName = "group_id")]

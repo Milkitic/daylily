@@ -1,8 +1,10 @@
-﻿using Daylily.Common.Assist;
+﻿using System;
+using Daylily.Common.Assist;
 using Daylily.Common.Models.CQResponse.Api;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
+using Daylily.Common.Models.CQResponse.Api.Abstract;
 
 namespace Daylily.Common.Interface.CQHttp
 {
@@ -140,7 +142,8 @@ namespace Daylily.Common.Interface.CQHttp
             Request(ApiUrl + GroupBanPath, parameters, true);
         }
 
-        public static GroupListInfo GetGroupList() => Request<GroupListInfo>(ApiUrl + GroupListPath, null);
+        public static Models.CQResponse.Api.Abstract.GroupList GetGroupList()
+            => Request<Models.CQResponse.Api.Abstract.GroupList>(ApiUrl + GroupListPath, null);
 
         public static GroupMemberInfo GetGroupMemberInfo(string groupId, string userId, bool noCache = false)
         {
@@ -168,6 +171,7 @@ namespace Daylily.Common.Interface.CQHttp
         /// </summary>
         /// <param name="groupId"></param>
         /// <returns></returns>
+        [Obsolete]
         public static GroupInfo GetGroupInfo(string groupId) => GetGroupList().Data.Find(x => x.GroupId.ToString() == groupId);
 
         private static void Request(string url, IDictionary<string, string> parameters, bool enableLog = false)
