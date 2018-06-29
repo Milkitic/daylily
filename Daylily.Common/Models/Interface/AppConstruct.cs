@@ -32,19 +32,19 @@ namespace Daylily.Common.Models.Interface
             switch (response.MessageType)
             {
                 case MessageType.Group:
-                    SendGroupMsg groupMsg = CqApi.SendGroupMessageAsync(response.GroupId,
+                    SendGroupMsgResp groupMsgResp = CqApi.SendGroupMessageAsync(response.GroupId,
                         (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsg.Status}}})");
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
                     break;
                 case MessageType.Discuss:
-                    SendDiscussMsg discussMsg = CqApi.SendDiscussMessageAsync(response.DiscussId,
+                    SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(response.DiscussId,
                         (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsg.Status}}})");
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
                     break;
                 case MessageType.Private:
-                    SendPrivateMsg privateMsg =
+                    SendPrivateMsgResp privateMsgResp =
                         CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsg.Status}}})");
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -57,19 +57,19 @@ namespace Daylily.Common.Models.Interface
             switch (messageType)
             {
                 case MessageType.Group:
-                    SendGroupMsg groupMsg = CqApi.SendGroupMessageAsync(groupId,
+                    SendGroupMsgResp groupMsgResp = CqApi.SendGroupMessageAsync(groupId,
                         (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsg.Status}}})");
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
                     break;
                 case MessageType.Discuss:
-                    SendDiscussMsg discussMsg = CqApi.SendDiscussMessageAsync(discussId.ToString(),
+                    SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(discussId.ToString(),
                         (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsg.Status}}})");
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
                     break;
                 case MessageType.Private:
-                    SendPrivateMsg privateMsg =
+                    SendPrivateMsgResp privateMsgResp =
                         CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsg.Status}}})");
+                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
