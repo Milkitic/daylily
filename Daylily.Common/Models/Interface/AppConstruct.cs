@@ -32,17 +32,17 @@ namespace Daylily.Common.Models.Interface
             switch (response.MessageType)
             {
                 case MessageType.Group:
-                    SendGroupMsgResponse groupMsg = CqApi.SendGroupMessageAsync(response.GroupId,
+                    SendGroupMsg groupMsg = CqApi.SendGroupMessageAsync(response.GroupId,
                         (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsg.Status}}})");
                     break;
                 case MessageType.Discuss:
-                    SendDiscussMsgResponse discussMsg = CqApi.SendDiscussMessageAsync(response.DiscussId,
+                    SendDiscussMsg discussMsg = CqApi.SendDiscussMessageAsync(response.DiscussId,
                         (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsg.Status}}})");
                     break;
                 case MessageType.Private:
-                    SendPrivateMsgResponse privateMsg =
+                    SendPrivateMsg privateMsg =
                         CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsg.Status}}})");
                     break;
@@ -57,17 +57,17 @@ namespace Daylily.Common.Models.Interface
             switch (messageType)
             {
                 case MessageType.Group:
-                    SendGroupMsgResponse groupMsg = CqApi.SendGroupMessageAsync(groupId,
+                    SendGroupMsg groupMsg = CqApi.SendGroupMessageAsync(groupId,
                         (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsg.Status}}})");
                     break;
                 case MessageType.Discuss:
-                    SendDiscussMsgResponse discussMsg = CqApi.SendDiscussMessageAsync(discussId.ToString(),
+                    SendDiscussMsg discussMsg = CqApi.SendDiscussMessageAsync(discussId.ToString(),
                         (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsg.Status}}})");
                     break;
                 case MessageType.Private:
-                    SendPrivateMsgResponse privateMsg =
+                    SendPrivateMsg privateMsg =
                         CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsg.Status}}})");
                     break;

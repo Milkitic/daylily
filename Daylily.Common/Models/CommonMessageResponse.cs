@@ -57,7 +57,7 @@ namespace Daylily.Common.Models
             }
         }
 
-        //public CommonMessageResponse(SendPrivateMsg privateMsg, string userId, bool enableAt = false)
+        //public CommonMessageResponse(SendPrivateMsgResp privateMsg, string userId, bool enableAt = false)
         //{
         //    UserId = privateMsg.UserId.ToString();
 
@@ -65,7 +65,7 @@ namespace Daylily.Common.Models
         //    Private = privateMsg;
         //}
 
-        //public CommonMessageResponse(SendDiscussMsg discussMsg, string userId, bool enableAt = false)
+        //public CommonMessageResponse(SendDiscussMsgResp discussMsg, string userId, bool enableAt = false)
         //{
         //    UserId = userId;
         //    DiscussId = discussMsg.DiscussId.ToString();
@@ -74,7 +74,7 @@ namespace Daylily.Common.Models
         //    Discuss = discussMsg;
         //}
 
-        //public CommonMessageResponse(SendGroupMsg groupMsg, string userId, bool enableAt = false)
+        //public CommonMessageResponse(SendGroupMsgResp groupMsg, string userId, bool enableAt = false)
         //{
         //    UserId = userId;
         //    DiscussId = groupMsg.GroupId.ToString();
