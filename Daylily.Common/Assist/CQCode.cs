@@ -123,7 +123,7 @@ namespace Daylily.Common.Assist
         }
 
         /// <summary>
-        /// 提取消息中的图片。返回一个string数组。
+        /// 提取消息中的图片。返回一个对象数组。
         /// </summary>
         /// <param name="source">消息文本</param>
         /// <returns></returns>

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Daylily.Common.Assist;
 using Daylily.Common.Models.CQResponse;
 using Newtonsoft.Json;
@@ -13,73 +11,78 @@ namespace Daylily.Common.Function
         {
             dynamic obj = JsonConvert.DeserializeObject(json);
             // 判断post类别
-            if (obj.post_type == "message")
+            try
             {
-                // 私聊
-                if (obj.message_type == "private")
+                if (obj.post_type == "message")
                 {
-                    PrivateMsg parsedObj = JsonConvert.DeserializeObject<PrivateMsg>(json);
-                    //PrivateMsg parsedObj = obj as PrivateMsg;
-                    try
+                    // 私聊
+                    if (obj.message_type == "private")
                     {
+                        PrivateMsg parsedObj = JsonConvert.DeserializeObject<PrivateMsg>(json);
                         MessageHandler privateHandler = new MessageHandler(parsedObj);
                     }
-                    catch (Exception ex)
-                    {
-                        Logger.WriteException(ex);
-                    }
-                }
 
-                //群聊
-                else if (obj.message_type == "group")
-                {
-                    GroupMsg parsedObj = JsonConvert.DeserializeObject<GroupMsg>(json);
-                    //GroupMsg parsedObj = obj as GroupMsg;
-                    try
+                    // 群聊
+                    else if (obj.message_type == "group")
                     {
+                        GroupMsg parsedObj = JsonConvert.DeserializeObject<GroupMsg>(json);
                         MessageHandler groupHandler = new MessageHandler(parsedObj);
                     }
-                    catch (Exception ex)
-                    {
-                        Logger.WriteException(ex);
-                    }
-                }
 
-                //讨论组
-                else if (obj.message_type == "discuss")
-                {
-                    DiscussMsg parsedObj = JsonConvert.DeserializeObject<DiscussMsg>(json);
-                    //DiscussMsg parsedObj = (DiscussMsg)obj;
-                    try
+                    // 讨论组
+                    else if (obj.message_type == "discuss")
                     {
+                        DiscussMsg parsedObj = JsonConvert.DeserializeObject<DiscussMsg>(json);
                         MessageHandler discussHandler = new MessageHandler(parsedObj);
-                        //group_handler.HandleMessage();
                     }
-                    catch (Exception ex)
+                }
+                else if (obj.post_type == "notice")
+                {
+                    // 群文件上传
+                    if (obj.notice_type == "group_upload")
                     {
-                        Logger.WriteException(ex);
-                        //GroupMsgResponse group_resp = new GroupMsgResponse()
-                        //{
-                        //    reply = ex.Message,
-                        //    auto_escape = false,
-                        //    at_sender = true,
-                        //    delete = false,
-                        //    kick = false,
-                        //    ban = false
-                        //};
-                        //return Json(group_resp);
+                        GroupFileUpload parsedObj = JsonConvert.DeserializeObject<GroupFileUpload>(json);
+                        // TODO
+                    }
+                    // 群管理员变动
+                    else if (obj.notice_type == "group_admin")
+                    {
+                        GroupAdminChange parsedObj = JsonConvert.DeserializeObject<GroupAdminChange>(json);
+                        // TODO
+                    }
+                    // 群成员增加/减少
+                    else if (obj.notice_type == "group_decrease" || obj.notice_type == "group_increase")
+                    {
+                        GroupMemberChange parsedObj = JsonConvert.DeserializeObject<GroupMemberChange>(json);
+                        // TODO
+                    }
+                    // 好友添加
+                    else if (obj.notice_type == "friend_add")
+                    {
+                        FriendAdd parsedObj = JsonConvert.DeserializeObject<FriendAdd>(json);
+                        // TODO
+                    }
+                }
+                else if (obj.post_type == "request")
+                {
+                    // 加好友请求
+                    if (obj.request_type == "friend")
+                    {
+                        FriendRequest parsedObj = JsonConvert.DeserializeObject<FriendRequest>(json);
+                        // TODO
+                    }
+                    // 加群请求／邀请
+                    else if (obj.request_type == "group")
+                    {
+                        GroupInvite parsedObj = JsonConvert.DeserializeObject<GroupInvite>(json);
+                        // TODO
                     }
                 }
             }
-            else if (obj.post_type == "event")
+            catch (Exception ex)
             {
-                // TODO
+                Logger.WriteException(ex);
             }
-            else if (obj.post_type == "request")
-            {
-                // TODO
-            }
-
             return null;
         }
     }
