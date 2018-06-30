@@ -23,17 +23,10 @@ namespace Daylily.Common.Function
                     try
                     {
                         MessageHandler privateHandler = new MessageHandler(parsedObj);
-                        //private_handler.HandleMessage();
                     }
                     catch (Exception ex)
                     {
                         Logger.WriteException(ex);
-                        //PrivateMsgResponse privateResp = new PrivateMsgResponse()
-                        //{
-                        //    AutoEscape = false,
-                        //    Reply = ex.Message
-                        //};
-                        //return Json(privateResp);
                     }
                 }
 
@@ -45,21 +38,10 @@ namespace Daylily.Common.Function
                     try
                     {
                         MessageHandler groupHandler = new MessageHandler(parsedObj);
-                        //group_handler.HandleMessage();
                     }
                     catch (Exception ex)
                     {
                         Logger.WriteException(ex);
-                        //GroupMsgResponse group_resp = new GroupMsgResponse()
-                        //{
-                        //    reply = ex.Message,
-                        //    auto_escape = false,
-                        //    at_sender = true,
-                        //    delete = false,
-                        //    kick = false,
-                        //    ban = false
-                        //};
-                        //return Json(group_resp);
                     }
                 }
 
