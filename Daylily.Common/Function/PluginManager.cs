@@ -24,10 +24,6 @@ namespace Daylily.Common.Function
 
         public static void LoadAllPlugins(string[] args)
         {
-            int i = 0;
-            i++;
-            ++i;
-
             Type[] iType =
             {
                 typeof(CheckCqAt),
