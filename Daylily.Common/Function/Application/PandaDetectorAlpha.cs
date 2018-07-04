@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -20,7 +21,7 @@ namespace Daylily.Common.Function.Application
         public override string Command => null;
         public override AppType AppType => AppType.Application;
 
-        private static readonly Dictionary<string, GroupSettings> GroupDic = new Dictionary<string, GroupSettings>();
+        private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
 
         private static int _totalCount;
 
@@ -40,7 +41,7 @@ namespace Daylily.Common.Function.Application
             string groupId = messageObj.GroupId ?? messageObj.DiscussId;
 
             if (!GroupDic.ContainsKey(groupId))
-                GroupDic.Add(groupId, new GroupSettings
+                GroupDic.GetOrAdd(groupId, new GroupSettings
                 {
                     GroupId = groupId,
                     MessageObj = messageObj

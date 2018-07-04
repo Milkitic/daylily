@@ -1,4 +1,5 @@
-﻿using Daylily.Common.Interface.CQHttp;
+﻿using System.Collections.Concurrent;
+using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace Daylily.Common.Assist
 {
     public class DiscussList
     {
-        private readonly Dictionary<long, DiscussSettings> _dicDiscuss = new Dictionary<long, DiscussSettings>();
+        private readonly ConcurrentDictionary<long, DiscussSettings> _dicDiscuss = new ConcurrentDictionary<long, DiscussSettings>();
 
         public DiscussSettings this[long discussId] => _dicDiscuss[discussId];
 
@@ -17,7 +18,7 @@ namespace Daylily.Common.Assist
             if (_dicDiscuss.Keys.Contains(discussId))
                 return;
 
-            _dicDiscuss.Add(discussId, new DiscussSettings(discussId.ToString()));
+            _dicDiscuss.GetOrAdd(discussId, new DiscussSettings(discussId.ToString()));
         }
 
     }

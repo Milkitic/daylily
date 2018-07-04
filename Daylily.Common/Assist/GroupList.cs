@@ -1,4 +1,5 @@
-﻿using Daylily.Common.Interface.CQHttp;
+﻿using System.Collections.Concurrent;
+using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace Daylily.Common.Assist
 {
     public class GroupList
     {
-        private readonly Dictionary<long, GroupSettings> _dicGroup = new Dictionary<long, GroupSettings>();
+        private readonly ConcurrentDictionary<long, GroupSettings> _dicGroup = new ConcurrentDictionary<long, GroupSettings>();
 
         public GroupSettings this[long groupId] => _dicGroup[groupId];
 
@@ -17,7 +18,7 @@ namespace Daylily.Common.Assist
             if (_dicGroup.Keys.Contains(groupId))
                 return;
 
-            _dicGroup.Add(groupId, new GroupSettings(groupId.ToString()));
+            _dicGroup.GetOrAdd(groupId, new GroupSettings(groupId.ToString()));
         }
 
     }

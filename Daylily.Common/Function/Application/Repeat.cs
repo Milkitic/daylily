@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
@@ -17,7 +18,7 @@ namespace Daylily.Common.Function.Application
         public override string Command => null;
         public override AppType AppType => AppType.Application;
 
-        private static readonly Dictionary<string, GroupSettings> GroupDic = new Dictionary<string, GroupSettings>();
+        private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
         private const int MaxNum = 10;
 
         public override void OnLoad(string[] args)
@@ -33,7 +34,7 @@ namespace Daylily.Common.Function.Application
 
             if (!GroupDic.ContainsKey(groupId))
             {
-                GroupDic.Add(groupId, new GroupSettings
+                GroupDic.GetOrAdd(groupId, new GroupSettings
                 {
                     GroupId = groupId,
                 });

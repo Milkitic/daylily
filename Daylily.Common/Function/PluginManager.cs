@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -12,13 +13,14 @@ namespace Daylily.Common.Function
 {
     public static class PluginManager
     {
-        public static Dictionary<string, AppConstruct> CommandMap { get; } =
-            new Dictionary<string, AppConstruct>();
+        public static ConcurrentDictionary<string, AppConstruct> CommandMap { get; } =
+            new ConcurrentDictionary<string, AppConstruct>();
 
         public static List<AppConstruct> ServiceList { get; } = new List<AppConstruct>();
         public static List<AppConstruct> ApplicationList { get; } = new List<AppConstruct>();
 
-        public static Dictionary<string, Assembly> AssemblyList { get; } = new Dictionary<string, Assembly>();
+        public static ConcurrentDictionary<string, Assembly> AssemblyList { get; } =
+            new ConcurrentDictionary<string, Assembly>();
 
         private static readonly string PluginDir = Path.Combine(Domain.CurrentDirectory, "plugins");
 
@@ -80,7 +82,7 @@ namespace Daylily.Common.Function
                     }
 
                     if (isValid)
-                        AssemblyList.Add(fi.Name, asm);
+                        AssemblyList.GetOrAdd(fi.Name, asm);
                 }
                 catch (Exception ex)
                 {
@@ -100,7 +102,7 @@ namespace Daylily.Common.Function
             foreach (var item in CommandMap)
             {
                 if (typeof(T) != item.Value.GetType()) continue;
-                CommandMap.Remove(item.Key);
+                CommandMap.Remove(item.Key, out _);
             }
 
             foreach (var item in ServiceList)
@@ -142,7 +144,7 @@ namespace Daylily.Common.Function
                     {
                         string[] cmds = plugin.Command.Split(',');
                         foreach (var cmd in cmds)
-                            CommandMap.Add(cmd, plugin);
+                            CommandMap.GetOrAdd(cmd, plugin);
                     }
 
                     Logger.WriteLine($"命令 \"{plugin.Name}\" ({plugin.Command}) 已经加载完毕。");

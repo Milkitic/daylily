@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -20,13 +21,12 @@ namespace Daylily.Common.Function.Application
         public override string Description => "群长时间不说话时，发熊猫";
         public override string Command => null;
         public override AppType AppType => AppType.Application;
-
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
-        private static Dictionary<string, GroupSettings> _groupDic;
+        private static ConcurrentDictionary<string, GroupSettings> _groupDic;
         public override void OnLoad(string[] args)
         {
             Logger.WriteLine("上次群发言情况载入中。");
-            _groupDic = LoadSettings<Dictionary<string, GroupSettings>>();
+            _groupDic = LoadSettings<ConcurrentDictionary<string, GroupSettings>>();
             if (_groupDic != null)
             {
                 foreach (var item in _groupDic)
@@ -35,7 +35,7 @@ namespace Daylily.Common.Function.Application
                     item.Value.Thread.Start(item.Key);
                 }
             }
-            else _groupDic = new Dictionary<string, GroupSettings>();
+            else _groupDic = new ConcurrentDictionary<string, GroupSettings>();
             Logger.WriteLine("上次群发言情载入完毕，并开启了线程。");
         }
 
@@ -47,7 +47,7 @@ namespace Daylily.Common.Function.Application
 
             if (!_groupDic.ContainsKey(groupId))
             {
-                _groupDic.Add(groupId, new GroupSettings
+                _groupDic.GetOrAdd(groupId, new GroupSettings
                 {
                     MessageObj = messageObj,
                     LastSentIsMe = false,
