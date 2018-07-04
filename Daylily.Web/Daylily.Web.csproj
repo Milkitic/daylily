@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="services\**" />
+    <Content Remove="services\**" />
+    <EmbeddedResource Remove="services\**" />
+    <None Remove="services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CSharpOSU" Version="1.4.5" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.0" />
     <PackageReference Include="MySql.Data" Version="8.0.11" />
@@ -19,10 +26,6 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="services\" />
   </ItemGroup>
 
   <ItemGroup>
