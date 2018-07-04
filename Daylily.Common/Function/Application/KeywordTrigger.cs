@@ -38,7 +38,7 @@ namespace Daylily.Common.Function.Application
         {
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
         {
             //概率从小到大排序，更科学
             string msg = messageObj.Message;

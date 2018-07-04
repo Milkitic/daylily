@@ -24,7 +24,7 @@ namespace Daylily.Plugin.Core.Command
 
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
         {
             if (messageObj.PermissionLevel == PermissionLevel.Public)
                 return new CommonMessageResponse(LoliReply.AdminOnly, messageObj, true);

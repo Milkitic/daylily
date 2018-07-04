@@ -38,7 +38,7 @@ namespace Daylily.Common.Function.Application
             //throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
         {
             if (messageObj.Group == null) return null;
 

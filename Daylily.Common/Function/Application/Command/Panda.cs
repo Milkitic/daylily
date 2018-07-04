@@ -36,7 +36,7 @@ namespace Daylily.Common.Function.Application.Command
             //throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
         {
             if (messageObj.MessageType == MessageType.Group && messageObj.GroupId != "672076603")
                 return new CommonMessageResponse(LoliReply.PrivateOnly, messageObj);

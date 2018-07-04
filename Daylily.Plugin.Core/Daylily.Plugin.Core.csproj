@@ -7,10 +7,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>C:\Users\YureruMiira\Source\Repos\Daylily\Daylily.Web\bin\Debug\netcoreapp2.1\plugins\</OutputPath>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>C:\Users\YureruMiira\Source\Repos\Daylily\Daylily.Web\bin\Release\PublishOutput\plugins</OutputPath>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

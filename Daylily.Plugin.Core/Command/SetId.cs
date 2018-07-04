@@ -25,7 +25,7 @@ namespace Daylily.Plugin.Core.Command
 
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
         {
             if (string.IsNullOrEmpty(messageObj.Parameter))
                 return null;

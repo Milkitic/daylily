@@ -30,7 +30,7 @@ namespace Daylily.Common.Function.Application
             //throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
         {
             // 查黄图
             if (messageObj.Group == null || messageObj.GroupId != "133605766") return null;

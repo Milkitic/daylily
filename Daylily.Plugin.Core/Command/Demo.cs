@@ -33,7 +33,7 @@ namespace Daylily.Plugin.Core.Command
 
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj) // 必要方法
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj) // 必要方法
         {
             // 接收的信息
             string message = messageObj.Message;

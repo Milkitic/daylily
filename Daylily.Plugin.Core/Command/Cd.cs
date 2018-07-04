@@ -22,7 +22,7 @@ namespace Daylily.Plugin.Core.Command
 
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
         {
             if (messageObj.GroupId != null) // 不给予群聊权限
                 return null;

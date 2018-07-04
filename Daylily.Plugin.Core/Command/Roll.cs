@@ -19,10 +19,9 @@ namespace Daylily.Plugin.Core.Command
 
         public override void OnLoad(string[] args)
         {
-
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
         {
             var query = messageObj.Parameter.Split(' ');
             if (!int.TryParse(query[0], out _))

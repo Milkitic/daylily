@@ -26,7 +26,7 @@ namespace Daylily.Common.Function.Application.Command
             Logger.WarningLine("当前" + Name + "仅为" + Version + "版！");
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj) // 必要方法
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj) // 必要方法
         {
             // 发送者的QQ
             string userId = messageObj.UserId;

@@ -22,7 +22,7 @@ namespace Daylily.Common.Function.Application.Command
 
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj) // 必要方法
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj) // 必要方法
         {
             string[] args = messageObj.Parameter.Split(' ');
 

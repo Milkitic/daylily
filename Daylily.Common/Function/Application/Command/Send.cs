@@ -19,7 +19,7 @@ namespace Daylily.Common.Function.Application.Command
             //throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
         {
             if (messageObj.PermissionLevel != PermissionLevel.Root)
                 return null;

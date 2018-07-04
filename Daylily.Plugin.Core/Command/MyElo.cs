@@ -22,7 +22,7 @@ namespace Daylily.Plugin.Core.Command
 
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj)
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
         {
             BllUserRole bllUserRole = new BllUserRole();
             EloApi eloApi = new EloApi();

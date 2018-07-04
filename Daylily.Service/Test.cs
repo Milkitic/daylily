@@ -22,7 +22,7 @@ namespace Daylily.Service
             t.Start();
         }
 
-        public override CommonMessageResponse OnExecute(CommonMessage messageObj) => null;
+        public override CommonMessageResponse OnExecute(in CommonMessage messageObj) => null;
 
         private static void Async()
         {
