@@ -19,11 +19,14 @@ namespace Daylily.Common.Function.Application
         public override string Command => null;
         public override AppType AppType => AppType.Application;
 
-        private static Dictionary<string, int> UserCount { get; } = new Dictionary<string, int>();
+        private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> Md5List { get; } = new Dictionary<string, CosObject>();
 
         public override void OnLoad(string[] args)
         {
+            Logger.WriteLine("上次用户计数载入中。");
+            UserCount = LoadSettings<Dictionary<string, int>>() ?? new Dictionary<string, int>();
+            Logger.WriteLine("上次用户计数载入完毕。");
             //throw new NotImplementedException();
         }
 
@@ -107,17 +110,24 @@ namespace Daylily.Common.Function.Application
 
         private CommonMessageResponse AddCount(string user, string group)
         {
-            Logger.WarningLine("发现好图，存了");
-            if (!UserCount.ContainsKey(user))
-                UserCount.Add(user, 2);
-            UserCount[user]--;
-            if (UserCount[user] != 0)
-                return new CommonMessageResponse("..黄花菜看了都脸红..求你少发点", user, true);
-            else
+            try
             {
-                UserCount[user] = 2;
-                CqApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
-                return new CommonMessageResponse("...", user, true);
+                Logger.WarningLine("发现好图，存了");
+                if (!UserCount.ContainsKey(user))
+                    UserCount.Add(user, 2);
+                UserCount[user]--;
+                if (UserCount[user] != 0)
+                    return new CommonMessageResponse("..黄花菜看了都脸红..求你少发点", user, true);
+                else
+                {
+                    UserCount[user] = 2;
+                    CqApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
+                    return new CommonMessageResponse("...", user, true);
+                }
+            }
+            finally
+            {
+                SaveSettings(UserCount);
             }
         }
     }

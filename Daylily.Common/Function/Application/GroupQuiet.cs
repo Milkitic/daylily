@@ -25,6 +25,7 @@ namespace Daylily.Common.Function.Application
         private static Dictionary<string, GroupSettings> _groupDic;
         public override void OnLoad(string[] args)
         {
+            Logger.WriteLine("上次群发言情况载入中。");
             _groupDic = LoadSettings<Dictionary<string, GroupSettings>>();
             if (_groupDic != null)
             {
@@ -35,6 +36,7 @@ namespace Daylily.Common.Function.Application
                 }
             }
             else _groupDic = new Dictionary<string, GroupSettings>();
+            Logger.WriteLine("上次群发言情载入完毕，并开启了线程。");
         }
 
         public override CommonMessageResponse OnExecute(CommonMessage messageObj)
