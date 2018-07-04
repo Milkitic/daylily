@@ -24,11 +24,6 @@ namespace Daylily.Web.Controllers
                 Logger.WarningLine("来自白菜的请求：" + ip);
                 return Json(new { });
             }
-            if (ip != "127.0.0.1" && ip != "123.207.137.177" && ip != "60.2.111.26")
-            {
-                Logger.DangerLine("来自未知ip的请求：" + ip);
-                return Json(new { });
-            }
 
             string json;
             using (var sr = new StreamReader(Request.Body))
