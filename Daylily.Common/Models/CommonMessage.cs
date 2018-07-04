@@ -5,23 +5,23 @@ namespace Daylily.Common.Models
 {
     public class CommonMessage
     {
-        public string Message { get; }
+        public string Message { get; set; }
 
         public string FullCommand { get; set; }
         public string Command { get; set; }
         public string Parameter { get; set; }
 
-        public MessageType MessageType { get; }
+        public MessageType MessageType { get; set; }
         public PermissionLevel PermissionLevel { get; set; }
 
-        public string UserId { get; }
-        public string DiscussId { get; }
-        public string GroupId { get; }
-        public long MessageId { get; }
+        public string UserId { get; set; }
+        public string DiscussId { get; set; }
+        public string GroupId { get; set; }
+        public long MessageId { get; set; }
 
-        public PrivateMsg Private { get; }
-        public DiscussMsg Discuss { get; }
-        public GroupMsg Group { get; }
+        public PrivateMsg Private { get; set; }
+        public DiscussMsg Discuss { get; set; }
+        public GroupMsg Group { get; set; }
 
         public CommonMessage()
         {

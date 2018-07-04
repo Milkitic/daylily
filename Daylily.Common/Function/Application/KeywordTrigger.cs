@@ -34,6 +34,9 @@ namespace Daylily.Common.Function.Application
         private static readonly string[] Kanlai = { "看来", "原来" };
         private static readonly string[] KanlaiOut = { "kanlai1.jpg", "kanlai2.jpg" };
 
+        private static readonly string[] Sb = { "黄花菜" };
+        private static readonly string[] SbOut = { "sb1.jpg", "sb2.jpg", "sb3.jpg", "sb4.jpg", "sb5.jpg", "sb6.jpg", "sb7.jpg", "sb8.jpg", "sb9.jpg" };
+
         public override void OnLoad(string[] args)
         {
         }
@@ -49,6 +52,8 @@ namespace Daylily.Common.Function.Application
             if (Trig(msg, Why, WhyOut, out img, 0.2)) // 20%
                 return new CommonMessageResponse(CqCode.EncodeFileToBase64(Path.Combine(PandaDir, img)), messageObj);
             if (Trig(msg, Kanlai, KanlaiOut, out img, 0.3)) // 30%
+                return new CommonMessageResponse(CqCode.EncodeFileToBase64(Path.Combine(PandaDir, img)), messageObj);
+            if (Trig(msg, Sb, SbOut, out img, 0.5)) // 50%
                 return new CommonMessageResponse(CqCode.EncodeFileToBase64(Path.Combine(PandaDir, img)), messageObj);
             return null;
         }
