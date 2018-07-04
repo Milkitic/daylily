@@ -22,8 +22,8 @@ namespace Daylily.Common.Function.Application.Command
         public override string Command => "panda";
         public override AppType AppType => AppType.Command;
 
-        private static readonly string PandaDir = Path.Combine(Environment.CurrentDirectory, "panda");
-        private static readonly string FontDir = Path.Combine(Environment.CurrentDirectory, "font");
+        private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
+        private static readonly string FontDir = Path.Combine(Domain.CurrentDirectory, "font");
 
         private readonly string[] _antiString = { "" };
 

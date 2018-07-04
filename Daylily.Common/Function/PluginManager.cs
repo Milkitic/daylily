@@ -20,7 +20,7 @@ namespace Daylily.Common.Function
 
         public static Dictionary<string, Assembly> AssemblyList { get; } = new Dictionary<string, Assembly>();
 
-        private static readonly string PluginDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins");
+        private static readonly string PluginDir = Path.Combine(Domain.CurrentDirectory, "plugins");
 
         public static void LoadAllPlugins(string[] args)
         {

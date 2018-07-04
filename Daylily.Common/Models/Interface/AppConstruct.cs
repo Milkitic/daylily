@@ -76,7 +76,7 @@ namespace Daylily.Common.Models.Interface
             }
         }
 
-        private readonly string _pluginDir = Path.Combine(Environment.CurrentDirectory, "plugins");
+        private readonly string _pluginDir = Path.Combine(Domain.CurrentDirectory, "plugins");
 
         protected void SaveSettings<T>(T cls, string fileName = null)
         {

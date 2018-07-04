@@ -37,7 +37,7 @@ namespace Daylily.Common.Assist
         {
             //string code = ToBase64(img);
             //Bitmap a = new Bitmap(ToImage(code));
-            string path = Path.Combine(Environment.CurrentDirectory, "images", Guid.NewGuid() + ".png");
+            string path = Path.Combine(Domain.CurrentDirectory, "images", Guid.NewGuid() + ".png");
             img.Save(path, System.Drawing.Imaging.ImageFormat.Png);
             return $"[CQ:image,file=base64://{EncodeFileToBase64(path, false)}]";
         }

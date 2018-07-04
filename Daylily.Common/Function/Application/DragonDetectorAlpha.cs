@@ -62,7 +62,7 @@ namespace Daylily.Common.Function.Application
                 else
                 {
                     WebRequestHelper.GetImageFromUrl(item.Url, item.Md5, item.Extension);
-                    _pathList.Add(Path.Combine(Environment.CurrentDirectory, "images", item.Md5 + item.Extension));
+                    _pathList.Add(Path.Combine(Domain.CurrentDirectory, "images", item.Md5 + item.Extension));
                 }
 
                 _totalCount++;
@@ -98,7 +98,7 @@ namespace Daylily.Common.Function.Application
                         {
                             FileName = "python3", // python3 dragon-detection.py "root"
                             Arguments =
-                                $"{Path.Combine(Environment.CurrentDirectory, "dragon", "dragon-detection.py")} \"{fullPath}\"",
+                                $"{Path.Combine(Domain.CurrentDirectory, "dragon", "dragon-detection.py")} \"{fullPath}\"",
                             CreateNoWindow = true,
                             UseShellExecute = false,
                             WindowStyle = ProcessWindowStyle.Hidden,

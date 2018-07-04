@@ -21,7 +21,7 @@ namespace Daylily.Common.Function.Application
         public override string Command => null;
         public override AppType AppType => AppType.Application;
 
-        private static readonly string PandaDir = Path.Combine(Environment.CurrentDirectory, "panda");
+        private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
         private static Dictionary<string, GroupSettings> _groupDic;
         public override void OnLoad(string[] args)
         {

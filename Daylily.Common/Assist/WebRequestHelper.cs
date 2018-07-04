@@ -273,7 +273,7 @@ namespace Daylily.Common.Assist
         {
             byte[] buffer = new byte[1024];
 
-            var imagePath = Path.Combine(Environment.CurrentDirectory, "images");
+            var imagePath = Path.Combine(Domain.CurrentDirectory, "images");
             var filePath = Path.Combine(imagePath, savePath + ext);
 
             try

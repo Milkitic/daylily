@@ -238,7 +238,7 @@ namespace Daylily.Plugin.Core.Command
                     Logger.DebugLine("[STRING] OK");
                 }
 
-                g.DrawImage(Image.FromFile(Path.Combine(Environment.CurrentDirectory, "static", "ForeLayer.png")),
+                g.DrawImage(Image.FromFile(Path.Combine(Domain.CurrentDirectory, "static", "ForeLayer.png")),
                     new Rectangle(0, 0, bmp.Width, bmp.Height));
                 Logger.DebugLine("[IMAGE] OK");
             }

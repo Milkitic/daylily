@@ -62,7 +62,7 @@ namespace Daylily.Common.Function.Application
                 else
                 {
                     WebRequestHelper.GetImageFromUrl(item.Url, item.Md5, item.Extension);
-                    GroupDic[groupId].PathQueue.Enqueue(Path.Combine(Environment.CurrentDirectory, "images",
+                    GroupDic[groupId].PathQueue.Enqueue(Path.Combine(Domain.CurrentDirectory, "images",
                         item.Md5 + item.Extension));
                 }
 
@@ -121,7 +121,7 @@ namespace Daylily.Common.Function.Application
                     continue;
                 Logger.SuccessLine("[" + gSets.GroupId + "] (熊猫) 几率: " + perc);
 
-                string resPath = Path.Combine(Environment.CurrentDirectory, "dragon", "resource_panda_send");
+                string resPath = Path.Combine(Domain.CurrentDirectory, "dragon", "resource_panda_send");
                 FileInfo[] files = new DirectoryInfo(resPath).GetFiles();
                 string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
                 SendMessage(new CommonMessageResponse(msg, gSets.MessageObj));
@@ -154,7 +154,7 @@ namespace Daylily.Common.Function.Application
                 {
                     FileName = "python3",
                     Arguments =
-                        $"{Path.Combine(Environment.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
+                        $"{Path.Combine(Domain.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
                     //FileName = "ping",
                     //Arguments = "127.0.0.1",
                     CreateNoWindow = true,
