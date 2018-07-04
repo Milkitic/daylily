@@ -23,6 +23,10 @@ namespace Daylily.Common.Models
         public DiscussMsg Discuss { get; }
         public GroupMsg Group { get; }
 
+        public CommonMessage()
+        {
+        }
+
         public CommonMessage(PrivateMsg privateMsg, PermissionLevel level = PermissionLevel.Public)
         {
             Message = privateMsg.Message;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse.Api;
@@ -23,7 +24,6 @@ namespace Daylily.Common.Models.Interface
         public abstract string Description { get; }
         public abstract string Command { get; }
         public abstract AppType AppType { get; }
-
         public abstract void OnLoad(string[] args);
         public abstract CommonMessageResponse OnExecute(CommonMessage messageObj);
 
@@ -73,6 +73,45 @@ namespace Daylily.Common.Models.Interface
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private readonly string _pluginDir = Path.Combine(Environment.CurrentDirectory, "plugins");
+
+        protected void SaveSettings<T>(T cls, string fileName = null)
+        {
+            Type thisT = GetType();
+            Type clsT = cls.GetType();
+
+            string setsDir = Path.Combine(_pluginDir, thisT.Name);
+            string saveName = Path.Combine(setsDir, (fileName ?? clsT.Name) + ".json");
+
+            if (!Directory.Exists(setsDir))
+                Directory.CreateDirectory(setsDir);
+
+            File.WriteAllText(saveName, Newtonsoft.Json.JsonConvert.SerializeObject(cls));
+        }
+
+        protected T LoadSettings<T>(string fileName = null)
+        {
+            try
+            {
+                Type thisT = GetType();
+                Type clsT = typeof(T);
+
+                string setsDir = Path.Combine(_pluginDir, thisT.Name);
+                string saveName = Path.Combine(setsDir, (fileName ?? clsT.Name) + ".json");
+
+                if (!Directory.Exists(setsDir))
+                    Directory.CreateDirectory(setsDir);
+
+                string json = File.ReadAllText(saveName);
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+            }
+            catch(Exception ex)
+            {
+                Logger.WriteException(ex);
+                return default;
             }
         }
     }

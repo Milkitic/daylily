@@ -7,6 +7,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application
 {
@@ -21,9 +22,19 @@ namespace Daylily.Common.Function.Application
         public override AppType AppType => AppType.Application;
 
         private static readonly string PandaDir = Path.Combine(Environment.CurrentDirectory, "panda");
-        private static readonly Dictionary<string, GroupSettings> GroupDic = new Dictionary<string, GroupSettings>();
+        private static Dictionary<string, GroupSettings> _groupDic;
         public override void OnLoad(string[] args)
         {
+            _groupDic = LoadSettings<Dictionary<string, GroupSettings>>();
+            if (_groupDic != null)
+            {
+                foreach (var item in _groupDic)
+                {
+                    item.Value.Thread = new Thread(DelayScan);
+                    item.Value.Thread.Start(item.Key);
+                }
+            }
+            else _groupDic = new Dictionary<string, GroupSettings>();
         }
 
         public override CommonMessageResponse OnExecute(CommonMessage messageObj)
@@ -32,9 +43,9 @@ namespace Daylily.Common.Function.Application
                 return null;
             string groupId = messageObj.GroupId ?? messageObj.DiscussId;
 
-            if (!GroupDic.ContainsKey(groupId))
+            if (!_groupDic.ContainsKey(groupId))
             {
-                GroupDic.Add(groupId, new GroupSettings
+                _groupDic.Add(groupId, new GroupSettings
                 {
                     MessageObj = messageObj,
                     LastSentIsMe = false,
@@ -42,41 +53,50 @@ namespace Daylily.Common.Function.Application
                     //CdTime = 15,
                 });
 
-                GroupDic[groupId].Thread = new Thread(DelayScan);
-                GroupDic[groupId].Thread.Start();
+                _groupDic[groupId].Thread = new Thread(DelayScan);
+                _groupDic[groupId].Thread.Start(groupId);
             }
 
-            if ((DateTime.Now - GroupDic[groupId].StartCd).TotalSeconds > GroupDic[groupId].CdTime)
+            if ((DateTime.Now - _groupDic[groupId].StartCd).TotalSeconds > _groupDic[groupId].CdTime)
             {
-                GroupDic[groupId].LastSent = DateTime.Now;
-                GroupDic[groupId].LastSentIsMe = false;
+                _groupDic[groupId].LastSent = DateTime.Now;
+                _groupDic[groupId].LastSentIsMe = false;
                 //GroupDic[groupId].TrigTime = Rnd.Next(4, 5);
-                GroupDic[groupId].TrigTime = Rnd.Next(60 * 60 * 2, 60 * 60 * 3);
-                Logger.DebugLine(groupId + ". Last: " + GroupDic[groupId].LastSent + ", Sent: " + GroupDic[groupId].LastSentIsMe);
+                _groupDic[groupId].TrigTime = Rnd.Next(60 * 60 * 2, 60 * 60 * 3);
+                Logger.DebugLine(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
+                SaveSettings(_groupDic);
             }
             else
                 Logger.DebugLine(groupId + ". CD");
             return null;
-
-            void DelayScan()
+        }
+        private void DelayScan(object groupIdObj)
+        {
+            string groupId = (string)groupIdObj;
+            while (true)
             {
-                while (true)
+                Thread.Sleep(5000);
+                if (_groupDic[groupId].LastSentIsMe) continue;
+                if ((DateTime.Now - _groupDic[groupId].LastSent).TotalSeconds < _groupDic[groupId].TrigTime) continue;
+                _groupDic[groupId].LastSentIsMe = true;
+                _groupDic[groupId].StartCd = DateTime.Now;
+                try
                 {
-                    Thread.Sleep(5000);
-                    if (GroupDic[groupId].LastSentIsMe) continue;
-                    if ((DateTime.Now - GroupDic[groupId].LastSent).TotalSeconds < GroupDic[groupId].TrigTime) continue;
-                    GroupDic[groupId].LastSentIsMe = true;
-                    GroupDic[groupId].StartCd = DateTime.Now;
                     var resp = CqCode.EncodeFileToBase64(Path.Combine(PandaDir, "quiet.jpg"));
-                    SendMessage(new CommonMessageResponse(resp, GroupDic[groupId].MessageObj));
-
+                    SendMessage(new CommonMessageResponse(resp, _groupDic[groupId].MessageObj));
+                    SaveSettings(_groupDic);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    throw;
                 }
             }
         }
-
         private class GroupSettings
         {
             public CommonMessage MessageObj { get; set; }
+            [JsonIgnore]
             public Thread Thread { get; set; }
             public bool LastSentIsMe { get; set; }
             public DateTime LastSent { get; set; }
