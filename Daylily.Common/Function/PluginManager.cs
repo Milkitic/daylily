@@ -31,6 +31,8 @@ namespace Daylily.Common.Function
                 typeof(PandaDetectorAlpha),
                 typeof(PornDetector),
                 typeof(Repeat),
+                typeof(GroupQuiet),
+                typeof(KeywordTrigger),
 
                 typeof(Kudosu),
                 typeof(Panda),

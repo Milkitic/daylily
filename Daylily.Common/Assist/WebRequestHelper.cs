@@ -314,10 +314,10 @@ namespace Daylily.Common.Assist
             {
                 try
                 {
-                    sw.Restart();
+                    //sw.Restart();
                     response = request.GetResponse() as HttpWebResponse;
-                    sw.Stop();
-                    Logger.SuccessLine($"{request.RequestUri.AbsoluteUri}: {sw.ElapsedMilliseconds}ms");
+                    //sw.Stop();
+                    //Logger.SuccessLine($"{request.RequestUri.AbsoluteUri}: {sw.ElapsedMilliseconds}ms");
                     break;
                 }
                 catch (Exception)

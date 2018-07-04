@@ -18,7 +18,7 @@ namespace Daylily.Web.Controllers
         public async Task<JsonResult> GetResponse()
         {
             var ip = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            if (ip != "127.0.0.1" && ip != "74.120.171.198" && ip != "123.207.137.177")
+            if (ip != "127.0.0.1" && ip != "74.120.171.198" && ip != "123.207.137.177" && ip != "60.2.111.26")
             {
                 Logger.DangerLine("来自未知ip的请求：" + ip);
                 //Response.StatusCode = 403;
