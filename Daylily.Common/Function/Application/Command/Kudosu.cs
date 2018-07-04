@@ -281,7 +281,7 @@ namespace Daylily.Common.Function.Application.Command
             }
         }
 
-        class KudosuInfo
+        private class KudosuInfo
         {
             public int Id { get; set; }
             public string Action { get; set; }
