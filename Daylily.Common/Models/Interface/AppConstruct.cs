@@ -5,6 +5,7 @@ using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse.Api;
 using Daylily.Common.Models.CQResponse.Api.Abstract;
 using Daylily.Common.Models.Enum;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Models.Interface
 {
@@ -33,12 +34,12 @@ namespace Daylily.Common.Models.Interface
             {
                 case MessageType.Group:
                     SendGroupMsgResp groupMsgResp = CqApi.SendGroupMessageAsync(response.GroupId,
-                        (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
+                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
                     break;
                 case MessageType.Discuss:
                     SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(response.DiscussId,
-                        (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
+                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
                     break;
                 case MessageType.Private:
@@ -58,12 +59,12 @@ namespace Daylily.Common.Models.Interface
             {
                 case MessageType.Group:
                     SendGroupMsgResp groupMsgResp = CqApi.SendGroupMessageAsync(groupId,
-                        (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
+                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
                     break;
                 case MessageType.Discuss:
                     SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(discussId.ToString(),
-                        (response.EnableAt ? CqCode.EncodeAt(response.UserId) + " " : "") + response.Message);
+                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
                     break;
                 case MessageType.Private:
@@ -108,7 +109,7 @@ namespace Daylily.Common.Models.Interface
                 string json = File.ReadAllText(saveName);
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.WriteException(ex);
                 return default;

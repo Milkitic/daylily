@@ -8,6 +8,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application
 {
@@ -46,15 +47,15 @@ namespace Daylily.Common.Function.Application
             //概率从小到大排序，更科学
             string msg = messageObj.Message;
             if (Trig(msg, Me, MeOut, out string img, 0.005)) // 0.05%
-                return new CommonMessageResponse(CqCode.EncodeFileToBase64(Path.Combine(PandaDir, img)), messageObj);
+                return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
             if (Trig(msg, You, YouOut, out img, 0.02)) // 2%
-                return new CommonMessageResponse(CqCode.EncodeFileToBase64(Path.Combine(PandaDir, img)), messageObj);
+                return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
             if (Trig(msg, Why, WhyOut, out img, 0.2)) // 20%
-                return new CommonMessageResponse(CqCode.EncodeFileToBase64(Path.Combine(PandaDir, img)), messageObj);
+                return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
             if (Trig(msg, Kanlai, KanlaiOut, out img, 0.3)) // 30%
-                return new CommonMessageResponse(CqCode.EncodeFileToBase64(Path.Combine(PandaDir, img)), messageObj);
+                return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
             if (Trig(msg, Sb, SbOut, out img, 0.5)) // 50%
-                return new CommonMessageResponse(CqCode.EncodeFileToBase64(Path.Combine(PandaDir, img)), messageObj);
+                return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
             return null;
         }
 

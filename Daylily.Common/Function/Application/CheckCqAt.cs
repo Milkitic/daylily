@@ -6,6 +6,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application
 {
@@ -35,10 +36,13 @@ namespace Daylily.Common.Function.Application
             string[] ids = CqCode.GetAt(messageObj.Message);
             if (ids == null || !ids.Contains("2181697779") && !ids.Contains("3421735167")) return null;
             Thread.Sleep(Rnd.Next(200, 300));
-            return Rnd.NextDouble() < 0.9
-                ? new CommonMessageResponse("", messageObj, true)
-                : new CommonMessageResponse(CqCode.EncodeFileToBase64(Path.Combine(PandaDir, "at.jpg")), messageObj);
-
+            if (Rnd.NextDouble() < 0.9)
+                return new CommonMessageResponse("", messageObj, true);
+            else
+            {
+                var cqImg = new FileImage(Path.Combine(PandaDir, "at.jpg"));
+                return new CommonMessageResponse(cqImg.ToString(), messageObj);
+            }
         }
     }
 }

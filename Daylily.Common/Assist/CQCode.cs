@@ -18,51 +18,6 @@ namespace Daylily.Common.Assist
         /// </summary>
         public static string CqRoot { get; set; }
 
-        #region Encode
-
-        /// <summary>
-        /// 将功能“AT一个人”编码为CQ码。
-        /// </summary>
-        /// <param name="id">需要at的QQ号</param>
-        /// <returns></returns>
-        public static string EncodeAt(string id) =>
-            id == null ? "" : $"[CQ:at,qq={Escape(id)}]";
-
-        /// <summary>
-        /// 将功能“发送图片”编码为CQ码（Base64形式）。
-        /// </summary>
-        /// <param name="img">需要发送的图片</param>
-        /// <returns></returns>
-        public static string EncodeImageToBase64(Image img)
-        {
-            //string code = ToBase64(img);
-            //Bitmap a = new Bitmap(ToImage(code));
-            string path = Path.Combine(Domain.CurrentDirectory, "images", Guid.NewGuid() + ".png");
-            img.Save(path, System.Drawing.Imaging.ImageFormat.Png);
-            return $"[CQ:image,file=base64://{EncodeFileToBase64(path, false)}]";
-        }
-
-        /// <summary>
-        /// 将功能“发送本地已存在的图片”编码为CQ码（Base64形式）。
-        /// </summary>
-        /// <param name="path">需要发送的图片</param>
-        /// <param name="notOnlyBase64">是否仅包含Base64</param>
-        /// <returns></returns>
-        public static string EncodeFileToBase64(string path, bool notOnlyBase64 = true)
-        {
-            FileStream filestream = new FileStream(path, FileMode.Open);
-            byte[] bt = new byte[filestream.Length];
-
-            filestream.Read(bt, 0, bt.Length);
-            string base64Str = Convert.ToBase64String(bt);
-            filestream.Close();
-            if (notOnlyBase64)
-                return $"[CQ:image,file=base64://{base64Str}]";
-            return base64Str;
-        }
-
-        #endregion
-
         #region Decode
 
         /// <summary>

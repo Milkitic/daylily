@@ -8,6 +8,7 @@ using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application
 {
@@ -133,7 +134,7 @@ namespace Daylily.Common.Function.Application
 
             //CqApi.SetGroupBan(group, user, rnd.Next(1, 100 * dragonCount + 1) * 60);
             if (_group != "133605766")
-                CqApi.SendGroupMessageAsync(_group, CqCode.EncodeAt(_user) + " 你龙了?");
+                CqApi.SendGroupMessageAsync(_group, new At(_user) + " 你龙了?");
             else
                 CqApi.DeleteMessage(_messageId);
             if (_currentCount <= 1) return;

@@ -112,13 +112,11 @@ namespace Daylily.Common.Utils
             string imageUrl = null) => new CustomMusic(linkUrl, audioUrl, title, content, imageUrl);
         protected CoolQCode Share(string linkUrl, string title, string content, string imageUrl) =>
             new Share(linkUrl, title, content, imageUrl);
-        protected CoolQCode FImage(string path) => new FileImage(new FileInfo(path));
-        protected CoolQCode Image(FileInfo file) => new FileImage(file);
-        protected CoolQCode Image(string url) => new FileImage(url);
+        protected CoolQCode Image(string path) => new FileImage(path);
+        protected CoolQCode UImage(string url) => new FileImage(url, true);
         protected CoolQCode Image(Image image) => new FileImage(image);
-        protected CoolQCode FRecord(string path) => new FileImage(new FileInfo(path));
-        protected CoolQCode Record(FileInfo file) => new FileRecord(file);
-        protected CoolQCode Record(string url) => new FileRecord(url);
+        protected CoolQCode Record(string path) => new FileImage(path);
+        protected CoolQCode URecord(string url) => new FileRecord(url, true);
 
         public string Compose() => _inner.Compose();
     }

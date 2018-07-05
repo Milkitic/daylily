@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using CSharpOsu;
@@ -14,6 +15,7 @@ using Daylily.Common.Interface;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application.Command
@@ -110,9 +112,9 @@ namespace Daylily.Common.Function.Application.Command
                     return;
                 } while (tmpList.Count != 0);
 
-                string msg = CqCode.EncodeImageToBase64(Draw(totalList, uname));
+                var cqImg = new FileImage(Draw(totalList, uname)).ToString();
 
-                SendMessage(new CommonMessageResponse(msg, _message));
+                SendMessage(new CommonMessageResponse(cqImg, _message));
             }
             catch (Exception ex)
             {

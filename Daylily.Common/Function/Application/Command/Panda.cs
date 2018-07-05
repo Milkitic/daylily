@@ -9,6 +9,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application.Command
 {
@@ -40,8 +41,8 @@ namespace Daylily.Common.Function.Application.Command
         {
             if (messageObj.MessageType == MessageType.Group && messageObj.GroupId != "672076603")
                 return new CommonMessageResponse(LoliReply.PrivateOnly, messageObj);
-            var resp = CqCode.EncodeImageToBase64(Draw(messageObj.Parameter));
-            return new CommonMessageResponse(resp, messageObj);
+            var cqImg = new FileImage(Draw(messageObj.Parameter)).ToString();
+            return new CommonMessageResponse(cqImg, messageObj);
         }
 
         private Bitmap Draw(string word)

@@ -8,6 +8,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application
@@ -84,8 +85,8 @@ namespace Daylily.Common.Function.Application
                 _groupDic[groupId].StartCd = DateTime.Now;
                 try
                 {
-                    var resp = CqCode.EncodeFileToBase64(Path.Combine(PandaDir, "quiet.jpg"));
-                    SendMessage(new CommonMessageResponse(resp, _groupDic[groupId].MessageObj));
+                    var cqImg = new FileImage(Path.Combine(PandaDir, "quiet.jpg")).ToString();
+                    SendMessage(new CommonMessageResponse(cqImg, _groupDic[groupId].MessageObj));
                     SaveSettings(_groupDic);
                 }
                 catch (Exception ex)

@@ -8,6 +8,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application
 {
@@ -124,8 +125,8 @@ namespace Daylily.Common.Function.Application
 
                 string resPath = Path.Combine(Domain.CurrentDirectory, "dragon", "resource_panda_send");
                 FileInfo[] files = new DirectoryInfo(resPath).GetFiles();
-                string msg = CqCode.EncodeFileToBase64(files[Rnd.Next(files.Length)].FullName);
-                SendMessage(new CommonMessageResponse(msg, gSets.MessageObj));
+                var cqImg = new FileImage(files[Rnd.Next(files.Length)].FullName).ToString();
+                SendMessage(new CommonMessageResponse(cqImg, gSets.MessageObj));
             }
 
             gSets.PandaCount = 0;

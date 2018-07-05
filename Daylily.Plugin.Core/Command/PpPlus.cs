@@ -9,6 +9,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Plugin.Core.Command
 {
@@ -76,9 +77,9 @@ namespace Daylily.Plugin.Core.Command
                 }
             }
 
-            var resp = CqCode.EncodeImageToBase64(Draw(userId, dValue));
+            var cqImg = new FileImage(Draw(userId, dValue)).ToString();
             //Logger.InfoLine(resp);
-            return new CommonMessageResponse(resp, messageObj);
+            return new CommonMessageResponse(cqImg, messageObj);
         }
 
         private static Bitmap Draw(string user, IReadOnlyDictionary<string, int> dPfmance)

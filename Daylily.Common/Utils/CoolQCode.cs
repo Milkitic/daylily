@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -19,6 +18,7 @@ namespace Daylily.Common.Utils
         /// <param name="text">文本内容。</param>
         public static implicit operator CoolQCode(string text) =>
             new Text(text);
+        public override string ToString() => CoolQMessage.Compose(this);
 
         /// <summary>
         /// 判断文本是否为数字。
@@ -327,13 +327,13 @@ namespace Daylily.Common.Utils
         /// 发送本地已存在的图片。
         /// </summary>
         /// <param name="file">文件信息。</param>
-        public FileImage(FileInfo file) : base(file) { }
+        public FileImage(string file) : base(new FileInfo(file)) { }
 
         /// <summary>
         /// 发送网络中的图片。
         /// </summary>
         /// <param name="url">网络地址</param>
-        public FileImage(string url) : base(url) { }
+        public FileImage(string url, bool useUrl) : base(url) { }
 
         /// <summary>
         /// 发送Image对象中的图片。
@@ -356,13 +356,13 @@ namespace Daylily.Common.Utils
         /// 发送本地已存在的语音。
         /// </summary>
         /// <param name="file">文件信息。</param>
-        public FileRecord(FileInfo file) : base(file) { }
+        public FileRecord(string file) : base(new FileInfo(file)) { }
 
         /// <summary>
         /// 发送网络中的语音。
         /// </summary>
         /// <param name="url">网络地址</param>
-        public FileRecord(string url) : base(url) { }
+        public FileRecord(string url, bool useUrl) : base(url) { }
     }
 
     public class Assemblage : CoolQCode
