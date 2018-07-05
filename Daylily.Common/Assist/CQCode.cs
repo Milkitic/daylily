@@ -141,55 +141,11 @@ namespace Daylily.Common.Assist
             return infoList.Count == 0 ? null : infoList.ToArray();
         }
 
-        /// <summary>
-        /// 提取消息中的图片网址。返回一个string数组。（已弃用）
-        /// </summary>
-        /// <param name="source">消息文本</param>
-        /// <returns></returns>
-        [Obsolete]
-        public static string[] GetImageUrls(string source)
-        {
-            List<string> urlList = new List<string>();
-            int index, index2 = 0;
-            while ((index = source.IndexOf("[CQ:image", index2, StringComparison.Ordinal)) != -1)
-            {
-                if (source.IndexOf(".gif", index, StringComparison.Ordinal) != -1)
-                {
-                    index2 = index2 + source.IndexOf(".gif", index, StringComparison.Ordinal);
-                    continue;
-                }
-
-                int tmpIndex = source.IndexOf("url=", index, StringComparison.Ordinal) + 4;
-                int length = source.IndexOf("]", tmpIndex, StringComparison.Ordinal) - tmpIndex;
-                urlList.Add(source.Substring(tmpIndex, length));
-                index2 = tmpIndex + length;
-            }
-
-            return urlList.Count == 0 ? null : urlList.ToArray();
-        }
-
         #endregion
 
         private static string Escape(string text)
         {
             return text.Replace("&", "&amp").Replace("[", "&#91").Replace("]", "&#93").Replace(",", "&#44");
-        }
-
-        private static string ToBase64(Image img)
-        {
-            BinaryFormatter binFormatter = new BinaryFormatter();
-            MemoryStream memStream = new MemoryStream();
-            binFormatter.Serialize(memStream, img);
-            byte[] bytes = memStream.GetBuffer();
-            return Convert.ToBase64String(bytes);
-        }
-
-        private static Image ToImage(string base64)
-        {
-            byte[] bytes = Convert.FromBase64String(base64);
-            MemoryStream memStream = new MemoryStream(bytes);
-            BinaryFormatter binFormatter = new BinaryFormatter();
-            return (Image)binFormatter.Deserialize(memStream);
         }
     }
 }

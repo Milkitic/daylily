@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Common", "Daylily.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Web", "Daylily.Web\Daylily.Web.csproj", "{5BAB2B81-1E84-41DD-884B-2365495A1356}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daylily.Service", "Daylily.Service\Daylily.Service.csproj", "{5B357AA3-4160-48F7-AEE1-607EEA0E12C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Service", "Daylily.Service\Daylily.Service.csproj", "{5B357AA3-4160-48F7-AEE1-607EEA0E12C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
