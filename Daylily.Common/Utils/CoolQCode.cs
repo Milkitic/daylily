@@ -4,10 +4,9 @@ using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Daylily.Common.Assist;
 
-namespace Daylily.Common.Beta
+namespace Daylily.Common.Utils
 {
     /// <summary>
     /// CQ码
