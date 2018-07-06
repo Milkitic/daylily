@@ -1,4 +1,6 @@
-﻿using Daylily.Common.Models.CQResponse;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Models.Enum;
 
 namespace Daylily.Common.Models
@@ -10,6 +12,9 @@ namespace Daylily.Common.Models
         public string FullCommand { get; set; }
         public string Command { get; set; }
         public string Parameter { get; set; }
+        public ConcurrentDictionary<string, string> Parameters { get; set; }
+        public ConcurrentDictionary<string, string> Switches { get; set; }
+        public List<string> SimpleParams { get; set; }
 
         public MessageType MessageType { get; set; }
         public PermissionLevel PermissionLevel { get; set; }

@@ -36,6 +36,7 @@ namespace Daylily.Common.Function
                 typeof(GroupQuiet),
                 typeof(KeywordTrigger),
 
+                typeof(MyGraveyard),
                 typeof(Kudosu),
                 typeof(Panda),
                 typeof(Rcon),

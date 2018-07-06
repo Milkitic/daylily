@@ -19,7 +19,7 @@ namespace Daylily.Plugin.Core.Command
 
         public override void OnLoad(string[] args)
         {
-
+             
         }
 
         public override CommonMessageResponse OnExecute(in CommonMessage messageObj)

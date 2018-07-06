@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Daylily.Common.Assist;
+using Daylily.Common.Function.Command;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
 using Daylily.Common.Models.CQResponse;
@@ -204,15 +205,9 @@ namespace Daylily.Common.Function
                     break;
                 case MessageType.Group:
                     var userInfo = CqApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString()); // 有点费时间
-                    if (userInfo?.Data == null)
-                    {
-                        Logger.WarningLine("userInfo.Data is null!!");
-                        Logger.WriteMessage($"({GroupInfo[groupId].Name}) {userId}:\r\n  {CqCode.Decode(message)}");
-                    }
-                    else
-                        Logger.WriteMessage(
-                            $"({GroupInfo[groupId].Name}) {(string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card)}:\r\n  {CqCode.Decode(message)}");
-
+                    Logger.WriteMessage(string.Format("({0}) {1}:\r\n  {2}", GroupInfo[groupId].Name,
+                        string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card,
+                        CqCode.Decode(message)));
                     break;
             }
 
@@ -271,14 +266,17 @@ namespace Daylily.Common.Function
 
         private void HandleMessageCmd(CommonMessage commonMessage)
         {
-            string fullCmd = commonMessage.FullCommand;
             Thread.Sleep(_rnd.Next(MinTime, MaxTime));
 
-            commonMessage.Command = fullCmd.Split(' ')[0].Trim();
-            commonMessage.Parameter = fullCmd.IndexOf(" ", StringComparison.Ordinal) == -1
-                ? ""
-                : fullCmd.Substring(fullCmd.IndexOf(" ", StringComparison.Ordinal) + 1,
-                    fullCmd.Length - commonMessage.Command.Length - 1).Trim();
+            string fullCmd = commonMessage.FullCommand;
+            CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
+            ca.Analyze(fullCmd);
+            commonMessage.Command = ca.CommandName;
+            commonMessage.Parameter = ca.Parameter;
+            commonMessage.Parameters = ca.Parameters;
+            commonMessage.Switches = ca.Switches;
+            commonMessage.SimpleParams = ca.SimpleParams;
+
             if (!PluginManager.CommandMap.ContainsKey(commonMessage.Command)) return;
 
             CommonMessageResponse replyObj = PluginManager.CommandMap[commonMessage.Command].OnExecute(commonMessage);
