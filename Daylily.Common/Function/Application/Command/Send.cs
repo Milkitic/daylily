@@ -26,7 +26,7 @@ namespace Daylily.Common.Function.Application.Command
 
             string[] split = messageObj.Parameter.Split("|");
             if (split.Length == 1)
-                return new CommonMessageResponse(Transform(messageObj.Message), messageObj);
+                return new CommonMessageResponse(Transform(messageObj.Parameter), messageObj);
             string innerUser = null, innerGroup = null, innerDiscuss = null, innerMessage = null;
             MessageType innerType = MessageType.Private;
             for (int i = 0; i < split.Length; i += 2)
@@ -62,7 +62,7 @@ namespace Daylily.Common.Function.Application.Command
             if (innerMessage == null)
                 return new CommonMessageResponse("你还没有填写消息...", messageObj);
 
-            SendMessage(new CommonMessageResponse(innerMessage, innerUser, true), innerGroup, innerDiscuss, innerType);
+            SendMessage(new CommonMessageResponse(innerMessage, innerUser), innerGroup, innerDiscuss, innerType);
 
             return null;
         }

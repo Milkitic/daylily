@@ -63,7 +63,7 @@ namespace Daylily.Common.Models.Interface
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
                     break;
                 case MessageType.Discuss:
-                    SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(discussId.ToString(),
+                    SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(discussId,
                         (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
                     Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
                     break;

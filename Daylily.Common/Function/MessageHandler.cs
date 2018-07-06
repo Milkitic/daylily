@@ -18,9 +18,9 @@ namespace Daylily.Common.Function
 
         public static string CommandFlag = "!";
 
-        private readonly Random _rnd = new Random();
-        private const int MinTime = 200; // 回应的反应时间
-        private const int MaxTime = 300; // 回应的反应时间
+        //private readonly Random _rnd = new Random();
+        //private const int MinTime = 200; // 回应的反应时间
+        //private const int MaxTime = 300; // 回应的反应时间
 
         /// <summary>
         /// 群聊消息
@@ -266,10 +266,11 @@ namespace Daylily.Common.Function
 
         private void HandleMessageCmd(CommonMessage commonMessage)
         {
-            Thread.Sleep(_rnd.Next(MinTime, MaxTime));
+            //Thread.Sleep(_rnd.Next(MinTime, MaxTime));
 
             string fullCmd = commonMessage.FullCommand;
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
+
             ca.Analyze(fullCmd);
             commonMessage.Command = ca.CommandName;
             commonMessage.Parameter = ca.Parameter;
