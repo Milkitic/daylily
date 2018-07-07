@@ -4,6 +4,7 @@ using Daylily.Common.Models.CQResponse;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Daylily.Common.Assist
 {
@@ -28,7 +29,7 @@ namespace Daylily.Common.Assist
         public string Id { get; set; }
         public string Name { get; set; }
         public Queue<DiscussMsg> MsgQueue { get; set; } = new Queue<DiscussMsg>();
-        public Thread Thread { get; set; }
+        public Task Task { get; set; }
         public int MsgLimit { get; set; } = 10;
         public bool LockMsg { get; set; } = false; // 用于判断是否超出消息阀值
 

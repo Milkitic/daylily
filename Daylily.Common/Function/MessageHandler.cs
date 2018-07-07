@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Function.Command;
 using Daylily.Common.Interface.CQHttp;
@@ -39,12 +40,10 @@ namespace Daylily.Common.Function
                 AppConstruct.SendMessage(new CommonMessageResponse(parsedObj.Message, new CommonMessage(parsedObj)));
             }
 
-            if (GroupInfo[id].Thread == null ||
-                (GroupInfo[id].Thread.ThreadState != ThreadState.Running &&
-                 GroupInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
+            if (GroupInfo[id].Task == null || GroupInfo[id].Task.IsCanceled ||
+                GroupInfo[id].Task.IsCompleted)
             {
-                GroupInfo[id].Thread = new Thread(HandleGroupMessage);
-                GroupInfo[id].Thread.Start(parsedObj);
+                GroupInfo[id].Task = Task.Run(() => HandleGroupMessage(parsedObj));
             }
             else
             {
@@ -69,12 +68,10 @@ namespace Daylily.Common.Function
                 AppConstruct.SendMessage(new CommonMessageResponse(parsedObj.Message, new CommonMessage(parsedObj)));
             }
 
-            if (DiscussInfo[id].Thread == null ||
-                (DiscussInfo[id].Thread.ThreadState != ThreadState.Running &&
-                 DiscussInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
+            if (DiscussInfo[id].Task == null || DiscussInfo[id].Task.IsCanceled ||
+                DiscussInfo[id].Task.IsCompleted)
             {
-                DiscussInfo[id].Thread = new Thread(HandleDiscussMessage);
-                DiscussInfo[id].Thread.Start(parsedObj);
+                DiscussInfo[id].Task = Task.Run(() => HandleDiscussMessage(parsedObj));
             }
             else
             {
@@ -99,12 +96,10 @@ namespace Daylily.Common.Function
                 AppConstruct.SendMessage(new CommonMessageResponse("？？求您慢点说话好吗", new CommonMessage(parsedObj)));
             }
 
-            if (PrivateInfo[id].Thread == null ||
-                (PrivateInfo[id].Thread.ThreadState != ThreadState.Running &&
-                 PrivateInfo[id].Thread.ThreadState != ThreadState.WaitSleepJoin))
+            if (PrivateInfo[id].Task == null || PrivateInfo[id].Task.IsCanceled ||
+                PrivateInfo[id].Task.IsCompleted)
             {
-                PrivateInfo[id].Thread = new Thread(HandlePrivateMessage);
-                PrivateInfo[id].Thread.Start(parsedObj);
+                PrivateInfo[id].Task = Task.Run(() => HandlePrivateMessage(parsedObj));
             }
             else
             {

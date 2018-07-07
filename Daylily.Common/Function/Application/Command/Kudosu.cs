@@ -112,7 +112,29 @@ namespace Daylily.Common.Function.Application.Command
                     return;
                 } while (tmpList.Count != 0);
 
-                var cqImg = new FileImage(Draw(totalList, uname)).ToString();
+                List<KdInfo> kdInfoList = new List<KdInfo>();
+                int pastMonth = -1;
+                KdInfo info = null;
+                totalList.Reverse();
+                foreach (var item in totalList)
+                {
+                    if (item.Created_At.Month != pastMonth)
+                    {
+                        if (pastMonth != -1)
+                            kdInfoList.Add(info);
+                        info = new KdInfo()
+                        {
+                            Time = item.Created_At
+                        };
+                        pastMonth = item.Created_At.Month;
+                    }
+
+                    if (info != null) info.Count++;
+                }
+
+                if (info != null) kdInfoList.Add(info);
+
+                var cqImg = new FileImage(Draw(kdInfoList, uname)).ToString();
 
                 SendMessage(new CommonMessageResponse(cqImg, _message));
             }
@@ -122,30 +144,8 @@ namespace Daylily.Common.Function.Application.Command
             }
         }
 
-        private static Bitmap Draw(List<KudosuInfo> totalList, string uname)
+        private static Bitmap Draw(List<KdInfo> kdInfoList, string uname)
         {
-            List<KdInfo> kdInfoList = new List<KdInfo>();
-            int pastMonth = -1;
-            KdInfo info = null;
-            totalList.Reverse();
-            foreach (var item in totalList)
-            {
-                if (item.Created_At.Month != pastMonth)
-                {
-                    if (pastMonth != -1)
-                        kdInfoList.Add(info);
-                    info = new KdInfo()
-                    {
-                        Time = item.Created_At
-                    };
-                    pastMonth = item.Created_At.Month;
-                }
-
-                if (info != null) info.Count++;
-            }
-
-            if (info != null) kdInfoList.Add(info);
-
             int max = kdInfoList.Max(x => x.Count);
             string avg = "AVG: " + Math.Round(kdInfoList.Average(x => x.Count), 2);
             const int imgWidth = 430, imgHeight = 250;
