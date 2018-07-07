@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Daylily.Common.Assist;
+using Daylily.Common.Function.Dispatch;
 using Daylily.Common.Models.CQResponse;
+using Daylily.Common.Models.MessageList;
 using Newtonsoft.Json;
 
 namespace Daylily.Common.Function
@@ -15,10 +18,12 @@ namespace Daylily.Common.Function
             {
                 if (obj.post_type == "message")
                 {
+                    PrivateMsg parsed = null;
                     // 私聊
                     if (obj.message_type == "private")
                     {
                         PrivateMsg parsedObj = JsonConvert.DeserializeObject<PrivateMsg>(json);
+                        parsed = JsonConvert.DeserializeObject<PrivateMsg>(json);
                         MessageHandler privateHandler = new MessageHandler(parsedObj);
                     }
 
@@ -26,6 +31,7 @@ namespace Daylily.Common.Function
                     else if (obj.message_type == "group")
                     {
                         GroupMsg parsedObj = JsonConvert.DeserializeObject<GroupMsg>(json);
+                        parsed = JsonConvert.DeserializeObject<GroupMsg>(json);
                         MessageHandler groupHandler = new MessageHandler(parsedObj);
                     }
 
@@ -33,8 +39,18 @@ namespace Daylily.Common.Function
                     else if (obj.message_type == "discuss")
                     {
                         DiscussMsg parsedObj = JsonConvert.DeserializeObject<DiscussMsg>(json);
+                        parsed = JsonConvert.DeserializeObject<DiscussMsg>(json);
                         MessageHandler discussHandler = new MessageHandler(parsedObj);
                     }
+
+                    Dispatcher dispatcher = new Dispatcher(new List<IMessageList>
+                    {
+                        new GroupList(),
+                        new PrivateList(),
+                        new DiscussList()
+
+                    });
+                    dispatcher.SendToBack(parsed);
                 }
                 else if (obj.post_type == "notice")
                 {
