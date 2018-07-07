@@ -1,12 +1,11 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Daylily.Common.Assist
+namespace Daylily.Common.Models.MessageList
 {
     public class GroupList
     {

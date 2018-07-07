@@ -1,10 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using Daylily.Common.Models.CQResponse;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Daylily.Common.Models.CQResponse;
 
-namespace Daylily.Common.Assist
+namespace Daylily.Common.Models.MessageList
 {
     public class PrivateList
     {
