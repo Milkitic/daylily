@@ -25,6 +25,7 @@ namespace Daylily.Common.Interface.CQHttp
         private const string GroupMemberInfoPath = "/get_group_member_info";
         private const string GroupMemberListPath = "/get_group_member_list";
 
+        private const string GroupInfoPath = "/_get_group_info";
         /// <summary>
         /// 发送私聊消息
         /// </summary>
@@ -176,7 +177,7 @@ namespace Daylily.Common.Interface.CQHttp
             {
                 { "group_id", HttpUtility.UrlEncode(groupId) }
             };
-            return Request<GetGroupInfo>(ApiUrl + GroupMemberListPath, parameters);
+            return Request<GetGroupInfo>(ApiUrl + GroupInfoPath, parameters);
         }
 
         /// <summary>

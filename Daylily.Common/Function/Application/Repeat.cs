@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
@@ -31,36 +32,16 @@ namespace Daylily.Common.Function.Application
             if (messageObj.MessageType == MessageType.Private)
                 return null;
             string groupId = messageObj.GroupId ?? messageObj.DiscussId;
-
+            
             if (!GroupDic.ContainsKey(groupId))
             {
                 GroupDic.GetOrAdd(groupId, new GroupSettings
                 {
                     GroupId = groupId,
                 });
-                GroupDic[groupId].Thread = new Thread(delegate ()
-                {
-                    while (true)
-                    {
-                        Thread.Sleep(Rnd.Next(1000, 10000));
-                        if (GroupDic[groupId].IntQueue <= 0)
-                        {
-                            if (GroupDic[groupId].Locked)
-                            {
-                                GroupDic[groupId].Locked = false;
-                                Logger.DebugLine(groupId + " unlocked");
-                            }
-                            continue;
-                        }
-                        if (Rnd.NextDouble() < 0.02)
-                            Thread.Sleep(Rnd.Next(30000, 45000));
 
-                        GroupDic[groupId].IntQueue--;
-                        Logger.DebugLine(groupId + " decresed to " + GroupDic[groupId].IntQueue);
-                    }
-
-                });
-                GroupDic[groupId].Thread.Start();
+                GroupDic[groupId].Task = Task.Run(DecreaseQueue);
+                //GroupDic[groupId].Thread.Start();
             }
 
             if (GroupDic[groupId].IntQueue >= MaxNum && !GroupDic[groupId].Locked)
@@ -72,17 +53,39 @@ namespace Daylily.Common.Function.Application
                 return new CommonMessageResponse(messageObj.Message, messageObj);
             }
 
-
             GroupDic[groupId].IntQueue++;
             Logger.DebugLine(groupId + " incresed to " + GroupDic[groupId].IntQueue);
             return null;
+
+            Task DecreaseQueue()
+            {
+                while (true)
+                {
+                    Thread.Sleep(Rnd.Next(1000, 10000));
+                    if (GroupDic[groupId].IntQueue <= 0)
+                    {
+                        if (GroupDic[groupId].Locked)
+                        {
+                            GroupDic[groupId].Locked = false;
+                            Logger.DebugLine(groupId + " unlocked");
+                        }
+
+                        continue;
+                    }
+
+                    if (Rnd.NextDouble() < 0.02) Thread.Sleep(Rnd.Next(30000, 45000));
+
+                    GroupDic[groupId].IntQueue--;
+                    Logger.DebugLine(groupId + " decresed to " + GroupDic[groupId].IntQueue);
+                }
+            }
         }
 
         private class GroupSettings
         {
             public string GroupId { get; set; }
             public int IntQueue { get; set; }
-            public Thread Thread { get; set; }
+            public Task Task { get; set; }
             public bool Locked { get; set; } = false;
         }
 

@@ -5,7 +5,7 @@ namespace Daylily.Common.Models.CQResponse
     /// <summary>
     /// 群消息。
     /// </summary>
-    public class GroupMsg : PrivateMsg
+    public class GroupMsg : Msg
     {
         /// <summary>
         /// 群号。

@@ -30,7 +30,7 @@ namespace Daylily.Common.Function
             {
                 typeof(CheckCqAt),
                 //typeof(DragonDetectorAlpha),
-                typeof(PandaDetectorAlpha),
+                typeof(PandaDetector),
                 typeof(PornDetector),
                 typeof(Repeat),
                 typeof(GroupQuiet),

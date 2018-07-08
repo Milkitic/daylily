@@ -21,7 +21,7 @@ namespace Daylily.Common.Models.CQResponse.Api
         public List<GroupInfoV2Admins> Admins { get; set; }
     }
 
-    public abstract class GroupInfoV2Admins
+    public class GroupInfoV2Admins
     {
         [JsonProperty(PropertyName = "user_id")]
         public long UserId { get; set; }

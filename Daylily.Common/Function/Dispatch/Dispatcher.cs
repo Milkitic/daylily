@@ -15,7 +15,7 @@ namespace Daylily.Common.Function.Dispatch
 
         private readonly List<IMessageList> _messageLists;
 
-        public void SendToBack(PrivateMsg msg)
+        public void SendToBack(Msg msg)
         {
             switch (msg)
             {

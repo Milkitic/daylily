@@ -3,7 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
+using System.Threading.Tasks;
+//using System.Threading;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
@@ -12,7 +13,7 @@ using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application
 {
-    public class PandaDetectorAlpha : AppConstruct
+    public class PandaDetector : AppConstruct
     {
         public override string Name => "斗图";
         public override string Author => "yf_extension";
@@ -71,17 +72,10 @@ namespace Daylily.Common.Function.Application
                 _totalCount++;
             }
 
-            if (GroupDic[groupId].Thread == null)
+            if (GroupDic[groupId].Task == null || GroupDic[groupId].Task.IsCompleted ||
+                GroupDic[groupId].Task.IsCanceled)
             {
-                GroupDic[groupId].Thread = new Thread(RunDetector);
-                GroupDic[groupId].Thread.Start(GroupDic[groupId]);
-            }
-            else
-            {
-                if (GroupDic[groupId].Thread.IsAlive) return null;
-
-                GroupDic[groupId].Thread = new Thread(RunDetector);
-                GroupDic[groupId].Thread.Start(GroupDic[groupId]);
+                GroupDic[groupId].Task = Task.Run(() => RunDetector(GroupDic[groupId]));
                 Logger.PrimaryLine("[" + groupId + "] (熊猫) 共 " + _totalCount);
             }
 
@@ -212,7 +206,7 @@ namespace Daylily.Common.Function.Application
             public string GroupId { get; set; }
             public List<string> ReceivedString { get; } = new List<string>();
             public Queue<string> PathQueue { get; } = new Queue<string>();
-            public Thread Thread { get; set; }
+            public Task Task { get; set; }
             public Process Process { get; set; }
             public int PandaCount { get; set; }
         }

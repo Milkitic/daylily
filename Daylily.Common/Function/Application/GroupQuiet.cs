@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+//using System.Threading;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
@@ -32,8 +34,7 @@ namespace Daylily.Common.Function.Application
             {
                 foreach (var item in _groupDic)
                 {
-                    item.Value.Thread = new Thread(DelayScan);
-                    item.Value.Thread.Start(item.Key);
+                    item.Value.Task = Task.Run(() => DelayScan(item.Key));
                 }
             }
             else _groupDic = new ConcurrentDictionary<string, GroupSettings>();
@@ -56,8 +57,7 @@ namespace Daylily.Common.Function.Application
                     //CdTime = 15,
                 });
 
-                _groupDic[groupId].Thread = new Thread(DelayScan);
-                _groupDic[groupId].Thread.Start(groupId);
+                _groupDic[groupId].Task = Task.Run(() => DelayScan(groupId));
             }
 
             if ((DateTime.Now - _groupDic[groupId].StartCd).TotalSeconds > _groupDic[groupId].CdTime)
@@ -100,7 +100,7 @@ namespace Daylily.Common.Function.Application
         {
             public CommonMessage MessageObj { get; set; }
             [JsonIgnore]
-            public Thread Thread { get; set; }
+            public Task Task { get; set; }
             public bool LastSentIsMe { get; set; }
             public DateTime LastSent { get; set; }
             public DateTime StartCd { get; set; }

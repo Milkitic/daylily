@@ -5,7 +5,7 @@ namespace Daylily.Common.Models.CQResponse
     /// <summary>
     /// 讨论组消息。
     /// </summary>
-    public class DiscussMsg : PrivateMsg
+    public class DiscussMsg : Msg
     {
         /// <summary>
         /// 讨论组 ID。

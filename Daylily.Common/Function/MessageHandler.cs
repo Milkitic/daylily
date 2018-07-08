@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Daylily.Common.Assist;
@@ -48,7 +49,7 @@ namespace Daylily.Common.Function
             }
             else
             {
-                Logger.InfoLine("当前已有" + GroupInfo[id].MsgQueue.Count + "条消息在" + GroupInfo[id].Name + "排队");
+                Logger.InfoLine("当前已有" + GroupInfo[id].MsgQueue.Count + "条消息在" + GroupInfo[id].Info.GroupName + "排队");
             }
         }
 
@@ -201,7 +202,7 @@ namespace Daylily.Common.Function
                     break;
                 case MessageType.Group:
                     var userInfo = CqApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString()); // 有点费时间
-                    Logger.WriteMessage(string.Format("({0}) {1}:\r\n  {2}", GroupInfo[groupId].Name,
+                    Logger.WriteMessage(string.Format("({0}) {1}:\r\n  {2}", GroupInfo[groupId].Info.GroupName,
                         string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card,
                         CqCode.Decode(message)));
                     break;
@@ -227,7 +228,7 @@ namespace Daylily.Common.Function
                 else if (message.IndexOf(CommandFlag + "sudo ", StringComparison.Ordinal) == 0 &&
                          type == MessageType.Group)
                 {
-                    if (!GroupInfo[groupId].AdminList.Contains(userId))
+                    if (GroupInfo[groupId].Info.Admins.Count(q => q.UserId == userId) == 0)
                     {
                         AppConstruct.SendMessage(new CommonMessageResponse(LoliReply.FakeAdmin, commonMessage));
                     }
@@ -246,10 +247,9 @@ namespace Daylily.Common.Function
             }
 
             HandleMesasgeApp(commonMessage);
-
         }
 
-        private void HandleMesasgeApp(CommonMessage commonMessage)
+        private static void HandleMesasgeApp(CommonMessage commonMessage)
         {
             foreach (var item in PluginManager.ApplicationList)
             {
@@ -260,7 +260,7 @@ namespace Daylily.Common.Function
             }
         }
 
-        private void HandleMessageCmd(CommonMessage commonMessage)
+        private static void HandleMessageCmd(CommonMessage commonMessage)
         {
             //Thread.Sleep(_rnd.Next(MinTime, MaxTime));
 

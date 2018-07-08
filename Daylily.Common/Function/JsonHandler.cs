@@ -18,7 +18,7 @@ namespace Daylily.Common.Function
             {
                 if (obj.post_type == "message")
                 {
-                    PrivateMsg parsed = null;
+                    Msg parsed = null;
                     // 私聊
                     if (obj.message_type == "private")
                     {
@@ -45,10 +45,9 @@ namespace Daylily.Common.Function
 
                     Dispatcher dispatcher = new Dispatcher(new List<IMessageList>
                     {
-                        new GroupList(),
-                        new PrivateList(),
-                        new DiscussList()
-
+                        //new GroupList(),
+                        //new PrivateList(),
+                        //new DiscussList()
                     });
                     dispatcher.SendToBack(parsed);
                 }
