@@ -1,0 +1,332 @@
+﻿@{
+    Layout = null;
+    string a = Html.Raw("asdf").ToString();
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+    <style>
+        .msg-divide {
+            border: 1px solid #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            background-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.05);
+            margin-top: 0px;
+            margin-bottom: -15px;
+            padding-left: 2px;
+            padding-right: 2px;
+            padding-top: 1px;
+        }
+
+        .recv-list {
+            background-color: #111;
+            color: #ddd;
+            height: 150px;
+            white-space: pre-wrap; /*css-3*/
+            white-space: -moz-pre-wrap; /*Mozilla,since1999*/
+            white-space: -pre-wrap; /*Opera4-6*/
+            white-space: -o-pre-wrap; /*Opera7*/
+            word-wrap: break-word; /*InternetExplorer5.5+*/
+        }
+
+        .recv-list-fix {
+            height: 300px;
+        }
+
+        .debug .source {
+            color: darkgray;
+        }
+
+        .debug .info {
+            color: darkgray;
+        }
+
+        .inform .source {
+            background-color: #1e90ff;
+            color: white;
+        }
+
+        .inform .info {
+            color: #1e90ff;
+        }
+
+        .warn .source {
+            background-color: #ed7100;
+            color: white;
+        }
+
+        .warn .info {
+            color: #ed7100;
+        }
+
+        .succ .source {
+            background-color: #009d42;
+            color: white;
+        }
+
+        .succ .info {
+            color: #009d42;
+        }
+
+        .err .source {
+            background-color: #e60033;
+            color: white;
+        }
+
+        .err .info {
+            color: #e60033;
+        }
+    </style>
+</head>
+<body style="background-color: #333; color: #DDD">
+    <div class="container body-content">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <h3>
+                    » @ViewData["Title"]
+                </h3>
+                <div id="exception" class="alert alert-warning"
+                    @if (ViewData["error"] == null) { @Html.Raw("style=\"display:none;\"") }>
+                    @ViewData["error"]
+                </div>
+                <div><label id="status">Ready to connect...</label></div>
+                <label for="connectionUrl">WebSocket Server.</label>
+                <span id="connectionUrl"></span>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-md-6 column raw">
+                <a class="btn btn-default" style="background-color: #333; color: white;width:100%" data-toggle="collapse" data-target="#rawList">
+                    RAW
+                </a>
+                <pre id="rawList" class="collapse in recv-list"></pre>
+            </div>
+            <div class="col-md-6 column inform">
+                <a class="btn btn-default" style="background-color: #333; color: white;width:100%" data-toggle="collapse" data-target="#infoList">
+                    INFO
+                </a>
+                <pre id="infoList" class="collapse in recv-list"></pre>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-md-6 column message">
+                <a class="btn btn-default" style="background-color: #333; color: white;width:100%" data-toggle="collapse" data-target="#messageList">
+                    MESSAGE
+                </a>
+                <pre id="messageList" class="collapse in recv-list recv-list-fix"></pre>
+            </div>
+            <div class="col-md-6 column err">
+                <a class="btn btn-default" style="background-color: #333; color: white;width:100%" data-toggle="collapse" data-target="#errorList">
+                    ERROR
+                </a>
+                <pre id="errorList" class="collapse in recv-list recv-list-fix"></pre>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-md-6 column succ">
+                <a class="btn btn-default" style="background-color: #333; color: white;width:100%" data-toggle="collapse" data-target="#successList">
+                    SUCCESS
+                </a>
+                <pre id="successList" class="collapse in recv-list"></pre>
+            </div>
+            <div class="col-md-6 column warn">
+                <a class="btn btn-default" style="background-color: #333; color: white;width:100%" data-toggle="collapse" data-target="#warnList">
+                    WARN
+                </a>
+                <pre id="warnList" class="collapse in recv-list"></pre>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-md-6 column origin">
+                <a class="btn btn-default" style="background-color: #333; color: white;width:100%" data-toggle="collapse" data-target="#originList">
+                    ORIGIN
+                </a>
+                <pre id="originList" class="collapse in recv-list"></pre>
+            </div>
+            <div class="col-md-6 column debug">
+                <a class="btn btn-default" style="background-color: #333; color: white;width:100%" data-toggle="collapse" data-target="#debugList">
+                    DEBUG
+                </a>
+                <pre id="debugList" class="collapse in recv-list"></pre>
+            </div>
+        </div>
+        <div class="form-group">
+            <input for="inputCommand" style="width: 100%;" id="inputCommand" class="form-control" placeholder="Type command here" autocomplete="off" />
+        </div>
+        <div class="form-group">
+            <button name="execCommand" id="execCommand" class="btn btn-default btn-sm">Send</button>
+        </div>
+    </div>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+    @if (ViewData["error"] == null)
+    {
+        <script>
+        var socket;
+        var scheme = document.location.protocol === "https:" ? "wss" : "ws";
+        var port = document.location.port ? (":" + document.location.port) : "";
+        var socketText = scheme + "://" + document.location.hostname + port + "/ws";
+        @*$("#connectionUrl").text(socketText);*@
+        $(function() {
+            $("#status").text("Connecting..");
+            socket = new WebSocket(socketText);
+            socket.onopen = function(event) {
+                updateState();
+                $("#status").text("Connected.");
+            };
+            socket.onclose = function(event) {
+                updateState();
+                $("#exception").show();
+                $("#exception").text('Connection lost. Try refresh? [Code: ' + event.code + ']');
+                $("#status").text("");
+            };
+            socket.onerror = updateState;
+            socket.onmessage = function(event) {
+                var jsonObj = JSON.parse(event.data);
+                var list;
+                if (jsonObj.RawList != null) {
+                    list = jsonObj.RawList.Data;
+                    updatePre(list, "rawList");
+                }
+                if (jsonObj.OriginList != null) {
+                    list = jsonObj.OriginList.Data;
+                    updatePre(list, "originList");
+                }
+                if (jsonObj.MessageList != null) {
+                    list = jsonObj.MessageList.Data;
+                    updatePreMsg(list, "messageList");
+                }
+                if (jsonObj.DebugList != null) {
+                    list = jsonObj.DebugList.Data;
+                    updatePre(list, "debugList");
+                }
+                if (jsonObj.InfoList != null) {
+                    list = jsonObj.InfoList.Data;
+                    updatePre(list, "infoList");
+                }
+                if (jsonObj.WarnList != null) {
+                    list = jsonObj.WarnList.Data;
+                    updatePre(list, "warnList");
+                }
+                if (jsonObj.SuccessList != null) {
+                    list = jsonObj.SuccessList.Data;
+                    updatePre(list, "successList");
+                }
+                if (jsonObj.ErrorList != null) {
+                    list = jsonObj.ErrorList.Data;
+                    updatePre(list, "errorList");
+                }
+            };
+        });
+        $("#inputCommand").keydown(function() {
+            if (event.keyCode === "13") { // 回车
+                $('#execCommand').click();
+            }
+        });
+        $("#execCommand").click(function (e) {
+            var cmd = $("#inputCommand").val();
+            $.post('/home/sendcommand', { command: cmd }, function (result) {
+                if (result.code === "200") {
+                    $("#inputCommand").val("");
+                }
+                else if (result.code === "-101") {
+                    $("#exception").show();
+                    $("#exception").empty().append(result.message);
+                }
+            });
+        });
+        function updatePre(list, elementId) {
+            for (var i = 0, len = list.length; i < len; i++) {
+                var source = list[i].Source;
+                var info = list[i].Info;
+                $("#" + elementId).html($("#" + elementId).html() +
+                    '<div class="msg-divide"><span class="source">' +
+                    htmlEscape(source) +
+                    '</span>' + (source == null ? "" :"<br /> ") + '<span class="info">' +
+                    htmlEscape(info) +
+                    "</span></div>" +
+                    "\r\n");
+                $("#" + elementId).scrollTop(document.getElementById(elementId).scrollHeight);
+            }
+        }
+        function updatePreMsg(list, elementId) {
+            for (var i = 0, len = list.length; i < len; i++) {
+                var source = list[i].Source;
+                var info = list[i].Info;
+                $("#" + elementId).html($("#" + elementId).html() +
+                    '<div class="msg-divide"><span class="source">' +
+                    htmlEscape(source) +
+                    '</span> <span class="info">' +
+                    htmlEscape(info) +
+                    "</span></div>" +
+                    "\r\n");
+                $("#" + elementId).scrollTop(document.getElementById(elementId).scrollHeight);
+            }
+        }
+        function updateState() {
+            if (!socket) {
+
+            } else {
+                switch (socket.readyState) {
+                case WebSocket.CLOSED:
+
+                    break;
+                case WebSocket.CLOSING:
+
+                    break;
+                case WebSocket.CONNECTING:
+
+                    break;
+                case WebSocket.OPEN:
+
+                    break;
+                default:
+
+                    break;
+                }
+            }
+        }
+
+        function htmlEscape(str) {
+            return str == null
+                ? ""
+                : str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+        </script>
+    }
+</body>
+</html>

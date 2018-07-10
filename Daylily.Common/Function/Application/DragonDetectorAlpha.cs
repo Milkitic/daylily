@@ -71,7 +71,7 @@ namespace Daylily.Common.Function.Application
 
             _thread = new Thread(RunDetector);
             _thread.Start(_pathList);
-            Logger.WarningLine("已经发送了请求,目前队列中共" + _totalCount);
+            Logger.Warn("已经发送了请求,目前队列中共" + _totalCount);
             return null;
         }
 
@@ -112,7 +112,7 @@ namespace Daylily.Common.Function.Application
                     _proc.OutputDataReceived += ProcOutputReceived;
                     _proc.ErrorDataReceived += ProcErrorReceived;
 
-                    Logger.PrimaryLine("正在调用中");
+                    Logger.Origin("正在调用中");
                     _proc.Start();
                     _proc.BeginOutputReadLine();
                     _proc.BeginErrorReadLine();
@@ -122,7 +122,7 @@ namespace Daylily.Common.Function.Application
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteException(ex);
+                    Logger.Exception(ex);
                 }
                 finally
                 {
@@ -159,7 +159,7 @@ namespace Daylily.Common.Function.Application
         {
             if (_receivedString.Count == 0) return;
             string line = _receivedString[_receivedString.Count - 1];
-            Logger.WarningLine(line);
+            Logger.Warn(line);
 
             var tmp = line.Split(' ');
             var status = int.Parse(tmp[0]);

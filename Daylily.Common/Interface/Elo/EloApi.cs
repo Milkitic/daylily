@@ -1,6 +1,7 @@
 ﻿using Daylily.Common.Assist;
 using Daylily.Common.Models.Elo.Api;
 using System.Collections.Generic;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Interface.Elo
 {
@@ -17,12 +18,12 @@ namespace Daylily.Common.Interface.Elo
             };
 
             var response = WebRequestHelper.CreateUrlGetHttpResponse(ApiUrl + "/user", parameters);
-            Logger.DefaultLine("Sent request.");
+            Logger.Debug("Sent request.");
 
             if (response != null)
             {
                 jsonString = WebRequestHelper.GetResponseString(response);
-                Logger.DefaultLine("Received response.");
+                Logger.Debug("Received response.");
             }
 
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<EloUserInfo>(jsonString);

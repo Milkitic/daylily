@@ -4,6 +4,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application.Command
 {
@@ -23,7 +24,7 @@ namespace Daylily.Common.Function.Application.Command
 
         public override void OnLoad(string[] args)
         {
-            Logger.WarningLine("当前" + Name + "仅为" + Version + "版！");
+            Logger.Warn("当前" + Name + "仅为" + Version + "版！");
         }
 
         public override CommonMessageResponse OnExecute(in CommonMessage messageObj) // 必要方法
@@ -102,7 +103,7 @@ namespace Daylily.Common.Function.Application.Command
             }
             catch (Exception ex)
             {
-                Logger.WriteException(ex);
+                Logger.Exception(ex);
             }
 
         }

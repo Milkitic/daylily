@@ -28,7 +28,7 @@ namespace Daylily.Common.Function.Application
         private static ConcurrentDictionary<string, GroupSettings> _groupDic;
         public override void OnLoad(string[] args)
         {
-            Logger.WriteLine("上次群发言情况载入中。");
+            Logger.Origin("上次群发言情况载入中。");
             _groupDic = LoadSettings<ConcurrentDictionary<string, GroupSettings>>();
             if (_groupDic != null)
             {
@@ -38,7 +38,7 @@ namespace Daylily.Common.Function.Application
                 }
             }
             else _groupDic = new ConcurrentDictionary<string, GroupSettings>();
-            Logger.WriteLine("上次群发言情载入完毕，并开启了线程。");
+            Logger.Origin("上次群发言情载入完毕，并开启了线程。");
         }
 
         public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
@@ -66,11 +66,11 @@ namespace Daylily.Common.Function.Application
                 _groupDic[groupId].LastSentIsMe = false;
                 //GroupDic[groupId].TrigTime = Rnd.Next(4, 5);
                 _groupDic[groupId].TrigTime = Rnd.Next(60 * 60 * 2, 60 * 60 * 3);
-                Logger.DebugLine(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
+                Logger.Debug(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
                 SaveSettings(_groupDic);
             }
             else
-                Logger.DebugLine(groupId + ". CD");
+                Logger.Debug(groupId + ". CD");
             return null;
         }
         private void DelayScan(object groupIdObj)

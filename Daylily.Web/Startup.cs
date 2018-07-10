@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Database;
 using Daylily.Common.Function;
 using Daylily.Common.Interface;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
+using Daylily.Common.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -45,6 +48,32 @@ namespace Daylily.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var webSocketOptions = new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(120),
+                ReceiveBufferSize = 4 * 1024
+            };
+            app.UseWebSockets(webSocketOptions);
+
+            async Task WebSocket(HttpContext context, Func<Task> next)
+            {
+                if (context.Request.Path == "/ws")
+                {
+                    if (context.WebSockets.IsWebSocketRequest)
+                    {
+                        WsHelper.WebSocket = await context.WebSockets.AcceptWebSocketAsync();
+                        await WsHelper.Response();
+                    }
+                    else
+                        context.Response.StatusCode = 400;
+                }
+                else
+                    await next();
+            }
+
+            app.Use(WebSocket);
+
+            Logger.Raw("Websocket控制台已启动。");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

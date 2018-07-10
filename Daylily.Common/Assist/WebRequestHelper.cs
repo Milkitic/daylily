@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Assist
 {
@@ -297,7 +298,7 @@ namespace Daylily.Common.Assist
             }
             catch (Exception ex)
             {
-                Logger.WriteException(ex);
+                Logger.Exception(ex);
                 return null;
             }
 
@@ -322,8 +323,8 @@ namespace Daylily.Common.Assist
                 }
                 catch (Exception)
                 {
-                    Logger.DangerLine($"尝试了{i}次，请求超时 (>{request.Timeout}ms)");
-                    Logger.DangerLine($"{request.RequestUri.AbsoluteUri}: {sw.ElapsedMilliseconds}ms");
+                    Logger.Error($"尝试了{i}次，请求超时 (>{request.Timeout}ms)");
+                    Logger.Error($"{request.RequestUri.AbsoluteUri}: {sw.ElapsedMilliseconds}ms");
                     if (i == count - 1)
                         throw;
                 }
@@ -347,7 +348,7 @@ namespace Daylily.Common.Assist
                 }
                 catch (Exception)
                 {
-                    Logger.DangerLine($"尝试了{i}次，请求超时 (>{request.Timeout}ms)");
+                    Logger.Error($"尝试了{i}次，请求超时 (>{request.Timeout}ms)");
                     if (i == count - 1)
                         throw;
                 }

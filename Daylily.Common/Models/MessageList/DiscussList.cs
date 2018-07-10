@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Models.MessageList
 {
@@ -40,7 +41,7 @@ namespace Daylily.Common.Models.MessageList
 
         private void UpdateInfo()
         {
-            if (Id == null) Logger.PrimaryLine("Id is null!!!!");
+            if (Id == null) Logger.Warn("Id is null!!!!");
             try
             {
                 var info = CqApi.GetGroupInfo(Id);

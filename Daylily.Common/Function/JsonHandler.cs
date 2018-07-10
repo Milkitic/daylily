@@ -4,6 +4,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Function.Dispatch;
 using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Models.MessageList;
+using Daylily.Common.Utils;
 using Newtonsoft.Json;
 
 namespace Daylily.Common.Function
@@ -96,7 +97,7 @@ namespace Daylily.Common.Function
             }
             catch (Exception ex)
             {
-                Logger.WriteException(ex);
+                Logger.Exception(ex);
             }
             return null;
         }

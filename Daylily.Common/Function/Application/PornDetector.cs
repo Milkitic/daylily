@@ -6,6 +6,7 @@ using Daylily.Common.Models;
 using Daylily.Common.Models.CosResponse;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application
 {
@@ -24,9 +25,9 @@ namespace Daylily.Common.Function.Application
 
         public override void OnLoad(string[] args)
         {
-            Logger.WriteLine("上次用户计数载入中。");
+            Logger.Origin("上次用户计数载入中。");
             UserCount = LoadSettings<Dictionary<string, int>>() ?? new Dictionary<string, int>();
-            Logger.WriteLine("上次用户计数载入完毕。");
+            Logger.Origin("上次用户计数载入完毕。");
             //throw new NotImplementedException();
         }
 
@@ -50,7 +51,7 @@ namespace Daylily.Common.Function.Application
             if (urlList.Count == 0 && cacheList.Count == 0)
                 return null;
 
-            Logger.WarningLine("发现了" + (urlList.Count + cacheList.Count) + "张图");
+            Logger.Warn("发现了" + (urlList.Count + cacheList.Count) + "张图");
 
             CosAnalyzer model = new CosAnalyzer
             {
@@ -112,7 +113,7 @@ namespace Daylily.Common.Function.Application
         {
             try
             {
-                Logger.WarningLine("发现好图，存了");
+                Logger.Warn("发现好图，存了");
                 if (!UserCount.ContainsKey(user))
                     UserCount.Add(user, 2);
                 UserCount[user]--;

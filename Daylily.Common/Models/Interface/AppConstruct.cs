@@ -35,17 +35,17 @@ namespace Daylily.Common.Models.Interface
                 case MessageType.Group:
                     SendGroupMsgResp groupMsgResp = CqApi.SendGroupMessageAsync(response.GroupId,
                         (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
                     break;
                 case MessageType.Discuss:
                     SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(response.DiscussId,
                         (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
                     break;
                 case MessageType.Private:
                     SendPrivateMsgResp privateMsgResp =
                         CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -60,17 +60,17 @@ namespace Daylily.Common.Models.Interface
                 case MessageType.Group:
                     SendGroupMsgResp groupMsgResp = CqApi.SendGroupMessageAsync(groupId,
                         (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
                     break;
                 case MessageType.Discuss:
                     SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(discussId,
                         (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
                     break;
                 case MessageType.Private:
                     SendPrivateMsgResp privateMsgResp =
                         CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
-                    Logger.InfoLine($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -111,7 +111,7 @@ namespace Daylily.Common.Models.Interface
             }
             catch (Exception ex)
             {
-                Logger.WriteException(ex);
+                Logger.Exception(ex);
                 return default;
             }
         }

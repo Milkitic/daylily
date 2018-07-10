@@ -76,7 +76,7 @@ namespace Daylily.Common.Function.Application
                 GroupDic[groupId].Task.IsCanceled)
             {
                 GroupDic[groupId].Task = Task.Run(() => RunDetector(GroupDic[groupId]));
-                Logger.PrimaryLine("[" + groupId + "] (熊猫) 共 " + _totalCount);
+                Logger.Info("[" + groupId + "] (熊猫) 共 " + _totalCount);
             }
 
             return null;
@@ -98,24 +98,24 @@ namespace Daylily.Common.Function.Application
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteException(ex);
+                    Logger.Exception(ex);
                 }
                 finally
                 {
                     _totalCount--;
-                    Logger.PrimaryLine("(熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
+                    Logger.Info("(熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
                 }
             }
 
             if (gSets.PandaCount < 1) return;
-            Logger.PrimaryLine("[" + gSets.GroupId + "] (熊猫) " + gSets.PandaCount);
+            Logger.Info("[" + gSets.GroupId + "] (熊猫) " + gSets.PandaCount);
 
             for (int i = 0; i < gSets.PandaCount; i++)
             {
                 var perc = Rnd.NextDouble();
                 if (perc >= 0.15)
                     continue;
-                Logger.SuccessLine("[" + gSets.GroupId + "] (熊猫) 几率: " + perc);
+                Logger.Success("[" + gSets.GroupId + "] (熊猫) 几率: " + perc);
 
                 string resPath = Path.Combine(Domain.CurrentDirectory, "dragon", "resource_panda_send");
                 FileInfo[] files = new DirectoryInfo(resPath).GetFiles();
@@ -163,13 +163,13 @@ namespace Daylily.Common.Function.Application
 
             gSets.Process.OutputDataReceived += (sender, e) =>
             {
-                Logger.DebugLine(e.Data);
+                Logger.Debug(e.Data);
                 if (e.Data != null && e.Data.Trim() != "") gSets.ReceivedString.Add(e.Data);
             };
 
             gSets.Process.ErrorDataReceived += (sender, e) =>
             {
-                Logger.DebugLine(e.Data);
+                Logger.Debug(e.Data);
                 if (e.Data != null && e.Data.Trim() != "") gSets.ReceivedString.Add(e.Data);
             };
 
@@ -197,7 +197,7 @@ namespace Daylily.Common.Function.Application
                 }
             }
 
-            Logger.DangerLine("检测图片失败。");
+            Logger.Error("检测图片失败。");
         }
 
         private class GroupSettings

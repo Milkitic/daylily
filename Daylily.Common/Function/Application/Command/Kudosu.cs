@@ -100,7 +100,7 @@ namespace Daylily.Common.Function.Application.Command
                     string json = WebRequestHelper.GetResponseString(
                         WebRequestHelper.CreateGetHttpResponse(
                             "https://osu.ppy.sh/users/" + id + "/kudosu?offset=" + page + "&limit=" + count));
-                    Logger.DebugLine("GET JSON");
+                    Logger.Debug("GET JSON");
 
                     tmpList = JsonConvert.DeserializeObject<List<KudosuInfo>>(json);
                     totalList.AddRange(tmpList);
@@ -140,7 +140,7 @@ namespace Daylily.Common.Function.Application.Command
             }
             catch (Exception ex)
             {
-                Logger.WriteException(ex);
+                Logger.Exception(ex);
             }
         }
 

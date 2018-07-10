@@ -8,6 +8,7 @@ using Daylily.Common.Function.Application;
 using Daylily.Common.Function.Application.Command;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function
 {
@@ -56,7 +57,7 @@ namespace Daylily.Common.Function
                 FileInfo fi = new FileInfo(item);
                 try
                 {
-                    Logger.PrimaryLine("已发现" + fi.Name);
+                    Logger.Info("已发现" + fi.Name);
 
                     //Assembly asm = Assembly.LoadFile(fi.FullName);
                     Assembly asm = System.Runtime.Loader.AssemblyLoadContext.Default.LoadFromAssemblyPath(fi.FullName);
@@ -77,8 +78,8 @@ namespace Daylily.Common.Function
                         }
                         catch (Exception ex)
                         {
-                            Logger.DangerLine(typeName + " occurred an unexpected error.");
-                            Logger.WriteException(ex);
+                            Logger.Error(typeName + " occurred an unexpected error.");
+                            Logger.Exception(ex);
                         }
                     }
 
@@ -87,11 +88,11 @@ namespace Daylily.Common.Function
                 }
                 catch (Exception ex)
                 {
-                    Logger.DangerLine(ex.Message);
+                    Logger.Error(ex.Message);
                 }
 
                 if (!isValid)
-                    Logger.WarningLine($"\"{fi.Name}\" 不是合法的插件扩展。");
+                    Logger.Warn($"\"{fi.Name}\" 不是合法的插件扩展。");
 
             }
 
@@ -140,7 +141,7 @@ namespace Daylily.Common.Function
                 case AppType.Command:
 
                     if (plugin.Command == null)
-                        Logger.WarningLine($"\"{plugin.Name}\" 没有设置命令！！");
+                        Logger.Warn($"\"{plugin.Name}\" 没有设置命令！！");
                     else
                     {
                         string[] cmds = plugin.Command.Split(',');
@@ -148,15 +149,15 @@ namespace Daylily.Common.Function
                             CommandMap.GetOrAdd(cmd, plugin);
                     }
 
-                    Logger.WriteLine($"命令 \"{plugin.Name}\" ({plugin.Command}) 已经加载完毕。");
+                    Logger.Origin($"命令 \"{plugin.Name}\" ({plugin.Command}) 已经加载完毕。");
                     break;
                 case AppType.Application:
                     ApplicationList.Add(plugin);
-                    Logger.WriteLine($"应用 \"{plugin.Name}\" 已经加载完毕。");
+                    Logger.Origin($"应用 \"{plugin.Name}\" 已经加载完毕。");
                     break;
                 default:
                     ServiceList.Add(plugin);
-                    Logger.WriteLine($"服务 \"{plugin.Name}\" 已经加载完毕。");
+                    Logger.Origin($"服务 \"{plugin.Name}\" 已经加载完毕。");
                     break;
             }
         }

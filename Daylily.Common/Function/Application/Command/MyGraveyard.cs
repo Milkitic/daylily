@@ -65,7 +65,7 @@ namespace Daylily.Common.Function.Application.Command
                     string json = WebRequestHelper.GetResponseString(
                         WebRequestHelper.CreateGetHttpResponse(
                             "https://osu.ppy.sh/users/" + id + "/beatmapsets/graveyard?offset=" + page + "&limit=" + count));
-                    Logger.DebugLine("GET JSON");
+                    Logger.Debug("GET JSON");
 
                     tmpArray = JsonConvert.DeserializeObject<Beatmap[]>(json);
                     totalList.AddRange(tmpArray);
@@ -89,7 +89,7 @@ namespace Daylily.Common.Function.Application.Command
             }
             catch (Exception ex)
             {
-                Logger.WriteException(ex);
+                Logger.Exception(ex);
             }
         }
 

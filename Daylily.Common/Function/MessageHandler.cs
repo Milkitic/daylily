@@ -10,6 +10,7 @@ using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Models.MessageList;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function
 {
@@ -49,7 +50,7 @@ namespace Daylily.Common.Function
             }
             else
             {
-                Logger.InfoLine("当前已有" + GroupInfo[id].MsgQueue.Count + "条消息在" + GroupInfo[id].Info.GroupName + "排队");
+                Logger.Info("当前已有" + GroupInfo[id].MsgQueue.Count + "条消息在" + GroupInfo[id].Info.GroupName + "排队");
             }
         }
 
@@ -77,7 +78,7 @@ namespace Daylily.Common.Function
             }
             else
             {
-                Logger.InfoLine("当前已有" + DiscussInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
+                Logger.Info("当前已有" + DiscussInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
             }
         }
 
@@ -105,7 +106,7 @@ namespace Daylily.Common.Function
             }
             else
             {
-                Logger.InfoLine("当前已有" + PrivateInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
+                Logger.Info("当前已有" + PrivateInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
             }
         }
 
@@ -127,7 +128,7 @@ namespace Daylily.Common.Function
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteException(ex);
+                    Logger.Exception(ex);
                 }
             }
 
@@ -152,7 +153,7 @@ namespace Daylily.Common.Function
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteException(ex);
+                    Logger.Exception(ex);
                 }
             }
 
@@ -177,7 +178,7 @@ namespace Daylily.Common.Function
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteException(ex);
+                    Logger.Exception(ex);
                 }
             }
 
@@ -195,14 +196,14 @@ namespace Daylily.Common.Function
             switch (commonMessage.MessageType)
             {
                 case MessageType.Private:
-                    Logger.WriteMessage($"{userId}:\r\n  {CqCode.Decode(message)}");
+                    Logger.Message($"{userId}:\r\n  {CqCode.Decode(message)}");
                     break;
                 case MessageType.Discuss:
-                    Logger.WriteMessage($"({DiscussInfo[discussId].Name}) {userId}:\r\n  {CqCode.Decode(message)}");
+                    Logger.Message($"({DiscussInfo[discussId].Name}) {userId}:\r\n  {CqCode.Decode(message)}");
                     break;
                 case MessageType.Group:
                     var userInfo = CqApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString()); // 有点费时间
-                    Logger.WriteMessage(string.Format("({0}) {1}:\r\n  {2}", GroupInfo[groupId].Info.GroupName,
+                    Logger.Message(string.Format("({0}) {1}:\r\n  {2}", GroupInfo[groupId].Info.GroupName,
                         string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card,
                         CqCode.Decode(message)));
                     break;
@@ -274,9 +275,18 @@ namespace Daylily.Common.Function
             commonMessage.Switches = ca.Switches;
             commonMessage.SimpleParams = ca.SimpleParams;
 
+            CommonMessageResponse replyObj = null;
+            AppConstruct plugin = null;
             if (!PluginManager.CommandMap.ContainsKey(commonMessage.Command)) return;
-
-            CommonMessageResponse replyObj = PluginManager.CommandMap[commonMessage.Command].OnExecute(commonMessage);
+            try
+            {
+                plugin = PluginManager.CommandMap[commonMessage.Command];
+                replyObj = plugin.OnExecute(commonMessage);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex, fullCmd, plugin?.ToString()??"Unknown plugin");
+            }
             if (replyObj == null) return;
             AppConstruct.SendMessage(replyObj);
         }

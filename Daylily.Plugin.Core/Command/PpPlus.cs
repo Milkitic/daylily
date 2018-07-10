@@ -31,9 +31,9 @@ namespace Daylily.Plugin.Core.Command
         {
             string userId = messageObj.Parameter;
 
-            Logger.DefaultLine("Sent request.");
+            Logger.Origin("Sent request.");
             var response = WebRequestHelper.CreatePostHttpResponse("https://syrin.me/pp+/u/" + userId);
-            Logger.DefaultLine("Received request.");
+            Logger.Origin("Received request.");
             if (response == null)
                 return null;
 
@@ -122,7 +122,7 @@ namespace Daylily.Plugin.Core.Command
                         gp.AddPolygon(points);
                         gp.CloseFigure();
                         g.FillPath(brush, gp);
-                        Logger.DebugLine("[BACK POLYGON] OK");
+                        Logger.Debug("[BACK POLYGON] OK");
                     }
                 }
 
@@ -133,7 +133,7 @@ namespace Daylily.Plugin.Core.Command
                     using (Pen pen = new Pen(borderColor, 1))
                     {
                         g.DrawLine(pen, pointCentre, item);
-                        Logger.DebugLine("[NET FRAME] OK");
+                        Logger.Debug("[NET FRAME] OK");
                     }
                 }
 
@@ -177,7 +177,7 @@ namespace Daylily.Plugin.Core.Command
                     gp.CloseFigure();
                     // gp.FillPath(new SolidBrush(Color.FromArgb(128, 171, 210, 124)), gp2);
                     g.FillPath(brush, gp);
-                    Logger.DebugLine("[FORE POLYGON] OK");
+                    Logger.Debug("[FORE POLYGON] OK");
                 }
 
                 // 画数据边框
@@ -193,7 +193,7 @@ namespace Daylily.Plugin.Core.Command
                         g.FillEllipse(brush, new RectangleF(pointStatic[i].X - 3, pointStatic[i].Y - 3, 6, 6));
                         g.DrawLine(pen, pointStatic[i],
                             i == pointStatic.Length - 1 ? pointStatic[0] : pointStatic[i + 1]);
-                        Logger.DebugLine("[FORE BORDER] OK");
+                        Logger.Debug("[FORE BORDER] OK");
                     }
                 }
 
@@ -216,7 +216,7 @@ namespace Daylily.Plugin.Core.Command
                             pointCentre.Y + (float)(Math.Cos(deg) * rCurrent) - ok.Height / 2f);
 
                         g.DrawString(item.Value.ToString(), fontMsyh, blackBrush, tempPoint);
-                        Logger.DebugLine("[STRING] OK");
+                        Logger.Debug("[STRING] OK");
                         //g.DrawString(item.Key.ToString(), new Font("微软雅黑", 10), new SolidBrush(Color.Black), point_bder[ii]);
                         ii++;
                     }
@@ -236,12 +236,12 @@ namespace Daylily.Plugin.Core.Command
 
                     g.DrawString(strTotal, fontTotal, brushTotal, bmp.Width - sizeStrTotal.Width + 5, 5);
                     g.DrawString(strTitle, fontTitle, brushTitle, 4, 4);
-                    Logger.DebugLine("[STRING] OK");
+                    Logger.Debug("[STRING] OK");
                 }
 
                 g.DrawImage(Image.FromFile(Path.Combine(Domain.CurrentDirectory, "static", "ForeLayer.png")),
                     new Rectangle(0, 0, bmp.Width, bmp.Height));
-                Logger.DebugLine("[IMAGE] OK");
+                Logger.Debug("[IMAGE] OK");
             }
 
             return bmp;

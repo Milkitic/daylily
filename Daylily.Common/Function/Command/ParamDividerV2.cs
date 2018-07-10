@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Daylily.Common.Assist;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Command
 {
@@ -93,7 +94,7 @@ namespace Daylily.Common.Function.Command
             }
             catch (Exception ex)
             {
-                Logger.DebugLine(ex.Message);
+                Logger.Debug(ex.Message);
                 return false;
             }
 

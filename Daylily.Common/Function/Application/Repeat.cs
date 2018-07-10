@@ -6,6 +6,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application
 {
@@ -47,14 +48,14 @@ namespace Daylily.Common.Function.Application
             if (GroupDic[groupId].IntQueue >= MaxNum && !GroupDic[groupId].Locked)
             {
                 GroupDic[groupId].Locked = true;
-                Logger.DebugLine(groupId + " locked");
-                Logger.SuccessLine(groupId + "的" + messageObj.UserId + "触发了复读");
+                Logger.Debug(groupId + " locked");
+                Logger.Success(groupId + "的" + messageObj.UserId + "触发了复读");
                 Thread.Sleep(Rnd.Next(1000, 8000));
                 return new CommonMessageResponse(messageObj.Message, messageObj);
             }
 
             GroupDic[groupId].IntQueue++;
-            Logger.DebugLine(groupId + " incresed to " + GroupDic[groupId].IntQueue);
+            Logger.Debug(groupId + " incresed to " + GroupDic[groupId].IntQueue);
             return null;
 
             Task DecreaseQueue()
@@ -67,7 +68,7 @@ namespace Daylily.Common.Function.Application
                         if (GroupDic[groupId].Locked)
                         {
                             GroupDic[groupId].Locked = false;
-                            Logger.DebugLine(groupId + " unlocked");
+                            Logger.Debug(groupId + " unlocked");
                         }
 
                         continue;
@@ -76,7 +77,7 @@ namespace Daylily.Common.Function.Application
                     if (Rnd.NextDouble() < 0.02) Thread.Sleep(Rnd.Next(30000, 45000));
 
                     GroupDic[groupId].IntQueue--;
-                    Logger.DebugLine(groupId + " decresed to " + GroupDic[groupId].IntQueue);
+                    Logger.Debug(groupId + " decresed to " + GroupDic[groupId].IntQueue);
                 }
             }
         }

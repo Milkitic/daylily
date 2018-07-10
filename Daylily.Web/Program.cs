@@ -11,10 +11,12 @@ namespace Daylily.Web
         public static void Main(string[] args)
         {
             var app = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application;
-            Console.WriteLine($"{app.ApplicationName} {app.ApplicationVersion} based on {app.RuntimeFramework}");
-            //AppDomain ad = AppDomain.CreateDomain("Load library");
+            Logger.Raw(@".__       . .   
+|  \ _.  .|*|  .
+|__/(_]\_||||\_|
+       ._|   ._|");
+            Logger.Raw($"{app.ApplicationName.Split('.')[0]} {app.ApplicationVersion} based on {app.RuntimeFramework}");
             PluginManager.LoadAllPlugins(args);
-            //AppDomain.Unload(ad);
             BuildWebHost(args).Run();
 
         }

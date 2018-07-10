@@ -7,6 +7,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Function;
 using Daylily.Common.Models.CQRequest;
 using Daylily.Common.Models.CQResponse;
+using Daylily.Common.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -21,7 +22,7 @@ namespace Daylily.Web.Controllers
 
             if (ip == "74.120.171.198")
             {
-                Logger.WarningLine("来自白菜的请求：" + ip);
+                Logger.Warn("来自白菜的请求：" + ip);
                 return Json(new { });
             }
 

@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Database
 {
@@ -53,7 +54,7 @@ namespace Daylily.Common.Database
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteException(ex);
+                    Logger.Exception(ex);
                     return -1;
                 }
             }

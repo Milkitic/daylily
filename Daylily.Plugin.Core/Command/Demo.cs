@@ -5,6 +5,7 @@ using Daylily.Common.Models;
 using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils;
 
 namespace Daylily.Plugin.Core.Command
 {
@@ -48,7 +49,7 @@ namespace Daylily.Plugin.Core.Command
             MessageType type = messageObj.MessageType;
             if (type != MessageType.Private)
             {
-                Logger.DangerLine("不能非私聊");
+                Logger.Error("不能非私聊");
                 //return null;  // 返回null则不返回消息
             }
 
@@ -64,11 +65,11 @@ namespace Daylily.Plugin.Core.Command
             // 当用户执行 /sudo 或 /root 会分别触发 Admin（对应群的管理员）和 Root（系统管理员），以此做出对应权限所对应的功能
             PermissionLevel level = messageObj.PermissionLevel;
             if (level == PermissionLevel.Public)
-                Logger.InfoLine("当前所用权限：Public");
+                Logger.Info("当前所用权限：Public");
             else if (level == PermissionLevel.Admin)
-                Logger.InfoLine("当前所用权限：Admin");
+                Logger.Info("当前所用权限：Admin");
             else if (level == PermissionLevel.Root)
-                Logger.InfoLine("当前所用权限：Root");
+                Logger.Info("当前所用权限：Root");
 
             // 暂无实际用处，当前为框架所用，后续会有变动
             string fullcmd = messageObj.FullCommand;
@@ -137,7 +138,7 @@ namespace Daylily.Plugin.Core.Command
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteException(ex);
+                    Logger.Exception(ex);
                 }
             }
         }

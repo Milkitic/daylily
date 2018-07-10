@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
 using Daylily.Common.Models.CQResponse.Api.Abstract;
+using Daylily.Common.Utils;
 
 namespace Daylily.Common.Interface.CQHttp
 {
@@ -195,10 +196,10 @@ namespace Daylily.Common.Interface.CQHttp
             if (response == null)
                 return;
             if (enableLog)
-                Logger.DefaultLine("Sent request.");
+                Logger.Debug("Sent request.");
             WebRequestHelper.GetResponseString(response);
             if (enableLog)
-                Logger.DefaultLine("Received response.");
+                Logger.Debug("Received response.");
         }
 
         private static T Request<T>(string url, IDictionary<string, string> parameters, bool enableLog = false)
@@ -207,10 +208,10 @@ namespace Daylily.Common.Interface.CQHttp
             if (response == null)
                 return default;
             if (enableLog)
-                Logger.DefaultLine("Sent request.");
+                Logger.Debug("Sent request.");
             var jsonString = WebRequestHelper.GetResponseString(response);
             if (enableLog)
-                Logger.DefaultLine("Received response.");
+                Logger.Debug("Received response.");
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString);
         }
 
@@ -220,10 +221,10 @@ namespace Daylily.Common.Interface.CQHttp
             if (response.Result == null)
                 return default;
             if (enableLog)
-                Logger.DefaultLine("Sent request.");
+                Logger.Debug("Sent request.");
             var jsonString = WebRequestHelper.GetResponseString(await response);
             if (enableLog)
-                Logger.DefaultLine("Received response.");
+                Logger.Debug("Received response.");
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString);
         }
     }
