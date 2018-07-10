@@ -101,23 +101,33 @@
                     » @ViewData["Title"]
                 </h3>
                 <div id="exception" class="alert alert-warning"
-                    @if (ViewData["error"] == null) { @Html.Raw("style=\"display:none;\"") }>
+                     @if (ViewData["error"] == null) { @Html.Raw("style=\"display:none;\"") }>
                     @ViewData["error"]
                 </div>
                 <div><label id="status">Ready to connect...</label></div>
-                <label for="connectionUrl">WebSocket Server.</label>
+                <label for="connectionUrl">Daylily is running.</label>
                 <span id="connectionUrl"></span>
             </div>
         </div>
         <div class="row clearfix">
+            <div class="row clearfix">
+                <div class="col-md-12 column raw">
+                    <div class="form-group">
+                        <input for="inputCommand" style="width: 100%;" id="inputCommand" class="form-control" placeholder="Type command here" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <button name="execCommand" id="execCommand" class="btn btn-default btn-sm">Send</button>
+                    </div>
+                </div>
+            </div>
             <div class="col-md-6 column raw">
-                <a class="btn btn-default" style="background-color: #333; color: white;width:100%" data-toggle="collapse" data-target="#rawList">
+                <a class="btn btn-default" style="background-color: #333; color: white; width: 100%" data-toggle="collapse" data-target="#rawList">
                     RAW
                 </a>
                 <pre id="rawList" class="collapse in recv-list"></pre>
             </div>
             <div class="col-md-6 column inform">
-                <a class="btn btn-default" style="background-color: #333; color: white;width:100%" data-toggle="collapse" data-target="#infoList">
+                <a class="btn btn-default" style="background-color: #333; color: white; width: 100%" data-toggle="collapse" data-target="#infoList">
                     INFO
                 </a>
                 <pre id="infoList" class="collapse in recv-list"></pre>
@@ -164,12 +174,6 @@
                 </a>
                 <pre id="debugList" class="collapse in recv-list"></pre>
             </div>
-        </div>
-        <div class="form-group">
-            <input for="inputCommand" style="width: 100%;" id="inputCommand" class="form-control" placeholder="Type command here" autocomplete="off" />
-        </div>
-        <div class="form-group">
-            <button name="execCommand" id="execCommand" class="btn btn-default btn-sm">Send</button>
         </div>
     </div>
     <environment include="Development">
@@ -251,22 +255,21 @@
                 }
             };
         });
-        $("#inputCommand").keydown(function() {
-            if (event.keyCode === "13") { // 回车
+        $("#inputCommand").keypress(function() {
+            if (event.keyCode === 13) { // 回车
                 $('#execCommand').click();
+                $("#inputCommand").val("");
             }
         });
         $("#execCommand").click(function (e) {
-            var cmd = $("#inputCommand").val();
-            $.post('/home/sendcommand', { command: cmd }, function (result) {
-                if (result.code === "200") {
-                    $("#inputCommand").val("");
-                }
-                else if (result.code === "-101") {
-                    $("#exception").show();
-                    $("#exception").empty().append(result.message);
-                }
-            });
+            if (!socket || socket.readyState != WebSocket.OPEN) {
+                $("#exception").show();
+                $("#exception").text('Socket not connected. Try refresh?');
+            }
+            else {
+                var data = $("#inputCommand").val();
+                socket.send(data);
+            }
         });
         function updatePre(list, elementId) {
             for (var i = 0, len = list.length; i < len; i++) {

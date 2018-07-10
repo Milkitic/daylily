@@ -49,13 +49,16 @@ namespace Daylily.Common.Utils
                 await WebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             while (!result.CloseStatus.HasValue)
             {
-                string text = Encoding.Default.GetString(buffer).Trim('\0');
+                 string text = Encoding.Default.GetString(buffer).Trim('\0');
                 if (result.MessageType == WebSocketMessageType.Text)
-                    Console.WriteLine(text); // Do things here.
-
+                {
+                    Logger.Raw("> " + text); // Do things here.
+                    Console.DaylilyConsole.Response(text);
+                }
                 await WebSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType,
                     result.EndOfMessage, CancellationToken.None); // Response
 
+                buffer = new byte[1024 * 4];
                 result = await WebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             }
 
