@@ -92,7 +92,6 @@ namespace Daylily.Common.Function.Application
                 catch (Exception ex)
                 {
                     Logger.Exception(ex);
-                    throw;
                 }
             }
         }

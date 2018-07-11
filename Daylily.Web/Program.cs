@@ -17,14 +17,13 @@ namespace Daylily.Web
        ._|   ._|");
             Logger.Raw($"{app.ApplicationName.Split('.')[0]} {app.ApplicationVersion} based on {app.RuntimeFramework}");
             PluginManager.LoadAllPlugins(args);
-            BuildWebHost(args).Run();
+            CreateWebHostBuilder(args).Build().Run();
 
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseUrls("http://*:23333")
-                .Build();
+                .UseUrls("http://*:23333");
     }
 }

@@ -29,6 +29,11 @@ namespace Daylily.Common.Function.Command
                 Parameters = _divider.Parameters;
                 Switches = _divider.Switches;
             }
+            else
+            {
+                Parameters = new ConcurrentDictionary<string, string>();
+                Switches = new ConcurrentDictionary<string, string>();
+            }
             CommandName = _divider.CommandName;
             Parameter = _divider.Parameter;
             SimpleParams = _divider.SimpleParams;

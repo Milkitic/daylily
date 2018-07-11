@@ -208,8 +208,7 @@ namespace Daylily.Common.Assist
 
         private static HttpWebRequest _GetReqGetObj(string url, IDictionary<string, string> parameters)
         {
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-            if (request == null) throw new NullReferenceException();
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             //request.ContentType = "application/x-www-form-urlencoded";
 

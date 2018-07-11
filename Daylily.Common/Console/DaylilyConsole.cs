@@ -12,15 +12,48 @@ namespace Daylily.Common.Console
         {
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
             ca.Analyze(command);
-            switch (ca.CommandName)
+
+            try
             {
-                case "stop":
-                    Logger.Raw("Application is shutting down... ");
-                    Environment.Exit(0);
-                    break;
-                default:
-                    Logger.Raw(ca.CommandName + ": command not found");
-                    break;
+                switch (ca.CommandName)
+                {
+                    case "stop":
+                        Logger.Raw("Application is shutting down... ");
+                        Environment.Exit(0);
+                        break;
+                    case "console":
+                        {
+                            if (ca.Parameters.ContainsKey("cut-count"))
+                            {
+                                if (ca.Switches.ContainsKey("set"))
+                                {
+                                    WsHelper.CutCount = int.Parse(ca.Parameters["cut-count"]);
+                                    Logger.Raw(ca.CommandName + ": set: oparation succeed");
+                                }
+                                else
+                                {
+                                    Logger.Raw(ca.CommandName + ": parameter mismatch");
+                                }
+                            }
+                            else if (ca.Switches.ContainsKey("get"))
+                            {
+                                if (ca.Switches.ContainsKey("cut-count"))
+                                {
+                                    Logger.Raw(WsHelper.CutCount.ToString());
+                                }
+                            }
+                            else
+                                Logger.Raw(ca.CommandName + ": parameter mismatch");
+                            break;
+                        }
+                    default:
+                        Logger.Raw(ca.CommandName + ": command not found");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Raw(ex.Message);
             }
         }
     }
