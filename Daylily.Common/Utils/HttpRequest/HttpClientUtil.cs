@@ -19,7 +19,10 @@ namespace Daylily.Common.Utils.HttpRequest
                 AutomaticDecompression = DecompressionMethods.GZip
             };
             ServicePointManager.ServerCertificateValidationCallback = CheckValidationResult;
-            Http = new HttpClient(handler);
+            Http = new HttpClient(handler)
+            {
+                Timeout = new TimeSpan(0, 0, 3)
+            };
         }
 
         /// <summary>
