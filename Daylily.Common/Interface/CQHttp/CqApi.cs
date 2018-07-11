@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Daylily.Common.Models.CQResponse.Api.Abstract;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.HttpRequest;
 
 namespace Daylily.Common.Interface.CQHttp
 {

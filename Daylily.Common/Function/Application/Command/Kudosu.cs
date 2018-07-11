@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading;
 using CSharpOsu;
 using CSharpOsu.Module;
-using Daylily.Common.Assist;
 using Daylily.Common.Database.BLL;
 using Daylily.Common.Database.Model;
 using Daylily.Common.Interface;
@@ -16,6 +15,7 @@ using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.HttpRequest;
 using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application.Command
@@ -97,8 +97,8 @@ namespace Daylily.Common.Function.Application.Command
                 const int count = 20;
                 do
                 {
-                    string json = WebRequestHelper.GetResponseString(
-                        WebRequestHelper.CreateGetHttpResponse(
+                    string json = WebRequestUtil.GetResponseString(
+                        WebRequestUtil.CreateGetHttpResponse(
                             "https://osu.ppy.sh/users/" + id + "/kudosu?offset=" + page + "&limit=" + count));
                     Logger.Debug("GET JSON");
 
