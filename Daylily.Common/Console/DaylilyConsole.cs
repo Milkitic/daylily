@@ -6,9 +6,14 @@ using Daylily.Common.Utils;
 
 namespace Daylily.Common.Console
 {
-    internal static class DaylilyConsole
+    internal class DaylilyConsole
     {
-        public static void Response(string command)
+        public void WsCall(object metadata, string message)
+        {
+            Logger.Raw("> " + message);
+            Response(message);
+        }
+        public void Response(string command)
         {
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
             ca.Analyze(command);
@@ -27,7 +32,7 @@ namespace Daylily.Common.Console
                             {
                                 if (ca.Switches.ContainsKey("set"))
                                 {
-                                    WsHelper.CutCount = int.Parse(ca.Parameters["cut-count"]);
+                                    SocketLogger.CutCount = int.Parse(ca.Parameters["cut-count"]);
                                     Logger.Raw(ca.CommandName + ": set: oparation succeed");
                                 }
                                 else
@@ -39,7 +44,7 @@ namespace Daylily.Common.Console
                             {
                                 if (ca.Switches.ContainsKey("cut-count"))
                                 {
-                                    Logger.Raw(WsHelper.CutCount.ToString());
+                                    Logger.Raw(SocketLogger.CutCount.ToString());
                                 }
                             }
                             else

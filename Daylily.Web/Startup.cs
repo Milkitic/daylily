@@ -50,7 +50,7 @@ namespace Daylily.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -70,8 +70,8 @@ namespace Daylily.Web
                 {
                     if (context.WebSockets.IsWebSocketRequest)
                     {
-                        WsHelper.WebSocket = await context.WebSockets.AcceptWebSocketAsync();
-                        await WsHelper.Response();
+                        SocketLogger.WebSocket = await context.WebSockets.AcceptWebSocketAsync();
+                        await SocketLogger.Response();
                     }
                     else
                         context.Response.StatusCode = 400;
@@ -95,10 +95,12 @@ namespace Daylily.Web
             }
 
             app.UseStaticFiles();
-
-                      app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            Common.Console.Startup.RunConsole();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

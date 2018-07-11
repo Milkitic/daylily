@@ -9,9 +9,10 @@ using Newtonsoft.Json;
 
 namespace Daylily.Common.Utils
 {
-    public static class WsHelper
+    public static class SocketLogger
     {
         public static WebSocket WebSocket { get; set; }
+        public static event WsMessageReceivedEventHandler MessageReceived;
         public static int CutCount { get; set; } = 50;
 
         public static void Ws_MessageSend(LogList sender, WsMessageSendEventArgs args)
@@ -50,8 +51,10 @@ namespace Daylily.Common.Utils
                 // 循环接收数据
                 if (result.MessageType == WebSocketMessageType.Text)
                 {
-                    Logger.Raw("> " + text); // Do things here.
-                    Console.DaylilyConsole.Response(text);
+                    MessageReceived(null, new WsMessageReceivedEventArgs
+                    {
+                        Message = text
+                    });
                 }
                 //await WebSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType,
                 //    result.EndOfMessage, CancellationToken.None); // Send
