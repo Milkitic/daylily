@@ -64,7 +64,7 @@ namespace Daylily.Common.Function.Application
                 }
                 else
                 {
-                    WebRequestHelper.GetImageFromUrl(item.Url, item.Md5, item.Extension);
+                    WebRequestUtil.GetImageFromUrl(item.Url, item.Md5, item.Extension);
                     GroupDic[groupId].PathQueue.Enqueue(Path.Combine(Domain.CurrentDirectory, "images",
                         item.Md5 + item.Extension));
                 }

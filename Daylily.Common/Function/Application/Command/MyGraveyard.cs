@@ -62,8 +62,8 @@ namespace Daylily.Common.Function.Application.Command
                 const int count = 10;
                 do
                 {
-                    string json = WebRequestHelper.GetResponseString(
-                        WebRequestHelper.CreateGetHttpResponse(
+                    string json = WebRequestUtil.GetResponseString(
+                        WebRequestUtil.CreateGetHttpResponse(
                             "https://osu.ppy.sh/users/" + id + "/beatmapsets/graveyard?offset=" + page + "&limit=" + count));
                     Logger.Debug("GET JSON");
 

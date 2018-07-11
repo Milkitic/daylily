@@ -32,12 +32,12 @@ namespace Daylily.Plugin.Core.Command
             string userId = messageObj.Parameter;
 
             Logger.Origin("Sent request.");
-            var response = WebRequestHelper.CreatePostHttpResponse("https://syrin.me/pp+/u/" + userId);
+            var response = WebRequestUtil.CreatePostHttpResponse("https://syrin.me/pp+/u/" + userId);
             Logger.Origin("Received request.");
             if (response == null)
                 return null;
 
-            string jsonString = WebRequestHelper.GetResponseString(response);
+            string jsonString = WebRequestUtil.GetResponseString(response);
             if (jsonString.IndexOf("Oops!", StringComparison.Ordinal) != -1)
                 throw new Exception(LoliReply.IdNotFound);
             int index = jsonString.IndexOf("<div class=\"performance-table\">", StringComparison.Ordinal);

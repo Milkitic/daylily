@@ -12,7 +12,7 @@ namespace Daylily.Common.Assist
     /// <summary>
     /// Web请求帮助类
     /// </summary>
-    public static class WebRequestHelper
+    public static class WebRequestUtil
     {
         private const int Timeout = 3000; // 整体的一次请求超时时间
         /// <summary>

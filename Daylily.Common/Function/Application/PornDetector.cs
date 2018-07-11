@@ -66,9 +66,9 @@ namespace Daylily.Common.Function.Application
                     url_list = urlList.ToArray()
                 });
 
-                var abc = WebRequestHelper.CreatePostHttpResponse(
+                var abc = WebRequestUtil.CreatePostHttpResponse(
                     "http://service.image.myqcloud.com/detection/porn_detect", str, authorization: Signature.Get());
-                var respStr = WebRequestHelper.GetResponseString(abc);
+                var respStr = WebRequestUtil.GetResponseString(abc);
 
                 model = Newtonsoft.Json.JsonConvert.DeserializeObject<CosAnalyzer>(respStr);
             }

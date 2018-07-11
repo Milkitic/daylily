@@ -38,7 +38,7 @@ namespace Daylily.Plugin.Core.Command
             const int count = 20;
             //do
             //{
-            string json = WebRequestHelper.GetResponseString(WebRequestHelper.CreateGetHttpResponse(
+            string json = WebRequestUtil.GetResponseString(WebRequestUtil.CreateGetHttpResponse(
                 "https://osu.ppy.sh/users/" + userInfo[0].UserId + "/kudosu?offset=" + page + "&limit=" + count));
             List<KudosuInfo> tmpList = JsonConvert.DeserializeObject<List<KudosuInfo>>(json);
             foreach (var item in tmpList)

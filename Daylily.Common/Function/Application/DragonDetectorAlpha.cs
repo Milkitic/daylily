@@ -62,7 +62,7 @@ namespace Daylily.Common.Function.Application
                 }
                 else
                 {
-                    WebRequestHelper.GetImageFromUrl(item.Url, item.Md5, item.Extension);
+                    WebRequestUtil.GetImageFromUrl(item.Url, item.Md5, item.Extension);
                     _pathList.Add(Path.Combine(Domain.CurrentDirectory, "images", item.Md5 + item.Extension));
                 }
 

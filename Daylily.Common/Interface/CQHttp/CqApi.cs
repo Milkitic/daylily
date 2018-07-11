@@ -192,24 +192,24 @@ namespace Daylily.Common.Interface.CQHttp
 
         private static void Request(string url, IDictionary<string, string> parameters, bool enableLog = false)
         {
-            var response = WebRequestHelper.CreatePostHttpResponse(url, parameters);
+            var response = WebRequestUtil.CreatePostHttpResponse(url, parameters);
             if (response == null)
                 return;
             if (enableLog)
                 Logger.Debug("Sent request.");
-            WebRequestHelper.GetResponseString(response);
+            WebRequestUtil.GetResponseString(response);
             if (enableLog)
                 Logger.Debug("Received response.");
         }
 
         private static T Request<T>(string url, IDictionary<string, string> parameters, bool enableLog = false)
         {
-            var response = WebRequestHelper.CreatePostHttpResponse(url, parameters);
+            var response = WebRequestUtil.CreatePostHttpResponse(url, parameters);
             if (response == null)
                 return default;
             if (enableLog)
                 Logger.Debug("Sent request.");
-            var jsonString = WebRequestHelper.GetResponseString(response);
+            var jsonString = WebRequestUtil.GetResponseString(response);
             if (enableLog)
                 Logger.Debug("Received response.");
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString);
@@ -217,12 +217,12 @@ namespace Daylily.Common.Interface.CQHttp
 
         private static async Task<T> AsyncRequest<T>(string url, IDictionary<string, string> parameters, bool enableLog = false)
         {
-            var response = WebRequestHelper.CreatePostHttpResponseAsync(url, parameters);
+            var response = WebRequestUtil.CreatePostHttpResponseAsync(url, parameters);
             if (response.Result == null)
                 return default;
             if (enableLog)
                 Logger.Debug("Sent request.");
-            var jsonString = WebRequestHelper.GetResponseString(await response);
+            var jsonString = WebRequestUtil.GetResponseString(await response);
             if (enableLog)
                 Logger.Debug("Received response.");
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString);
