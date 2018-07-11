@@ -5,6 +5,7 @@ using Daylily.Common.Database.BLL;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils.HttpRequest;
 using Newtonsoft.Json;
 
 namespace Daylily.Plugin.Core.Command

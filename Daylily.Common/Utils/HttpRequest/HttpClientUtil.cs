@@ -11,6 +11,7 @@ namespace Daylily.Common.Utils.HttpRequest
 {
     public static class HttpClientUtil
     {
+        public static bool EnableLog { get; set; } = false;
         private static readonly HttpClient Http;
         static HttpClientUtil()
         {
@@ -19,7 +20,7 @@ namespace Daylily.Common.Utils.HttpRequest
                 AutomaticDecompression = DecompressionMethods.GZip
             };
             ServicePointManager.ServerCertificateValidationCallback = CheckValidationResult;
-            Http = new HttpClient(handler)
+            Http = new HttpClient()
             {
                 Timeout = new TimeSpan(0, 0, 3)
             };
@@ -59,10 +60,19 @@ namespace Daylily.Common.Utils.HttpRequest
         /// <returns></returns>
         public static string HttpPost(string url, IDictionary<string, string> args, IDictionary<string, string> argsHeader = null)
         {
+            HttpContent content;
             //argDic.ToSortUrlParamString();
-            var jsonStr = Newtonsoft.Json.JsonConvert.SerializeObject(args);
-            HttpContent content = new StringContent(jsonStr);
-            content.Headers.ContentType = new MediaTypeHeaderValue(HttpContentType.Json.GetContentType());
+            if (args != null)
+            {
+                var jsonStr = Newtonsoft.Json.JsonConvert.SerializeObject(args);
+                content = new StringContent(jsonStr);
+                content.Headers.ContentType = new MediaTypeHeaderValue(HttpContentType.Json.GetContentType());
+            }
+            else
+            {
+                content = new StringContent("");
+                content.Headers.ContentType = new MediaTypeHeaderValue(HttpContentType.Form.GetContentType());
+            }
             if (argsHeader != null)
             {
                 foreach (var item in argsHeader)
@@ -73,68 +83,21 @@ namespace Daylily.Common.Utils.HttpRequest
         }
 
         /// <summary>
-        /// HttpClient POST提交
-        /// </summary>
-        /// <param name="url">Http地址</param>
-        /// <param name="content">Http信息</param>
-        /// <returns></returns>
-        public static string HttpPost(string url, HttpContent content)
-        {
-            try
-            {
-                var response = Http.PostAsync(url, content).Result;
-                //确保HTTP成功状态值
-                response.EnsureSuccessStatusCode();
-                //await异步读取最后的JSON（注意此时gzip已经被自动解压缩了，因为上面的AutomaticDecompression = DecompressionMethods.GZip）
-                var reJson = response.Content.ReadAsStringAsync().Result;
-                return reJson;
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// GET 请求
-        /// </summary>
-        public static string HttpGet(string url)
-        {
-            try
-            {
-                var response = Http.GetAsync(url).Result;
-                response.EnsureSuccessStatusCode();
-                return response.Content.ReadAsStringAsync().Result;
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// GET 请求
-        /// <param name="args">参数字典</param>
-        /// </summary>
-        public static string HttpGet(string url, IDictionary<string, string> args)
-        {
-            return HttpGet(url + args.ToUrlParamString());
-        }
-
-        /// <summary>
         /// GET 请求
         /// </summary>
         /// <param name="url">Http地址</param>
         /// <param name="args">参数字典</param>
         /// <param name="headerDic">请求头字典</param>
         /// <returns></returns>
-        public static string HttpGet(string url, IDictionary<string, string> args, IDictionary<string, string> headerDic)
+        public static string HttpGet(string url, IDictionary<string, string> args = null, IDictionary<string, string> headerDic = null)
         {
             try
             {
-                url = url + args.ToUrlParamString();
+                if (args != null)
+                {
+                    url = url + args.ToUrlParamString();
+                }
+
                 if (headerDic != null)
                 {
                     foreach (var item in headerDic)
@@ -144,9 +107,35 @@ namespace Daylily.Common.Utils.HttpRequest
                 }
 
                 //await异步等待回应
+                if (EnableLog)
+                    Logger.Debug("Sent get request.");
                 var response = Http.GetStringAsync(url).Result;
+                if (EnableLog)
+                    Logger.Debug("Received get response.");
                 return response;
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                throw;
+            }
+        }
 
+        private static string HttpPost(string url, HttpContent content)
+        {
+            try
+            {
+                if (EnableLog)
+                    Logger.Debug("Sent post request.");
+                var response = Http.PostAsync(url, content).Result;
+                if (EnableLog)
+                    Logger.Debug("Received post response.");
+
+                //确保HTTP成功状态值
+                response.EnsureSuccessStatusCode();
+                //await异步读取最后的JSON（注意此时gzip已经被自动解压缩了，因为上面的AutomaticDecompression = DecompressionMethods.GZip）
+                var reJson = response.Content.ReadAsStringAsync().Result;
+                return reJson;
             }
             catch (Exception ex)
             {

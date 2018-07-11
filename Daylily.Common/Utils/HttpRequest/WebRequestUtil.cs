@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Daylily.Common.Assist;
 using Daylily.Common.Utils;
 
 namespace Daylily.Common.Utils.HttpRequest

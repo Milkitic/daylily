@@ -44,8 +44,8 @@ namespace Daylily.Common.Models.MessageList
             if (Id == null) Logger.Warn("Id is null!!!!");
             try
             {
-                var info = CqApi.GetGroupInfo(Id);
-                string name = info == null ? Id : info.GroupName;
+                var info = CqApi.GetGroupInfoV2(Id);
+                string name = info == null ? Id : info.Data.GroupName;
                 Name = name;
             }
             catch

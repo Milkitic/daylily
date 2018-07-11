@@ -7,6 +7,7 @@ using Daylily.Common.Models.CosResponse;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.HttpRequest;
 
 namespace Daylily.Common.Function.Application
 {

@@ -2,6 +2,7 @@
 using Daylily.Common.Models.Elo.Api;
 using System.Collections.Generic;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.HttpRequest;
 
 namespace Daylily.Common.Interface.Elo
 {
@@ -17,12 +18,12 @@ namespace Daylily.Common.Interface.Elo
                 {"user_id", uid.ToString()}
             };
 
-            var response = WebRequestHelper.CreateUrlGetHttpResponse(ApiUrl + "/user", parameters);
+            var response = WebRequestUtil.CreateUrlGetHttpResponse(ApiUrl + "/user", parameters);
             Logger.Debug("Sent request.");
 
             if (response != null)
             {
-                jsonString = WebRequestHelper.GetResponseString(response);
+                jsonString = WebRequestUtil.GetResponseString(response);
                 Logger.Debug("Received response.");
             }
 

@@ -38,10 +38,10 @@ namespace Daylily.Common.Interface.CQHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "user_id", HttpUtility.UrlEncode(id) },
-                { "message", HttpUtility.UrlEncode(message) }
+                { "user_id", id },
+                { "message", message }
             };
-            return Request<SendPrivateMsgResp>(ApiUrl + PrivateMsgPath, parameters, true);
+            return Request<SendPrivateMsgResp>(ApiUrl + PrivateMsgPath, parameters);
         }
         /// <summary>
         /// 发送私聊消息（异步版本）
@@ -53,10 +53,10 @@ namespace Daylily.Common.Interface.CQHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "user_id", HttpUtility.UrlEncode(id) },
-                { "message", HttpUtility.UrlEncode(message) }
+                { "user_id", id },
+                { "message", message }
             };
-            return AsyncRequest<SendPrivateMsgResp>(ApiUrl + PrivateMsgAsyncPath, parameters, true).Result;
+            return Request<SendPrivateMsgResp>(ApiUrl + PrivateMsgAsyncPath, parameters);
         }
 
         /// <summary>
@@ -69,10 +69,10 @@ namespace Daylily.Common.Interface.CQHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "discuss_id", HttpUtility.UrlEncode(discussId) },
-                { "message", HttpUtility.UrlEncode(message) }
+                { "discuss_id", discussId },
+                { "message", message }
             };
-            return Request<SendDiscussMsgResp>(ApiUrl + DiscussMsgPath, parameters, true);
+            return Request<SendDiscussMsgResp>(ApiUrl + DiscussMsgPath, parameters);
         }
         /// <summary>
         /// 发送讨论组消息（异步版本）
@@ -84,10 +84,10 @@ namespace Daylily.Common.Interface.CQHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "discuss_id", HttpUtility.UrlEncode(discussId) },
-                { "message", HttpUtility.UrlEncode(message) }
+                { "discuss_id", discussId },
+                { "message", message }
             };
-            return AsyncRequest<SendDiscussMsgResp>(ApiUrl + DiscussMsgAsyncPath, parameters, true).Result;
+            return Request<SendDiscussMsgResp>(ApiUrl + DiscussMsgAsyncPath, parameters);
         }
 
         /// <summary>
@@ -100,10 +100,10 @@ namespace Daylily.Common.Interface.CQHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", HttpUtility.UrlEncode(groupId) },
-                { "message", HttpUtility.UrlEncode(message) }
+                { "group_id", groupId },
+                { "message", message }
             };
-            return Request<SendGroupMsgResp>(ApiUrl + GroupMsgPath, parameters, true);
+            return Request<SendGroupMsgResp>(ApiUrl + GroupMsgPath, parameters);
         }
         /// <summary>
         /// 发送群聊消息（异步版本）
@@ -115,10 +115,10 @@ namespace Daylily.Common.Interface.CQHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", HttpUtility.UrlEncode(groupId) },
-                { "message", HttpUtility.UrlEncode(message) }
+                { "group_id", groupId },
+                { "message", message }
             };
-            return AsyncRequest<SendGroupMsgResp>(ApiUrl + GroupMsgAsyncPath, parameters, true).Result;
+            return Request<SendGroupMsgResp>(ApiUrl + GroupMsgAsyncPath, parameters);
         }
 
         /// <summary>
@@ -131,18 +131,18 @@ namespace Daylily.Common.Interface.CQHttp
             {
                 { "message_id", messageId.ToString() }
             };
-            Request(ApiUrl + MsgDelPath, parameters, true);
+            Request(ApiUrl + MsgDelPath, parameters);
         }
 
         public static void SetGroupBan(string groupId, string userId, int duration)
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", HttpUtility.UrlEncode(groupId) },
-                { "user_id", HttpUtility.UrlEncode(userId) },
+                { "group_id", groupId },
+                { "user_id", userId },
                 { "duration", duration.ToString() }
             };
-            Request(ApiUrl + GroupBanPath, parameters, true);
+            Request(ApiUrl + GroupBanPath, parameters);
         }
 
         public static GetGroupList GetGroupList() => Request<GetGroupList>(ApiUrl + GroupListPath, null);
@@ -151,8 +151,8 @@ namespace Daylily.Common.Interface.CQHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", HttpUtility.UrlEncode(groupId) },
-                { "user_id", HttpUtility.UrlEncode(userId) },
+                { "group_id", groupId },
+                { "user_id", userId },
                 { "no_cache", noCache.ToString() }
             };
 
@@ -163,7 +163,7 @@ namespace Daylily.Common.Interface.CQHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", HttpUtility.UrlEncode(groupId) }
+                { "group_id", groupId }
             };
             return Request<GetGroupMemberList>(ApiUrl + GroupMemberListPath, parameters);
         }
@@ -177,7 +177,7 @@ namespace Daylily.Common.Interface.CQHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", HttpUtility.UrlEncode(groupId) }
+                { "group_id", groupId }
             };
             return Request<GetGroupInfo>(ApiUrl + GroupInfoPath, parameters);
         }
@@ -193,39 +193,12 @@ namespace Daylily.Common.Interface.CQHttp
 
         private static void Request(string url, IDictionary<string, string> parameters, bool enableLog = false)
         {
-            var response = WebRequestUtil.CreatePostHttpResponse(url, parameters);
-            if (response == null)
-                return;
-            if (enableLog)
-                Logger.Debug("Sent request.");
-            WebRequestUtil.GetResponseString(response);
-            if (enableLog)
-                Logger.Debug("Received response.");
+            HttpClientUtil.HttpPost(url, parameters);
         }
 
         private static T Request<T>(string url, IDictionary<string, string> parameters, bool enableLog = false)
         {
-            var response = WebRequestUtil.CreatePostHttpResponse(url, parameters);
-            if (response == null)
-                return default;
-            if (enableLog)
-                Logger.Debug("Sent request.");
-            var jsonString = WebRequestUtil.GetResponseString(response);
-            if (enableLog)
-                Logger.Debug("Received response.");
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString);
-        }
-
-        private static async Task<T> AsyncRequest<T>(string url, IDictionary<string, string> parameters, bool enableLog = false)
-        {
-            var response = WebRequestUtil.CreatePostHttpResponseAsync(url, parameters);
-            if (response.Result == null)
-                return default;
-            if (enableLog)
-                Logger.Debug("Sent request.");
-            var jsonString = WebRequestUtil.GetResponseString(await response);
-            if (enableLog)
-                Logger.Debug("Received response.");
+            var jsonString = HttpClientUtil.HttpPost(url, parameters);
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString);
         }
     }

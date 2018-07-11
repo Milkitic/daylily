@@ -1,6 +1,7 @@
 ﻿using Daylily.Common.Assist;
 using System.Collections.Generic;
 using System.Web;
+using Daylily.Common.Utils.HttpRequest;
 
 namespace Daylily.Common.Interface.DaylilyAssist
 {
@@ -11,13 +12,15 @@ namespace Daylily.Common.Interface.DaylilyAssist
         public static string GetImgFile(string fileName)
         {
             string str = null;
-            IDictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("fileName", HttpUtility.UrlEncode(fileName));
+            IDictionary<string, string> parameters = new Dictionary<string, string>
+            {
+                { "fileName", HttpUtility.UrlEncode(fileName) }
+            };
 
-            var response = WebRequestHelper.CreatePostHttpResponse(ApiUrl + "/api/imgfile", parameters);
+            var response = WebRequestUtil.CreatePostHttpResponse(ApiUrl + "/api/imgfile", parameters);
             if (response != null)
             {
-                str = WebRequestHelper.GetResponseString(response);
+                str = WebRequestUtil.GetResponseString(response);
             }
 
             return str;
