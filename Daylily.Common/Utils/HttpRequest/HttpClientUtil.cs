@@ -54,7 +54,7 @@ namespace Daylily.Common.Utils.HttpRequest
         /// <param name="args">参数字典</param>
         /// <param name="argsHeader">请求头字典</param>
         /// <returns></returns>
-        public static string HttpPost(string url, IDictionary<string, string> args, IDictionary<string, string> argsHeader)
+        public static string HttpPost(string url, IDictionary<string, string> args, IDictionary<string, string> argsHeader = null)
         {
             //argDic.ToSortUrlParamString();
             var jsonStr = Newtonsoft.Json.JsonConvert.SerializeObject(args);
