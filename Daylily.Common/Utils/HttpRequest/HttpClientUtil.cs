@@ -11,7 +11,7 @@ namespace Daylily.Common.Utils.HttpRequest
 {
     public static class HttpClientUtil
     {
-        public static readonly HttpClient Http;
+        private static readonly HttpClient Http;
         static HttpClientUtil()
         {
             var handler = new HttpClientHandler
