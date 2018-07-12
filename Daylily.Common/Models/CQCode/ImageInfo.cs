@@ -1,6 +1,7 @@
 ﻿using Daylily.Common.Interface.DaylilyAssist;
 using System;
 using System.IO;
+using Daylily.Common.IO;
 
 namespace Daylily.Common.Models.CQCode
 {
@@ -43,7 +44,7 @@ namespace Daylily.Common.Models.CQCode
             }
             else
             {
-                settings = File.ReadAllLines(fullPath);
+                settings = ConcurrentFile.ReadAllLines(fullPath);
             }
 
             foreach (var line in settings)

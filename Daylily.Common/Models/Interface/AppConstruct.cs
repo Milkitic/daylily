@@ -2,6 +2,7 @@
 using System.IO;
 using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
+using Daylily.Common.IO;
 using Daylily.Common.Models.CQResponse.Api;
 using Daylily.Common.Models.CQResponse.Api.Abstract;
 using Daylily.Common.Models.Enum;
@@ -90,7 +91,7 @@ namespace Daylily.Common.Models.Interface
             if (!Directory.Exists(setsDir))
                 Directory.CreateDirectory(setsDir);
 
-            File.WriteAllText(saveName, Newtonsoft.Json.JsonConvert.SerializeObject(cls));
+            ConcurrentFile.WriteAllText(saveName, Newtonsoft.Json.JsonConvert.SerializeObject(cls));
         }
 
         protected T LoadSettings<T>(string fileName = null)
@@ -106,7 +107,7 @@ namespace Daylily.Common.Models.Interface
                 if (!Directory.Exists(setsDir))
                     Directory.CreateDirectory(setsDir);
 
-                string json = File.ReadAllText(saveName);
+                string json = ConcurrentFile.ReadAllText(saveName);
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
             }
             catch (Exception ex)
