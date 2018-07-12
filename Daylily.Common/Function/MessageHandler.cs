@@ -43,12 +43,7 @@ namespace Daylily.Common.Function
                 AppConstruct.SendMessage(new CommonMessageResponse(parsedObj.Message, new CommonMessage(parsedObj)));
             }
 
-            if (GroupInfo[id].Task == null || GroupInfo[id].Task.IsCanceled ||
-                GroupInfo[id].Task.IsCompleted)
-            {
-                GroupInfo[id].Task = Task.Run(() => HandleGroupMessage(parsedObj));
-            }
-            else
+            if (!GroupInfo[id].TryRun(() => HandleGroupMessage(parsedObj)))
             {
                 Logger.Info("当前已有" + GroupInfo[id].MsgQueue.Count + "条消息在" + GroupInfo[id].Info.GroupName + "排队");
             }
@@ -115,12 +110,8 @@ namespace Daylily.Common.Function
             var parsedObj = obj as GroupMsg;
             long groupId = parsedObj.GroupId;
 
-            while (GroupInfo[groupId].MsgQueue.Count != 0)
+            while (GroupInfo[groupId].MsgQueue.TryDequeue(out var currentInfo))
             {
-                if (GroupInfo[groupId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生 <- 因为你线程不安全。
-
-                var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
-
                 try
                 {
                     CommonMessage commonMessage = new CommonMessage(currentInfo);

@@ -21,8 +21,9 @@ namespace Daylily.Common.Models.MessageList
 
     public class GroupSettings
     {
+        private readonly object _taskLock = new object();
         public string Id { get; set; }
-        public Queue<GroupMsg> MsgQueue { get; set; } = new Queue<GroupMsg>();
+        public ConcurrentQueue<GroupMsg> MsgQueue { get; set; } = new ConcurrentQueue<GroupMsg>();
         public Task Task { get; set; }
         public int MsgLimit { get; set; } = 10;
         public bool LockMsg { get; set; } = false; // 用于判断是否超出消息阀值
@@ -32,6 +33,20 @@ namespace Daylily.Common.Models.MessageList
         {
             Id = groupId;
             UpdateInfo();
+        }
+
+        public bool TryRun(Action action)
+        {
+            bool isTaskFree;
+            lock (_taskLock)
+            {
+                isTaskFree = Task == null || Task.IsCanceled || Task.IsCompleted;
+                if (isTaskFree)
+                {
+                    Task = Task.Run(action);
+                }
+            }
+            return isTaskFree;
         }
 
         private void UpdateInfo()
