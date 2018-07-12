@@ -18,13 +18,11 @@ namespace Daylily.Common.Models.MessageList
 
     }
 
-    public class DiscussSettings
+    public class DiscussSettings: EndpointSettings<DiscussMsg>
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public Queue<DiscussMsg> MsgQueue { get; set; } = new Queue<DiscussMsg>();
-        public Task Task { get; set; }
-        public int MsgLimit { get; set; } = 10;
+        public override int MsgLimit { get; } = 10;
         public bool LockMsg { get; set; } = false; // 用于判断是否超出消息阀值
 
         public DiscussSettings(string discussId)
