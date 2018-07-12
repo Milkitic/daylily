@@ -44,12 +44,7 @@ namespace Daylily.Common.Function
                 AppConstruct.SendMessage(new CommonMessageResponse(parsedObj.Message, new CommonMessage(parsedObj)));
             }
 
-            if (GroupInfo[id].Task == null || GroupInfo[id].Task.IsCanceled ||
-                GroupInfo[id].Task.IsCompleted)
-            {
-                GroupInfo[id].Task = Task.Run(() => HandleGroupMessage(parsedObj));
-            }
-            else
+            if (!GroupInfo[id].TryRun(() => HandleGroupMessage(parsedObj)))
             {
                 Logger.Info("当前已有" + GroupInfo[id].MsgQueue.Count + "条消息在" + GroupInfo[id].Info.GroupName + "排队");
             }
@@ -72,12 +67,7 @@ namespace Daylily.Common.Function
                 AppConstruct.SendMessage(new CommonMessageResponse(parsedObj.Message, new CommonMessage(parsedObj)));
             }
 
-            if (DiscussInfo[id].Task == null || DiscussInfo[id].Task.IsCanceled ||
-                DiscussInfo[id].Task.IsCompleted)
-            {
-                DiscussInfo[id].Task = Task.Run(() => HandleDiscussMessage(parsedObj));
-            }
-            else
+            if (!DiscussInfo[id].TryRun(() => HandleDiscussMessage(parsedObj)))
             {
                 Logger.Info("当前已有" + DiscussInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
             }
@@ -100,28 +90,19 @@ namespace Daylily.Common.Function
                 AppConstruct.SendMessage(new CommonMessageResponse("？？求您慢点说话好吗", new CommonMessage(parsedObj)));
             }
 
-            if (PrivateInfo[id].Task == null || PrivateInfo[id].Task.IsCanceled ||
-                PrivateInfo[id].Task.IsCompleted)
-            {
-                PrivateInfo[id].Task = Task.Run(() => HandlePrivateMessage(parsedObj));
-            }
-            else
+            if (!PrivateInfo[id].TryRun(() => HandlePrivateMessage(parsedObj)))
             {
                 Logger.Info("当前已有" + PrivateInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
             }
         }
 
-        private void HandleGroupMessage(object obj)
+        private void HandleGroupMessage(GroupMsg obj)
         {
-            var parsedObj = obj as GroupMsg;
+            var parsedObj = obj;
             long groupId = parsedObj.GroupId;
 
-            while (GroupInfo[groupId].MsgQueue.Count != 0)
+            while (GroupInfo[groupId].MsgQueue.TryDequeue(out var currentInfo))
             {
-                if (GroupInfo[groupId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
-
-                var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
-
                 try
                 {
                     CommonMessage commonMessage = new CommonMessage(currentInfo);
@@ -136,17 +117,13 @@ namespace Daylily.Common.Function
             GroupInfo[groupId].LockMsg = false;
         }
 
-        private void HandleDiscussMessage(object obj)
+        private void HandleDiscussMessage(DiscussMsg obj)
         {
-            var parsedObj = obj as DiscussMsg;
+            var parsedObj = obj;
 
             long discussId = parsedObj.DiscussId;
-            while (DiscussInfo[discussId].MsgQueue.Count != 0)
+            while (DiscussInfo[discussId].MsgQueue.TryDequeue(out var currentInfo))
             {
-                if (DiscussInfo[discussId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
-
-                var currentInfo = DiscussInfo[discussId].MsgQueue.Dequeue();
-
                 try
                 {
                     CommonMessage commonMessage = new CommonMessage(currentInfo);
@@ -161,17 +138,13 @@ namespace Daylily.Common.Function
             DiscussInfo[discussId].LockMsg = false;
         }
 
-        private void HandlePrivateMessage(object obj)
+        private void HandlePrivateMessage(PrivateMsg obj)
         {
-            var parsedObj = obj as PrivateMsg;
+            var parsedObj = obj;
 
             long userId = parsedObj.UserId;
-            while (PrivateInfo[userId].MsgQueue.Count != 0)
+            while (PrivateInfo[userId].MsgQueue.TryDequeue(out var currentInfo))
             {
-                if (PrivateInfo[userId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
-
-                var currentInfo = PrivateInfo[userId].MsgQueue.Dequeue();
-
                 try
                 {
                     CommonMessage commonMessage = new CommonMessage(currentInfo);

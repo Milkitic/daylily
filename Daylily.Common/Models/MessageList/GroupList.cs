@@ -15,22 +15,14 @@ namespace Daylily.Common.Models.MessageList
 
         public GroupSettings this[long groupId] => _dicGroup[groupId];
 
-        public void Add(long groupId)
-        {
-            if (_dicGroup.Keys.Contains(groupId))
-                return;
-
-            _dicGroup.GetOrAdd(groupId, new GroupSettings(groupId.ToString()));
-        }
+        public void Add(long groupId) => _dicGroup.TryAdd(groupId, new GroupSettings(groupId.ToString()));
 
     }
 
-    public class GroupSettings
+    public class GroupSettings : EndpointSettings<GroupMsg>
     {
         public string Id { get; set; }
-        public Queue<GroupMsg> MsgQueue { get; set; } = new Queue<GroupMsg>();
-        public Task Task { get; set; }
-        public int MsgLimit { get; set; } = 10;
+        public override int MsgLimit { get; } = 10;
         public bool LockMsg { get; set; } = false; // 用于判断是否超出消息阀值
         public GroupInfoV2 Info { get; set; }
 
