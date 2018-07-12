@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Utils.HttpRequest
 {

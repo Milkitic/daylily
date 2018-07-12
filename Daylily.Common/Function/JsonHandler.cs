@@ -5,6 +5,7 @@ using Daylily.Common.Function.Dispatch;
 using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Models.MessageList;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.LogUtils;
 using Newtonsoft.Json;
 
 namespace Daylily.Common.Function

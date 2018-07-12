@@ -9,6 +9,7 @@ using Daylily.Common.Function.Application.Command;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function
 {

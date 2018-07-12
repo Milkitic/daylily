@@ -11,6 +11,7 @@ using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Models.MessageList;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function
 {
@@ -285,7 +286,7 @@ namespace Daylily.Common.Function
             }
             catch (Exception ex)
             {
-                Logger.Exception(ex, fullCmd, plugin?.ToString()??"Unknown plugin");
+                Logger.Exception(ex, fullCmd, plugin?.ToString() ?? "Unknown plugin");
             }
             if (replyObj == null) return;
             AppConstruct.SendMessage(replyObj);

@@ -5,6 +5,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Models.MessageList
 {

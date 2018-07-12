@@ -3,6 +3,7 @@ using Daylily.Common.Models.Elo.Api;
 using System.Collections.Generic;
 using Daylily.Common.Utils;
 using Daylily.Common.Utils.HttpRequest;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Interface.Elo
 {

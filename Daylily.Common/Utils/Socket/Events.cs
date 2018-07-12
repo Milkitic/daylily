@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Utils.Socket
 {

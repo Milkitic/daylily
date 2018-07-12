@@ -7,6 +7,7 @@ using Daylily.Common.Models.CQResponse.Api;
 using Daylily.Common.Models.CQResponse.Api.Abstract;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Models.Interface
 {

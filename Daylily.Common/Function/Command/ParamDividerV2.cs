@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Daylily.Common.Assist;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Command
 {

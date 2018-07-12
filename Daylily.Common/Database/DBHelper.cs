@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Database
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using Daylily.Common.Function;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.LogUtils;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 

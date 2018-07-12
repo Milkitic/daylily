@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Daylily.Common.Utils.LogUtils;
 using Daylily.Common.Utils.Socket;
 
 namespace Daylily.Common.Console

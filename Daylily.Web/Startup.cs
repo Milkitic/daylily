@@ -8,6 +8,7 @@ using Daylily.Common.Interface;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.LogUtils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

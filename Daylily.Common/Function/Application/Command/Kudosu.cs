@@ -16,6 +16,7 @@ using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
 using Daylily.Common.Utils.HttpRequest;
+using Daylily.Common.Utils.LogUtils;
 using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application.Command
