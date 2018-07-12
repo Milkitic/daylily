@@ -117,7 +117,7 @@ namespace Daylily.Common.Function
 
             while (GroupInfo[groupId].MsgQueue.Count != 0)
             {
-                if (GroupInfo[groupId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生
+                if (GroupInfo[groupId].MsgQueue.Count == 0) break; // 不加这条总有奇怪的错误发生 <- 因为你线程不安全。
 
                 var currentInfo = GroupInfo[groupId].MsgQueue.Dequeue();
 
@@ -285,7 +285,7 @@ namespace Daylily.Common.Function
             }
             catch (Exception ex)
             {
-                Logger.Exception(ex, fullCmd, plugin?.ToString()??"Unknown plugin");
+                Logger.Exception(ex, fullCmd, plugin?.ToString() ?? "Unknown plugin");
             }
             if (replyObj == null) return;
             AppConstruct.SendMessage(replyObj);
