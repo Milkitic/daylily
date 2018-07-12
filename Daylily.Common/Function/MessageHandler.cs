@@ -95,9 +95,9 @@ namespace Daylily.Common.Function
             }
         }
 
-        private void HandleGroupMessage(object obj)
+        private void HandleGroupMessage(GroupMsg obj)
         {
-            var parsedObj = obj as GroupMsg;
+            var parsedObj = obj;
             long groupId = parsedObj.GroupId;
 
             while (GroupInfo[groupId].MsgQueue.TryDequeue(out var currentInfo))
@@ -116,9 +116,9 @@ namespace Daylily.Common.Function
             GroupInfo[groupId].LockMsg = false;
         }
 
-        private void HandleDiscussMessage(object obj)
+        private void HandleDiscussMessage(DiscussMsg obj)
         {
-            var parsedObj = obj as DiscussMsg;
+            var parsedObj = obj;
 
             long discussId = parsedObj.DiscussId;
             while (DiscussInfo[discussId].MsgQueue.TryDequeue(out var currentInfo))
@@ -137,9 +137,9 @@ namespace Daylily.Common.Function
             DiscussInfo[discussId].LockMsg = false;
         }
 
-        private void HandlePrivateMessage(object obj)
+        private void HandlePrivateMessage(PrivateMsg obj)
         {
-            var parsedObj = obj as PrivateMsg;
+            var parsedObj = obj;
 
             long userId = parsedObj.UserId;
             while (PrivateInfo[userId].MsgQueue.TryDequeue(out var currentInfo))
