@@ -11,12 +11,7 @@ namespace Daylily.Common.Models.MessageList
 
         private readonly ConcurrentDictionary<long, PrivateSettings> _di = new ConcurrentDictionary<long, PrivateSettings>();
 
-        public void Add(long privateId)
-        {
-            if (_di.Keys.Contains(privateId))
-                return;
-            _di.GetOrAdd(privateId, new PrivateSettings());
-        }
+        public void Add(long privateId) => _di.TryAdd(privateId, new PrivateSettings());
     }
 
     public class PrivateSettings
