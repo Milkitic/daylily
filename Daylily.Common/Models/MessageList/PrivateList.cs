@@ -7,11 +7,16 @@ namespace Daylily.Common.Models.MessageList
 {
     public class PrivateList
     {
-        public PrivateSettings this[long groupId] => _di[groupId];
+        public PrivateSettings this[long groupId] => _dicPri[groupId];
 
-        private readonly ConcurrentDictionary<long, PrivateSettings> _di = new ConcurrentDictionary<long, PrivateSettings>();
+        private readonly ConcurrentDictionary<long, PrivateSettings> _dicPri = new ConcurrentDictionary<long, PrivateSettings>();
 
-        public void Add(long privateId) => _di.TryAdd(privateId, new PrivateSettings());
+        public void Add(long privateId)
+        {
+            if (_dicPri.Keys.Contains(privateId))
+                return;
+            _dicPri.TryAdd(privateId, new PrivateSettings());
+        }
     }
 
     public class PrivateSettings : EndpointSettings<PrivateMsg>

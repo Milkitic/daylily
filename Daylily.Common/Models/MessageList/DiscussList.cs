@@ -15,8 +15,12 @@ namespace Daylily.Common.Models.MessageList
 
         public DiscussSettings this[long discussId] => _dicDiscuss[discussId];
 
-        public void Add(long discussId) => _dicDiscuss.TryAdd(discussId, new DiscussSettings(discussId.ToString()));
-
+        public void Add(long discussId)
+        {
+            if (_dicDiscuss.Keys.Contains(discussId))
+                return;
+            _dicDiscuss.TryAdd(discussId, new DiscussSettings(discussId.ToString()));
+        }
     }
 
     public class DiscussSettings: EndpointSettings<DiscussMsg>

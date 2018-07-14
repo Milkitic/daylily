@@ -15,8 +15,12 @@ namespace Daylily.Common.Models.MessageList
 
         public GroupSettings this[long groupId] => _dicGroup[groupId];
 
-        public void Add(long groupId) => _dicGroup.TryAdd(groupId, new GroupSettings(groupId.ToString()));
-
+        public void Add(long groupId)
+        {
+            if (_dicGroup.Keys.Contains(groupId))
+                return;
+            _dicGroup.TryAdd(groupId, new GroupSettings(groupId.ToString()));
+        }
     }
 
     public class GroupSettings : EndpointSettings<GroupMsg>
