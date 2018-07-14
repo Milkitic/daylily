@@ -9,8 +9,8 @@ namespace Daylily.Common.Function.Command
     {
         string CommandName { get; }
         string Parameter { get; }
-        ConcurrentDictionary<string, string> Parameters { get; }
-        ConcurrentDictionary<string, string> Switches { get; }
+        Dictionary<string, string> Parameters { get; }
+        Dictionary<string, string> Switches { get; }
         List<string> SimpleParams { get; set; }
         bool TryDivide(string fullCmd);
     }

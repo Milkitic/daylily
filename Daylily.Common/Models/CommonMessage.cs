@@ -12,8 +12,8 @@ namespace Daylily.Common.Models
         public string FullCommand { get; set; }
         public string Command { get; set; }
         public string Parameter { get; set; }
-        public ConcurrentDictionary<string, string> Parameters { get; set; }
-        public ConcurrentDictionary<string, string> Switches { get; set; }
+        public Dictionary<string, string> Parameters { get; set; }
+        public Dictionary<string, string> Switches { get; set; }
         public List<string> SimpleParams { get; set; }
 
         public MessageType MessageType { get; set; }

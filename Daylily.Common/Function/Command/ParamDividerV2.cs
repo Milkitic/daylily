@@ -14,8 +14,8 @@ namespace Daylily.Common.Function.Command
         public string CommandName { get; private set; }
         public string Parameter { get; private set; }
 
-        public ConcurrentDictionary<string, string> Parameters { get; } = new ConcurrentDictionary<string, string>();
-        public ConcurrentDictionary<string, string> Switches { get; } = new ConcurrentDictionary<string, string>();
+        public Dictionary<string, string> Parameters { get; } = new Dictionary<string, string>();
+        public Dictionary<string, string> Switches { get; } = new Dictionary<string, string>();
         public List<string> SimpleParams { get; set; }
 
         private static readonly char[] Quote = { '\'', '\"' };
@@ -70,7 +70,7 @@ namespace Daylily.Common.Function.Command
                     {
                         if (tmpKey != null)
                         {
-                            Switches.GetOrAdd(tmpKey, tmpKey);
+                            Switches.Add(tmpKey, tmpKey);
                         }
 
                         tmpKey = item.Remove(0, 1);
@@ -85,7 +85,7 @@ namespace Daylily.Common.Function.Command
                             tmpValue = item.Trim(q);
                         }
 
-                        Parameters.GetOrAdd(tmpKey, tmpValue);
+                        Parameters.Add(tmpKey, tmpValue);
                         tmpKey = null;
                         tmpValue = null;
                         isLastKeyOrValue = false;

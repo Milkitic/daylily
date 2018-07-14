@@ -11,8 +11,8 @@ namespace Daylily.Common.Function.Command
         public string CommandName { get; private set; }
         public string Parameter { get; private set; }
 
-        public ConcurrentDictionary<string, string> Parameters { get; private set; }
-        public ConcurrentDictionary<string, string> Switches { get; set; }
+        public Dictionary<string, string> Parameters { get; private set; }
+        public Dictionary<string, string> Switches { get; set; }
         public List<string> SimpleParams { get; set; } = new List<string>();
 
         private readonly IParamDivider _divider;
@@ -31,8 +31,8 @@ namespace Daylily.Common.Function.Command
             }
             else
             {
-                Parameters = new ConcurrentDictionary<string, string>();
-                Switches = new ConcurrentDictionary<string, string>();
+                Parameters = new Dictionary<string, string>();
+                Switches = new Dictionary<string, string>();
             }
             CommandName = _divider.CommandName;
             Parameter = _divider.Parameter;

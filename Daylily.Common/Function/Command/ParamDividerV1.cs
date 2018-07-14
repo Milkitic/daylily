@@ -10,11 +10,11 @@ namespace Daylily.Common.Function.Command
         public string CommandName { get; private set; }
         public string Parameter { get; private set; }
 
-        public ConcurrentDictionary<string, string> Parameters { get; } =
-            new ConcurrentDictionary<string, string>();
+        public Dictionary<string, string> Parameters { get; } =
+            new Dictionary<string, string>();
 
-        public ConcurrentDictionary<string, string> Switches { get; } =
-            new ConcurrentDictionary<string, string>();
+        public Dictionary<string, string> Switches { get; } =
+            new Dictionary<string, string>();
 
         public List<string> SimpleParams { get; set; } = new List<string>();
 
@@ -59,13 +59,13 @@ namespace Daylily.Common.Function.Command
                                 if (isKeyOrValue)
                                 {
                                     tmpKey = param.Substring(startP, endP - startP).Trim().TrimStart('-');
-                                    Switches.GetOrAdd(tmpKey, tmpKey);
+                                    Switches.Add(tmpKey, tmpKey);
                                     isKeyOrValue = false;
                                 }
                                 else
                                 {
                                     tmpValue = param.Substring(startP, endP - startP).Trim().Trim('\"');
-                                    Parameters.GetOrAdd(tmpKey, tmpValue);
+                                    Parameters.Add(tmpKey, tmpValue);
                                     Switches.Remove(tmpKey, out _);
                                 }
                                 startP = i;
