@@ -14,15 +14,19 @@ namespace Daylily.Common.Models.MessageList
 
         public bool TryRun(Action action)
         {
-            bool isTaskFree;
-            lock (_taskLock)
+            bool isTaskFree = _task == null || _task.IsCanceled || _task.IsCompleted;
+            if (isTaskFree)
             {
-                isTaskFree = _task == null || _task.IsCanceled || _task.IsCompleted;
-                if (isTaskFree)
+                lock (_taskLock)
                 {
-                    _task = Task.Run(action);
+                    isTaskFree = _task == null || _task.IsCanceled || _task.IsCompleted;
+                    if (isTaskFree)
+                    {
+                        _task = Task.Run(action);
+                    }
                 }
             }
+
             return isTaskFree;
         }
     }
