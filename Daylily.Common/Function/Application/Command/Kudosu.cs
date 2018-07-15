@@ -21,7 +21,7 @@ using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application.Command
 {
-    public class Kudosu : AppConstruct
+    public class Kudosu : CommandApp
     {
         public override string Name => "Modding查询";
         public override string Author => "yf_extension";
@@ -29,7 +29,6 @@ namespace Daylily.Common.Function.Application.Command
         public override string VersionNumber => "1.0";
         public override string Description => "查询modding（被点赞或给与kd），并生成对应统计图";
         public override string Command => "kd";
-        public override AppType AppType => AppType.Command;
 
         private CommonMessage _message;
         private Thread _t;

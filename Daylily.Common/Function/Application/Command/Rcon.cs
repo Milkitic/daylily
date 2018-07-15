@@ -9,7 +9,7 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Application.Command
 {
-    public class Rcon : AppConstruct
+    public class Rcon : CommandApp
     {
         public override string Name => "日程提醒";
         public override string Author => "yf_extension";
@@ -17,7 +17,6 @@ namespace Daylily.Common.Function.Application.Command
         public override string VersionNumber => "1.0";
         public override string Description => "建立一个日程提醒";
         public override string Command => "rcon";
-        public override AppType AppType => AppType.Command;
 
         private static string UserId { get; set; }
         private static Thread _tThread;

@@ -15,11 +15,13 @@ namespace Daylily.Common.Function
 {
     public static class PluginManager
     {
-        public static ConcurrentDictionary<string, AppConstruct> CommandMap { get; } =
-            new ConcurrentDictionary<string, AppConstruct>();
+        public static ConcurrentDictionary<string, CommandApp> CommandMap { get; } =
+            new ConcurrentDictionary<string, CommandApp>();
+        public static ConcurrentDictionary<string, Type> CommandMapTest { get; } =
+            new ConcurrentDictionary<string, Type>();
 
-        public static List<AppConstruct> ServiceList { get; } = new List<AppConstruct>();
-        public static List<AppConstruct> ApplicationList { get; } = new List<AppConstruct>();
+        public static List<ServiceApp> ServiceList { get; } = new List<ServiceApp>();
+        public static List<ApplicationApp> ApplicationList { get; } = new List<ApplicationApp>();
 
         public static ConcurrentDictionary<string, Assembly> AssemblyList { get; } =
             new ConcurrentDictionary<string, Assembly>();
@@ -70,7 +72,7 @@ namespace Daylily.Common.Function
                         string typeName = "";
                         try
                         {
-                            if (type.BaseType != typeof(AppConstruct)) continue;
+                            if (type.BaseType.BaseType != typeof(AppConstruct)) continue;
 
                             typeName = type.Name ?? "";
                             InsertPlugin(type, args);
@@ -131,7 +133,10 @@ namespace Daylily.Common.Function
         private static void InsertPlugin(Type type, string[] args)
         {
             AppConstruct plugin = Activator.CreateInstance(type) as AppConstruct;
-            InsertPlugin(plugin, args);
+            //if (plugin.AppType != AppType.Command)
+            {
+                InsertPlugin(plugin, args);
+            }
         }
 
         private static void InsertPlugin(AppConstruct plugin, string[] args)
@@ -140,24 +145,24 @@ namespace Daylily.Common.Function
             switch (plugin.AppType)
             {
                 case AppType.Command:
-
-                    if (plugin.Command == null)
+                    CommandApp cmdPlugin = (CommandApp)plugin;
+                    if (cmdPlugin.Command == null)
                         Logger.Warn($"\"{plugin.Name}\" 没有设置命令！！");
                     else
                     {
-                        string[] cmds = plugin.Command.Split(',');
+                        string[] cmds = cmdPlugin.Command.Split(',');
                         foreach (var cmd in cmds)
-                            CommandMap.GetOrAdd(cmd, plugin);
+                            CommandMap.GetOrAdd(cmd, (CommandApp)plugin);
                     }
 
-                    Logger.Origin($"命令 \"{plugin.Name}\" ({plugin.Command}) 已经加载完毕。");
+                    Logger.Origin($"命令 \"{plugin.Name}\" ({cmdPlugin.Command}) 已经加载完毕。");
                     break;
                 case AppType.Application:
-                    ApplicationList.Add(plugin);
+                    ApplicationList.Add((ApplicationApp)plugin);
                     Logger.Origin($"应用 \"{plugin.Name}\" 已经加载完毕。");
                     break;
                 default:
-                    ServiceList.Add(plugin);
+                    ServiceList.Add((ServiceApp)plugin);
                     Logger.Origin($"服务 \"{plugin.Name}\" 已经加载完毕。");
                     break;
             }

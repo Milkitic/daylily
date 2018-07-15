@@ -25,11 +25,9 @@ namespace Daylily.Common.Models.Interface
         public abstract PluginVersion Version { get; }
         public abstract string VersionNumber { get; }
         public abstract string Description { get; }
-        public abstract string Command { get; }
-        public abstract AppType AppType { get; }
+       public abstract AppType AppType { get; }
         public abstract void OnLoad(string[] args);
-        public abstract CommonMessageResponse OnExecute(in CommonMessage messageObj);
-
+    
         public static void SendMessage(CommonMessageResponse response)
         {
             switch (response.MessageType)

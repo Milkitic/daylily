@@ -13,7 +13,7 @@ using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application.Command
 {
-    public class Panda : AppConstruct
+    public class Panda : CommandApp
     {
         public override string Name => "熊猫生成器";
         public override string Author => "yf_extension";
@@ -21,7 +21,6 @@ namespace Daylily.Common.Function.Application.Command
         public override string VersionNumber => "1.0";
         public override string Description => "生成熊猫图，表情随机";
         public override string Command => "panda";
-        public override AppType AppType => AppType.Command;
 
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
         private static readonly string FontDir = Path.Combine(Domain.CurrentDirectory, "font");

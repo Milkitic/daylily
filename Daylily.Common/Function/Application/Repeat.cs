@@ -11,15 +11,13 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Application
 {
-    public class Repeat : AppConstruct
+    public class Repeat : ApplicationApp
     {
         public override string Name => "复读";
         public override string Author => "yf_extension";
         public override PluginVersion Version => PluginVersion.Stable;
         public override string VersionNumber => "1.0";
         public override string Description => "按一定条件触发复读";
-        public override string Command => null;
-        public override AppType AppType => AppType.Application;
 
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
         private const int MaxNum = 10;

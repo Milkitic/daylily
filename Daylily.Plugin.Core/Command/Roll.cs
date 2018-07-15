@@ -7,7 +7,7 @@ using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {
-    public class Roll : AppConstruct
+    public class Roll : CommandApp
     {
         public override string Name => "获取随机数";
         public override string Author => "yf_extension";
@@ -15,7 +15,6 @@ namespace Daylily.Plugin.Core.Command
         public override string VersionNumber => "1.0";
         public override string Description => "获取一个随机数";
         public override string Command => "roll";
-        public override AppType AppType => AppType.Command;
 
         public override void OnLoad(string[] args)
         {

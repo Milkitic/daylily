@@ -14,15 +14,13 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Application
 {
-    public class DragonDetectorAlpha : AppConstruct
+    public class DragonDetectorAlpha : ApplicationApp
     {
         public override string Name => "嗅探龙图";
         public override string Author => "yf_extension";
         public override PluginVersion Version => PluginVersion.Alpha;
         public override string VersionNumber => "1.0";
         public override string Description => "发现龙图时做出不同操作";
-        public override string Command => null;
-        public override AppType AppType => AppType.Application;
 
         private readonly List<string> _pathList = new List<string>();
         private readonly List<string> _receivedString = new List<string>();

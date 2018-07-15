@@ -7,7 +7,7 @@ using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {
-    class Cd : AppConstruct
+    class Cd : CommandApp
     {
         public override string Name => "文件浏览器";
         public override string Author => "yf_extension";
@@ -15,11 +15,10 @@ namespace Daylily.Plugin.Core.Command
         public override string VersionNumber => "1.0";
         public override string Description => "浏览磁盘目录";
         public override string Command => "cd";
-        public override AppType AppType => AppType.Command;
 
         public override void OnLoad(string[] args)
         {
-             
+
         }
 
         public override CommonMessageResponse OnExecute(in CommonMessage messageObj)

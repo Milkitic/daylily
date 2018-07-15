@@ -10,15 +10,13 @@ using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application
 {
-    public class CheckCqAt : AppConstruct
+    public class CheckCqAt : ApplicationApp
     {
         public override string Name => "嗅探at";
         public override string Author => "yf_extension";
         public override PluginVersion Version => PluginVersion.Stable;
         public override string VersionNumber => "1.0";
         public override string Description => "当自己被at时回击at对方";
-        public override string Command => null;
-        public override AppType AppType => AppType.Application;
 
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
 

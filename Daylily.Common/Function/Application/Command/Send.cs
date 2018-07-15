@@ -4,7 +4,7 @@ using Daylily.Common.Models.Interface;
 
 namespace Daylily.Common.Function.Application.Command
 {
-    public class Send : AppConstruct
+    public class Send : CommandApp
     {
         public override string Name => "发送自定义消息";
         public override string Author => "yf_extension";
@@ -12,7 +12,6 @@ namespace Daylily.Common.Function.Application.Command
         public override string VersionNumber => "1.0";
         public override string Description => "支持发送任意格式的消息（包含cq码），支持群聊私聊";
         public override string Command => "send";
-        public override AppType AppType => AppType.Command;
 
         public override void OnLoad(string[] args)
         {

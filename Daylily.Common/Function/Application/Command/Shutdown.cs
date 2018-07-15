@@ -5,7 +5,7 @@ using Daylily.Common.Models.Interface;
 
 namespace Daylily.Common.Function.Application.Command
 {
-    public class Shutdown : AppConstruct
+    public class Shutdown : CommandApp
     {
         public override string Name => "强行停止黄花菜";
         public override string Author => "yf_extension";
@@ -13,7 +13,6 @@ namespace Daylily.Common.Function.Application.Command
         public override string VersionNumber => "1.0";
         public override string Description => "收到消息就自毁";
         public override string Command => "sdown";
-        public override AppType AppType => AppType.Command;
 
         public override void OnLoad(string[] args)
         {

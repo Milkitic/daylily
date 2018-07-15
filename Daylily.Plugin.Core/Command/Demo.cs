@@ -10,7 +10,7 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Plugin.Core.Command
 {
-    class Demo : AppConstruct // 继承此类，详细可查看Daylily.Common.Models.AppConstruct类
+    class Demo : CommandApp // 继承此类做为命令，此外还有其他两种类型
     {
         //插件名
         public override string Name => "测试Demo插件";
@@ -24,8 +24,6 @@ namespace Daylily.Plugin.Core.Command
         public override string Description => "用于对于插件开发进行Demo演示";
         //激活插件的命令（仅当AppType为Command的时候有效，英文逗号分隔）
         public override string Command => null;
-        //插件的类别是命令、应用还是服务
-        public override AppType AppType => AppType.Command;
 
         static Thread _tThread;
         static string UserId { get; set; }

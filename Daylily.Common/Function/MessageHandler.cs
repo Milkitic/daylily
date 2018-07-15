@@ -250,7 +250,7 @@ namespace Daylily.Common.Function
             commonMessage.SimpleParams = ca.SimpleParams;
 
             CommonMessageResponse replyObj = null;
-            AppConstruct plugin = null;
+            CommandApp plugin = null;
             if (!PluginManager.CommandMap.ContainsKey(commonMessage.Command)) return;
             try
             {

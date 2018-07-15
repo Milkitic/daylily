@@ -16,15 +16,14 @@ using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application
 {
-    public class GroupQuiet : AppConstruct
+    public class GroupQuiet : ApplicationApp
     {
         public override string Name => "死群发熊猫";
         public override string Author => "yf_extension";
         public override PluginVersion Version => PluginVersion.Stable;
         public override string VersionNumber => "1.0";
         public override string Description => "群长时间不说话时，发熊猫";
-        public override string Command => null;
-        public override AppType AppType => AppType.Application;
+
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
         private static ConcurrentDictionary<string, GroupSettings> _groupDic;
         public override void OnLoad(string[] args)

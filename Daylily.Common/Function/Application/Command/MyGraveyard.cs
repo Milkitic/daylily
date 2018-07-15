@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application.Command
 {
-    public class MyGraveyard : AppConstruct
+    public class MyGraveyard : CommandApp
     {
         public override string Name => "随机挖坑";
         public override string Author => "yf_extension";
@@ -25,7 +25,6 @@ namespace Daylily.Common.Function.Application.Command
         public override string VersionNumber => "1.0";
         public override string Description => "随机挖坑";
         public override string Command => "挖坑";
-        public override AppType AppType => AppType.Command;
 
         private CommonMessage _message;
         private Thread _t;

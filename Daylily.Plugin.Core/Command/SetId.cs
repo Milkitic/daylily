@@ -10,7 +10,7 @@ using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {
-    public class SetId : AppConstruct
+    public class SetId : CommandApp
     {
         public override string Name => "绑定id";
         public override string Author => "yf_extension";
@@ -18,7 +18,6 @@ namespace Daylily.Plugin.Core.Command
         public override string VersionNumber => "1.0";
         public override string Description => "绑定osu id";
         public override string Command => "setid";
-        public override AppType AppType => AppType.Command;
 
         public override void OnLoad(string[] args)
         {

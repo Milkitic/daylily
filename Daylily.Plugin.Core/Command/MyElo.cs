@@ -7,7 +7,7 @@ using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {
-    public class MyElo : AppConstruct
+    public class MyElo : CommandApp
     {
         public override string Name => "ELO查询";
         public override string Author => "yf_extension";
@@ -15,7 +15,6 @@ namespace Daylily.Plugin.Core.Command
         public override string VersionNumber => "1.0";
         public override string Description => "获取自己的elo信息";
         public override string Command => null; // 弃用，晚些整合
-        public override AppType AppType => AppType.Command;
 
         public override void OnLoad(string[] args)
         {

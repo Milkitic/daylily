@@ -15,15 +15,13 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Application
 {
-    public class PandaDetector : AppConstruct
+    public class PandaDetector : ApplicationApp
     {
         public override string Name => "斗图";
         public override string Author => "yf_extension";
         public override PluginVersion Version => PluginVersion.Beta;
         public override string VersionNumber => "1.0";
         public override string Description => "发现各类熊猫图时有几率返回一张熊猫图";
-        public override string Command => null;
-        public override AppType AppType => AppType.Application;
 
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
 

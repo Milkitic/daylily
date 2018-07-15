@@ -5,7 +5,7 @@ using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {
-    public class Ping : AppConstruct
+    public class Ping : CommandApp
     {
         public override string Name => "Ping";
         public override string Author => "yf_extension";
@@ -13,7 +13,6 @@ namespace Daylily.Plugin.Core.Command
         public override string VersionNumber => "1.0";
         public override string Description => "返回pong";
         public override string Command => "ping";
-        public override AppType AppType => AppType.Command;
 
         public override void OnLoad(string[] args)
         {

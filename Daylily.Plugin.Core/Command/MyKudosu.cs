@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Daylily.Plugin.Core.Command
 {
-    public class MyKudosu : AppConstruct
+    public class MyKudosu : CommandApp
     {
         public override string Name => "Modding查询";
         public override string Author => "yf_extension";
@@ -18,7 +18,6 @@ namespace Daylily.Plugin.Core.Command
         public override string VersionNumber => "1.0";
         public override string Description => "获取最近modding信息";
         public override string Command => null; // 弃用，准备删了
-        public override AppType AppType => AppType.Command;
 
         public override void OnLoad(string[] args)
         {

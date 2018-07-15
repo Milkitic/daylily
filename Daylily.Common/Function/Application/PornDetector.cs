@@ -12,15 +12,13 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Application
 {
-    public class PornDetector : AppConstruct
+    public class PornDetector : ApplicationApp
     {
         public override string Name => "嗅探黄图";
         public override string Author => "yf_extension";
         public override PluginVersion Version => PluginVersion.Beta;
         public override string VersionNumber => "1.0";
         public override string Description => "发现福利图和黄图时进行提醒和禁言（仅新人mapper群）";
-        public override string Command => null;
-        public override AppType AppType => AppType.Application;
 
         private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> Md5List { get; } = new Dictionary<string, CosObject>();

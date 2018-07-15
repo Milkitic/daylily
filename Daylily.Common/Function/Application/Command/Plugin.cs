@@ -7,7 +7,7 @@ using Daylily.Common.Models.Interface;
 
 namespace Daylily.Common.Function.Application.Command
 {
-    public class Plugin : AppConstruct
+    public class Plugin : CommandApp
     {
         public override string Name => "插件管理";
         public override string Author => "yf_extension";
@@ -15,7 +15,6 @@ namespace Daylily.Common.Function.Application.Command
         public override string VersionNumber => "1.0";
         public override string Description => "动态管理插件";
         public override string Command => "plugin";
-        public override AppType AppType => AppType.Command;
 
         public override void OnLoad(string[] args)
         {

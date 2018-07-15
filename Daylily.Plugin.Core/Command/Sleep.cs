@@ -6,7 +6,7 @@ using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {
-    public class Sleep : AppConstruct
+    public class Sleep : CommandApp
     {
         public override string Name => "自我禁言";
         public override string Author => "yf_extension";
@@ -14,7 +14,6 @@ namespace Daylily.Plugin.Core.Command
         public override string VersionNumber => "1.0";
         public override string Description => "只允许30分钟到12小时";
         public override string Command => "sleep,slip";
-        public override AppType AppType => AppType.Command;
 
         public override void OnLoad(string[] args)
         {
