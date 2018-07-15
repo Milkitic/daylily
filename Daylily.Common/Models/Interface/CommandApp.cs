@@ -11,6 +11,5 @@ namespace Daylily.Common.Models.Interface
         public abstract string Command { get; }
 
         public abstract CommonMessageResponse OnExecute(in CommonMessage messageObj);
-
     }
 }

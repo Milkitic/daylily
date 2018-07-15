@@ -73,7 +73,12 @@ namespace Daylily.Common.Function
                         try
                         {
                             if (type.BaseType.BaseType != typeof(AppConstruct)) continue;
-
+                            if (type.BaseType == typeof(CommandApp))
+                                if (type.IsDefined(typeof(CommandAttribute), false) == false)
+                                {
+                                    Logger.Error("bad implementation");
+                                    continue;
+                                }
                             typeName = type.Name ?? "";
                             InsertPlugin(type, args);
 
