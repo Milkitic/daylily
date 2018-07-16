@@ -16,6 +16,11 @@ namespace Daylily.Common.Function.Application.Command
     [Command("plugin")]
     public class Plugin : CommandApp
     {
+        [Arg("l", IsSwitch = true)]
+        public bool List { get; set; }
+        [Arg("r")]
+        public string Remove { get; set; }
+
         public override void Initialize(string[] args)
         {
 
@@ -23,32 +28,17 @@ namespace Daylily.Common.Function.Application.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            string[] args = messageObj.ArgString.Split(' ');
-
-            for (int i = 0; i < args.Length; i++)
-            {
-                string cmd = args[i]; //, par = args[i + 1];
-                switch (cmd)
-                {
-                    case "-l":
-                    case "--list":
-                        return new CommonMessageResponse(ShowPluginList(), messageObj);
-                    case "-r":
-                    case "--remove":
-                        string par = args[i + 1];
-                        return new CommonMessageResponse(par, messageObj);
-                    default:
-                        return new CommonMessageResponse("未知的参数: " + cmd + "...", messageObj);
-                }
-            }
-
+            if (List)
+                return new CommonMessageResponse(ShowPluginList(), messageObj);
+            if (Remove != null)
+                return new CommonMessageResponse(Remove, messageObj);
             return null;
         }
 
         private string ShowPluginList()
         {
             var sb = new StringBuilder();
-            var commandMap = PluginManager.CommandMap.Values.Distinct();
+            var commandMap = PluginManager.CommandMapStatic.Values.Distinct();
             sb.AppendLine("命令插件：");
             foreach (var item in commandMap)
             {

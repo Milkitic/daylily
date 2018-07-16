@@ -277,11 +277,15 @@ namespace Daylily.Common.Function
                 switch (info[0])
                 {
                     case ArgAttribute argAttrib:
-                        if (cm.Args.ContainsKey(argAttrib.Name))
+                        if (cm.Switches.ContainsKey(argAttrib.Name))
                         {
                             if (argAttrib.IsSwitch)
                                 prop.SetValue(plugin, true);
-                            else
+                        }
+
+                        if (cm.Args.ContainsKey(argAttrib.Name))
+                        {
+                            if (!argAttrib.IsSwitch)
                             {
                                 dynamic obj = ParseStr(prop, cm.Args[argAttrib.Name]);
                                 prop.SetValue(plugin, obj);

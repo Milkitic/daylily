@@ -20,6 +20,8 @@ namespace Daylily.Common.Function
         //public static ConcurrentDictionary<string, CommandApp> CommandMap { get; } = new ConcurrentDictionary<string, CommandApp>();
         public static ConcurrentDictionary<string, Type> CommandMap { get; } =
             new ConcurrentDictionary<string, Type>();
+        public static ConcurrentDictionary<string, CommandApp> CommandMapStatic { get; } =
+            new ConcurrentDictionary<string, CommandApp>();
 
         public static List<ServiceApp> ServiceList { get; } = new List<ServiceApp>();
         public static List<ApplicationApp> ApplicationList { get; } = new List<ApplicationApp>();
@@ -151,7 +153,8 @@ namespace Daylily.Common.Function
                         {
                             //CommandMap.TryAdd(cmd, (CommandApp)plugin);
                             CommandMap.TryAdd(cmd, type);
-                            str += cmd + ",";
+                            CommandMapStatic.TryAdd(cmd, cmdPlugin);
+                         str += cmd + ",";
                         }
 
                         str = str.TrimEnd(',') + ") ";
