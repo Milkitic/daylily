@@ -29,6 +29,10 @@ namespace Daylily.Common.Function.Application.Command
         private CommonMessage _message;
         private Thread _t;
 
+        public override void Initialize(string[] args)
+        {
+
+        }
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             _message = messageObj;

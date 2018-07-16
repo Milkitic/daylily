@@ -16,6 +16,11 @@ namespace Daylily.Plugin.Core.Command
     [Command("cd")]
     class Cd : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.GroupId != null) // 不给予群聊权限
@@ -25,7 +30,7 @@ namespace Daylily.Plugin.Core.Command
                 return new CommonMessageResponse(LoliReply.RootOnly, messageObj);
             StringBuilder sb = new StringBuilder();
 
-            DirectoryInfo di = new DirectoryInfo(messageObj.Parameter);
+            DirectoryInfo di = new DirectoryInfo(messageObj.ArgString);
             var files = di.GetFiles();
             var dirs = di.GetDirectories();
             foreach (var item in dirs)

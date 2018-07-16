@@ -17,9 +17,8 @@ namespace Daylily.Common.Function
 {
     public static class PluginManager
     {
-        public static ConcurrentDictionary<string, CommandApp> CommandMap { get; } =
-            new ConcurrentDictionary<string, CommandApp>();
-        public static ConcurrentDictionary<string, Type> CommandMapTest { get; } =
+        //public static ConcurrentDictionary<string, CommandApp> CommandMap { get; } = new ConcurrentDictionary<string, CommandApp>();
+        public static ConcurrentDictionary<string, Type> CommandMap { get; } =
             new ConcurrentDictionary<string, Type>();
 
         public static List<ServiceApp> ServiceList { get; } = new List<ServiceApp>();
@@ -136,9 +135,29 @@ namespace Daylily.Common.Function
             try
             {
                 AppConstruct plugin = Activator.CreateInstance(type) as AppConstruct;
-                //if (plugin.AppType != AppType.Command)
+                if (plugin.AppType != AppType.Command)
                 {
                     InsertPlugin(plugin, args);
+                }
+                else
+                {
+                    CommandApp cmdPlugin = (CommandApp)plugin;
+                    cmdPlugin.Initialize(args);
+                    string str = "";
+                    if (cmdPlugin.Commands != null)
+                    {
+                        str = "(";
+                        foreach (var cmd in cmdPlugin.Commands)
+                        {
+                            //CommandMap.TryAdd(cmd, (CommandApp)plugin);
+                            CommandMap.TryAdd(cmd, type);
+                            str += cmd + ",";
+                        }
+
+                        str = str.TrimEnd(',') + ") ";
+                    }
+
+                    Logger.Origin($"命令 \"{plugin.Name}\" {str}已经加载完毕。");
                 }
             }
             catch (Exception ex)
@@ -149,26 +168,8 @@ namespace Daylily.Common.Function
 
         private static void InsertPlugin(AppConstruct plugin, string[] args)
         {
-
             switch (plugin.AppType)
             {
-                case AppType.Command:
-                    CommandApp cmdPlugin = (CommandApp)plugin;
-                    string str = "";
-                    if (cmdPlugin.Commands != null)
-                    {
-                        str = "(";
-                        foreach (var cmd in cmdPlugin.Commands)
-                        {
-                            CommandMap.TryAdd(cmd, (CommandApp)plugin);
-                            str += cmd + ",";
-                        }
-
-                        str = str.TrimEnd(',') + ") ";
-                    }
-
-                    Logger.Origin($"命令 \"{plugin.Name}\" {str}已经加载完毕。");
-                    break;
                 case AppType.Application:
                     ApplicationList.Add((ApplicationApp)plugin);
                     Logger.Origin($"应用 \"{plugin.Name}\" 已经加载完毕。");

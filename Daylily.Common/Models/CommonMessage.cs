@@ -12,10 +12,11 @@ namespace Daylily.Common.Models
 
         public string FullCommand { get; set; }
         public string Command { get; set; }
-        public string Parameter { get; set; }
-        public Dictionary<string, string> Parameters { get; set; }
+        public string ArgString { get; set; }
+        public Dictionary<string, string> Args { get; set; }
+        public List<string> FreeArgs { get; set; }
         public Dictionary<string, string> Switches { get; set; }
-        public List<string> SimpleParams { get; set; }
+        public List<string> SimpleArgs { get; set; }
 
         public MessageType MessageType { get; set; }
         public PermissionLevel PermissionLevel { get; set; }

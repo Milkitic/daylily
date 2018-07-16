@@ -8,10 +8,11 @@ namespace Daylily.Common.Function.Command
     public interface IParamDivider
     {
         string CommandName { get; }
-        string Parameter { get; }
-        Dictionary<string, string> Parameters { get; }
+        string ArgString { get; }
+        Dictionary<string, string> Args { get; }
+        List<string> FreeArgs { get; }
         Dictionary<string, string> Switches { get; }
-        List<string> SimpleParams { get; set; }
+        List<string> SimpleArgs { get; set; }
         bool TryDivide(string fullCmd);
     }
 }

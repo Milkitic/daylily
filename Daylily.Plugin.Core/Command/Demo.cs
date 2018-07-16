@@ -24,8 +24,13 @@ namespace Daylily.Plugin.Core.Command
     [Help("用于对于插件开发进行Demo演示")]
     class Demo : CommandApp // 继承此类做为命令，此外还有其他两种类型
     {
-        static Thread _tThread;
-        static string UserId { get; set; }
+        private static Thread _tThread;
+        private static string UserId { get; set; }
+
+        public override void Initialize(string[] args)
+        {
+
+        }
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
@@ -53,7 +58,7 @@ namespace Daylily.Plugin.Core.Command
             // 此字段为 "demo"
             string command = messageObj.Command;
             // 此字段为 "asdf 1234"
-            string parameter = messageObj.Parameter;
+            string parameter = messageObj.ArgString;
             // 当前处于的权限状态，默认为Public（即开放权限）
             // 当用户执行 /sudo 或 /root 会分别触发 Admin（对应群的管理员）和 Root（系统管理员），以此做出对应权限所对应的功能
             PermissionLevel level = messageObj.PermissionLevel;

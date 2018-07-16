@@ -15,17 +15,22 @@ namespace Daylily.Plugin.Core.Command
     [Command("sleep", "slip")]
     public class Sleep : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.GroupId == "133605766")
                 return null;
             if (messageObj.GroupId == null)
                 return null;
-            if (messageObj.Parameter.Trim() == "")
+            if (messageObj.ArgString.Trim() == "")
                 return new CommonMessageResponse("要睡多少小时呀? 你不写是要30循吗??", messageObj, true);
 
             DateTime dt = new DateTime();
-            if (!double.TryParse(messageObj.Parameter, out double result))
+            if (!double.TryParse(messageObj.ArgString, out double result))
                 return new CommonMessageResponse("我只要一个数表示小时，支持小数", messageObj, true);
             if (result > 12) result = 12;
             else if (result < 0.5) result = 0.5;

@@ -9,10 +9,11 @@ namespace Daylily.Common.Function.Command
     public class CommandAnalyzer
     {
         public string CommandName { get; private set; }
-        public string Parameter { get; private set; }
+        public string ArgString { get; private set; }
 
-        public Dictionary<string, string> Parameters { get; private set; }
-        public Dictionary<string, string> Switches { get; set; }
+        public Dictionary<string, string> Args { get; private set; }
+        public List<string> FreeArgs { get; private set; }
+        public Dictionary<string, string> Switches { get; private set; }
         public List<string> SimpleParams { get; set; } = new List<string>();
 
         private readonly IParamDivider _divider;
@@ -26,17 +27,19 @@ namespace Daylily.Common.Function.Command
         {
             if (_divider.TryDivide(fullCmd))
             {
-                Parameters = _divider.Parameters;
+                Args = _divider.Args;
+                FreeArgs = _divider.FreeArgs;
                 Switches = _divider.Switches;
             }
             else
             {
-                Parameters = new Dictionary<string, string>();
+                Args = new Dictionary<string, string>();
+                FreeArgs = new List<string>();
                 Switches = new Dictionary<string, string>();
             }
             CommandName = _divider.CommandName;
-            Parameter = _divider.Parameter;
-            SimpleParams = _divider.SimpleParams;
+            ArgString = _divider.ArgString;
+            SimpleParams = _divider.SimpleArgs;
         }
 
         public void Analyze(string fullCmd, CommonMessage commonMessage)
@@ -44,17 +47,19 @@ namespace Daylily.Common.Function.Command
             //outCm = (CommonMessage)inCm.Clone();
             if (_divider.TryDivide(fullCmd))
             {
-                commonMessage.Parameters = _divider.Parameters;
+                commonMessage.Args = _divider.Args;
+                commonMessage.FreeArgs = _divider.FreeArgs;
                 commonMessage.Switches = _divider.Switches;
             }
             else
             {
-                commonMessage.Parameters = new Dictionary<string, string>();
+                commonMessage.Args = new Dictionary<string, string>();
+                commonMessage.FreeArgs = new List<string>();
                 commonMessage.Switches = new Dictionary<string, string>();
             }
             commonMessage.Command = _divider.CommandName;
-            commonMessage.Parameter = _divider.Parameter;
-            commonMessage.SimpleParams = _divider.SimpleParams;
+            commonMessage.ArgString = _divider.ArgString;
+            commonMessage.SimpleArgs = _divider.SimpleArgs;
         }
     }
 }

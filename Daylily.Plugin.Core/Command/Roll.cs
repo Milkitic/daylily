@@ -16,9 +16,14 @@ namespace Daylily.Plugin.Core.Command
     [Command("roll")]
     public class Roll : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            var query = messageObj.Parameter.Split(' ');
+            var query = messageObj.ArgString.Split(' ');
             if (!int.TryParse(query[0], out _))
             {
                 return new CommonMessageResponse(Next().ToString(), messageObj, true);

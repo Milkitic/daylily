@@ -16,6 +16,11 @@ namespace Daylily.Plugin.Core.Command
     //[Command] // 弃用，晚些整合
     public class MyElo : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             BllUserRole bllUserRole = new BllUserRole();

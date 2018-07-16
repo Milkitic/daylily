@@ -14,6 +14,11 @@ namespace Daylily.Common.Function.Application.Command
     [Command("sdown")]
     public class Shutdown : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.PermissionLevel != PermissionLevel.Root)

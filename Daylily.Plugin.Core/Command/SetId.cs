@@ -19,13 +19,18 @@ namespace Daylily.Plugin.Core.Command
     [Command("setid")]
     public class SetId : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            if (string.IsNullOrEmpty(messageObj.Parameter))
+            if (string.IsNullOrEmpty(messageObj.ArgString))
                 return null;
             BllUserRole bllUserRole = new BllUserRole();
             OsuClient osu = new OsuClient(OsuApi.ApiKey);
-            OsuUser[] userList = osu.GetUser(messageObj.Parameter);
+            OsuUser[] userList = osu.GetUser(messageObj.ArgString);
 
             if (userList.Length == 0)
                 return new CommonMessageResponse(LoliReply.IdNotFound, messageObj);
@@ -34,7 +39,7 @@ namespace Daylily.Plugin.Core.Command
             var role = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
             if (role.Count != 0)
             {
-                if (role[0].CurrentUname.ToLower() == messageObj.Parameter.ToLower())
+                if (role[0].CurrentUname.ToLower() == messageObj.ArgString.ToLower())
                     return new CommonMessageResponse("我认识你，" + role[0].CurrentUname + ".", messageObj, true);
                 string msg = role[0].CurrentUname + "先森，别以为我不认识你哦. 嗯? 你真不是? 那请找Mother Ship吧..";
                 return new CommonMessageResponse(msg, messageObj, true);

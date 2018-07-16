@@ -18,16 +18,21 @@ namespace Daylily.Plugin.Core.Command
     [Command("elo")]
     public class Elo : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.PermissionLevel == PermissionLevel.Public)
                 return new CommonMessageResponse(LoliReply.AdminOnly, messageObj, true);
-            if (string.IsNullOrEmpty(messageObj.Parameter))
+            if (string.IsNullOrEmpty(messageObj.ArgString))
                 return new CommonMessageResponse(LoliReply.ParamMissing, messageObj, true);
 
             EloApi eloApi = new EloApi();
             OsuClient osu = new OsuClient(OsuApi.ApiKey);
-            OsuUser[] userList = osu.GetUser(messageObj.Parameter);
+            OsuUser[] userList = osu.GetUser(messageObj.ArgString);
             if (userList.Length == 0)
                 return new CommonMessageResponse(LoliReply.IdNotFound, messageObj, true);
 

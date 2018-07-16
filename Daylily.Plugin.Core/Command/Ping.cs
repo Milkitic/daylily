@@ -14,6 +14,11 @@ namespace Daylily.Plugin.Core.Command
     [Command("ping")]
     public class Ping : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.GroupId != null) // 不给予群聊权限

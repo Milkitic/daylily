@@ -33,6 +33,11 @@ namespace Daylily.Common.Function.Application.Command
         private CommonMessage _message;
         private Thread _t;
 
+        public override void Initialize(string[] args)
+        {
+            
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             _message = messageObj;
@@ -47,7 +52,7 @@ namespace Daylily.Common.Function.Application.Command
             {
                 string id;
                 string uname;
-                if (string.IsNullOrEmpty(_message.Parameter))
+                if (string.IsNullOrEmpty(_message.ArgString))
                 {
                     BllUserRole bllUserRole = new BllUserRole();
                     List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(_message.UserId));
@@ -65,7 +70,7 @@ namespace Daylily.Common.Function.Application.Command
                     if (_message.PermissionLevel != PermissionLevel.Public)
                     {
                         OsuClient osu = new OsuClient(OsuApi.ApiKey);
-                        OsuUser[] userList = osu.GetUser(_message.Parameter);
+                        OsuUser[] userList = osu.GetUser(_message.ArgString);
                         if (userList.Length == 0)
                         {
                             SendMessage(new CommonMessageResponse(LoliReply.IdNotFound, _message, true));

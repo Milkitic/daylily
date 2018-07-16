@@ -19,6 +19,11 @@ namespace Daylily.Plugin.Core.Command
     //[Command] // 弃用，准备删了
     public class MyKudosu : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             //if (group != null) // 不给予群聊权限

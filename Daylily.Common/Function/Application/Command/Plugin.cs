@@ -16,9 +16,14 @@ namespace Daylily.Common.Function.Application.Command
     [Command("plugin")]
     public class Plugin : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            string[] args = messageObj.Parameter.Split(' ');
+            string[] args = messageObj.ArgString.Split(' ');
 
             for (int i = 0; i < args.Length; i++)
             {

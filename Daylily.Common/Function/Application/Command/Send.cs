@@ -13,14 +13,19 @@ namespace Daylily.Common.Function.Application.Command
     [Command("send")]
     public class Send : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.PermissionLevel != PermissionLevel.Root)
                 return null;
 
-            string[] split = messageObj.Parameter.Split("|");
+            string[] split = messageObj.ArgString.Split("|");
             if (split.Length == 1)
-                return new CommonMessageResponse(Transform(messageObj.Parameter), messageObj);
+                return new CommonMessageResponse(Transform(messageObj.ArgString), messageObj);
             string innerUser = null, innerGroup = null, innerDiscuss = null, innerMessage = null;
             MessageType innerType = MessageType.Private;
             for (int i = 0; i < split.Length; i += 2)

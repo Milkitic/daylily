@@ -22,6 +22,11 @@ namespace Daylily.Common.Function.Application.Command
         private static Thread _tThread;
         private string _message;
 
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             // 发送者的QQ
@@ -36,7 +41,7 @@ namespace Daylily.Common.Function.Application.Command
                 //return null;  // 返回null则不返回消息
             }
 
-            string parameter = messageObj.Parameter;
+            string parameter = messageObj.ArgString;
             // 当前处于的权限状态，默认为Public（即开放权限）
             // 当用户执行 /sudo 或 /root 会分别触发 Admin（对应群的管理员）和 Root（系统管理员），以此做出对应权限所对应的功能
             PermissionLevel level = messageObj.PermissionLevel;

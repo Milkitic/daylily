@@ -3,15 +3,7 @@ using Daylily.Common.Models.Enum;
 
 namespace Daylily.Common.Models.Attributes
 {
-    public class CommandAttribute : Attribute
-    {
-        public CommandAttribute(params string[] commands)
-        {
-            Commands = commands;
-        }
-        public string[] Commands { get; }
-    }
-
+    [AttributeUsage(AttributeTargets.Class)]
     public class NameAttribute : Attribute
     {
         public NameAttribute(string name)
@@ -21,6 +13,7 @@ namespace Daylily.Common.Models.Attributes
         public string Name { get; }
     }
 
+    [AttributeUsage(AttributeTargets.Class)]
     public class AuthorAttribute : Attribute
     {
         public AuthorAttribute(string author)
@@ -30,6 +23,7 @@ namespace Daylily.Common.Models.Attributes
         public string Author { get; }
     }
 
+    [AttributeUsage(AttributeTargets.Class)]
     public class VersionAttribute : Attribute
     {
         public int Major { get; }
@@ -46,6 +40,7 @@ namespace Daylily.Common.Models.Attributes
         }
     }
 
+    [AttributeUsage(AttributeTargets.Class)]
     public class HelpAttribute : Attribute
     {
         public string[] Helps { get; }

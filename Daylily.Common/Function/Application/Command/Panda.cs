@@ -31,11 +31,16 @@ namespace Daylily.Common.Function.Application.Command
         private const FontStyle FontStyle = System.Drawing.FontStyle.Bold;
         private const int SmFontSize = 13, NmFontSize = 16, LgFontSize = 26;
 
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.MessageType == MessageType.Group && messageObj.GroupId != "672076603")
                 return new CommonMessageResponse(LoliReply.PrivateOnly, messageObj);
-            var cqImg = new FileImage(Draw(messageObj.Parameter)).ToString();
+            var cqImg = new FileImage(Draw(messageObj.ArgString)).ToString();
             return new CommonMessageResponse(cqImg, messageObj);
         }
 

@@ -14,6 +14,11 @@ namespace Daylily.Plugin.Core.Command
     [Command("help")]
     public class Help : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             return new CommonMessageResponse("太多了哇..都在这里：https://www.zybuluo.com/milkitic/note/1130078", messageObj);

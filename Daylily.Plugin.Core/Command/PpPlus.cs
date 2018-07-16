@@ -24,9 +24,14 @@ namespace Daylily.Plugin.Core.Command
     [Command("pp")]
     public class PpPlus : CommandApp
     {
+        public override void Initialize(string[] args)
+        {
+
+        }
+
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            string userId = messageObj.Parameter;
+            string userId = messageObj.ArgString;
 
             Logger.Origin("Sent request.");
             var response = WebRequestUtil.CreatePostHttpResponse("https://syrin.me/pp+/u/" + userId);

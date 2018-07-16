@@ -12,26 +12,27 @@ namespace Daylily.Common.Function.Command
     class ParamDividerV2 : IParamDivider
     {
         public string CommandName { get; private set; }
-        public string Parameter { get; private set; }
+        public string ArgString { get; private set; }
 
-        public Dictionary<string, string> Parameters { get; } = new Dictionary<string, string>();
+        public Dictionary<string, string> Args { get; } = new Dictionary<string, string>();
+        public List<string> FreeArgs { get; } = new List<string>();
         public Dictionary<string, string> Switches { get; } = new Dictionary<string, string>();
-        public List<string> SimpleParams { get; set; }
+        public List<string> SimpleArgs { get; set; }
 
         private static readonly char[] Quote = { '\'', '\"' };
         public bool TryDivide(string fullCmd)
         {
             CommandName = fullCmd.Split(' ')[0].Trim();
-            Parameter = fullCmd.IndexOf(" ", StringComparison.Ordinal) == -1
+            ArgString = fullCmd.IndexOf(" ", StringComparison.Ordinal) == -1
                 ? ""
                 : fullCmd.Substring(fullCmd.IndexOf(" ", StringComparison.Ordinal) + 1,
                     fullCmd.Length - CommandName.Length - 1).Trim();
             List<string> splitedParam = new List<string>();
-            SimpleParams = Parameter.Split(' ').ToList();
-            if (Parameter == "") return false;
+            SimpleArgs = ArgString.Split(' ').ToList();
+            if (ArgString == "") return false;
             try
             {
-                splitedParam.AddRange(Parameter.Split(' '));
+                splitedParam.AddRange(ArgString.Split(' '));
                 foreach (var item in splitedParam)
                 {
                     if (Quote.Any(q => ContainsChar(q, item)))
@@ -78,17 +79,23 @@ namespace Daylily.Common.Function.Command
                     }
                     else
                     {
-                        if (!isLastKeyOrValue)
-                            throw new ArgumentException("Expect key.");
                         foreach (var q in Quote)
                         {
                             tmpValue = item.Trim(q);
                         }
-
-                        Parameters.Add(tmpKey, tmpValue);
-                        tmpKey = null;
-                        tmpValue = null;
-                        isLastKeyOrValue = false;
+                        if (!isLastKeyOrValue)
+                        {
+                            FreeArgs.Add(tmpValue);
+                            //throw new ArgumentException("Expect key.");
+                        }
+                        else
+                        {
+                            Args.Add(tmpKey, tmpValue);
+                            tmpKey = null;
+                            tmpValue = null;
+                            isLastKeyOrValue = false;
+                        }
+                    
                     }
                 }
 

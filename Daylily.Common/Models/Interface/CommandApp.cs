@@ -13,6 +13,7 @@ namespace Daylily.Common.Models.Interface
         public sealed override AppType AppType => AppType.Command;
         public string[] Commands { get; }
 
+        public abstract void Initialize(string[] args);
         public abstract CommonMessageResponse Message_Received(in CommonMessage messageObj);
 
         protected CommandApp()

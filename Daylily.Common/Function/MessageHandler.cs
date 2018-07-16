@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -7,6 +8,7 @@ using Daylily.Common.Assist;
 using Daylily.Common.Function.Command;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
@@ -235,28 +237,104 @@ namespace Daylily.Common.Function
 
         private static void HandleMessageCmd(CommonMessage commonMessage)
         {
-            string fullCmd = commonMessage.FullCommand;
+            var cm = commonMessage;
+            string fullCmd = cm.FullCommand;
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
-            ca.Analyze(fullCmd, commonMessage);
+            ca.Analyze(fullCmd, cm);
 
             CommonMessageResponse replyObj = null;
-            if (!PluginManager.CommandMap.ContainsKey(commonMessage.Command)) return;
-            CommandApp plugin = PluginManager.CommandMap[commonMessage.Command];
+            if (!PluginManager.CommandMap.ContainsKey(cm.Command)) return;
+            Type t = PluginManager.CommandMap[cm.Command];
+            CommandApp plugin = GetInstance(t);
+            
             Task.Run(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        replyObj = plugin.Message_Received(commonMessage);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Exception(ex, fullCmd, plugin?.Name ?? "Unknown plugin");
-                    }
-
-                    if (replyObj == null) return;
-                    CqApi.SendMessage(replyObj);
+                    SetValues(cm, t, plugin);
+                    replyObj = plugin.Message_Received(cm);
                 }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex, fullCmd, plugin?.Name ?? "Unknown plugin");
+                }
+
+                if (replyObj == null) return;
+                CqApi.SendMessage(replyObj);
+            }
             );
         }
+
+        private static void SetValues(CommonMessage cm, Type t, CommandApp plugin)
+        {
+            var props = t.GetProperties();
+            int index = 0;
+            string[] freeArray = cm.FreeArgs.ToArray();
+            foreach (var prop in props)
+            {
+                var info = prop.GetCustomAttributes(false);
+                if (info.Length != 1) continue;
+                switch (info[0])
+                {
+                    case ArgAttribute argAttrib:
+                        if (cm.Args.ContainsKey(argAttrib.Name))
+                        {
+                            if (argAttrib.IsSwitch)
+                                prop.SetValue(plugin, true);
+                            else
+                            {
+                                dynamic obj = ParseStr(prop, cm.Args[argAttrib.Name]);
+                                prop.SetValue(plugin, obj);
+                            }
+                        }
+                        break;
+                    case FreeArgAttribute _:
+                        {
+                            dynamic obj = ParseStr(prop, freeArray[index]);
+                            prop.SetValue(plugin, obj);
+                            index++;
+                            break;
+                        }
+                }
+            }
+        }
+
+        private static dynamic ParseStr(System.Reflection.PropertyInfo prop, string argStr)
+        {
+            dynamic obj;
+            if (prop.PropertyType == typeof(int))
+            {
+                obj = Convert.ToInt32(argStr);
+            }
+            else if (prop.PropertyType == typeof(long))
+            {
+                obj = Convert.ToInt64(argStr);
+            }
+            else if (prop.PropertyType == typeof(short))
+            {
+                obj = Convert.ToInt16(argStr);
+            }
+            else if (prop.PropertyType == typeof(string))
+            {
+                obj = argStr;//Convert.ToString(cmd);
+            }
+            else if (prop.PropertyType == typeof(bool))
+            {
+                string tmpCmd = argStr == "" ? "true" : argStr;
+                if (tmpCmd == "0")
+                    tmpCmd = "false";
+                else if (tmpCmd == "1")
+                    tmpCmd = "true";
+                obj = Convert.ToBoolean(tmpCmd);
+            }
+            else
+            {
+                throw new NotSupportedException("sb");
+            }
+
+            return obj;
+        }
+
+        private static CommandApp GetInstance(Type type) => Activator.CreateInstance(type) as CommandApp;
     }
 }

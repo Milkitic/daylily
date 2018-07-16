@@ -123,6 +123,5 @@ namespace Daylily.Common.Models.Interface
         private readonly string _pluginDir = Path.Combine(Domain.CurrentDirectory, "plugins");
 
         #endregion private members
-
     }
 }

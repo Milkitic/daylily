@@ -29,11 +29,11 @@ namespace Daylily.Common.Console
                         break;
                     case "console":
                         {
-                            if (ca.Parameters.ContainsKey("cut-count"))
+                            if (ca.Args.ContainsKey("cut-count"))
                             {
                                 if (ca.Switches.ContainsKey("set"))
                                 {
-                                    SocketLogger.CutCount = int.Parse(ca.Parameters["cut-count"]);
+                                    SocketLogger.CutCount = int.Parse(ca.Args["cut-count"]);
                                     Logger.Raw(ca.CommandName + ": set: oparation succeed");
                                 }
                                 else
