@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.CosResponse;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
@@ -12,26 +14,23 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Application
 {
+    [Name("嗅探黄图")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Beta)]
+    [Help("发现福利图和黄图时进行提醒和禁言（仅新人mapper群）")]
     public class PornDetector : ApplicationApp
     {
-        public override string Name => "嗅探黄图";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Beta;
-        public override string VersionNumber => "1.0";
-        public override string Description => "发现福利图和黄图时进行提醒和禁言（仅新人mapper群）";
-
         private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> Md5List { get; } = new Dictionary<string, CosObject>();
 
-        public override void OnLoad(string[] args)
+        public PornDetector()
         {
             Logger.Origin("上次用户计数载入中。");
             UserCount = LoadSettings<Dictionary<string, int>>() ?? new Dictionary<string, int>();
             Logger.Origin("上次用户计数载入完毕。");
-            //throw new NotImplementedException();
         }
 
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             // 查黄图
             if (messageObj.Group == null || messageObj.GroupId != "133605766") return null;

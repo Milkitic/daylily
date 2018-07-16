@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Daylily.Common.Models.Enum;
 
 namespace Daylily.Common.Models.Interface
@@ -9,7 +10,6 @@ namespace Daylily.Common.Models.Interface
     {
         public sealed override AppType AppType => AppType.Application;
 
-        public abstract CommonMessageResponse OnExecute(in CommonMessage messageObj);
-
+        public abstract CommonMessageResponse Message_Received(in CommonMessage messageObj);
     }
 }

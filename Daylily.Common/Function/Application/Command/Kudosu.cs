@@ -6,12 +6,14 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using CSharpOsu;
 using CSharpOsu.Module;
 using Daylily.Common.Database.BLL;
 using Daylily.Common.Database.Model;
 using Daylily.Common.Interface;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
@@ -21,24 +23,17 @@ using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application.Command
 {
+    [Name("Modding查询")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Help("查询modding（被点赞或给与kd），并生成对应统计图")]
+    [Command("kd")]
     public class Kudosu : CommandApp
     {
-        public override string Name => "Modding查询";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Stable;
-        public override string VersionNumber => "1.0";
-        public override string Description => "查询modding（被点赞或给与kd），并生成对应统计图";
-        public override string Command => "kd";
-
         private CommonMessage _message;
         private Thread _t;
 
-        public override void OnLoad(string[] args)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             _message = messageObj;
             _t = new Thread(Async);

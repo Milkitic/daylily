@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using CSharpOsu;
 using CSharpOsu.Module;
 using Daylily.Common.Database.BLL;
 using Daylily.Common.Database.Model;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Models.Osu;
@@ -17,23 +19,17 @@ using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application.Command
 {
+    [Name("随机挖坑")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Beta)]
+    [Help("随机挖坑")]
+    [Command("挖坑")]
     public class MyGraveyard : CommandApp
     {
-        public override string Name => "随机挖坑";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Beta;
-        public override string VersionNumber => "1.0";
-        public override string Description => "随机挖坑";
-        public override string Command => "挖坑";
-
         private CommonMessage _message;
         private Thread _t;
 
-        public override void OnLoad(string[] args)
-        {
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             _message = messageObj;
             _t = new Thread(Async);

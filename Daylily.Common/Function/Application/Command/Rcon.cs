@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
@@ -9,29 +11,22 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Application.Command
 {
+    [Name("日程提醒")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Alpha)]
+    [Help("建立一个日程提醒")]
+    [Command("rcon")]
     public class Rcon : CommandApp
     {
-        public override string Name => "日程提醒";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Alpha;
-        public override string VersionNumber => "1.0";
-        public override string Description => "建立一个日程提醒";
-        public override string Command => "rcon";
-
-        private static string UserId { get; set; }
+        private static string _userId;
         private static Thread _tThread;
         private string _message;
 
-        public override void OnLoad(string[] args)
-        {
-            Logger.Warn("当前" + Name + "仅为" + Version + "版！");
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj) // 必要方法
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             // 发送者的QQ
             string userId = messageObj.UserId;
-            UserId = userId;
+            _userId = userId;
 
             // 包含消息种类，分别为Group, Discuss, Private，省去判断以上是否为null来判定消息种类
             MessageType type = messageObj.MessageType;
@@ -99,7 +94,7 @@ namespace Daylily.Common.Function.Application.Command
             {
                 Thread.Sleep((int)(sleepTime * 60 * 1000));
                 // 这里可以做大量其他操作，更新数据库等，不阻塞主线程
-                SendMessage(new CommonMessageResponse(msg, UserId, true), null, null, MessageType.Private);
+                SendMessage(new CommonMessageResponse(msg, _userId, true), null, null, MessageType.Private);
             }
             catch (Exception ex)
             {

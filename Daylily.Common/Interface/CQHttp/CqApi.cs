@@ -7,6 +7,9 @@ using System.Web;
 using Daylily.Common.Models.CQResponse.Api.Abstract;
 using Daylily.Common.Utils;
 using Daylily.Common.Utils.HttpRequest;
+using Daylily.Common.Models;
+using Daylily.Common.Models.Enum;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Interface.CQHttp
 {
@@ -28,6 +31,55 @@ namespace Daylily.Common.Interface.CQHttp
         private const string GroupMemberListPath = "/get_group_member_list";
 
         private const string GroupInfoPath = "/_get_group_info";
+
+        public static void SendMessage(CommonMessageResponse response)
+        {
+            switch (response.MessageType)
+            {
+                case MessageType.Group:
+                    SendGroupMsgResp groupMsgResp = SendGroupMessageAsync(response.GroupId,
+                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
+                    break;
+                case MessageType.Discuss:
+                    SendDiscussMsgResp discussMsgResp = SendDiscussMessageAsync(response.DiscussId,
+                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
+                    break;
+                case MessageType.Private:
+                    SendPrivateMsgResp privateMsgResp = SendPrivateMessageAsync(response.UserId, response.Message);
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public static void SendMessage(CommonMessageResponse response, string groupId, string discussId,
+            MessageType messageType)
+        {
+            switch (messageType)
+            {
+                case MessageType.Group:
+                    SendGroupMsgResp groupMsgResp = SendGroupMessageAsync(groupId,
+                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
+                    break;
+                case MessageType.Discuss:
+                    SendDiscussMsgResp discussMsgResp = SendDiscussMessageAsync(discussId,
+                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
+                    break;
+                case MessageType.Private:
+                    SendPrivateMsgResp privateMsgResp = SendPrivateMessageAsync(response.UserId, response.Message);
+                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+
         /// <summary>
         /// 发送私聊消息
         /// </summary>

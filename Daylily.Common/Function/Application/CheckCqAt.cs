@@ -2,30 +2,25 @@
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application
 {
+    [Name("嗅探at")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Help("当自己被at时回击at对方")]
     public class CheckCqAt : ApplicationApp
     {
-        public override string Name => "嗅探at";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Stable;
-        public override string VersionNumber => "1.0";
-        public override string Description => "当自己被at时回击at对方";
-
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
 
-        public override void OnLoad(string[] args)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.MessageType == MessageType.Private) return null;
             if (messageObj.Group != null && messageObj.GroupId == "133605766" &&

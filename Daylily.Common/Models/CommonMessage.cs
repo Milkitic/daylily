@@ -1,11 +1,12 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Models.Enum;
 
 namespace Daylily.Common.Models
 {
-    public class CommonMessage
+    public class CommonMessage : ICloneable
     {
         public string Message { get; set; }
 
@@ -68,6 +69,11 @@ namespace Daylily.Common.Models
             PermissionLevel = level;
 
             Group = groupMsg;
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 }

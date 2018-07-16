@@ -1,30 +1,25 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CSharpOsu;
 using CSharpOsu.Module;
 using Daylily.Common.Database.BLL;
 using Daylily.Common.Database.Model;
 using Daylily.Common.Interface;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {
+    [Name("绑定id")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Help("绑定osu id")]
+    [Command("setid")]
     public class SetId : CommandApp
     {
-        public override string Name => "绑定id";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Stable;
-        public override string VersionNumber => "1.0";
-        public override string Description => "绑定osu id";
-        public override string Command => "setid";
-
-        public override void OnLoad(string[] args)
-        {
-
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (string.IsNullOrEmpty(messageObj.Parameter))
                 return null;

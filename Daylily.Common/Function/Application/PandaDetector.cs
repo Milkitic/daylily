@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 //using System.Threading;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
@@ -15,24 +16,17 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Application
 {
+    [Name("熊猫斗图")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Beta)]
+    [Help("发现各类熊猫图时有几率返回一张熊猫图")]
     public class PandaDetector : ApplicationApp
     {
-        public override string Name => "斗图";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Beta;
-        public override string VersionNumber => "1.0";
-        public override string Description => "发现各类熊猫图时有几率返回一张熊猫图";
-
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
 
         private static int _totalCount;
 
-        public override void OnLoad(string[] args)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.MessageType == MessageType.Private) return null;
             if (messageObj.GroupId == "133605766")
@@ -51,8 +45,7 @@ namespace Daylily.Common.Function.Application
             //GroupDic[groupId].GroupType = messageObj.GroupId == null ? MessageType.Discuss : MessageType.Group;
 
             var imgList = CqCode.GetImageInfo(messageObj.Message);
-            if (imgList == null)
-                return null;
+            if (imgList == null) return null;
 
             foreach (var item in imgList)
             {

@@ -5,9 +5,9 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-//using System.Threading;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
@@ -16,17 +16,16 @@ using Newtonsoft.Json;
 
 namespace Daylily.Common.Function.Application
 {
+    [Name("死群熊猫")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Help("群长时间不说话时，发一张相关的熊猫。")]
     public class GroupQuiet : ApplicationApp
     {
-        public override string Name => "死群发熊猫";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Stable;
-        public override string VersionNumber => "1.0";
-        public override string Description => "群长时间不说话时，发熊猫";
-
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
         private static ConcurrentDictionary<string, GroupSettings> _groupDic;
-        public override void OnLoad(string[] args)
+
+        public GroupQuiet()
         {
             Logger.Origin("上次群发言情况载入中。");
             _groupDic = LoadSettings<ConcurrentDictionary<string, GroupSettings>>();
@@ -41,7 +40,7 @@ namespace Daylily.Common.Function.Application
             Logger.Origin("上次群发言情载入完毕，并开启了线程。");
         }
 
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.MessageType == MessageType.Private)
                 return null;

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
@@ -14,14 +16,12 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Application
 {
+    [Name("嗅探龙图")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Alpha)]
+    [Help("发现龙图时做出不同操作")]
     public class DragonDetectorAlpha : ApplicationApp
     {
-        public override string Name => "嗅探龙图";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Alpha;
-        public override string VersionNumber => "1.0";
-        public override string Description => "发现龙图时做出不同操作";
-
         private readonly List<string> _pathList = new List<string>();
         private readonly List<string> _receivedString = new List<string>();
 
@@ -34,12 +34,7 @@ namespace Daylily.Common.Function.Application
         private string _user, _group;
         private long _messageId;
 
-        public override void OnLoad(string[] args)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.Group == null) return null;
 

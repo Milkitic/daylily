@@ -4,22 +4,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application
 {
+    [Name("关键词触发")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Alpha)]
+    [Help("收到已给的关键词时，根据已给几率返回一张熊猫图")]
     public class KeywordTrigger : ApplicationApp
     {
-        public override string Name => "关键词触发";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Beta;
-        public override string VersionNumber => "1.0";
-        public override string Description => "发现各类熊猫图时有几率返回一张熊猫图";
-
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
         private static readonly string[] Me = { "我" };
         private static readonly string[] MeOut = { "me1.jpg" };
@@ -36,11 +36,7 @@ namespace Daylily.Common.Function.Application
         private static readonly string[] Sb = { "黄花菜" };
         private static readonly string[] SbOut = { "sb1.jpg", "sb2.jpg", "sb3.jpg", "sb4.jpg", "sb5.jpg", "sb6.jpg", "sb7.jpg", "sb8.jpg", "sb9.jpg" };
 
-        public override void OnLoad(string[] args)
-        {
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             //概率从小到大排序，更科学
             string msg = messageObj.Message;

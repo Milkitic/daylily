@@ -1,27 +1,22 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
 namespace Daylily.Common.Function.Application.Command
 {
+    [Name("插件管理")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Alpha)]
+    [Help("动态管理插件")]
+    [Command("plugin")]
     public class Plugin : CommandApp
     {
-        public override string Name => "插件管理";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Alpha;
-        public override string VersionNumber => "1.0";
-        public override string Description => "动态管理插件";
-        public override string Command => "plugin";
-
-        public override void OnLoad(string[] args)
-        {
-
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj) // 必要方法
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             string[] args = messageObj.Parameter.Split(' ');
 

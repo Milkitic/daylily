@@ -2,7 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Function.Application;
 using Daylily.Common.Function.Application.Command;
@@ -73,12 +75,6 @@ namespace Daylily.Common.Function
                         try
                         {
                             if (type.BaseType.BaseType != typeof(AppConstruct)) continue;
-                            if (type.BaseType == typeof(CommandApp))
-                                if (type.IsDefined(typeof(CommandAttribute), false) == false)
-                                {
-                                    Logger.Error("bad implementation");
-                                    continue;
-                                }
                             typeName = type.Name ?? "";
                             InsertPlugin(type, args);
 
@@ -86,7 +82,7 @@ namespace Daylily.Common.Function
                         }
                         catch (Exception ex)
                         {
-                            Logger.Error(typeName + " occurred an unexpected error.");
+                            Logger.Error(typeName + " 抛出了未处理的异常。");
                             Logger.Exception(ex);
                         }
                     }
@@ -137,38 +133,52 @@ namespace Daylily.Common.Function
 
         private static void InsertPlugin(Type type, string[] args)
         {
-            AppConstruct plugin = Activator.CreateInstance(type) as AppConstruct;
-            //if (plugin.AppType != AppType.Command)
+            try
             {
-                InsertPlugin(plugin, args);
+                AppConstruct plugin = Activator.CreateInstance(type) as AppConstruct;
+                //if (plugin.AppType != AppType.Command)
+                {
+                    InsertPlugin(plugin, args);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex.InnerException ?? ex);
             }
         }
 
         private static void InsertPlugin(AppConstruct plugin, string[] args)
         {
-            plugin.OnLoad(args);
+
             switch (plugin.AppType)
             {
                 case AppType.Command:
                     CommandApp cmdPlugin = (CommandApp)plugin;
-                    if (cmdPlugin.Command == null)
-                        Logger.Warn($"\"{plugin.Name}\" 没有设置命令！！");
-                    else
+                    string str = "";
+                    if (cmdPlugin.Commands != null)
                     {
-                        string[] cmds = cmdPlugin.Command.Split(',');
-                        foreach (var cmd in cmds)
-                            CommandMap.GetOrAdd(cmd, (CommandApp)plugin);
+                        str = "(";
+                        foreach (var cmd in cmdPlugin.Commands)
+                        {
+                            CommandMap.TryAdd(cmd, (CommandApp)plugin);
+                            str += cmd + ",";
+                        }
+
+                        str = str.TrimEnd(',') + ") ";
                     }
 
-                    Logger.Origin($"命令 \"{plugin.Name}\" ({cmdPlugin.Command}) 已经加载完毕。");
+                    Logger.Origin($"命令 \"{plugin.Name}\" {str}已经加载完毕。");
                     break;
                 case AppType.Application:
                     ApplicationList.Add((ApplicationApp)plugin);
                     Logger.Origin($"应用 \"{plugin.Name}\" 已经加载完毕。");
                     break;
+                case AppType.Service:
                 default:
-                    ServiceList.Add((ServiceApp)plugin);
-                    Logger.Origin($"服务 \"{plugin.Name}\" 已经加载完毕。");
+                    ServiceApp svcPlugin = (ServiceApp)plugin;
+                    Task.Run(() => { svcPlugin.RunTask(args); });
+                    ServiceList.Add(svcPlugin);
+                    Logger.Origin($"服务 \"{svcPlugin.Name}\" 已经加载完毕。");
                     break;
             }
         }

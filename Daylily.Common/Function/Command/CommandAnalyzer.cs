@@ -38,5 +38,23 @@ namespace Daylily.Common.Function.Command
             Parameter = _divider.Parameter;
             SimpleParams = _divider.SimpleParams;
         }
+
+        public void Analyze(string fullCmd, CommonMessage commonMessage)
+        {
+            //outCm = (CommonMessage)inCm.Clone();
+            if (_divider.TryDivide(fullCmd))
+            {
+                commonMessage.Parameters = _divider.Parameters;
+                commonMessage.Switches = _divider.Switches;
+            }
+            else
+            {
+                commonMessage.Parameters = new Dictionary<string, string>();
+                commonMessage.Switches = new Dictionary<string, string>();
+            }
+            commonMessage.Command = _divider.CommandName;
+            commonMessage.Parameter = _divider.Parameter;
+            commonMessage.SimpleParams = _divider.SimpleParams;
+        }
     }
 }

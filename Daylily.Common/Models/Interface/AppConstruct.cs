@@ -3,6 +3,7 @@ using System.IO;
 using Daylily.Common.Assist;
 using Daylily.Common.Interface.CQHttp;
 using Daylily.Common.IO;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.CQResponse.Api;
 using Daylily.Common.Models.CQResponse.Api.Abstract;
 using Daylily.Common.Models.Enum;
@@ -13,71 +14,70 @@ namespace Daylily.Common.Models.Interface
 {
     public abstract class AppConstruct
     {
+        #region public members
+
+        public abstract AppType AppType { get; }
+        public string Name { get; }
+        public string Author { get; }
+        public int Major { get; }
+        public int Minor { get; }
+        public int Patch { get; }
+        public string Version => string.Concat(Major, ".", Minor, ".", Patch);
+        public PluginVersion PluginVersion { get; }
+        public string[] Helps { get; }
+        
+        #endregion public members
+
+        #region protected members
+
+        protected AppConstruct()
+        {
+            Type t = GetType();
+            if (!t.IsDefined(typeof(NameAttribute), false)) Name = t.Name;
+            if (!t.IsDefined(typeof(AuthorAttribute), false)) Author = "undefined";
+            if (!t.IsDefined(typeof(HelpAttribute), false)) Helps = new[] { "尚无帮助信息" };
+            if (!t.IsDefined(typeof(VersionAttribute), false))
+            {
+                Major = 0;
+                Minor = 0;
+                Patch = 1;
+                PluginVersion = PluginVersion.Alpha;
+            }
+
+            var attrs = t.GetCustomAttributes(false);
+            foreach (var attr in attrs)
+            {
+                switch (attr)
+                {
+                    case NameAttribute name:
+                        Name = name.Name ?? t.Name;
+                        break;
+                    case AuthorAttribute author:
+                        Author = author.Author ?? "undefined";
+                        break;
+                    case VersionAttribute ver:
+                        Major = ver.Major;
+                        Minor = ver.Minor;
+                        Patch = ver.Patch;
+                        PluginVersion = ver.PluginVersion;
+                        if (PluginVersion == PluginVersion.Alpha)
+                            Logger.Warn($"\"{Name}\" 仅为{PluginVersion}版本。可能出现大量无法预料的问题。");
+                        break;
+                    case HelpAttribute help:
+                        Helps = help.Helps ?? new[] { "尚无帮助信息" };
+                        break;
+                }
+            }
+        }
+
         protected PermissionLevel CurrentLevel { get; set; }
 
         protected static readonly Random Rnd = new Random();
 
-        /// <summary>
-        /// 以逗号分隔 如"sleep,slip"
-        /// </summary>
-        public abstract string Name { get; }
-        public abstract string Author { get; }
-        public abstract PluginVersion Version { get; }
-        public abstract string VersionNumber { get; }
-        public abstract string Description { get; }
-       public abstract AppType AppType { get; }
-        public abstract void OnLoad(string[] args);
-    
-        public static void SendMessage(CommonMessageResponse response)
-        {
-            switch (response.MessageType)
-            {
-                case MessageType.Group:
-                    SendGroupMsgResp groupMsgResp = CqApi.SendGroupMessageAsync(response.GroupId,
-                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
-                    break;
-                case MessageType.Discuss:
-                    SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(response.DiscussId,
-                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
-                    break;
-                case MessageType.Private:
-                    SendPrivateMsgResp privateMsgResp =
-                        CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+        protected static void SendMessage(CommonMessageResponse response) => CqApi.SendMessage(response);
 
-        public static void SendMessage(CommonMessageResponse response, string groupId, string discussId,
-            MessageType messageType)
-        {
-            switch (messageType)
-            {
-                case MessageType.Group:
-                    SendGroupMsgResp groupMsgResp = CqApi.SendGroupMessageAsync(groupId,
-                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
-                    break;
-                case MessageType.Discuss:
-                    SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(discussId,
-                        (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
-                    break;
-                case MessageType.Private:
-                    SendPrivateMsgResp privateMsgResp =
-                        CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private readonly string _pluginDir = Path.Combine(Domain.CurrentDirectory, "plugins");
+        protected static void SendMessage(CommonMessageResponse response, string groupId, string discussId,
+            MessageType messageType) => CqApi.SendMessage(response, groupId, discussId, messageType);
 
         protected void SaveSettings<T>(T cls, string fileName = null)
         {
@@ -115,5 +115,14 @@ namespace Daylily.Common.Models.Interface
                 return default;
             }
         }
+
+        #endregion protected members
+
+        #region private members
+
+        private readonly string _pluginDir = Path.Combine(Domain.CurrentDirectory, "plugins");
+
+        #endregion private members
+
     }
 }

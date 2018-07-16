@@ -1,27 +1,22 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Daylily.Common.Database.BLL;
 using Daylily.Common.Interface.Elo;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 
 namespace Daylily.Plugin.Core.Command
 {
+    [Name("ELO查询")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Alpha)]
+    [Help("获取自己的elo信息")]
+    //[Command] // 弃用，晚些整合
     public class MyElo : CommandApp
     {
-        public override string Name => "ELO查询";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Stable;
-        public override string VersionNumber => "1.0";
-        public override string Description => "获取自己的elo信息";
-        public override string Command => null; // 弃用，晚些整合
-
-        public override void OnLoad(string[] args)
-        {
-
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             BllUserRole bllUserRole = new BllUserRole();
             EloApi eloApi = new EloApi();

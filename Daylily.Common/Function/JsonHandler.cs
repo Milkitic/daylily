@@ -26,7 +26,7 @@ namespace Daylily.Common.Function
                     {
                         PrivateMsg parsedObj = JsonConvert.DeserializeObject<PrivateMsg>(json);
                         parsed = JsonConvert.DeserializeObject<PrivateMsg>(json);
-                        MessageHandler privateHandler = new MessageHandler(parsedObj);
+                        _ = new MessageHandler(parsedObj);
                     }
 
                     // 群聊
@@ -34,7 +34,7 @@ namespace Daylily.Common.Function
                     {
                         GroupMsg parsedObj = JsonConvert.DeserializeObject<GroupMsg>(json);
                         parsed = JsonConvert.DeserializeObject<GroupMsg>(json);
-                        MessageHandler groupHandler = new MessageHandler(parsedObj);
+                        _ = new MessageHandler(parsedObj);
                     }
 
                     // 讨论组
@@ -42,7 +42,7 @@ namespace Daylily.Common.Function
                     {
                         DiscussMsg parsedObj = JsonConvert.DeserializeObject<DiscussMsg>(json);
                         parsed = JsonConvert.DeserializeObject<DiscussMsg>(json);
-                        MessageHandler discussHandler = new MessageHandler(parsedObj);
+                        _ = new MessageHandler(parsedObj);
                     }
 
                     Dispatcher dispatcher = new Dispatcher(new List<IMessageList>

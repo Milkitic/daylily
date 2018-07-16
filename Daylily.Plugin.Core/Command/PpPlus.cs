@@ -5,8 +5,10 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
@@ -15,20 +17,14 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Plugin.Core.Command
 {
+    [Name("PP+查询")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Beta)]
+    [Help("获取自己的PP+信息，并生成六维图")]
+    [Command("pp")]
     public class PpPlus : CommandApp
     {
-        public override string Name => "PP+查询";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Beta;
-        public override string VersionNumber => "1.0";
-        public override string Description => "获取自己的PP+信息，并生成六维图";
-        public override string Command => "pp";
-
-        public override void OnLoad(string[] args)
-        {
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             string userId = messageObj.Parameter;
 

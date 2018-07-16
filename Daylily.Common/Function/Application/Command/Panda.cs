@@ -5,23 +5,23 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
 
 namespace Daylily.Common.Function.Application.Command
 {
+    [Name("熊猫生成器")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Beta)]
+    [Help("生成熊猫图，表情随机")]
+    [Command("panda")]
     public class Panda : CommandApp
     {
-        public override string Name => "熊猫生成器";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Beta;
-        public override string VersionNumber => "1.0";
-        public override string Description => "生成熊猫图，表情随机";
-        public override string Command => "panda";
-
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
         private static readonly string FontDir = Path.Combine(Domain.CurrentDirectory, "font");
 
@@ -31,12 +31,7 @@ namespace Daylily.Common.Function.Application.Command
         private const FontStyle FontStyle = System.Drawing.FontStyle.Bold;
         private const int SmFontSize = 13, NmFontSize = 16, LgFontSize = 26;
 
-        public override void OnLoad(string[] args)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             if (messageObj.MessageType == MessageType.Group && messageObj.GroupId != "672076603")
                 return new CommonMessageResponse(LoliReply.PrivateOnly, messageObj);

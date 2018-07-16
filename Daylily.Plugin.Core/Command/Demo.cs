@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Models;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
@@ -10,30 +12,22 @@ using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Plugin.Core.Command
 {
+    // 激活插件的命令，支持多字符串
+    [Command("demo")]
+    // 插件名
+    [Name("测试Demo插件")]
+    // 插件作者
+    [Author("yf_extension")]
+    // 插件版本
+    [Version(0, 0, 1, PluginVersion.Stable)]
+    // 插件说明，用于help查询
+    [Help("用于对于插件开发进行Demo演示")]
     class Demo : CommandApp // 继承此类做为命令，此外还有其他两种类型
     {
-        //插件名
-        public override string Name => "测试Demo插件";
-        //插件作者
-        public override string Author => "yf_extension";
-        //插件版本
-        public override PluginVersion Version => PluginVersion.Stable;
-        //插件版本号
-        public override string VersionNumber => "1.0";
-        //插件说明，用于help查询
-        public override string Description => "用于对于插件开发进行Demo演示";
-        //激活插件的命令（仅当AppType为Command的时候有效，英文逗号分隔）
-        public override string Command => null;
-
         static Thread _tThread;
         static string UserId { get; set; }
 
-        public override void OnLoad(string[] args)
-        {
-
-        }
-
-        public override CommonMessageResponse OnExecute(in CommonMessage messageObj) // 必要方法
+        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             // 接收的信息
             string message = messageObj.Message;

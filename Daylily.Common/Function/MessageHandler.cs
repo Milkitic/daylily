@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,9 +24,9 @@ namespace Daylily.Common.Function
 
         public static string CommandFlag = "!";
 
-        //private readonly Random _rnd = new Random();
-        //private const int MinTime = 200; // 回应的反应时间
-        //private const int MaxTime = 300; // 回应的反应时间
+        private readonly Random _rnd = new Random();
+        private const int MinTime = 100; // 每条缓冲时间
+        private const int MaxTime = 300; // 每条缓冲时间
 
         /// <summary>
         /// 群聊消息
@@ -41,7 +42,7 @@ namespace Daylily.Common.Function
             else if (!GroupInfo[id].LockMsg)
             {
                 GroupInfo[id].LockMsg = true;
-                AppConstruct.SendMessage(new CommonMessageResponse(parsedObj.Message, new CommonMessage(parsedObj)));
+                CqApi.SendMessage(new CommonMessageResponse(parsedObj.Message, new CommonMessage(parsedObj)));
             }
 
             if (!GroupInfo[id].TryRun(() => HandleGroupMessage(parsedObj)))
@@ -64,7 +65,7 @@ namespace Daylily.Common.Function
             else if (!DiscussInfo[id].LockMsg)
             {
                 DiscussInfo[id].LockMsg = true;
-                AppConstruct.SendMessage(new CommonMessageResponse(parsedObj.Message, new CommonMessage(parsedObj)));
+                CqApi.SendMessage(new CommonMessageResponse(parsedObj.Message, new CommonMessage(parsedObj)));
             }
 
             if (!DiscussInfo[id].TryRun(() => HandleDiscussMessage(parsedObj)))
@@ -87,7 +88,7 @@ namespace Daylily.Common.Function
             else if (!PrivateInfo[id].LockMsg)
             {
                 PrivateInfo[id].LockMsg = true;
-                AppConstruct.SendMessage(new CommonMessageResponse("？？求您慢点说话好吗", new CommonMessage(parsedObj)));
+                CqApi.SendMessage(new CommonMessageResponse("？？求您慢点说话好吗", new CommonMessage(parsedObj)));
             }
 
             if (!PrivateInfo[id].TryRun(() => HandlePrivateMessage(parsedObj)))
@@ -96,9 +97,8 @@ namespace Daylily.Common.Function
             }
         }
 
-        private void HandleGroupMessage(GroupMsg obj)
+        private void HandleGroupMessage(GroupMsg parsedObj)
         {
-            var parsedObj = obj;
             long groupId = parsedObj.GroupId;
 
             while (GroupInfo[groupId].MsgQueue.TryDequeue(out var currentInfo))
@@ -117,10 +117,8 @@ namespace Daylily.Common.Function
             GroupInfo[groupId].LockMsg = false;
         }
 
-        private void HandleDiscussMessage(DiscussMsg obj)
+        private void HandleDiscussMessage(DiscussMsg parsedObj)
         {
-            var parsedObj = obj;
-
             long discussId = parsedObj.DiscussId;
             while (DiscussInfo[discussId].MsgQueue.TryDequeue(out var currentInfo))
             {
@@ -138,10 +136,8 @@ namespace Daylily.Common.Function
             DiscussInfo[discussId].LockMsg = false;
         }
 
-        private void HandlePrivateMessage(PrivateMsg obj)
+        private void HandlePrivateMessage(PrivateMsg parsedObj)
         {
-            var parsedObj = obj;
-
             long userId = parsedObj.UserId;
             while (PrivateInfo[userId].MsgQueue.TryDequeue(out var currentInfo))
             {
@@ -189,7 +185,7 @@ namespace Daylily.Common.Function
                 {
                     if (commonMessage.UserId != "2241521134")
                     {
-                        AppConstruct.SendMessage(new CommonMessageResponse(LoliReply.FakeRoot, commonMessage));
+                        CqApi.SendMessage(new CommonMessageResponse(LoliReply.FakeRoot, commonMessage));
                     }
                     else
                     {
@@ -205,7 +201,7 @@ namespace Daylily.Common.Function
                 {
                     if (GroupInfo[groupId].Info.Admins.Count(q => q.UserId == userId) == 0)
                     {
-                        AppConstruct.SendMessage(new CommonMessageResponse(LoliReply.FakeAdmin, commonMessage));
+                        CqApi.SendMessage(new CommonMessageResponse(LoliReply.FakeAdmin, commonMessage));
                     }
                     else
                     {
@@ -222,47 +218,45 @@ namespace Daylily.Common.Function
             }
 
             HandleMesasgeApp(commonMessage);
+            Thread.Sleep(_rnd.Next(MinTime, MaxTime));
         }
 
         private static void HandleMesasgeApp(CommonMessage commonMessage)
         {
             foreach (var item in PluginManager.ApplicationList)
             {
-                CommonMessageResponse replyObj = item.OnExecute(commonMessage);
-
-                if (replyObj == null) continue;
-                AppConstruct.SendMessage(replyObj);
+                Task.Run(() =>
+                {
+                    CommonMessageResponse replyObj = item.Message_Received(commonMessage);
+                    if (replyObj != null) CqApi.SendMessage(replyObj);
+                });
             }
         }
 
         private static void HandleMessageCmd(CommonMessage commonMessage)
         {
-            //Thread.Sleep(_rnd.Next(MinTime, MaxTime));
-
             string fullCmd = commonMessage.FullCommand;
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
-
-            ca.Analyze(fullCmd);
-            commonMessage.Command = ca.CommandName;
-            commonMessage.Parameter = ca.Parameter;
-            commonMessage.Parameters = ca.Parameters;
-            commonMessage.Switches = ca.Switches;
-            commonMessage.SimpleParams = ca.SimpleParams;
+            ca.Analyze(fullCmd, commonMessage);
 
             CommonMessageResponse replyObj = null;
-            CommandApp plugin = null;
             if (!PluginManager.CommandMap.ContainsKey(commonMessage.Command)) return;
-            try
-            {
-                plugin = PluginManager.CommandMap[commonMessage.Command];
-                replyObj = plugin.OnExecute(commonMessage);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex, fullCmd, plugin?.ToString() ?? "Unknown plugin");
-            }
-            if (replyObj == null) return;
-            AppConstruct.SendMessage(replyObj);
+            CommandApp plugin = PluginManager.CommandMap[commonMessage.Command];
+            Task.Run(() =>
+                {
+                    try
+                    {
+                        replyObj = plugin.Message_Received(commonMessage);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Exception(ex, fullCmd, plugin?.Name ?? "Unknown plugin");
+                    }
+
+                    if (replyObj == null) return;
+                    CqApi.SendMessage(replyObj);
+                }
+            );
         }
     }
 }

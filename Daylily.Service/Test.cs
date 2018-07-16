@@ -1,32 +1,31 @@
 ﻿using Daylily.Common.Models;
 using System;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Service
 {
+    [Name("后台计时")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Help("后台计时")]
     public class Test : ServiceApp
     {
-        public override string Name => "后台计时";
-        public override string Author => "yf_extension";
-        public override PluginVersion Version => PluginVersion.Alpha;
-        public override string VersionNumber => "1.0";
-        public override string Description => "后台计时";
-
-        public override void OnLoad(string[] args)
+        public override void RunTask(string[] args)
         {
-            Thread t = new Thread(Async);
-            t.Start();
-        }
-
-        private static void Async()
-        {
-            while (true)
+            Task.Run(() =>
             {
-                Thread.Sleep(1000);
-                Console.WriteLine(DateTime.Now);
-            }
+                while (true)
+                {
+                    Thread.Sleep(1000);
+                    Console.WriteLine(DateTime.Now);
+                }
+            });
         }
     }
 }
