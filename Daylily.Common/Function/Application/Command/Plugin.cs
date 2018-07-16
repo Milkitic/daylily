@@ -11,7 +11,7 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("插件管理")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Alpha)]
+    [Version(0, 0, 2, PluginVersion.Alpha)]
     [Help("动态管理插件")]
     [Command("plugin")]
     public class Plugin : CommandApp
