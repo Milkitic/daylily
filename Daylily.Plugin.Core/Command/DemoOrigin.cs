@@ -13,7 +13,7 @@ using Daylily.Common.Utils.LogUtils;
 namespace Daylily.Plugin.Core.Command
 {
     // 激活插件的命令，支持多字符串
-    [Command("demo")]
+    [Command("demo1")]
     // 插件名
     [Name("测试Demo插件")]
     // 插件作者
@@ -22,7 +22,7 @@ namespace Daylily.Plugin.Core.Command
     [Version(0, 0, 1, PluginVersion.Stable)]
     // 插件说明，用于help查询
     [Help("用于对于插件开发进行Demo演示")]
-    class Demo : CommandApp // 继承此类做为命令，此外还有其他两种类型
+    class DemoOrigin : CommandApp // 继承此类做为命令，此外还有其他两种类型
     {
         private static Thread _tThread;
         private static string UserId { get; set; }
@@ -58,7 +58,7 @@ namespace Daylily.Plugin.Core.Command
             // 此字段为 "demo"
             string command = messageObj.Command;
             // 此字段为 "asdf 1234"
-            string parameter = messageObj.ArgString;
+            string argString = messageObj.ArgString;
             // 当前处于的权限状态，默认为Public（即开放权限）
             // 当用户执行 /sudo 或 /root 会分别触发 Admin（对应群的管理员）和 Root（系统管理员），以此做出对应权限所对应的功能
             PermissionLevel level = messageObj.PermissionLevel;
@@ -77,9 +77,9 @@ namespace Daylily.Plugin.Core.Command
             GroupMsg groupObj = messageObj.Group;
 
             // 假设做一个定时报告程序（此仅为全局共享，对于用户用途不大）
-            if (string.IsNullOrEmpty(parameter))
+            if (string.IsNullOrEmpty(argString))
                 return new CommonMessageResponse("请填写参数", messageObj, enableAt: true);
-            string[] param = parameter.Split(" ");
+            string[] param = argString.Split(" ");
             if (param.Length > 2)
                 return new CommonMessageResponse("参数不正确", messageObj, enableAt: true);
 
