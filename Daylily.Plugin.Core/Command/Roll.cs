@@ -11,15 +11,17 @@ namespace Daylily.Plugin.Core.Command
 {
     [Name("获取随机数")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Version(0, 1, 0, PluginVersion.Stable)]
     [Help("获取一个随机数")]
     [Command("roll")]
     public class Roll : CommandApp
     {
+        [Arg("r", IsSwitch = true, Default = false)]
+        public bool Repeat { get; set; }
         [FreeArg]
-        public string UboundOrMsg { get; set; }
+        public string Param1OrMsg { get; set; }
         [FreeArg]
-        public string LboundOrMsg { get; set; }
+        public string Param2OrMsg { get; set; }
         [FreeArg]
         public string CountOrMsg { get; set; }
 
@@ -30,63 +32,58 @@ namespace Daylily.Plugin.Core.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            var query = messageObj.ArgString.Split(' ');
-            if (!int.TryParse(query[0], out _))
+            bool isParam1 = int.TryParse(Param1OrMsg, out int param1);
+            bool isParam2 = int.TryParse(Param2OrMsg, out int param2);
+            bool isCNum = int.TryParse(CountOrMsg, out int count);
+            if (!isParam1)
+                return new CommonMessageResponse(GetRand().ToString(), messageObj, true);
+            if (!isParam2)
+                return new CommonMessageResponse(GetRand(param1).ToString(), messageObj, true);
+            if (!isCNum)
+                return new CommonMessageResponse(GetRand(param1, param2).ToString(), messageObj, true);
+            return new CommonMessageResponse(GetRandMessage(param1, param2, count), messageObj, true);
+        }
+
+        private static int GetRand() => Rnd.Next(0, 101);
+
+        private static int GetRand(int uBound) => Rnd.Next(0, uBound + 1);
+
+        private static int GetRand(int lBound, int uBound) => Rnd.Next(lBound, uBound + 1);
+
+        private string GetRandMessage(int lBound, int uBound, int count)
+        {
+            uBound = uBound + 1;
+            if (uBound - lBound > 1000) return "总数只支持1000以内……";
+            if (count > 30) return "次数不能大于30……";
+            if (count < 0) return "缩不粗化";
+
+            List<int> newList = new List<int>();
+            if (Repeat || count > uBound - lBound)
             {
-                return new CommonMessageResponse(Next().ToString(), messageObj, true);
+                string repMsg = ((count > uBound - lBound) && !Repeat) ? "（可能包含重复结果）" : "";
+                for (int i = 0; i < count; i++)
+                {
+                    newList.Add(GetRand(lBound, uBound - 1));
+                }
+
+                newList.Sort();
+                return repMsg + string.Join(',', newList);
             }
 
-            switch (query.Length)
-            {
-                case 1:
-                    return new CommonMessageResponse(Next(int.Parse(query[0])).ToString(), messageObj, true);
-                case 2:
-                    return new CommonMessageResponse(Next(int.Parse(query[0]), int.Parse(query[1])).ToString(), messageObj,
-                        true);
-                case 3:
-                    return new CommonMessageResponse(
-                        Next(int.Parse(query[0]), int.Parse(query[1]), int.Parse(query[2])), messageObj, true);
-                default:
-                    return new CommonMessageResponse(LoliReply.ParamError, messageObj, true);
-            }
-        }
-
-        private int Next()
-        {
-            return Rnd.Next(0, 101);
-        }
-
-        private int Next(int uBound)
-        {
-            return Rnd.Next(0, uBound + 1);
-        }
-
-        private int Next(int lBound, int uBound)
-        {
-            return Rnd.Next(lBound, uBound + 1);
-        }
-
-        private string Next(int lBound, int uBound, int times)
-        {
-            if (uBound - lBound > 1000) return ("能不能不要把总数设太多..1000以内");
-            if (times > 30) return ("次数不能大于30...");
-            if (times < 0) return ("你想怎么样.jpg");
-            if (times > uBound - lBound) return ("你这样我没法给结果。");
+            // else
             List<int> list = new List<int>();
-            for (int i = lBound; i <= uBound; i++)
-            {
+            for (int i = lBound; i < uBound; i++)
                 list.Add(i);
-            }
 
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < times; i++)
+            for (int i = 0; i < count; i++)
             {
                 int index = Rnd.Next(0, list.Count);
-                sb.Append(list[index] + ", ");
+                newList.Add(list[index]);
                 list.RemoveAt(index);
             }
 
-            return sb.ToString().Trim().Trim(',');
+            newList.Sort();
+            return string.Join(',', newList);
         }
     }
 }
