@@ -11,7 +11,7 @@ namespace Daylily.Common.Models.Interface
     public abstract class CommandApp : AppConstruct
     {
         public sealed override AppType AppType => AppType.Command;
-        public string[] Commands { get; }
+        public string[] Commands { get; internal set; }
 
         public abstract void Initialize(string[] args);
         public abstract CommonMessageResponse Message_Received(in CommonMessage messageObj);

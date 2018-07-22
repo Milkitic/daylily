@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 using Daylily.Common.Assist;
 using Daylily.Common.Function.Application;
 using Daylily.Common.Function.Application.Command;
+using Daylily.Common.IO;
 using Daylily.Common.Models.Enum;
+using Daylily.Common.Models.Extension;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
 using Daylily.Common.Utils.LogUtils;
+using Newtonsoft.Json;
 
 namespace Daylily.Common.Function
 {
@@ -30,6 +33,7 @@ namespace Daylily.Common.Function
             new ConcurrentDictionary<string, Assembly>();
 
         private static readonly string PluginDir = Path.Combine(Domain.CurrentDirectory, "plugins");
+        private static readonly string ExtendedDir = Path.Combine(PluginDir, "extended");
 
         public static void LoadAllPlugins(string[] args)
         {
@@ -55,6 +59,40 @@ namespace Daylily.Common.Function
             foreach (var item in iType)
             {
                 InsertPlugin(item, args);
+            }
+
+            if (!Directory.Exists(ExtendedDir))
+                Directory.CreateDirectory(ExtendedDir);
+
+            foreach (var dir in Directory.GetDirectories(ExtendedDir))
+            {
+                string metaFile = Path.Combine(dir, "metadata.json");
+                if (!File.Exists(metaFile))
+                {
+                    Logger.Error(dir + "内未包含metadata.json");
+                    continue;
+                }
+                string json = ConcurrentFile.ReadAllText(metaFile);
+                ExtendMeta extendMeta = JsonConvert.DeserializeObject<ExtendMeta>(json);
+
+                ExtendApp extendApp = new ExtendApp()
+                {
+                    Name = extendMeta.Name,
+                    Author = extendMeta.Author,
+                    Major = extendMeta.Major,
+                    Minor = extendMeta.Minor,
+                    Patch = extendMeta.Patch,
+                    State = extendMeta.State,
+                    File = extendMeta.File,
+                    Helps = extendMeta.Help,
+                    Commands = extendMeta.Command,
+                };
+
+                foreach (var item in extendApp.Commands)
+                {
+                    CommandMap.TryAdd(item, extendApp.GetType());
+                    CommandMapStatic.TryAdd(item, extendApp);
+                }
             }
 
             foreach (var item in Directory.GetFiles(PluginDir, "*.dll"))

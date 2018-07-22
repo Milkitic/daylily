@@ -17,15 +17,15 @@ namespace Daylily.Common.Models.Interface
         #region public members
 
         public abstract AppType AppType { get; }
-        public string Name { get; }
-        public string Author { get; }
-        public int Major { get; }
-        public int Minor { get; }
-        public int Patch { get; }
+        public string Name { get; internal set; }
+        public string Author { get; internal set; }
+        public int Major { get; internal set; }
+        public int Minor { get; internal set; }
+        public int Patch { get; internal set; }
         public string Version => string.Concat(Major, ".", Minor, ".", Patch);
-        public PluginVersion PluginVersion { get; }
-        public string[] Helps { get; }
-        
+        public PluginVersion State { get; internal set; }
+        public string[] Helps { get; internal set; }
+
         #endregion public members
 
         #region protected members
@@ -41,7 +41,7 @@ namespace Daylily.Common.Models.Interface
                 Major = 0;
                 Minor = 0;
                 Patch = 1;
-                PluginVersion = PluginVersion.Alpha;
+                State = PluginVersion.Alpha;
             }
 
             var attrs = t.GetCustomAttributes(false);
@@ -59,9 +59,9 @@ namespace Daylily.Common.Models.Interface
                         Major = ver.Major;
                         Minor = ver.Minor;
                         Patch = ver.Patch;
-                        PluginVersion = ver.PluginVersion;
-                        if (PluginVersion == PluginVersion.Alpha)
-                            Logger.Warn($"\"{Name}\" 仅为{PluginVersion}版本。可能出现大量无法预料的问题。");
+                        State = ver.PluginVersion;
+                        if (State == PluginVersion.Alpha)
+                            Logger.Warn($"\"{Name}\" 仅为{State}版本。可能出现大量无法预料的问题。");
                         break;
                     case HelpAttribute help:
                         Helps = help.Helps ?? new[] { "尚无帮助信息" };

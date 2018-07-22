@@ -62,7 +62,7 @@ namespace Daylily.Plugin.Core.Command
 
             sb.AppendLine($"“{plugin.Name}”的帮助：");
             sb.AppendLine($"作者：{plugin.Author}");
-            sb.AppendLine($"版本：{plugin.Version} {plugin.PluginVersion.ToString()}");
+            sb.AppendLine($"版本：{plugin.Version} {plugin.State.ToString()}");
             sb.AppendLine($"帮助说明：\r\n  {string.Join("  \r\n", plugin.Helps)}");
             Type t = plugin.GetType();
             var props = t.GetProperties();

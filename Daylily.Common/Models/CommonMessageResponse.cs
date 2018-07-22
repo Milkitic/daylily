@@ -6,17 +6,17 @@ namespace Daylily.Common.Models
 {
     public class CommonMessageResponse
     {
-        public bool EnableAt { get; }
-        public string Message { get; }
-        public MessageType MessageType { get; }
+        public bool EnableAt { get; set; }
+        public string Message { get; set; }
+        public MessageType MessageType { get; set; }
 
-        public string UserId { get; }
-        public string DiscussId { get; }
-        public string GroupId { get; }
+        public string UserId { get; set; }
+        public string DiscussId { get; set; }
+        public string GroupId { get; set; }
 
-        public SendPrivateMsg Private { get; }
-        public SendDiscussMsg Discuss { get; }
-        public SendGroupMsg Group { get; }
+        public SendPrivateMsg Private { get; set; }
+        public SendDiscussMsg Discuss { get; set; }
+        public SendGroupMsg Group { get; set; }
 
         /// <summary>
         /// 此为指定一个特定的群时再使用
