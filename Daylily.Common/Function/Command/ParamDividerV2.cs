@@ -62,7 +62,7 @@ namespace Daylily.Common.Function.Command
                 }
 
                 string tmpKey = null, tmpValue = null;
-                bool isLastKeyOrValue = true;
+                bool isLastKeyOrValue = false;
 
                 splitedParam.Add("-");
                 foreach (var item in splitedParam)

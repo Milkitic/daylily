@@ -16,6 +16,13 @@ namespace Daylily.Plugin.Core.Command
     [Command("roll")]
     public class Roll : CommandApp
     {
+        [FreeArg]
+        public string UboundOrMsg { get; set; }
+        [FreeArg]
+        public string LboundOrMsg { get; set; }
+        [FreeArg]
+        public string CountOrMsg { get; set; }
+
         public override void Initialize(string[] args)
         {
 

@@ -246,7 +246,7 @@ namespace Daylily.Common.Function
             if (!PluginManager.CommandMap.ContainsKey(cm.Command)) return;
             Type t = PluginManager.CommandMap[cm.Command];
             CommandApp plugin = GetInstance(t);
-            
+
             Task.Run(() =>
             {
                 try
@@ -268,8 +268,9 @@ namespace Daylily.Common.Function
         private static void SetValues(CommonMessage cm, Type t, CommandApp plugin)
         {
             var props = t.GetProperties();
-            int index = 0;
+            int freeIndex = 0;
             string[] freeArray = cm.FreeArgs.ToArray();
+            int length = freeArray.Length;
             foreach (var prop in props)
             {
                 var info = prop.GetCustomAttributes(false);
@@ -282,8 +283,7 @@ namespace Daylily.Common.Function
                             if (argAttrib.IsSwitch)
                                 prop.SetValue(plugin, true);
                         }
-
-                        if (cm.Args.ContainsKey(argAttrib.Name))
+                        else if (cm.Args.ContainsKey(argAttrib.Name))
                         {
                             if (!argAttrib.IsSwitch)
                             {
@@ -291,12 +291,24 @@ namespace Daylily.Common.Function
                                 prop.SetValue(plugin, obj);
                             }
                         }
-                        break;
-                    case FreeArgAttribute _:
+                        else if (argAttrib.Default != null)
                         {
-                            dynamic obj = ParseStr(prop, freeArray[index]);
+                            prop.SetValue(plugin, argAttrib.Default); //不再转换，提升效率
+                        }
+
+                        break;
+                    case FreeArgAttribute freeArgAttrib:
+                        {
+                            if (freeIndex > length - 1)
+                            {
+                                if (freeArgAttrib.Default != null)
+                                    prop.SetValue(plugin, freeArgAttrib.Default); //不再转换，提升效率
+                                break;
+                            }
+
+                            dynamic obj = ParseStr(prop, freeArray[freeIndex]);
                             prop.SetValue(plugin, obj);
-                            index++;
+                            freeIndex++;
                             break;
                         }
                 }
