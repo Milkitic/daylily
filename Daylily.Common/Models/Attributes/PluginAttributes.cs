@@ -40,7 +40,7 @@ namespace Daylily.Common.Models.Attributes
         }
     }
 
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
     public class HelpAttribute : Attribute
     {
         public string[] Helps { get; }

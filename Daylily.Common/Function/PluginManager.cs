@@ -154,7 +154,7 @@ namespace Daylily.Common.Function
                             //CommandMap.TryAdd(cmd, (CommandApp)plugin);
                             CommandMap.TryAdd(cmd, type);
                             CommandMapStatic.TryAdd(cmd, cmdPlugin);
-                         str += cmd + ",";
+                            str += cmd + ",";
                         }
 
                         str = str.TrimEnd(',') + ") ";

@@ -274,7 +274,7 @@ namespace Daylily.Common.Function
             foreach (var prop in props)
             {
                 var info = prop.GetCustomAttributes(false);
-                if (info.Length != 1) continue;
+                if (info.Length == 0) continue;
                 switch (info[0])
                 {
                     case ArgAttribute argAttrib:

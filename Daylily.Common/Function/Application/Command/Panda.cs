@@ -12,6 +12,7 @@ using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.LogUtils;
 
 namespace Daylily.Common.Function.Application.Command
 {
@@ -22,10 +23,14 @@ namespace Daylily.Common.Function.Application.Command
     [Command("panda")]
     public class Panda : CommandApp
     {
+        [FreeArg]
+        public string PandaWord { get; set; }
+
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
         private static readonly string FontDir = Path.Combine(Domain.CurrentDirectory, "font");
 
-        private readonly string[] _antiString = { "" };
+        private readonly string[] _blankReply = { "傻逼，动动脑子写参数", "你倒是说话啊" };
+        private readonly string[] _invalidReply = { "你话太多了，沙雕" };
 
         private const int MaxW = 250, MaxH = 220;
         private const FontStyle FontStyle = System.Drawing.FontStyle.Bold;
@@ -40,86 +45,129 @@ namespace Daylily.Common.Function.Application.Command
         {
             if (messageObj.MessageType == MessageType.Group && messageObj.GroupId != "672076603")
                 return new CommonMessageResponse(LoliReply.PrivateOnly, messageObj);
-            var cqImg = new FileImage(Draw(messageObj.ArgString)).ToString();
+
+            FontFamily font = GetRandFont(GetFonts());
+            string pandaPath = GetRandPanda(GetPandas());
+
+            string word = GetRealWord(font, pandaPath);
+            string[] words = word.Split(',', '，');
+            int renderSize = GetFontSize(word);
+
+            var cqImg = new FileImage(Draw(words, renderSize, pandaPath, font)).ToString();
             return new CommonMessageResponse(cqImg, messageObj);
         }
 
-        private Bitmap Draw(string word)
+        private static Bitmap Draw(IReadOnlyList<string> words, int renderSize, string pandaPath, FontFamily font)
         {
+            foreach (var item in words)
+                Logger.Debug(item);
 
-            FileInfo[] pandaArray = GetPandas().ToArray();
-            FileInfo[] fontArray = GetFonts().ToArray();
-
-            FileInfo fontInfo = fontArray[Rnd.Next(0, fontArray.Length)];
-            PrivateFontCollection pfc = new PrivateFontCollection();
-            pfc.AddFontFile(fontInfo.FullName);
-
-            FontFamily font = pfc.Families[0];
-            FileInfo panda = pandaArray[Rnd.Next(0, pandaArray.Length)];
-
-            string[] blankReply = { "傻逼，动动脑子写参数", "你倒是说话啊" };
-            string[] invalidReply = { "你话太多了，沙雕" };
-
-            if (word.Replace("\n", "").Replace("\r", "").Trim() == "")
-                word = blankReply[Rnd.Next(0, blankReply.Length)];
-            else if (!IsValid(word, panda, font))
-                word = invalidReply[Rnd.Next(0, invalidReply.Length)];
-
-            string[] lines = word.Split(',', '，');
-
-            Bitmap bmp = new Bitmap(MaxW, MaxH);
-
-            int renderSize = RenderSize(word);
-
-            using (Image img = Image.FromFile(panda.FullName))
+            using (Image img = Image.FromFile(pandaPath))
             using (Brush b = new SolidBrush(Color.Black))
             using (Font f = new Font(font, renderSize, FontStyle))
             {
                 float maxWidth = 0, maxHeight = 0;
                 List<float> eachWidth = new List<float>(), eachHeight = new List<float>();
+                GetRealSize(words, f, ref maxWidth, ref maxHeight, eachWidth, eachHeight);
 
-                using (Graphics g1 = Graphics.FromImage(bmp))
+                int padWidth = img.Width + 10;
+                int padHeight = img.Height + 10;
+
+                const int staticH = 20, padding = 4;
+
+                int width = maxWidth > padWidth ? (int)maxWidth : padWidth,
+                    height = (int)maxHeight + img.Height + padding > padHeight ? (int)maxHeight + padHeight : padHeight + staticH;
+                Bitmap bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                using (Graphics g = Graphics.FromImage(bmp))
                 {
-                    foreach (var item in lines)
+                    SetGraphicStyle(g);
+                    g.Clear(Color.White);
+
+                    float centerX = bmp.Width / 2f;
+
+                    g.DrawImage(img, centerX - img.Width / 2f, 4, img.Width, img.Height);
+                    for (int i = 0; i < words.Count; i++)
                     {
-                        SizeF sizeF = g1.MeasureString(item, f);
-                        eachWidth.Add(sizeF.Width);
-                        eachHeight.Add(sizeF.Height);
-                        if (sizeF.Width > maxWidth) maxWidth = sizeF.Width;
-                        maxHeight += sizeF.Height;
+                        Logger.Debug(words[i]);
+                        g.DrawString(words[i], f, b,
+                            new PointF(centerX - eachWidth[i] / 2f, 7 + img.Height + i * eachHeight[i]));
                     }
+
+                    g.Dispose();
                 }
 
-                bmp = new Bitmap(maxWidth > img.Width + 10
-                        ? (int)maxWidth
-                        : img.Width + 10,
-                    (int)maxHeight + img.Height + 4 > img.Height + 10
-                        ? (int)maxHeight + img.Height + 10
-                        : img.Height + 30,
-                    System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                Graphics g = Graphics.FromImage(bmp);
-
-                SetGraphicStyle(ref g, font);
-
-                g.Clear(Color.White);
-
-                float centerX = bmp.Width / 2f;
-                //float centerY = bmp.Height / 2f;
-
-                g.DrawImage(img, centerX - img.Width / 2f, 4, img.Width, img.Height);
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    g.DrawString(lines[i], f, b,
-                        new PointF(centerX - eachWidth[i] / 2f, 7 + img.Height + i * eachHeight[i]));
-                }
-
-                g.Dispose();
+                return bmp;
             }
-
-            return bmp;
         }
 
-        private static int RenderSize(string word)
+        /// <summary>
+        /// 确定文字是否超出容许的范围（防止生成的熊猫图过大）
+        /// </summary>
+        /// <returns></returns>
+        private static bool IsLengthValid(string word, string pandaPath, FontFamily font)
+        {
+            string[] lines = word.Split(',', '，');
+            int renderSize = GetFontSize(word);
+
+            using (Bitmap bmp = new Bitmap(MaxW, MaxH))
+            using (Graphics g = Graphics.FromImage(bmp))
+            using (Image img = Image.FromFile(pandaPath))
+            using (Font f = new Font(font, renderSize, FontStyle))
+            {
+                float maxWidth = 0, maxHeight = 0;
+                foreach (var item in lines)
+                {
+                    SizeF sizeF = g.MeasureString(item, f);
+                    if (sizeF.Width > maxWidth) maxWidth = sizeF.Width;
+                    maxHeight += sizeF.Height;
+
+                    if (maxWidth > MaxW || maxHeight > MaxH - img.Height)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 确定画布实际大小。
+        /// </summary>
+        private static void GetRealSize(IEnumerable<string> words, Font f, ref float maxWidth, ref float maxHeight,
+            ICollection<float> eachWidth, ICollection<float> eachHeight)
+        {
+            using (Bitmap bmp = new Bitmap(MaxW, MaxH))
+            using (Graphics g1 = Graphics.FromImage(bmp))
+            {
+                foreach (var item in words)
+                {
+                    SizeF sizeF = g1.MeasureString(item, f);
+                    eachWidth.Add(sizeF.Width);
+                    eachHeight.Add(sizeF.Height);
+                    if (sizeF.Width > maxWidth) maxWidth = sizeF.Width;
+                    maxHeight += sizeF.Height;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 确定字体是否为空或有效。若为空或无效，则用默认语句替代。
+        /// </summary>
+        /// <returns></returns>
+        private string GetRealWord(FontFamily font, string pandaPath)
+        {
+            string word = PandaWord;
+            if (word.Replace("\n", "").Replace("\r", "").Trim() == "")
+                word = _blankReply[Rnd.Next(0, _blankReply.Length)];
+            else if (!IsLengthValid(word, pandaPath, font))
+                word = _invalidReply[Rnd.Next(0, _invalidReply.Length)];
+            return word;
+        }
+
+        /// <summary>
+        /// 确定字体大小，由字体数量决定。
+        /// </summary>
+        /// <returns></returns>
+        private static int GetFontSize(string word)
         {
             if (word.Length <= 5)
                 return LgFontSize;
@@ -128,45 +176,45 @@ namespace Daylily.Common.Function.Application.Command
             return SmFontSize;
         }
 
-        private static IEnumerable<FileInfo> GetPandas() => new DirectoryInfo(PandaDir).GetFiles("d*.png");
-        private static IEnumerable<FileInfo> GetFonts() => new DirectoryInfo(FontDir).GetFiles("*.tt?");
+        /// <summary>
+        /// 获取目录下的熊猫。
+        /// </summary>
+        /// <returns></returns>
+        private static FileInfo[] GetPandas() => new DirectoryInfo(PandaDir).GetFiles("d*.png");
 
-        private void SetGraphicStyle(ref Graphics g, FontFamily font)
+        /// <summary>
+        /// 获取目录下的字体。
+        /// </summary>
+        /// <returns></returns>
+        private static FileInfo[] GetFonts() => new DirectoryInfo(FontDir).GetFiles("*.tt?");
+
+        /// <summary>
+        /// 随机获取一个的熊猫。
+        /// </summary>
+        /// <returns></returns>
+        private static string GetRandPanda(IReadOnlyList<FileInfo> pandaArray)
         {
-            g.TextRenderingHint = _antiString.Contains(font.Name)
-                ? TextRenderingHint.ClearTypeGridFit
-                : TextRenderingHint.AntiAlias;
-
-            g.CompositingQuality = CompositingQuality.HighQuality;
-            g.SmoothingMode = SmoothingMode.HighQuality;
+            return pandaArray[Rnd.Next(0, pandaArray.Count)].FullName;
         }
 
-        private static bool IsValid(string word, FileInfo panda, FontFamily font)
+        /// <summary>
+        /// 随机获取一个的字体。
+        /// </summary>
+        /// <returns></returns>
+        private static FontFamily GetRandFont(IReadOnlyList<FileInfo> fontArray)
         {
-            List<float> eachWidth = new List<float>(), eachHeight = new List<float>();
-            string[] lines = word.Split(',', '，');
-            int renderSize = RenderSize(word);
+            FileInfo fontInfo = fontArray[Rnd.Next(0, fontArray.Count)];
+            PrivateFontCollection pfc = new PrivateFontCollection();
+            pfc.AddFontFile(fontInfo.FullName);
+            FontFamily font = pfc.Families[0];
+            return font;
+        }
 
-            Bitmap bmp = new Bitmap(MaxW, MaxH);
-            using (Graphics g = Graphics.FromImage(bmp))
-            using (Image img = Image.FromFile(panda.FullName))
-            using (Font f = new Font(font, renderSize, FontStyle))
-            {
-                float maxWidth = 0, maxHeight = 0;
-                foreach (var item in lines)
-                {
-                    SizeF sizeF = g.MeasureString(item, f);
-                    eachWidth.Add(sizeF.Width);
-                    eachHeight.Add(sizeF.Height);
-                    if (sizeF.Width > maxWidth) maxWidth = sizeF.Width;
-                    maxHeight += sizeF.Height;
-                }
-
-                if (maxWidth > MaxW || maxHeight > MaxH - img.Height)
-                    return false;
-            }
-
-            return true;
+        private static void SetGraphicStyle(Graphics g)
+        {
+            g.TextRenderingHint = TextRenderingHint.AntiAlias;
+            g.CompositingQuality = CompositingQuality.HighQuality;
+            g.SmoothingMode = SmoothingMode.HighQuality;
         }
     }
 }

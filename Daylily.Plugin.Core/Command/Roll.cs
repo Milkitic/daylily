@@ -12,17 +12,21 @@ namespace Daylily.Plugin.Core.Command
     [Name("获取随机数")]
     [Author("yf_extension")]
     [Version(0, 1, 0, PluginVersion.Stable)]
-    [Help("获取一个随机数")]
+    [Help("获取随机数")]
     [Command("roll")]
     public class Roll : CommandApp
     {
         [Arg("r", IsSwitch = true, Default = false)]
+        [Help("当激活时，则使抽取含重复结果。否则结果不包含重复结果。")]
         public bool Repeat { get; set; }
         [FreeArg]
+        [Help("当参数(m)为无效参数时，此参数(n)为上界(0~n)。否则此参数为下界(n~m)。")]
         public string Param1OrMsg { get; set; }
         [FreeArg]
+        [Help("此参数(m)为上界(n~m)。")]
         public string Param2OrMsg { get; set; }
         [FreeArg]
+        [Help("此参数(c)为抽取的数量。")]
         public string CountOrMsg { get; set; }
 
         public override void Initialize(string[] args)
