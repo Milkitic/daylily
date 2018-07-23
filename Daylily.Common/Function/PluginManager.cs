@@ -37,6 +37,16 @@ namespace Daylily.Common.Function
 
         public static void LoadAllPlugins(string[] args)
         {
+            Logger.Info("===加载内部插件中==");
+            LoadBuiltIn(args);
+            Logger.Info("===加载外部插件中==");
+            LoadFromFile(args);
+            Logger.Info("===加载扩展插件中==");
+            LoadExtend();
+        }
+
+        private static void LoadBuiltIn(string[] args)
+        {
             Type[] iType =
             {
                 typeof(CheckCqAt),
@@ -60,41 +70,10 @@ namespace Daylily.Common.Function
             {
                 InsertPlugin(item, args);
             }
+        }
 
-            if (!Directory.Exists(ExtendedDir))
-                Directory.CreateDirectory(ExtendedDir);
-
-            foreach (var dir in Directory.GetDirectories(ExtendedDir))
-            {
-                string metaFile = Path.Combine(dir, "metadata.json");
-                if (!File.Exists(metaFile))
-                {
-                    Logger.Error(dir + "内未包含metadata.json");
-                    continue;
-                }
-                string json = ConcurrentFile.ReadAllText(metaFile);
-                ExtendMeta extendMeta = JsonConvert.DeserializeObject<ExtendMeta>(json);
-
-                ExtendApp extendApp = new ExtendApp()
-                {
-                    Name = extendMeta.Name,
-                    Author = extendMeta.Author,
-                    Major = extendMeta.Major,
-                    Minor = extendMeta.Minor,
-                    Patch = extendMeta.Patch,
-                    State = extendMeta.State,
-                    File = extendMeta.File,
-                    Helps = extendMeta.Help,
-                    Commands = extendMeta.Command,
-                };
-
-                foreach (var item in extendApp.Commands)
-                {
-                    CommandMap.TryAdd(item, extendApp.GetType());
-                    CommandMapStatic.TryAdd(item, extendApp);
-                }
-            }
-
+        private static void LoadFromFile(string[] args)
+        {
             foreach (var item in Directory.GetFiles(PluginDir, "*.dll"))
             {
                 bool isValid = false;
@@ -136,10 +115,57 @@ namespace Daylily.Common.Function
 
                 if (!isValid)
                     Logger.Warn($"\"{fi.Name}\" 不是合法的插件扩展。");
-
             }
+        }
 
-            //throw new NotImplementedException();
+        private static void LoadExtend()
+        {
+            if (!Directory.Exists(ExtendedDir))
+                Directory.CreateDirectory(ExtendedDir);
+
+            foreach (var dir in Directory.GetDirectories(ExtendedDir))
+            {
+                string metaFile = Path.Combine(dir, "metadata.json");
+                if (!File.Exists(metaFile))
+                {
+                    Logger.Error(dir + "内未包含metadata.json");
+                    continue;
+                }
+                Logger.Info("已发现 " + new DirectoryInfo(dir).Name);
+
+                string json = ConcurrentFile.ReadAllText(metaFile);
+                ExtendMeta extendMeta = JsonConvert.DeserializeObject<ExtendMeta>(json);
+
+                ExtendApp extendApp = new ExtendApp()
+                {
+                    Program = extendMeta.Program,
+                    File = new FileInfo(Path.Combine(dir, extendMeta.File)).FullName,
+                    Name = extendMeta.Name,
+                    Author = extendMeta.Author,
+                    Major = extendMeta.Major,
+                    Minor = extendMeta.Minor,
+                    Patch = extendMeta.Patch,
+                    State = extendMeta.State,
+                    Helps = extendMeta.Help,
+                    Commands = extendMeta.Command,
+                };
+
+                if (extendApp.Commands.Length != 0)
+                {
+                    foreach (var item in extendApp.Commands)
+                    {
+                        CommandMap.TryAdd(item, extendApp.GetType());
+                        CommandMapStatic.TryAdd(item, extendApp);
+                    }
+                    Logger.Origin($"命令 \"{extendMeta.Name}\" ({string.Join(',', extendApp.Commands)}) 已经加载完毕。");
+
+                }
+                else
+                {
+                    Logger.Warn($"\"{extendMeta.Name}\"尚未设置命令，因此无法被用户激活。");
+                    Logger.Origin($"命令 \"{extendMeta.Name}\" 已经加载完毕。");
+                }
+            }
         }
 
         public static void RemovePlugin<T>()

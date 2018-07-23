@@ -63,7 +63,7 @@ namespace Daylily.Plugin.Core.Command
             sb.AppendLine($"“{plugin.Name}”的帮助：");
             sb.AppendLine($"作者：{plugin.Author}");
             sb.AppendLine($"版本：{plugin.Version} {plugin.State.ToString()}");
-            sb.AppendLine($"帮助说明：\r\n  {string.Join("  \r\n", plugin.Helps)}");
+            sb.AppendLine($"帮助说明：\r\n  {string.Join("\r\n  ", plugin.Helps)}");
             Type t = plugin.GetType();
             var props = t.GetProperties();
 
@@ -97,7 +97,7 @@ namespace Daylily.Plugin.Core.Command
                         used = true;
                     }
 
-                    sbArg.AppendLine(argStr + ": " + helpStr);
+                    sbArg.AppendLine($"  {argStr}: {helpStr}");
                 }
 
                 if (freeStr != null)
@@ -108,7 +108,7 @@ namespace Daylily.Plugin.Core.Command
                         used = true;
                     }
 
-                    sbFree.AppendLine(freeStr + ": " + helpStr);
+                    sbFree.AppendLine($"  {freeStr}: {helpStr}");
                 }
             }
 

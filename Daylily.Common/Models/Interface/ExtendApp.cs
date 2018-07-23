@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.IO;
 using System.Text;
 using Daylily.Common.Assist;
@@ -15,7 +16,6 @@ namespace Daylily.Common.Models.Interface
         public string Program { get; set; }
         public string File { get; set; }
 
-        private readonly List<string> _receivedString = new List<string>();
         public sealed override void Initialize(string[] args) { }
 
         public sealed override CommonMessageResponse Message_Received(in CommonMessage messageObj)
@@ -25,14 +25,17 @@ namespace Daylily.Common.Models.Interface
 
         private CommonMessageResponse CreateProc(in CommonMessage messageObj)
         {
+            List<string> receivedString = new List<string>();
+            messageObj.Encode();
+            string arg = JsonConvert.SerializeObject(messageObj).Replace("\"", "\\\"").Replace(" ", "+++").Insert(0, "\"");
+            arg = arg + "\"";
+            Logger.Debug(arg);
             var proc = new Process
             {
                 StartInfo =
                 {
                     FileName = Program,
-                    Arguments =$"{File} {JsonConvert.SerializeObject(messageObj)}",
-                    //FileName = "ping",
-                    //Arguments = "127.0.0.1",
+                    Arguments =$"{File} {arg}",
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     WindowStyle = ProcessWindowStyle.Hidden,
@@ -44,13 +47,13 @@ namespace Daylily.Common.Models.Interface
             proc.OutputDataReceived += (sender, e) =>
             {
                 Logger.Debug(e.Data);
-                if (e.Data != null && e.Data.Trim() != "") _receivedString.Add(e.Data);
+                if (e.Data != null && e.Data.Trim().Trim('\n').Trim('\r') != "") receivedString.Add(e.Data);
             };
 
             proc.ErrorDataReceived += (sender, e) =>
             {
                 Logger.Debug(e.Data);
-                if (e.Data != null && e.Data.Trim() != "") _receivedString.Add(e.Data);
+                if (e.Data != null && e.Data.Trim().Trim('\n').Trim('\r') != "") receivedString.Add(e.Data);
             };
 
             proc.Start();
@@ -59,14 +62,22 @@ namespace Daylily.Common.Models.Interface
 
             proc.WaitForExit();
             return ProcExited();
-        }
 
-        private CommonMessageResponse ProcExited()
-        {
-            if (_receivedString.Count == 0)
-                return null;
-            string last = _receivedString[_receivedString.Count - 1];
-            return JsonConvert.DeserializeObject<CommonMessageResponse>(last);
+            CommonMessageResponse ProcExited()
+            {
+                if (receivedString.Count == 0)
+                    return null;
+                string last = receivedString[receivedString.Count - 1];
+                try
+                {
+                    return JsonConvert.DeserializeObject<CommonMessageResponse>(last);
+                }
+                catch (JsonReaderException)
+                {
+                    Logger.Error("转换JSON失败，因此无法做出应答");
+                    return null;
+                }
+            }
         }
     }
 }

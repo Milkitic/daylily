@@ -21,7 +21,7 @@ namespace Daylily.Common.Models.Interface
             Type t = GetType();
             if (!t.IsDefined(typeof(CommandAttribute), false))
             {
-                Logger.Warn($"\"{Name}\"尚未设置命令，因此无法被用户激活。");
+                if (t != typeof(ExtendApp)) Logger.Warn($"\"{Name}\"尚未设置命令，因此无法被用户激活。");
             }
             else
             {

@@ -18,6 +18,8 @@ namespace Daylily.Common.Models
         public SendDiscussMsg Discuss { get; set; }
         public SendGroupMsg Group { get; set; }
 
+        public CommonMessageResponse() { }
+
         /// <summary>
         /// 此为指定一个特定的群时再使用
         /// </summary>

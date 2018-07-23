@@ -245,7 +245,7 @@ namespace Daylily.Common.Function
             CommonMessageResponse replyObj = null;
             if (!PluginManager.CommandMap.ContainsKey(cm.Command)) return;
             Type t = PluginManager.CommandMap[cm.Command];
-            CommandApp plugin = GetInstance(t);
+            CommandApp plugin = t == typeof(ExtendApp) ? PluginManager.CommandMapStatic[cm.Command] : GetInstance(t);
 
             Task.Run(() =>
             {

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Daylily.Common.Models.CQResponse;
 using Daylily.Common.Models.Enum;
+using Newtonsoft.Json;
 
 namespace Daylily.Common.Models
 {
@@ -26,8 +27,11 @@ namespace Daylily.Common.Models
         public string GroupId { get; set; }
         public long MessageId { get; set; }
 
+        [JsonIgnore]
         public PrivateMsg Private { get; set; }
+        [JsonIgnore]
         public DiscussMsg Discuss { get; set; }
+        [JsonIgnore]
         public GroupMsg Group { get; set; }
 
         public CommonMessage()
@@ -75,6 +79,51 @@ namespace Daylily.Common.Models
         public object Clone()
         {
             return MemberwiseClone();
+        }
+
+        public void Encode()
+        {
+            Message = Message.Replace("\"", "---");
+            FullCommand = FullCommand.Replace("\"", "---");
+            Command = Command.Replace("\"", "---");
+            ArgString = ArgString.Replace("\"", "---");
+
+            var args = new Dictionary<string, string>();
+            foreach (var arg in Args)
+                args.Add(arg.Key.Replace("\"", "---"), arg.Value.Replace("\"", "---"));
+            Args = args;
+            var switches = new Dictionary<string, string>();
+            foreach (var switch1 in Switches)
+                switches.Add(switch1.Key.Replace("\"", "---"), switch1.Value.Replace("\"", "---"));
+            Switches = switches;
+
+            for (var i = 0; i < FreeArgs.Count; i++)
+                FreeArgs[i] = FreeArgs[i].Replace("\"", "---");
+
+            for (var i = 0; i < SimpleArgs.Count; i++)
+                SimpleArgs[i] = SimpleArgs[i].Replace("\"", "---");
+        }
+
+        public void Decode()
+        {
+            FullCommand = FullCommand.Replace("---", "\"");
+            Command = Command.Replace("---", "\"");
+            ArgString = ArgString.Replace("---", "\"");
+
+            var args = new Dictionary<string, string>();
+            foreach (var arg in Args)
+                args.Add(arg.Key.Replace("---", "\""), arg.Value.Replace("---", "\""));
+            Args = args;
+            var switches = new Dictionary<string, string>();
+            foreach (var switch1 in Switches)
+                switches.Add(switch1.Key.Replace("---", "\""), switch1.Value.Replace("---", "\""));
+            Switches = switches;
+
+            for (var i = 0; i < FreeArgs.Count; i++)
+                FreeArgs[i] = FreeArgs[i].Replace("---", "\"");
+
+            for (var i = 0; i < SimpleArgs.Count; i++)
+                SimpleArgs[i] = SimpleArgs[i].Replace("---", "\"");
         }
     }
 }
