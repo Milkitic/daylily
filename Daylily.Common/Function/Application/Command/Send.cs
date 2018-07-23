@@ -8,11 +8,24 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("发送自定义消息")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Version(0, 1, 0, PluginVersion.Stable)]
     [Help("支持发送任意格式的消息（包含cq码），支持群聊私聊")]
     [Command("send")]
     public class Send : CommandApp
     {
+        [Arg("g")]
+        [Help("要发送的群号。")]
+        public string GroupId { get; set; }
+        [Arg("d")]
+        [Help("要发送的讨论组号。")]
+        public string DiscussId { get; set; }
+        [Arg("u")]
+        [Help("要发送的用户QQ号。")]
+        public string UserId { get; set; }
+        [FreeArg]
+        [Help("要发送的信息。")]
+        public string Message { get; set; }
+
         public override void Initialize(string[] args)
         {
 
@@ -20,49 +33,33 @@ namespace Daylily.Common.Function.Application.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
+            string innerUser = null, innerGroup = null, innerDiscuss = null;
+            var innerType = MessageType.Private;
             if (messageObj.PermissionLevel != PermissionLevel.Root)
-                return null;
+                return new CommonMessageResponse(LoliReply.RootOnly, messageObj);
+            if (Message == null)
+                return new CommonMessageResponse("你要说什么……", messageObj);
+            if (GroupId != null && DiscussId != null)
+                return new CommonMessageResponse("不能同时选择群和讨论组……", messageObj);
 
-            string[] split = messageObj.ArgString.Split("|");
-            if (split.Length == 1)
-                return new CommonMessageResponse(Transform(messageObj.ArgString), messageObj);
-            string innerUser = null, innerGroup = null, innerDiscuss = null, innerMessage = null;
-            MessageType innerType = MessageType.Private;
-            for (int i = 0; i < split.Length; i += 2)
+            string innerMessage = Transform(Message);
+            if (DiscussId != null)
             {
-                if (i + 1 == split.Length)
-                    return new CommonMessageResponse(split[i] + "缺少参数...", messageObj);
-                string cmd = split[i], par = split[i + 1];
-                switch (cmd)
-                {
-                    case "-u":
-                        innerUser = par;
-                        break;
-                    case "-g" when innerDiscuss != null:
-                        return new CommonMessageResponse("不能同时选择群和讨论组...", messageObj);
-                    case "-g":
-                        innerGroup = par;
-                        innerType = MessageType.Group;
-                        break;
-                    case "-d" when innerGroup != null:
-                        return new CommonMessageResponse("不能同时选择群和讨论组...", messageObj);
-                    case "-d":
-                        innerDiscuss = par;
-                        innerType = MessageType.Discuss;
-                        break;
-                    case "-m":
-                        innerMessage = Transform(par);
-                        break;
-                    default:
-                        return new CommonMessageResponse("未知的参数: " + cmd + "...", messageObj);
-                }
+                innerDiscuss = DiscussId;
+                innerType = MessageType.Discuss;
             }
+            else if (GroupId != null)
+            {
+                innerGroup = GroupId;
+                innerType = MessageType.Group;
+            }
+            if (UserId != null)
+                innerUser = UserId;
 
-            if (innerMessage == null)
-                return new CommonMessageResponse("你还没有填写消息...", messageObj);
+            if (DiscussId == null && GroupId == null && UserId == null)
+                return new CommonMessageResponse(Transform(messageObj.ArgString), messageObj);
 
             SendMessage(new CommonMessageResponse(innerMessage, innerUser), innerGroup, innerDiscuss, innerType);
-
             return null;
         }
 
