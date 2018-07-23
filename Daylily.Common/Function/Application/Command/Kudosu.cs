@@ -30,121 +30,95 @@ namespace Daylily.Common.Function.Application.Command
     [Command("kd")]
     public class Kudosu : CommandApp
     {
-        private CommonMessage _message;
-        private Thread _t;
 
         public override void Initialize(string[] args)
         {
-            
+
         }
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            _message = messageObj;
-            _t = new Thread(Async);
-            _t.Start();
-            return null;
-        }
-
-        private void Async()
-        {
-            try
+            string id;
+            string uname;
+            if (string.IsNullOrEmpty(messageObj.ArgString))
             {
-                string id;
-                string uname;
-                if (string.IsNullOrEmpty(_message.ArgString))
+                BllUserRole bllUserRole = new BllUserRole();
+                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+                if (userInfo.Count == 0)
                 {
-                    BllUserRole bllUserRole = new BllUserRole();
-                    List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(_message.UserId));
-                    if (userInfo.Count == 0)
+                    return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
+                }
+
+                id = userInfo[0].UserId.ToString();
+                uname = userInfo[0].CurrentUname;
+            }
+            else
+            {
+                if (messageObj.PermissionLevel != PermissionLevel.Public)
+                {
+                    OsuClient osu = new OsuClient(OsuApi.ApiKey);
+                    OsuUser[] userList = osu.GetUser(messageObj.ArgString);
+                    if (userList.Length == 0)
                     {
-                        SendMessage(new CommonMessageResponse(LoliReply.IdNotBound, _message, true));
-                        return;
+                        return new CommonMessageResponse(LoliReply.IdNotFound, messageObj, true);
                     }
 
-                    id = userInfo[0].UserId.ToString();
-                    uname = userInfo[0].CurrentUname;
+                    OsuUser userObj = userList[0];
+                    id = userObj.user_id;
+                    uname = userObj.username;
                 }
                 else
-                {
-                    if (_message.PermissionLevel != PermissionLevel.Public)
-                    {
-                        OsuClient osu = new OsuClient(OsuApi.ApiKey);
-                        OsuUser[] userList = osu.GetUser(_message.ArgString);
-                        if (userList.Length == 0)
-                        {
-                            SendMessage(new CommonMessageResponse(LoliReply.IdNotFound, _message, true));
-                            return;
-                        }
-
-                        OsuUser userObj = userList[0];
-                        id = userObj.user_id;
-                        uname = userObj.username;
-                    }
-                    else
-                        return;
-
-                    //else
-                    //{
-                    //    SendMessage(new CommonMessageResponse("你还没有绑ID. 请用/setid", _message, true));
-                    //    return;
-                    //}
-                }
-
-                List<KudosuInfo> totalList = new List<KudosuInfo>();
-                List<KudosuInfo> tmpList;
-                int page = 0;
-                const int count = 20;
-                do
-                {
-                    string json = WebRequestUtil.GetResponseString(
-                        WebRequestUtil.CreateGetHttpResponse(
-                            "https://osu.ppy.sh/users/" + id + "/kudosu?offset=" + page + "&limit=" + count));
-                    Logger.Debug("GET JSON");
-
-                    tmpList = JsonConvert.DeserializeObject<List<KudosuInfo>>(json);
-                    totalList.AddRange(tmpList);
-                    page += count;
-
-                    if (totalList.Count != 0) continue;
-
-                    SendMessage(new CommonMessageResponse("竟然连一张图都没摸过...", _message, true));
-                    return;
-                } while (tmpList.Count != 0);
-
-                List<KdInfo> kdInfoList = new List<KdInfo>();
-                int pastMonth = -1;
-                KdInfo info = null;
-                totalList.Reverse();
-                foreach (var item in totalList)
-                {
-                    if (item.Created_At.Month != pastMonth)
-                    {
-                        if (pastMonth != -1)
-                            kdInfoList.Add(info);
-                        info = new KdInfo()
-                        {
-                            Time = item.Created_At
-                        };
-                        pastMonth = item.Created_At.Month;
-                    }
-
-                    if (info != null) info.Count++;
-                }
-
-                if (info != null) kdInfoList.Add(info);
-
-                var cqImg = new FileImage(Draw(kdInfoList, uname)).ToString();
-
-                SendMessage(new CommonMessageResponse(cqImg, _message));
+                    return null;
             }
-            catch (Exception ex)
+
+            List<KudosuInfo> totalList = new List<KudosuInfo>();
+            List<KudosuInfo> tmpList;
+            int page = 0;
+            const int count = 20;
+            do
             {
-                Logger.Exception(ex);
+                string json = WebRequestUtil.GetResponseString(
+                    WebRequestUtil.CreateGetHttpResponse(
+                        "https://osu.ppy.sh/users/" + id + "/kudosu?offset=" + page + "&limit=" + count));
+                Logger.Debug("GET JSON");
+
+                tmpList = JsonConvert.DeserializeObject<List<KudosuInfo>>(json);
+                totalList.AddRange(tmpList);
+                page += count;
+
+                if (totalList.Count != 0) continue;
+
+                return new CommonMessageResponse("竟然连一张图都没摸过...", messageObj, true);
+            } while (tmpList.Count != 0);
+
+            List<KdInfo> kdInfoList = new List<KdInfo>();
+            int pastMonth = -1;
+            KdInfo info = null;
+            totalList.Reverse();
+            foreach (var item in totalList)
+            {
+                if (item.Created_At.Month != pastMonth)
+                {
+                    if (pastMonth != -1)
+                        kdInfoList.Add(info);
+                    info = new KdInfo
+                    {
+                        Time = item.Created_At
+                    };
+                    pastMonth = item.Created_At.Month;
+                }
+
+                if (info != null) info.Count++;
             }
+
+            if (info != null) kdInfoList.Add(info);
+
+            var cqImg = new FileImage(Draw(kdInfoList, uname)).ToString();
+
+            return new CommonMessageResponse(cqImg, messageObj);
         }
 
-        private static Bitmap Draw(List<KdInfo> kdInfoList, string uname)
+        private static Bitmap Draw(IReadOnlyList<KdInfo> kdInfoList, string uname)
         {
             int max = kdInfoList.Max(x => x.Count);
             string avg = "AVG: " + Math.Round(kdInfoList.Average(x => x.Count), 2);
