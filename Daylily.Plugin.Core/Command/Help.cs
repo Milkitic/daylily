@@ -22,25 +22,17 @@ namespace Daylily.Plugin.Core.Command
     [Command("help")]
     public class Help : CommandApp
     {
+        private static string _versionInfo;
         [FreeArg]
         public string PluginCommand { get; set; }
 
         public override void Initialize(string[] args)
         {
-
+            _versionInfo = args[0];
         }
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            //SendMessage(
-            //    PluginCommand == null
-            //        ? new CommonMessageResponse(ShowList().Trim('\n').Trim('\r'), messageObj.UserId)
-            //        : new CommonMessageResponse(ShowDetail().Trim('\n').Trim('\r'), messageObj.UserId), null, null,
-            //    MessageType.Private);
-
-            //return messageObj.MessageType != MessageType.Private
-            //    ? new CommonMessageResponse(LoliReply.PrivateOnly, messageObj)
-            //    : null;
             return PluginCommand == null
                 ? new CommonMessageResponse(ShowList(), messageObj)
                 : new CommonMessageResponse(ShowDetail().Trim('\n').Trim('\r'), messageObj);
@@ -49,15 +41,10 @@ namespace Daylily.Plugin.Core.Command
         private static string ShowList()
         {
             CommandApp[] plugins = PluginManager.CommandMapStatic.Values.Distinct().ToArray();
-            //var cmdList = new List<string>();
-            //var instList = new List<string>();
             Dictionary<string, string> dictionary = plugins.ToDictionary(item => string.Join(", /", item.Commands),
                 item => $"{item.Name}。{string.Join("。", item.Helps)}");
 
             IEnumerable<KeyValuePair<string, string>> dicSort = from objDic in dictionary orderby objDic.Key select objDic;
-            //cmdList.Add(string.Join(", /", item.Commands));
-            //instList.Add($"{item.Name}。{string.Join("。", item.Helps)}");
-
 
             return new FileImage(DrawList(dicSort)).ToString();
         }
@@ -89,6 +76,7 @@ namespace Daylily.Plugin.Core.Command
                 var info = prop.GetCustomAttributes(false);
                 if (info.Length == 0) continue;
                 string helpStr = "尚无帮助信息。", argStr = null, freeStr = null, argName = null;
+                bool isSwitch = false;
                 foreach (var o in info)
                 {
                     switch (o)
@@ -96,6 +84,7 @@ namespace Daylily.Plugin.Core.Command
                         case ArgAttribute argAttrib:
                             argStr = $"-{argAttrib.Name}";
                             argName = prop.Name;
+                            isSwitch = argAttrib.IsSwitch;
                             break;
                         case FreeArgAttribute freeArgAttrib:
                             freeStr = prop.Name;
@@ -108,18 +97,18 @@ namespace Daylily.Plugin.Core.Command
 
                 if (argStr != null)
                 {
-                    sbArg.Append($" [{argStr} {argName}]");
+                    sbArg.Append($" [{argStr}{(isSwitch ? "" : " " + StringUtils.GetUnderLineString(argName))}]");
                     custom.Arg.Add(argStr, helpStr);
                 }
 
                 if (freeStr != null)
                 {
-                    sbFree.Append($" [{freeStr}]");
-                    custom.FreeArg.Add(freeStr, helpStr);
+                    sbFree.Append($" [{StringUtils.GetUnderLineString(freeStr)}]");
+                    custom.FreeArg.Add(StringUtils.GetUnderLineString(freeStr), helpStr);
                 }
             }
 
-            custom.Usage = $"\"{PluginCommand}{sbArg}{sbFree}";
+            custom.Usage = $"/{PluginCommand}{sbArg}{sbFree}";
             return new FileImage(DrawDetail(custom)).ToString();
         }
 
@@ -137,6 +126,7 @@ namespace Daylily.Plugin.Core.Command
             Font fontH1B = new Font("等线", 14, FontStyle.Bold);
             Font fontH2 = new Font("等线", 12);
             Font fontH3 = new Font("等线", 11);
+            Font fontH4 = new Font("等线", 10);
 
             Size size = MeasureListSize(dictionary, fontH2, x, step, offset2);
 
@@ -145,12 +135,15 @@ namespace Daylily.Plugin.Core.Command
             using (Brush brushYellow = new SolidBrush(Color.FromArgb(255, 243, 82)))
             using (Brush brushGrey = new SolidBrush(Color.FromArgb(185, 185, 185)))
             using (Brush brushDarkGrey = new SolidBrush(Color.FromArgb(45, 45, 48)))
+            using (Brush brushLDarkGrey = new SolidBrush(Color.FromArgb(64, 64, 64)))
             using (Graphics g = Graphics.FromImage(bitmap))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 g.CompositingQuality = CompositingQuality.HighQuality;
                 g.SmoothingMode = SmoothingMode.HighQuality;
                 g.Clear(Color.FromArgb(30, 30, 30));
+
+                g.DrawString(_versionInfo, fontH4, brushLDarkGrey, 2, 2);
                 g.DrawString(title, fontH1, brushWhite, pointTitle);
                 g.DrawString(sub, fontH3, brushGrey, pointSub);
 
@@ -209,13 +202,19 @@ namespace Daylily.Plugin.Core.Command
             int topArg = topUsage2 + 24;
             Point pointArg = new Point(30, topArg);
             int topArg2 = topArg + 22, leftArg2 = 45;
-            const int stepArg = 22, offsetArg = 105;
+            if (custom.Arg.Count == 0)
+                topArg2 = topArg;
+            const int stepArg = 22, offsetArg = 125;
             GetRightBottom(offsetArg, topArg2, stepArg, custom.Arg, g, fontH3, out int rightArg, out int bottomArg);
 
             int topFree = bottomArg + 2;
+            if (custom.FreeArg.Count == 0)
+                topFree = bottomArg;
             Point pointFree = new Point(30, topFree);
             int topFree2 = topFree + 22, leftFree2 = 45;
-            const int stepFree = 22, offsetFree = 105;
+            if (custom.FreeArg.Count == 0)
+                topFree2 = topFree;
+            const int stepFree = 22, offsetFree = 125;
             GetRightBottom(offsetFree, topFree2, stepFree, custom.FreeArg, g, fontH3, out int rightFree, out int bottomFree);
 
 
@@ -234,11 +233,14 @@ namespace Daylily.Plugin.Core.Command
             using (Brush brushWhite = new SolidBrush(Color.White))
             using (Brush brushYellow = new SolidBrush(Color.FromArgb(255, 243, 82)))
             using (Brush brushGrey = new SolidBrush(Color.FromArgb(185, 185, 185)))
+            using (Brush brushLDarkGrey = new SolidBrush(Color.FromArgb(64, 64, 64)))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 g.CompositingQuality = CompositingQuality.HighQuality;
                 g.SmoothingMode = SmoothingMode.HighQuality;
                 g.Clear(Color.FromArgb(30, 30, 30));
+
+                g.DrawString(_versionInfo, fontH4, brushLDarkGrey, 2, 2);
                 g.DrawString(custom.Title, fontH1, brushWhite, pointTitle);
                 g.DrawString(help, fontH3, brushGrey, pointHelp);
                 g.DrawString($"作者：{custom.Author}", fontH4, brushWhite, pointAuthor);
@@ -246,7 +248,7 @@ namespace Daylily.Plugin.Core.Command
                 g.DrawString(custom.State.ToString(), fontH4, brushWhite, pointState);
                 g.DrawString("用法：", fontH2, brushWhite, pointUsage);
                 g.DrawString(custom.Usage, fontH3, brushGrey, pointUsage2);
-                g.DrawString("选项：", fontH2, brushWhite, pointArg);
+                if (custom.Arg.Count != 0) g.DrawString("选项：", fontH2, brushWhite, pointArg);
                 int i = 0;
                 foreach (var arg in custom.Arg)
                 {
@@ -254,7 +256,7 @@ namespace Daylily.Plugin.Core.Command
                     g.DrawString(arg.Value, fontH3, brushGrey, leftArg2 + offsetArg, topArg2 + stepArg * i);
                     i++;
                 }
-                g.DrawString("自由参数：", fontH2, brushWhite, pointFree);
+                if (custom.FreeArg.Count != 0) g.DrawString("自由参数：", fontH2, brushWhite, pointFree);
                 i = 0;
                 foreach (var free in custom.FreeArg)
                 {

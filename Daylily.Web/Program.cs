@@ -12,6 +12,7 @@ namespace Daylily.Web
         public static void Main(string[] args)
         {
             var app = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application;
+            args = new[] { $"{app.ApplicationName.Split('.')[0]} {app.ApplicationVersion.Remove(app.ApplicationVersion.Length - 2)} based on {app.RuntimeFramework}" };
             Logger.Raw(@".__       . .   
 |  \ _.  .|*|  .
 |__/(_]\_||||\_|
