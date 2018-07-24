@@ -17,7 +17,7 @@ namespace Daylily.Plugin.Core.Command
 {
     [Name("黄花菜帮助")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Beta)]
+    [Version(0, 1, 2, PluginVersion.Beta)]
     [Help("如何使用黄花菜？")]
     [Command("help")]
     public class Help : CommandApp
@@ -59,10 +59,71 @@ namespace Daylily.Plugin.Core.Command
             //instList.Add($"{item.Name}。{string.Join("。", item.Helps)}");
 
 
-            return new FileImage(Draw(dicSort)).ToString();
+            return new FileImage(DrawList(dicSort)).ToString();
         }
 
-        private static Bitmap Draw(IEnumerable<KeyValuePair<string, string>> dictionary)
+        private string ShowDetail()
+        {
+            if (!PluginManager.CommandMapStatic.Keys.Contains(PluginCommand))
+                return "未找到相关资源...";
+            CommandApp plugin = PluginManager.CommandMapStatic[PluginCommand];
+            Custom custom = new Custom
+            {
+                Title = plugin.Name,
+                Helps = plugin.Helps,
+                Author = plugin.Author,
+                Version = plugin.Version,
+                State = plugin.State,
+                Arg = new Dictionary<string, string>(),
+                FreeArg = new Dictionary<string, string>()
+            };
+
+            var sbArg = new StringBuilder();
+            var sbFree = new StringBuilder();
+
+            Type t = plugin.GetType();
+            var props = t.GetProperties();
+
+            foreach (var prop in props)
+            {
+                var info = prop.GetCustomAttributes(false);
+                if (info.Length == 0) continue;
+                string helpStr = "尚无帮助信息。", argStr = null, freeStr = null, argName = null;
+                foreach (var o in info)
+                {
+                    switch (o)
+                    {
+                        case ArgAttribute argAttrib:
+                            argStr = $"-{argAttrib.Name}";
+                            argName = prop.Name;
+                            break;
+                        case FreeArgAttribute freeArgAttrib:
+                            freeStr = prop.Name;
+                            break;
+                        case HelpAttribute helpAttrib:
+                            helpStr = string.Join(" ", helpAttrib.Helps);
+                            break;
+                    }
+                }
+
+                if (argStr != null)
+                {
+                    sbArg.Append($" [{argStr} {argName}]");
+                    custom.Arg.Add(argStr, helpStr);
+                }
+
+                if (freeStr != null)
+                {
+                    sbFree.Append($" [{freeStr}]");
+                    custom.FreeArg.Add(freeStr, helpStr);
+                }
+            }
+
+            custom.Usage = $"\"{PluginCommand}{sbArg}{sbFree}";
+            return new FileImage(DrawDetail(custom)).ToString();
+        }
+
+        private static Bitmap DrawList(IEnumerable<KeyValuePair<string, string>> dictionary)
         {
             const string title = "黄花菜Help";
             const string sub = "（输入 \"/help [command]\" 查找某个命令的详细信息。）";
@@ -77,7 +138,7 @@ namespace Daylily.Plugin.Core.Command
             Font fontH2 = new Font("等线", 12);
             Font fontH3 = new Font("等线", 11);
 
-            Size size = MeasureSize(dictionary, fontH2, x, step, offset2);
+            Size size = MeasureListSize(dictionary, fontH2, x, step, offset2);
 
             Bitmap bitmap = new Bitmap(size.Width, 80 + size.Height);
             using (Brush brushWhite = new SolidBrush(Color.White))
@@ -117,73 +178,120 @@ namespace Daylily.Plugin.Core.Command
             return bitmap;
         }
 
-        private string ShowDetail()
+        private static Bitmap DrawDetail(Custom custom)
         {
-            if (!PluginManager.CommandMapStatic.Keys.Contains(PluginCommand))
-                return "未找到相关资源...";
+            Bitmap bitmap = new Bitmap(1, 1);
+            Graphics g = Graphics.FromImage(bitmap);
+            Font fontH1 = new Font("等线", 14);
+            Font fontH1B = new Font("等线", 14, FontStyle.Bold);
+            Font fontH2 = new Font("等线", 12);
+            Font fontH3 = new Font("等线", 11);
+            Font fontH4 = new Font("等线", 10);
 
-            CommandApp plugin = PluginManager.CommandMapStatic[PluginCommand];
-            var sb = new StringBuilder();
-            var sbArg = new StringBuilder();
-            var sbFree = new StringBuilder();
+            Point pointTitle = new Point(30, 30);
+            Point pointHelp = new Point(45, 54);
+            string help = string.Join(Environment.NewLine, custom.Helps);
+            Size sizeHelp = GetStrSize(g, help, fontH3);
 
-            sb.AppendLine($"“{plugin.Name}”的帮助：");
-            sb.AppendLine($"作者：{plugin.Author}");
-            sb.AppendLine($"版本：{plugin.Version} {plugin.State.ToString()}");
-            sb.AppendLine($"帮助说明：\r\n  {string.Join("\r\n  ", plugin.Helps)}");
-            Type t = plugin.GetType();
-            var props = t.GetProperties();
+            int topAuthor = 54 + sizeHelp.Height + 3;
+            Point pointAuthor = new Point(45, topAuthor);
+            Point pointVer = new Point(205, topAuthor);
+            Point pointState = new Point(285, topAuthor);
+            Size sizeAuthor = GetStrSize(g, custom.Author, fontH4);
 
-            bool used = false;
-            foreach (var prop in props)
+            int topUsage = topAuthor + sizeAuthor.Height + 40;
+            Point pointUsage = new Point(30, topUsage);
+            Size sizeUsage = GetStrSize(g, custom.Usage, fontH3);
+
+            int topUsage2 = topUsage + 22;
+            Point pointUsage2 = new Point(45, topUsage2);
+
+            int topArg = topUsage2 + 24;
+            Point pointArg = new Point(30, topArg);
+            int topArg2 = topArg + 22, leftArg2 = 45;
+            const int stepArg = 22, offsetArg = 105;
+            GetRightBottom(offsetArg, topArg2, stepArg, custom.Arg, g, fontH3, out int rightArg, out int bottomArg);
+
+            int topFree = bottomArg + 2;
+            Point pointFree = new Point(30, topFree);
+            int topFree2 = topFree + 22, leftFree2 = 45;
+            const int stepFree = 22, offsetFree = 105;
+            GetRightBottom(offsetFree, topFree2, stepFree, custom.FreeArg, g, fontH3, out int rightFree, out int bottomFree);
+
+
+            List<int> rightList = new List<int>
             {
-                var info = prop.GetCustomAttributes(false);
-                if (info.Length == 0) continue;
-                string helpStr = "尚无帮助信息。", argStr = null, freeStr = null;
-                foreach (var o in info)
+                pointHelp.X + sizeHelp.Width + 20,
+                360,
+                rightArg + 70,
+                rightFree + 70,
+                pointUsage.X + sizeUsage.Width + 40
+            };
+            Size size = new Size(rightList.Max(), bottomFree + 20);
+
+            bitmap = new Bitmap(size.Width, size.Height);
+            g = Graphics.FromImage(bitmap);
+            using (Brush brushWhite = new SolidBrush(Color.White))
+            using (Brush brushYellow = new SolidBrush(Color.FromArgb(255, 243, 82)))
+            using (Brush brushGrey = new SolidBrush(Color.FromArgb(185, 185, 185)))
+            {
+                g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                g.CompositingQuality = CompositingQuality.HighQuality;
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.Clear(Color.FromArgb(30, 30, 30));
+                g.DrawString(custom.Title, fontH1, brushWhite, pointTitle);
+                g.DrawString(help, fontH3, brushGrey, pointHelp);
+                g.DrawString($"作者：{custom.Author}", fontH4, brushWhite, pointAuthor);
+                g.DrawString($"版本：{custom.Version}", fontH4, brushWhite, pointVer);
+                g.DrawString(custom.State.ToString(), fontH4, brushWhite, pointState);
+                g.DrawString("用法：", fontH2, brushWhite, pointUsage);
+                g.DrawString(custom.Usage, fontH3, brushGrey, pointUsage2);
+                g.DrawString("选项：", fontH2, brushWhite, pointArg);
+                int i = 0;
+                foreach (var arg in custom.Arg)
                 {
-                    switch (o)
-                    {
-                        case ArgAttribute argAttrib:
-                            argStr = $"-{argAttrib.Name}";
-                            break;
-                        case FreeArgAttribute freeArgAttrib:
-                            freeStr = $"自由参数 ({prop.Name})";
-                            break;
-                        case HelpAttribute helpAttrib:
-                            helpStr = string.Join("\r\n", helpAttrib.Helps);
-                            break;
-                    }
+                    g.DrawString(arg.Key, fontH3, brushYellow, leftArg2, topArg2 + stepArg * i);
+                    g.DrawString(arg.Value, fontH3, brushGrey, leftArg2 + offsetArg, topArg2 + stepArg * i);
+                    i++;
                 }
-
-                if (argStr != null)
+                g.DrawString("自由参数：", fontH2, brushWhite, pointFree);
+                i = 0;
+                foreach (var free in custom.FreeArg)
                 {
-                    if (!used)
-                    {
-                        sbArg.AppendLine("参数说明：");
-                        used = true;
-                    }
-
-                    sbArg.AppendLine($"  {argStr}: {helpStr}");
-                }
-
-                if (freeStr != null)
-                {
-                    if (!used)
-                    {
-                        sbFree.AppendLine("参数说明：");
-                        used = true;
-                    }
-
-                    sbFree.AppendLine($"  {freeStr}: {helpStr}");
+                    g.DrawString(free.Key, fontH3, brushYellow, leftFree2, topFree2 + stepFree * i);
+                    g.DrawString(free.Value, fontH3, brushGrey, leftFree2 + offsetFree, topFree2 + stepFree * i);
+                    i++;
                 }
             }
 
-            return sb.ToString() + sbArg + sbFree;
+            fontH1.Dispose();
+            fontH1B.Dispose();
+            fontH2.Dispose();
+            fontH3.Dispose();
+            g.Dispose();
 
+            return bitmap;
         }
 
-        private static Size MeasureSize(IEnumerable<KeyValuePair<string, string>> dictionary, Font fontH2, int x, int step, int offset2)
+        private static void GetRightBottom(int offsetDisp, int top, int step, Dictionary<string, string> keyValues, Graphics g,
+            Font f, out int right, out int bottom)
+        {
+            bottom = top + step * keyValues.Count;
+            right = 0;
+            foreach (var item in keyValues)
+            {
+                Size size = GetStrSize(g, item.Value, f);
+                if (offsetDisp + size.Width > right) right = offsetDisp + size.Width;
+            }
+        }
+
+        private static Size GetStrSize(Graphics g, string str, Font font)
+        {
+            var ok = g.MeasureString(str, font);
+            return new Size((int)ok.Width, (int)ok.Height);
+        }
+
+        private static Size MeasureListSize(IEnumerable<KeyValuePair<string, string>> dictionary, Font fontH2, int x, int step, int offset2)
         {
             int maxW = 0, maxH = 0;
             using (Bitmap bitmap = new Bitmap(1, 1))
@@ -231,6 +339,19 @@ namespace Daylily.Plugin.Core.Command
             roundedRect.AddLine(rect.X, rect.Bottom - cornerRadius * 2, rect.X, rect.Y + cornerRadius * 2);
             roundedRect.CloseFigure();
             return roundedRect;
+        }
+
+        private class Custom
+        {
+            public string Title { get; set; }
+            public string[] Helps { get; set; }
+            public string Author { get; set; }
+            public string Version { get; set; }
+            public PluginVersion State { get; set; }
+            public string Usage { get; set; }
+            public Dictionary<string, string> Arg { get; set; }
+            public Dictionary<string, string> FreeArg { get; set; }
+
         }
     }
 }
