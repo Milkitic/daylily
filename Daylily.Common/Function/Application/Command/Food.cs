@@ -17,7 +17,7 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("深夜美食")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Alpha)]
+    [Version(0, 1, 1, PluginVersion.Alpha)]
     [Help("查询一道深夜美食")]
     [Command("food")]
     public class Food : CommandApp
@@ -72,7 +72,7 @@ namespace Daylily.Common.Function.Application.Command
             Bitmap bmp = new Bitmap(path);
             using (Graphics g = Graphics.FromImage(bmp))
             using (Brush b = new SolidBrush(Color.White))
-            using (Pen p = new Pen(Color.FromArgb(48, 0, 0, 0), 2))
+            using (Pen p = new Pen(Color.FromArgb(96, 0, 0, 0), 2))
             using (Font f = new Font("等线", 12, FontStyle.Bold))
             {
                 SizeF sf = g.MeasureString(mark, f);

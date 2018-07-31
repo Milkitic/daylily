@@ -23,7 +23,7 @@ namespace Daylily.Common.Utils.HttpRequest
             ServicePointManager.ServerCertificateValidationCallback = CheckValidationResult;
             Http = new HttpClient()
             {
-                Timeout = new TimeSpan(0, 0, 3)
+                Timeout = new TimeSpan(0, 0, 8)
             };
         }
 
