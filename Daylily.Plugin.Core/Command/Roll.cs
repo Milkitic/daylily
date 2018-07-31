@@ -12,22 +12,22 @@ namespace Daylily.Plugin.Core.Command
     [Name("获取随机数")]
     [Author("yf_extension")]
     [Version(0, 1, 0, PluginVersion.Stable)]
-    [Help("获取随机数")]
+    [Help("获取一个或多个随机数。")]
     [Command("roll")]
     public class Roll : CommandApp
     {
         [Arg("r", IsSwitch = true, Default = false)]
-        [Help("当激活时，则使抽取含重复结果。否则结果不包含重复结果。")]
+        [Help("若启用，则使抽取含重复结果。否则结果不包含重复结果。")]
         public bool Repeat { get; set; }
         [FreeArg]
         [Help("当参数(m)为无效参数时，此参数(n)为上界(0~n)。否则此参数为下界(n~m)。")]
-        public string Param1OrMsg { get; set; }
+        public string Param1 { get; set; }
         [FreeArg]
         [Help("此参数(m)为上界(n~m)。")]
-        public string Param2OrMsg { get; set; }
+        public string Param2 { get; set; }
         [FreeArg]
         [Help("此参数(c)为抽取的数量。")]
-        public string CountOrMsg { get; set; }
+        public string Count { get; set; }
 
         public override void Initialize(string[] args)
         {
@@ -36,9 +36,9 @@ namespace Daylily.Plugin.Core.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            bool isParam1 = int.TryParse(Param1OrMsg, out int param1);
-            bool isParam2 = int.TryParse(Param2OrMsg, out int param2);
-            bool isCNum = int.TryParse(CountOrMsg, out int count);
+            bool isParam1 = int.TryParse(Param1, out int param1);
+            bool isParam2 = int.TryParse(Param2, out int param2);
+            bool isCNum = int.TryParse(Count, out int count);
             if (!isParam1)
                 return new CommonMessageResponse(GetRand().ToString(), messageObj, true);
             if (!isParam2)

@@ -19,11 +19,15 @@ namespace Daylily.Plugin.Core.Command
 {
     [Name("PP+查询")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Beta)]
-    [Help("获取自己的PP+信息，并生成六维图")]
+    [Version(0, 1, 0, PluginVersion.Beta)]
+    [Help("获取发送者的PP+信息，并生成相应六维图。")]
     [Command("pp")]
     public class PpPlus : CommandApp
     {
+        [FreeArg]
+        [Help("查询指定的osu用户名。若带空格，请使用引号。")]
+        public string OsuId { get; set; }
+
         public override void Initialize(string[] args)
         {
 
@@ -31,7 +35,7 @@ namespace Daylily.Plugin.Core.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            string userId = messageObj.ArgString;
+            string userId = OsuId;
 
             Logger.Origin("Sent request.");
             var response = WebRequestUtil.CreatePostHttpResponse("https://syrin.me/pp+/u/" + userId);

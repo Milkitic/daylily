@@ -18,13 +18,13 @@ namespace Daylily.Plugin.Core.Command
     [Name("黄花菜帮助")]
     [Author("yf_extension")]
     [Version(0, 1, 2, PluginVersion.Beta)]
-    [Help("如何使用黄花菜？")]
+    [Help("查看此帮助信息。")]
     [Command("help")]
     public class Help : CommandApp
     {
         private static string _versionInfo;
         [FreeArg]
-        public string PluginCommand { get; set; }
+        public string CommandName { get; set; }
 
         public override void Initialize(string[] args)
         {
@@ -33,16 +33,19 @@ namespace Daylily.Plugin.Core.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            return PluginCommand == null
-                ? new CommonMessageResponse(ShowList(), messageObj)
+            return CommandName == null
+                ? new CommonMessageResponse(ShowList(messageObj), messageObj)
                 : new CommonMessageResponse(ShowDetail().Trim('\n').Trim('\r'), messageObj);
         }
 
-        private static string ShowList()
+        private static string ShowList(CommonMessage messageObj)
         {
             CommandApp[] plugins = PluginManager.CommandMapStatic.Values.Distinct().ToArray();
-            Dictionary<string, string> dictionary = plugins.ToDictionary(item => string.Join(", /", item.Commands),
-                item => $"{item.Name}。{string.Join("。", item.Helps)}");
+            Dictionary<string, string> dictionary = plugins
+                .Where(plugin => plugin.HelpType == messageObj.PermissionLevel).ToDictionary(
+                    plugin => string.Join(", /", plugin.Commands),
+                    plugin => $"{plugin.Name}。{plugin.Helps[0]}");
+                  //plugin => $"{plugin.Name}。{string.Join("。", plugin.Helps)}");
 
             IEnumerable<KeyValuePair<string, string>> dicSort = from objDic in dictionary orderby objDic.Key select objDic;
 
@@ -51,9 +54,9 @@ namespace Daylily.Plugin.Core.Command
 
         private string ShowDetail()
         {
-            if (!PluginManager.CommandMapStatic.Keys.Contains(PluginCommand))
+            if (!PluginManager.CommandMapStatic.Keys.Contains(CommandName))
                 return "未找到相关资源...";
-            CommandApp plugin = PluginManager.CommandMapStatic[PluginCommand];
+            CommandApp plugin = PluginManager.CommandMapStatic[CommandName];
             Custom custom = new Custom
             {
                 Title = plugin.Name,
@@ -108,7 +111,7 @@ namespace Daylily.Plugin.Core.Command
                 }
             }
 
-            custom.Usage = $"/{PluginCommand}{sbArg}{sbFree}";
+            custom.Usage = $"/{CommandName}{sbArg}{sbFree}";
             return new FileImage(DrawDetail(custom)).ToString();
         }
 

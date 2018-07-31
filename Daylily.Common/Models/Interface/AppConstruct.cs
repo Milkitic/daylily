@@ -25,6 +25,7 @@ namespace Daylily.Common.Models.Interface
         public string Version => string.Concat(Major, ".", Minor, ".", Patch);
         public PluginVersion State { get; internal set; }
         public string[] Helps { get; internal set; }
+        public PermissionLevel HelpType { get; internal set; }
 
         #endregion public members
 
@@ -65,12 +66,15 @@ namespace Daylily.Common.Models.Interface
                         break;
                     case HelpAttribute help:
                         Helps = help.Helps ?? new[] { "尚无帮助信息" };
+                        HelpType = help.HelpType;
                         break;
                 }
             }
         }
 
         protected PermissionLevel CurrentLevel { get; set; }
+
+        protected string SettingsPath => Path.Combine(_pluginDir, GetType().Name);
 
         protected static readonly Random Rnd = new Random();
 
@@ -81,14 +85,12 @@ namespace Daylily.Common.Models.Interface
 
         protected void SaveSettings<T>(T cls, string fileName = null)
         {
-            Type thisT = GetType();
             Type clsT = cls.GetType();
 
-            string setsDir = Path.Combine(_pluginDir, thisT.Name);
-            string saveName = Path.Combine(setsDir, (fileName ?? clsT.Name) + ".json");
+            string saveName = Path.Combine(SettingsPath, (fileName ?? clsT.Name) + ".json");
 
-            if (!Directory.Exists(setsDir))
-                Directory.CreateDirectory(setsDir);
+            if (!Directory.Exists(SettingsPath))
+                Directory.CreateDirectory(SettingsPath);
 
             ConcurrentFile.WriteAllText(saveName, Newtonsoft.Json.JsonConvert.SerializeObject(cls));
         }
@@ -97,14 +99,12 @@ namespace Daylily.Common.Models.Interface
         {
             try
             {
-                Type thisT = GetType();
                 Type clsT = typeof(T);
 
-                string setsDir = Path.Combine(_pluginDir, thisT.Name);
-                string saveName = Path.Combine(setsDir, (fileName ?? clsT.Name) + ".json");
+                string saveName = Path.Combine(SettingsPath, (fileName ?? clsT.Name) + ".json");
 
-                if (!Directory.Exists(setsDir))
-                    Directory.CreateDirectory(setsDir);
+                if (!Directory.Exists(SettingsPath))
+                    Directory.CreateDirectory(SettingsPath);
 
                 string json = ConcurrentFile.ReadAllText(saveName);
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);

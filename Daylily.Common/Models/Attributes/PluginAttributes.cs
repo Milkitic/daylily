@@ -44,6 +44,7 @@ namespace Daylily.Common.Models.Attributes
     public class HelpAttribute : Attribute
     {
         public string[] Helps { get; }
+        public PermissionLevel HelpType { get; set; } = PermissionLevel.Public;
         public HelpAttribute(params string[] helps)
         {
             Helps = helps;

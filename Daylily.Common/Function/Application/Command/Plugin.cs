@@ -11,15 +11,17 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("插件管理")]
     [Author("yf_extension")]
-    [Version(0, 0, 2, PluginVersion.Alpha)]
-    [Help("动态管理插件")]
+    [Version(0, 1, 0, PluginVersion.Alpha)]
+    [Help("动态管理插件的启用状态。", HelpType = PermissionLevel.Root)]
     [Command("plugin")]
     public class Plugin : CommandApp
     {
         [Arg("l", IsSwitch = true)]
+        [Help("若启用，显示当前启用的插件列表。")]
         public bool List { get; set; }
-        [Arg("r")]
-        public string Remove { get; set; }
+        [Arg("d")]
+        [Help("禁用指定的插件。")]
+        public string PluginDisable { get; set; }
 
         public override void Initialize(string[] args)
         {
@@ -30,12 +32,12 @@ namespace Daylily.Common.Function.Application.Command
         {
             if (List)
                 return new CommonMessageResponse(ShowPluginList(), messageObj);
-            if (Remove != null)
-                return new CommonMessageResponse(Remove, messageObj);
+            if (PluginDisable != null)
+                return new CommonMessageResponse(PluginDisable, messageObj);
             return null;
         }
 
-        private string ShowPluginList()
+        private static string ShowPluginList()
         {
             var sb = new StringBuilder();
             var commandMap = PluginManager.CommandMapStatic.Values.Distinct();

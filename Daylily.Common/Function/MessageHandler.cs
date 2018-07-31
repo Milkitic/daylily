@@ -273,45 +273,49 @@ namespace Daylily.Common.Function
             int length = freeArray.Length;
             foreach (var prop in props)
             {
-                var info = prop.GetCustomAttributes(false);
-                if (info.Length == 0) continue;
-                switch (info[0])
+                var infos = prop.GetCustomAttributes(false);
+                if (infos.Length == 0) continue;
+                foreach (var info in infos)
                 {
-                    case ArgAttribute argAttrib:
-                        if (cm.Switches.ContainsKey(argAttrib.Name))
-                        {
-                            if (argAttrib.IsSwitch)
-                                prop.SetValue(plugin, true);
-                        }
-                        else if (cm.Args.ContainsKey(argAttrib.Name))
-                        {
-                            if (!argAttrib.IsSwitch)
+                    switch (info)
+                    {
+                        case ArgAttribute argAttrib:
+                            if (cm.Switches.ContainsKey(argAttrib.Name))
                             {
-                                dynamic obj = ParseStr(prop, cm.Args[argAttrib.Name]);
-                                prop.SetValue(plugin, obj);
+                                if (argAttrib.IsSwitch)
+                                    prop.SetValue(plugin, true);
                             }
-                        }
-                        else if (argAttrib.Default != null)
-                        {
-                            prop.SetValue(plugin, argAttrib.Default); //不再转换，提升效率
-                        }
-
-                        break;
-                    case FreeArgAttribute freeArgAttrib:
-                        {
-                            if (freeIndex > length - 1)
+                            else if (cm.Args.ContainsKey(argAttrib.Name))
                             {
-                                if (freeArgAttrib.Default != null)
-                                    prop.SetValue(plugin, freeArgAttrib.Default); //不再转换，提升效率
+                                if (!argAttrib.IsSwitch)
+                                {
+                                    dynamic obj = ParseStr(prop, cm.Args[argAttrib.Name]);
+                                    prop.SetValue(plugin, obj);
+                                }
+                            }
+                            else if (argAttrib.Default != null)
+                            {
+                                prop.SetValue(plugin, argAttrib.Default); //不再转换，提升效率
+                            }
+
+                            break;
+                        case FreeArgAttribute freeArgAttrib:
+                            {
+                                if (freeIndex > length - 1)
+                                {
+                                    if (freeArgAttrib.Default != null)
+                                        prop.SetValue(plugin, freeArgAttrib.Default); //不再转换，提升效率
+                                    break;
+                                }
+
+                                dynamic obj = ParseStr(prop, freeArray[freeIndex]);
+                                prop.SetValue(plugin, obj);
+                                freeIndex++;
                                 break;
                             }
-
-                            dynamic obj = ParseStr(prop, freeArray[freeIndex]);
-                            prop.SetValue(plugin, obj);
-                            freeIndex++;
-                            break;
-                        }
+                    }
                 }
+
             }
         }
 

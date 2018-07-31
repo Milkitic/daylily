@@ -11,10 +11,10 @@ namespace Daylily.Plugin.Core.Command
 {
     [Name("文件浏览")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Alpha)]
-    [Help("浏览磁盘目录")]
+    [Version(0, 1, 0, PluginVersion.Alpha)]
+    [Help("浏览磁盘目录。", HelpType = PermissionLevel.Root)]
     [Command("cd")]
-    class Cd : CommandApp
+    public class Cd : CommandApp
     {
         public override void Initialize(string[] args)
         {

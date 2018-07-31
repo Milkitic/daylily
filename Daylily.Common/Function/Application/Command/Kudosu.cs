@@ -25,11 +25,14 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("Modding查询")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
-    [Help("查询modding（被点赞或给与kd），并生成对应统计图")]
+    [Version(0, 1, 0, PluginVersion.Beta)]
+    [Help("查询Modding所得点赞或kd，并生成相应统计图。")]
     [Command("kd")]
     public class Kudosu : CommandApp
     {
+        [Help("查询指定的osu用户名。若带空格，请使用引号。")]
+        [FreeArg]
+        public string OsuId { get; set; }
 
         public override void Initialize(string[] args)
         {
@@ -40,35 +43,26 @@ namespace Daylily.Common.Function.Application.Command
         {
             string id;
             string uname;
-            if (string.IsNullOrEmpty(messageObj.ArgString))
+            if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
                 List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
                 if (userInfo.Count == 0)
-                {
                     return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
-                }
 
                 id = userInfo[0].UserId.ToString();
                 uname = userInfo[0].CurrentUname;
             }
             else
             {
-                if (messageObj.PermissionLevel != PermissionLevel.Public)
-                {
-                    OsuClient osu = new OsuClient(OsuApi.ApiKey);
-                    OsuUser[] userList = osu.GetUser(messageObj.ArgString);
-                    if (userList.Length == 0)
-                    {
-                        return new CommonMessageResponse(LoliReply.IdNotFound, messageObj, true);
-                    }
+                OsuClient osu = new OsuClient(OsuApi.ApiKey);
+                OsuUser[] userList = osu.GetUser(OsuId);
+                if (userList.Length == 0)
+                    return new CommonMessageResponse(LoliReply.IdNotFound, messageObj, true);
 
-                    OsuUser userObj = userList[0];
-                    id = userObj.user_id;
-                    uname = userObj.username;
-                }
-                else
-                    return null;
+                OsuUser userObj = userList[0];
+                id = userObj.user_id;
+                uname = userObj.username;
             }
 
             List<KudosuInfo> totalList = new List<KudosuInfo>();
@@ -88,7 +82,7 @@ namespace Daylily.Common.Function.Application.Command
 
                 if (totalList.Count != 0) continue;
 
-                return new CommonMessageResponse("竟然连一张图都没摸过...", messageObj, true);
+                return new CommonMessageResponse("此人一张图都没摸过……", messageObj, true);
             } while (tmpList.Count != 0);
 
             List<KdInfo> kdInfoList = new List<KdInfo>();

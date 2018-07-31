@@ -21,8 +21,8 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("随机挖坑")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Beta)]
-    [Help("随机挖坑")]
+    [Version(0, 1, 0, PluginVersion.Beta)]
+    [Help("从发送者的Graveyard Beatmaps中随机挖一张图。")]
     [Command("挖坑")]
     public class MyGraveyard : CommandApp
     {
@@ -36,9 +36,7 @@ namespace Daylily.Common.Function.Application.Command
             BllUserRole bllUserRole = new BllUserRole();
             List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
             if (userInfo.Count == 0)
-            {
                 return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
-            }
 
             var id = userInfo[0].UserId.ToString();
 

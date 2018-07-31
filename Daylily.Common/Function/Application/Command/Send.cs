@@ -9,7 +9,7 @@ namespace Daylily.Common.Function.Application.Command
     [Name("发送自定义消息")]
     [Author("yf_extension")]
     [Version(0, 1, 0, PluginVersion.Stable)]
-    [Help("支持发送任意格式的消息（包含cq码），支持群聊私聊")]
+    [Help("支持发送任意格式的消息（包含cq码）。", HelpType = PermissionLevel.Root)]
     [Command("send")]
     public class Send : CommandApp
     {
@@ -42,7 +42,7 @@ namespace Daylily.Common.Function.Application.Command
             if (GroupId != null && DiscussId != null)
                 return new CommonMessageResponse("不能同时选择群和讨论组……", messageObj);
 
-            string innerMessage = Transform(Message);
+            string innerMessage = Decode(Message);
             if (DiscussId != null)
             {
                 innerDiscuss = DiscussId;
@@ -57,13 +57,13 @@ namespace Daylily.Common.Function.Application.Command
                 innerUser = UserId;
 
             if (DiscussId == null && GroupId == null && UserId == null)
-                return new CommonMessageResponse(Transform(messageObj.ArgString), messageObj);
+                return new CommonMessageResponse(Decode(messageObj.ArgString), messageObj);
 
             SendMessage(new CommonMessageResponse(innerMessage, innerUser), innerGroup, innerDiscuss, innerType);
             return null;
         }
 
-        private static string Transform(string source) =>
+        private static string Decode(string source) =>
             source.Replace("\\&amp;", "&tamp;").Replace("\\#91;", "&t#91;").Replace("\\&#93;", "&t#93;").Replace("\\&#44;", "&t#44;")
             .Replace("&amp;", "&").Replace("&#91;", "[").Replace("&#93;", "]").Replace("&#44;", ",").
             Replace("&tamp;", "&amp;").Replace("&t#91;", "&#91;").Replace("&t#93;", "&#93;").Replace("&t#44;", "&#44;");

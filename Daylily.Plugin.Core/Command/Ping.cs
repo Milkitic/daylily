@@ -9,8 +9,8 @@ namespace Daylily.Plugin.Core.Command
 {
     [Name("Ping")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
-    [Help("返回pong")]
+    [Version(0, 1, 0, PluginVersion.Stable)]
+    [Help("返回\"pong\"。")]
     [Command("ping")]
     public class Ping : CommandApp
     {

@@ -7,10 +7,10 @@ using Daylily.Common.Models.Interface;
 
 namespace Daylily.Common.Function.Application.Command
 {
-    [Name("强行停止黄花菜")]
+    [Name("强制停止")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
-    [Help("收到消息立刻结束进程")]
+    [Version(0, 1, 0, PluginVersion.Stable)]
+    [Help("此命令会立刻结束程序进程。", HelpType = PermissionLevel.Root)]
     [Command("sdown")]
     public class Shutdown : CommandApp
     {

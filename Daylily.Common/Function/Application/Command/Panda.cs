@@ -18,12 +18,13 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("熊猫生成器")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Beta)]
-    [Help("生成熊猫图，表情随机")]
+    [Version(0, 1, 0, PluginVersion.Beta)]
+    [Help("生成可自定义文字的熊猫图（表情与文字随机）。")]
     [Command("panda")]
     public class Panda : CommandApp
     {
         [FreeArg]
+        [Help("需要生成的配套文字。以逗号分隔作为行数。若带空格，请使用引号。")]
         public string PandaWord { get; set; }
 
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");

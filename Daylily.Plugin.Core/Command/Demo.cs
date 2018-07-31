@@ -19,10 +19,10 @@ namespace Daylily.Plugin.Core.Command
     // 插件作者
     [Author("yf_extension")]
     // 插件版本
-    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Version(0, 1, 0, PluginVersion.Stable)]
     // 插件说明，用于help查询
     [Help("用于对于插件开发进行Demo演示")]
-    class DemoOrigin : CommandApp // 继承此类做为命令，此外还有其他两种类型
+    class Demo : CommandApp // 继承此类做为命令，此外还有其他两种类型
     {
         private static Thread _tThread;
         private static string UserId { get; set; }
