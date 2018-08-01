@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Daylily.Common.Assist;
@@ -339,10 +340,43 @@ namespace Daylily.Common.Utils
         /// 发送Image对象中的图片。
         /// </summary>
         /// <param name="img">为欲发送的图片</param>
+        /// <param name="imageQualityValue">为欲保存的图片质量，参数为1至100的整数（JPEG格式）</param>
+        public FileImage(Image img, int imageQualityValue)
+        {
+            string path = System.IO.Path.Combine(Domain.CurrentDirectory, "images", Guid.NewGuid() + ".png");
+
+            EncoderParameters encoderParameters = new EncoderParameters();
+            EncoderParameter encoderParameter = new EncoderParameter(Encoder.Quality, imageQualityValue);
+            encoderParameters.Param[0] = encoderParameter;
+            ImageCodecInfo[] imageCodecInfoArray = ImageCodecInfo.GetImageEncoders();
+            ImageCodecInfo jpegImageCodecInfo =
+                imageCodecInfoArray.FirstOrDefault(item => item.FormatDescription.Equals("JPEG"));
+
+            img.Save(path, jpegImageCodecInfo, encoderParameters);
+            //img.Save(path, format);
+            Path = Escape(path);
+        }
+
+        /// <summary>
+        /// 发送Image对象中的图片。
+        /// </summary>
+        /// <param name="img">为欲发送的图片</param>
+        /// <param name="format">为欲保存的图片格式</param>
+        public FileImage(Image img, ImageFormat format)
+        {
+            string path = System.IO.Path.Combine(Domain.CurrentDirectory, "images", Guid.NewGuid() + ".png");
+            img.Save(path, format);
+            Path = Escape(path);
+        }
+
+        /// <summary>
+        /// 发送Image对象中的图片。
+        /// </summary>
+        /// <param name="img">为欲发送的图片</param>
         public FileImage(Image img)
         {
             string path = System.IO.Path.Combine(Domain.CurrentDirectory, "images", Guid.NewGuid() + ".png");
-            img.Save(path, System.Drawing.Imaging.ImageFormat.Png);
+            img.Save(path, ImageFormat.Png);
             Path = Escape(path);
         }
     }

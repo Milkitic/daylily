@@ -17,7 +17,7 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("深夜美食")]
     [Author("yf_extension")]
-    [Version(0, 1, 1, PluginVersion.Alpha)]
+    [Version(0, 1, 2, PluginVersion.Beta)]
     [Help("查询一道深夜美食")]
     [Command("food")]
     public class Food : CommandApp
@@ -62,7 +62,7 @@ namespace Daylily.Common.Function.Application.Command
             string file = Path.Combine(dir, innerChoice);
 
             Bitmap bitmap = DrawWatermark(file);
-            return new CommonMessageResponse(new FileImage(bitmap).ToString(), messageObj);
+            return new CommonMessageResponse(new FileImage(bitmap, 85).ToString(), messageObj);
         }
 
         private static Bitmap DrawWatermark(string path)
