@@ -17,15 +17,27 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("深夜美食")]
     [Author("yf_extension")]
-    [Version(0, 1, 2, PluginVersion.Beta)]
+    [Version(0, 1, 3, PluginVersion.Beta)]
     [Help("查询一道深夜美食")]
     [Command("food")]
     public class Food : CommandApp
     {
-        private static string _imagePath, _content;
+        [Help("禁用指定相册。")]
+        [Arg("disable", Default = 0)]
+        public int EnabledAlbumId { get; set; }
+
+        [Help("启用指定相册。")]
+        [Arg("enable", Default = 0)]
+        public int DisabledAlbumId { get; set; }
+
+        [Help("清除并重新建立目录缓存。")]
+        [Arg("cc", IsSwitch = true)]
+        public bool ClearCache { get; set; }
 
         [FreeArg]
         public string FoodName { get; set; }
+
+        private static string _imagePath, _content;
 
         public override void Initialize(string[] args)
         {
@@ -39,13 +51,25 @@ namespace Daylily.Common.Function.Application.Command
             }
             else
                 Logger.Info("目录已经建立。");
-
-
         }
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             string[] content = File.ReadAllLines(_content);
+
+            if (EnabledAlbumId > 0 || DisabledAlbumId > 0)
+            {
+                return messageObj.PermissionLevel == PermissionLevel.Root
+                    ? ManageAlbum(messageObj, content)
+                    : new CommonMessageResponse(LoliReply.RootOnly, messageObj);
+            }
+
+            if (ClearCache)
+            {
+                ClearContent();
+                return new CommonMessageResponse("已重新建立缓存", messageObj);
+            }
+
             string[] choices = FoodName == null
                 ? content
                 : content.Where(k => k.IndexOf(FoodName, StringComparison.Ordinal) != -1).ToArray();
@@ -63,6 +87,52 @@ namespace Daylily.Common.Function.Application.Command
 
             Bitmap bitmap = DrawWatermark(file);
             return new CommonMessageResponse(new FileImage(bitmap, 85).ToString(), messageObj);
+        }
+
+        private CommonMessageResponse ManageAlbum(CommonMessage messageObj, IEnumerable<string> content)
+        {
+            string disabledPath = Path.Combine(_imagePath, ".disabled");
+            if (!Directory.Exists(disabledPath))
+                Directory.CreateDirectory(disabledPath);
+            string[] album;
+            string sourcePath, targetPath;
+            string message;
+            string name;
+            if (EnabledAlbumId > 0)
+            {
+                album = content.Where(k =>
+                        k.Substring(0, k.IndexOf(' ')).IndexOf(EnabledAlbumId.ToString(), StringComparison.Ordinal) !=
+                        -1)
+                    .ToArray();
+
+                name = album[0];
+                sourcePath = Path.Combine(_imagePath, name);
+                targetPath = disabledPath;
+                message = $"成功禁用 \"{album[0]}\"";
+            }
+            else
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(disabledPath);
+                string[] disContent =
+                    dirInfo.EnumerateDirectories().Select(i => i.Name).ToArray();
+                album = disContent.Where(k =>
+                    k.Substring(0, k.IndexOf(' ')).IndexOf(DisabledAlbumId.ToString(), StringComparison.Ordinal) !=
+                    -1).ToArray();
+
+                name = album[0];
+                sourcePath = Path.Combine(disabledPath, name);
+                targetPath = _imagePath;
+                message = $"成功启用 \"{album[0]}\"";
+            }
+
+            if (album.Length > 1)
+                return new CommonMessageResponse($"包含多个相册：\"{string.Join(',', album)}\"", messageObj);
+            if (album.Length == 0)
+                return new CommonMessageResponse($"没有找到相册 \"{EnabledAlbumId}\"", messageObj);
+
+            Directory.Move(sourcePath, Path.Combine(targetPath, name));
+            ClearContent();
+            return new CommonMessageResponse(message, messageObj);
         }
 
         private static Bitmap DrawWatermark(string path)
@@ -112,15 +182,25 @@ namespace Daylily.Common.Function.Application.Command
             Logger.Info("正在建立子目录的文件目录……");
             foreach (var item in info.EnumerateDirectories())
             {
-                Logger.Debug(item.Name);
+                //Logger.Debug(item.Name);
                 CreateFileContent(item);
             }
+        }
+
+        private static void ClearContent()
+        {
+            if (!Directory.Exists(_imagePath))
+                return;
+            var info = new DirectoryInfo(_imagePath);
+            RemoveContent(info);
+            CreateContent();
         }
 
         private static void CreateDirContent(DirectoryInfo di)
         {
             string content = Path.Combine(di.FullName, ".content");
-            List<string> list = di.EnumerateDirectories().Select(item => item.Name).ToList();
+            List<string> list = di.EnumerateDirectories().Where(i => !i.Name.StartsWith('.')).Select(item => item.Name)
+                .ToList();
             list.Sort();
             File.WriteAllLines(content, list);
         }
@@ -128,9 +208,16 @@ namespace Daylily.Common.Function.Application.Command
         private static void CreateFileContent(DirectoryInfo di)
         {
             string content = Path.Combine(di.FullName, ".content");
-            List<string> list = di.EnumerateFiles().Select(item => item.Name).ToList();
+            List<string> list = di.EnumerateFiles().Where(i => !i.Name.StartsWith('.')).Select(item => item.Name)
+                .ToList();
             list.Sort();
             File.WriteAllLines(content, list);
+        }
+
+        private static void RemoveContent(DirectoryInfo di)
+        {
+            string content = Path.Combine(di.FullName, ".content");
+            File.Delete(content);
         }
     }
 }

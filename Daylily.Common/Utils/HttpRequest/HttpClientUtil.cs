@@ -118,7 +118,7 @@ namespace Daylily.Common.Utils.HttpRequest
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                throw;
+                return null;
             }
         }
 
@@ -141,7 +141,7 @@ namespace Daylily.Common.Utils.HttpRequest
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                throw;
+                return null;
             }
         }
 
