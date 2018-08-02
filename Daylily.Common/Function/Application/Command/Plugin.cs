@@ -13,7 +13,7 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("插件管理")]
     [Author("yf_extension")]
-    [Version(0, 1, 3, PluginVersion.Alpha)]
+    [Version(0, 1, 4, PluginVersion.Alpha)]
     [Help("动态管理插件的启用状态。", "仅限当前群生效。", HelpType = PermissionLevel.Admin)]
     [Command("plugin")]
     public class Plugin : CommandApp
@@ -223,9 +223,13 @@ namespace Daylily.Common.Function.Application.Command
                     sb.AppendLine(MessageHandler.DiscussInfo[long.Parse(_cm.IdentityId)].Name + " 的插件情况：");
                     foreach (var item in MessageHandler.DiscussDisabledList[long.Parse(_cm.IdentityId)])
                     {
-                        foreach (var i in dicPlugin[cmdKey])
-                            if (i.TypeName == item)
-                                i.IsEnabled = false;
+                        var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
+                        foreach (var i in pluginInfos)
+                        {
+                            if (i.TypeName != item) continue;
+                            i.IsEnabled = false;
+                            break;
+                        }
                     }
 
                     break;
@@ -233,7 +237,8 @@ namespace Daylily.Common.Function.Application.Command
                     sb.AppendLine(_cm.IdentityId + " 的插件情况：");
                     foreach (var item in MessageHandler.PrivateDisabledList[long.Parse(_cm.IdentityId)])
                     {
-                        foreach (var i in dicPlugin[cmdKey])
+                        var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
+                        foreach (var i in pluginInfos)
                             if (i.TypeName == item)
                                 i.IsEnabled = false;
                     }
@@ -243,7 +248,8 @@ namespace Daylily.Common.Function.Application.Command
                     sb.AppendLine(MessageHandler.GroupInfo[long.Parse(_cm.IdentityId)].Info.GroupName + " 的插件情况：");
                     foreach (var item in MessageHandler.GroupDisabledList[long.Parse(_cm.IdentityId)])
                     {
-                        foreach (var i in dicPlugin[cmdKey])
+                        var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
+                        foreach (var i in pluginInfos)
                             if (i.TypeName == item)
                                 i.IsEnabled = false;
                     }

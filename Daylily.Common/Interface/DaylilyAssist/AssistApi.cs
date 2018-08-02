@@ -7,7 +7,7 @@ namespace Daylily.Common.Interface.DaylilyAssist
 {
     public class AssistApi
     {
-        public static string ApiUrl { get; set; } = "http://123.207.137.177:23334";
+        public static string ApiUrl { get; set; } = "http://139.199.103.11:23334";
 
         public static string GetImgFile(string fileName)
         {
