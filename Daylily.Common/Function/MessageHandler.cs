@@ -256,6 +256,8 @@ namespace Daylily.Common.Function
             string fullCmd = cm.FullCommand;
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
             ca.Analyze(fullCmd, cm);
+            CommonMessageResponse replyObj = null;
+            if (!PluginManager.CommandMap.ContainsKey(cm.Command)) return;
 
             Type t = PluginManager.CommandMap[cm.Command];
             if (ValidateDisabled(cm, t))
@@ -263,9 +265,6 @@ namespace Daylily.Common.Function
                 CqApi.SendMessage(new CommonMessageResponse("本群已禁用此命令...", commonMessage));
                 return;
             }
-
-            CommonMessageResponse replyObj = null;
-            if (!PluginManager.CommandMap.ContainsKey(cm.Command)) return;
 
             CommandApp plugin = t == typeof(ExtendApp) ? PluginManager.CommandMapStatic[cm.Command] : GetInstance(t);
 
@@ -377,7 +376,7 @@ namespace Daylily.Common.Function
             return false;
         }
 
-        private static dynamic ParseStr(System.Reflection.PropertyInfo prop, string argStr)
+        private static dynamic ParseStr(PropertyInfo prop, string argStr)
         {
             dynamic obj;
             if (prop.PropertyType == typeof(int))

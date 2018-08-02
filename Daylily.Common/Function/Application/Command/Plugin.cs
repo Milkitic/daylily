@@ -147,6 +147,8 @@ namespace Daylily.Common.Function.Application.Command
             foreach (var item in listCmd)
             {
                 if (item != EnabledPlugin) continue;
+                if (list.Contains(item))
+                    return new CommonMessageResponse("此插件已被禁用过了…", _cm);
                 list.Add(item);
                 SaveDisableSettings();
                 return new CommonMessageResponse($"已经禁用插件 \"{item}\"", _cm);
@@ -156,6 +158,8 @@ namespace Daylily.Common.Function.Application.Command
             {
                 var t = item.GetType();
                 if (t.Name != EnabledPlugin) continue;
+                if (list.Contains(t.Name))
+                    return new CommonMessageResponse("此插件已被禁用过了…", _cm);
                 list.Add(t.Name);
                 SaveDisableSettings();
                 return new CommonMessageResponse($"已经禁用插件 \"{t.Name}\"", _cm);
@@ -165,6 +169,8 @@ namespace Daylily.Common.Function.Application.Command
             {
                 var t = item.GetType();
                 if (t.Name != EnabledPlugin) continue;
+                if (list.Contains(t.Name))
+                    return new CommonMessageResponse("此插件已被禁用过了…", _cm);
                 list.Add(t.Name);
                 SaveDisableSettings();
                 return new CommonMessageResponse($"已经禁用插件 \"{t.Name}\"", _cm);

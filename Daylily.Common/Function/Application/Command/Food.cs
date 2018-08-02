@@ -138,7 +138,7 @@ namespace Daylily.Common.Function.Application.Command
         private static Bitmap DrawWatermark(string path)
         {
             FileInfo fi = new FileInfo(path);
-            string mark = fi.Directory.Name;
+            string mark = fi.Directory.Name + Environment.NewLine;
             Bitmap bmp = new Bitmap(path);
             using (Graphics g = Graphics.FromImage(bmp))
             using (Brush b = new SolidBrush(Color.White))
