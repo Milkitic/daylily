@@ -101,6 +101,17 @@ namespace Daylily.Web
             app.UseCookiePolicy();
 
             Common.Console.Startup.RunConsole();
+            if (MessageHandler.PrivateDisabledList == null)
+                MessageHandler.PrivateDisabledList =
+                    new System.Collections.Concurrent.ConcurrentDictionary<long, System.Collections.Generic.List<string>>();
+            if (MessageHandler.DiscussDisabledList == null)
+                MessageHandler.DiscussDisabledList =
+                    new System.Collections.Concurrent.ConcurrentDictionary<long, System.Collections.Generic.List<string>>();
+            if (MessageHandler.GroupDisabledList == null)
+                MessageHandler.GroupDisabledList =
+                    new System.Collections.Concurrent.ConcurrentDictionary<long, System.Collections.Generic.List<string>>();
+
+
 
             app.UseMvc(routes =>
             {

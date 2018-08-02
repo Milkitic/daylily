@@ -44,9 +44,6 @@ namespace Daylily.Common.Function.Application.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            if (messageObj.MessageType == MessageType.Group && messageObj.GroupId != "672076603")
-                return new CommonMessageResponse(LoliReply.PrivateOnly, messageObj);
-
             FontFamily font = GetRandFont(GetFonts());
             string pandaPath = GetRandPanda(GetPandas());
 
@@ -90,7 +87,7 @@ namespace Daylily.Common.Function.Application.Command
                     for (int i = 0; i < words.Count; i++)
                     {
                         Logger.Debug(words[i]);
-                        g.DrawString(words[i], f, b,
+                        g.DrawString(words[i] + Environment.NewLine, f, b,
                             new PointF(centerX - eachWidth[i] / 2f, 7 + img.Height + i * eachHeight[i]));
                     }
 

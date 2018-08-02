@@ -20,6 +20,25 @@ namespace Daylily.Common.Models
         public List<string> SimpleArgs { get; set; }
 
         public MessageType MessageType { get; set; }
+
+        public string IdentityId
+        {
+            get
+            {
+                switch (MessageType)
+                {
+                    case MessageType.Discuss:
+                        return DiscussId;
+                    case MessageType.Private:
+                        return UserId;
+                    case MessageType.Group:
+                        return GroupId;
+                    default:
+                        return null;
+                }
+            }
+        }
+
         public PermissionLevel PermissionLevel { get; set; }
 
         public string UserId { get; set; }

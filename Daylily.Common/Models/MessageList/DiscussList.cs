@@ -23,7 +23,7 @@ namespace Daylily.Common.Models.MessageList
         }
     }
 
-    public class DiscussSettings: EndpointSettings<DiscussMsg>
+    public class DiscussSettings : EndpointSettings<DiscussMsg>
     {
         public string Id { get; set; }
         public string Name { get; set; }

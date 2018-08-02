@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Daylily.Common.Assist;
@@ -20,9 +22,17 @@ namespace Daylily.Common.Function
 {
     public class MessageHandler
     {
-        private static GroupList GroupInfo { get; } = new GroupList();
-        private static DiscussList DiscussInfo { get; } = new DiscussList();
-        private static PrivateList PrivateInfo { get; } = new PrivateList();
+        public static GroupList GroupInfo { get; } = new GroupList();
+        public static DiscussList DiscussInfo { get; } = new DiscussList();
+        public static PrivateList PrivateInfo { get; } = new PrivateList();
+
+        public static ConcurrentDictionary<long, List<string>> GroupDisabledList { get; set; } =
+            new ConcurrentDictionary<long, List<string>>();
+        public static ConcurrentDictionary<long, List<string>> DiscussDisabledList { get; set; } =
+            new ConcurrentDictionary<long, List<string>>();
+        public static ConcurrentDictionary<long, List<string>> PrivateDisabledList { get; set; } =
+            new ConcurrentDictionary<long, List<string>>();
+
 
         public static string CommandFlag = "!";
 
@@ -225,8 +235,13 @@ namespace Daylily.Common.Function
 
         private static void HandleMesasgeApp(CommonMessage commonMessage)
         {
+            var cm = commonMessage;
             foreach (var item in PluginManager.ApplicationList)
             {
+                Type t = item.GetType();
+                if (ValidateDisabled(cm, t))
+                    continue;
+
                 Task.Run(() =>
                 {
                     CommonMessageResponse replyObj = item.Message_Received(commonMessage);
@@ -242,9 +257,16 @@ namespace Daylily.Common.Function
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
             ca.Analyze(fullCmd, cm);
 
+            Type t = PluginManager.CommandMap[cm.Command];
+            if (ValidateDisabled(cm, t))
+            {
+                CqApi.SendMessage(new CommonMessageResponse("本群已禁用此命令...", commonMessage));
+                return;
+            }
+
             CommonMessageResponse replyObj = null;
             if (!PluginManager.CommandMap.ContainsKey(cm.Command)) return;
-            Type t = PluginManager.CommandMap[cm.Command];
+
             CommandApp plugin = t == typeof(ExtendApp) ? PluginManager.CommandMapStatic[cm.Command] : GetInstance(t);
 
             Task.Run(() =>
@@ -317,6 +339,42 @@ namespace Daylily.Common.Function
                 }
 
             }
+        }
+
+        private static bool ValidateDisabled(CommonMessage cm, MemberInfo t)
+        {
+            switch (cm.MessageType)
+            {
+                case MessageType.Group:
+                    if (!GroupDisabledList.Keys.Contains(long.Parse(cm.GroupId)))
+                    {
+                        GroupDisabledList.TryAdd(long.Parse(cm.GroupId), new List<string>());
+                    }
+
+                    if (GroupDisabledList[long.Parse(cm.GroupId)].Contains(t.Name))
+                        return true;
+                    break;
+                case MessageType.Private:
+                    if (!PrivateDisabledList.Keys.Contains(long.Parse(cm.UserId)))
+                    {
+                        PrivateDisabledList.TryAdd(long.Parse(cm.UserId), new List<string>());
+                    }
+
+                    if (PrivateDisabledList[long.Parse(cm.UserId)].Contains(t.Name))
+                        return true;
+                    break;
+                case MessageType.Discuss:
+                    if (!DiscussDisabledList.Keys.Contains(long.Parse(cm.DiscussId)))
+                    {
+                        DiscussDisabledList.TryAdd(long.Parse(cm.DiscussId), new List<string>());
+                    }
+
+                    if (DiscussDisabledList[long.Parse(cm.DiscussId)].Contains(t.Name))
+                        return true;
+                    break;
+            }
+
+            return false;
         }
 
         private static dynamic ParseStr(System.Reflection.PropertyInfo prop, string argStr)
