@@ -38,6 +38,7 @@ namespace Daylily.Common.Function.Application.Command
         public string FoodName { get; set; }
 
         private static string _imagePath, _content;
+        private CommonMessage _cm;
 
         public override void Initialize(string[] args)
         {
@@ -55,19 +56,20 @@ namespace Daylily.Common.Function.Application.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
+            _cm = messageObj;
             string[] content = File.ReadAllLines(_content);
 
             if (EnabledAlbumId > 0 || DisabledAlbumId > 0)
             {
-                return messageObj.PermissionLevel == PermissionLevel.Root
-                    ? ManageAlbum(messageObj, content)
-                    : new CommonMessageResponse(LoliReply.RootOnly, messageObj);
+                return _cm.PermissionLevel == PermissionLevel.Root
+                    ? ManageAlbum(content)
+                    : new CommonMessageResponse(LoliReply.RootOnly, _cm);
             }
 
             if (ClearCache)
             {
                 ClearContent();
-                return new CommonMessageResponse("已重新建立缓存", messageObj);
+                return new CommonMessageResponse("已重新建立缓存", _cm);
             }
 
             string[] choices = FoodName == null
@@ -76,7 +78,7 @@ namespace Daylily.Common.Function.Application.Command
             if (choices.Length == 0 && FoodName != null)
                 return new CommonMessageResponse(
                     string.Format("没有找到 \"{0}\"", FoodName.Length > 30 ? FoodName.Substring(0, 27) + "..." : FoodName),
-                    messageObj);
+                    _cm);
 
             string choice = choices[Rnd.Next(0, choices.Length)];
             string dir = Path.Combine(_imagePath, choice);
@@ -86,10 +88,10 @@ namespace Daylily.Common.Function.Application.Command
             string file = Path.Combine(dir, innerChoice);
 
             Bitmap bitmap = DrawWatermark(file);
-            return new CommonMessageResponse(new FileImage(bitmap, 85).ToString(), messageObj);
+            return new CommonMessageResponse(new FileImage(bitmap, 85).ToString(), _cm);
         }
 
-        private CommonMessageResponse ManageAlbum(CommonMessage messageObj, IEnumerable<string> content)
+        private CommonMessageResponse ManageAlbum(IEnumerable<string> content)
         {
             string disabledPath = Path.Combine(_imagePath, ".disabled");
             if (!Directory.Exists(disabledPath))
@@ -126,19 +128,19 @@ namespace Daylily.Common.Function.Application.Command
             }
 
             if (album.Length > 1)
-                return new CommonMessageResponse($"包含多个相册：\"{string.Join(',', album)}\"", messageObj);
+                return new CommonMessageResponse($"包含多个相册：\"{string.Join(',', album)}\"", _cm);
             if (album.Length == 0)
-                return new CommonMessageResponse($"没有找到相册 \"{EnabledAlbumId}\"", messageObj);
+                return new CommonMessageResponse($"没有找到相册 \"{EnabledAlbumId}\"", _cm);
 
             Directory.Move(sourcePath, Path.Combine(targetPath, name));
             ClearContent();
-            return new CommonMessageResponse(message, messageObj);
+            return new CommonMessageResponse(message, _cm);
         }
 
         private static Bitmap DrawWatermark(string path)
         {
             FileInfo fi = new FileInfo(path);
-            string mark = fi.Directory.Name + Environment.NewLine;
+            string mark = fi.Directory.Name;
             Bitmap bmp = new Bitmap(path);
             using (Graphics g = Graphics.FromImage(bmp))
             using (Brush b = new SolidBrush(Color.White))
