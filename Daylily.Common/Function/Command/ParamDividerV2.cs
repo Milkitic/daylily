@@ -61,7 +61,7 @@ namespace Daylily.Common.Function.Command
                     if (!combined) throw new ArgumentException("Expect '" + item + "'.");
                 }
 
-                string tmpKey = null, tmpValue = null;
+                string tmpKey = null, tmpValue;
                 bool isLastKeyOrValue = false;
 
                 splitedParam.Add("-");
