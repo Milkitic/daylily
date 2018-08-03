@@ -22,6 +22,10 @@ namespace Daylily.Common.Function.Application.Command
     [Command("food")]
     public class Food : CommandApp
     {
+        [Help("点赞指定相册，将会以最佳推荐。")]
+        [Arg("点赞", Default = 0)]
+        public int Like { get; set; }
+
         [Help("禁用指定相册。")]
         [Arg("disable", Default = 0)]
         public int EnabledAlbumId { get; set; }
@@ -72,9 +76,22 @@ namespace Daylily.Common.Function.Application.Command
                 return new CommonMessageResponse("已重新建立缓存", _cm);
             }
 
-            string[] choices = FoodName == null
-                ? content
-                : content.Where(k => k.IndexOf(FoodName, StringComparison.Ordinal) != -1).ToArray();
+            string[] choices;
+
+            if (int.TryParse(FoodName, out _))
+            {
+                choices = FoodName == null
+                    ? content
+                    : content.Where(k =>
+                        k.Substring(0, k.IndexOf(' ')) == FoodName.ToString()).ToArray();
+            }
+            else
+            {
+                choices = FoodName == null
+                    ? content
+                    : content.Where(k => k.IndexOf(FoodName, StringComparison.Ordinal) != -1).ToArray();
+            }
+            
             if (choices.Length == 0 && FoodName != null)
                 return new CommonMessageResponse(
                     string.Format("没有找到 \"{0}\"", FoodName.Length > 30 ? FoodName.Substring(0, 27) + "..." : FoodName),
@@ -103,8 +120,7 @@ namespace Daylily.Common.Function.Application.Command
             if (EnabledAlbumId > 0)
             {
                 album = content.Where(k =>
-                        k.Substring(0, k.IndexOf(' ')).IndexOf(EnabledAlbumId.ToString(), StringComparison.Ordinal) !=
-                        -1)
+                        k.Substring(0, k.IndexOf(' ')) == EnabledAlbumId.ToString())
                     .ToArray();
 
                 name = album[0];
@@ -118,8 +134,7 @@ namespace Daylily.Common.Function.Application.Command
                 string[] disContent =
                     dirInfo.EnumerateDirectories().Select(i => i.Name).ToArray();
                 album = disContent.Where(k =>
-                    k.Substring(0, k.IndexOf(' ')).IndexOf(DisabledAlbumId.ToString(), StringComparison.Ordinal) !=
-                    -1).ToArray();
+                    k.Substring(0, k.IndexOf(' ')) == DisabledAlbumId.ToString()).ToArray();
 
                 name = album[0];
                 sourcePath = Path.Combine(disabledPath, name);

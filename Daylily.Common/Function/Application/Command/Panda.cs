@@ -18,7 +18,7 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("熊猫生成器")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Beta)]
+    [Version(0, 1, 2, PluginVersion.Beta)]
     [Help("生成可自定义文字的熊猫图（表情与文字随机）。")]
     [Command("panda")]
     public class Panda : CommandApp
@@ -34,8 +34,8 @@ namespace Daylily.Common.Function.Application.Command
         private readonly string[] _invalidReply = { "你话太多了，沙雕" };
 
         private const int MaxW = 250, MaxH = 220;
-        private const FontStyle FontStyle = System.Drawing.FontStyle.Bold;
-        private const int SmFontSize = 13, NmFontSize = 16, LgFontSize = 26;
+        private const FontStyle FontStyle = System.Drawing.FontStyle.Regular;
+        private const int SmFontSize = 13, NmFontSize = 16, LgFontSize = 24;
 
         public override void Initialize(string[] args)
         {
@@ -51,7 +51,7 @@ namespace Daylily.Common.Function.Application.Command
             string[] words = word.Split(',', '，');
             int renderSize = GetFontSize(word);
 
-            var cqImg = new FileImage(Draw(words, renderSize, pandaPath, font)).ToString();
+            var cqImg = new FileImage(Draw(words, renderSize, pandaPath, font), 65).ToString();
             return new CommonMessageResponse(cqImg, messageObj);
         }
 
@@ -87,8 +87,8 @@ namespace Daylily.Common.Function.Application.Command
                     for (int i = 0; i < words.Count; i++)
                     {
                         Logger.Debug(words[i]);
-                        g.DrawString(words[i] + Environment.NewLine, f, b,
-                            new PointF(centerX - eachWidth[i] / 2f, 7 + img.Height + i * eachHeight[i]));
+                        g.DrawString(words[i], f, b,
+                            new PointF(centerX - eachWidth[i] / 2f, 5 + img.Height + i * eachHeight[i]));
                     }
 
                     g.Dispose();
