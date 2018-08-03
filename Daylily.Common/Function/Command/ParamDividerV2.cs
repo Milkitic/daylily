@@ -81,7 +81,7 @@ namespace Daylily.Common.Function.Command
                     {
                         foreach (var q in Quote)
                         {
-                            tmpValue = item.Trim(q);
+                            tmpValue = tmpValue == null ? item.Trim(q) : tmpValue.Trim(q);
                         }
                         if (!isLastKeyOrValue)
                         {
@@ -95,7 +95,7 @@ namespace Daylily.Common.Function.Command
                             tmpValue = null;
                             isLastKeyOrValue = false;
                         }
-                    
+
                     }
                 }
 
