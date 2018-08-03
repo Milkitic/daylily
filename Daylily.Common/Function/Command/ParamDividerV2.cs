@@ -67,6 +67,7 @@ namespace Daylily.Common.Function.Command
                 splitedParam.Add("-");
                 foreach (var item in splitedParam)
                 {
+                    tmpValue = null;
                     if (item.StartsWith('-'))
                     {
                         if (tmpKey != null)
