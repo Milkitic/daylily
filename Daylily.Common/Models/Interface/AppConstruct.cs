@@ -18,7 +18,7 @@ namespace Daylily.Common.Models.Interface
 
         public abstract AppType AppType { get; }
         public string Name { get; internal set; }
-        public string Author { get; internal set; }
+        public string[] Author { get; internal set; }
         public int Major { get; internal set; }
         public int Minor { get; internal set; }
         public int Patch { get; internal set; }
@@ -35,7 +35,7 @@ namespace Daylily.Common.Models.Interface
         {
             Type t = GetType();
             if (!t.IsDefined(typeof(NameAttribute), false)) Name = t.Name;
-            if (!t.IsDefined(typeof(AuthorAttribute), false)) Author = "undefined";
+            if (!t.IsDefined(typeof(AuthorAttribute), false)) Author = new[] { "undefined" };
             if (!t.IsDefined(typeof(HelpAttribute), false)) Helps = new[] { "尚无帮助信息" };
             if (!t.IsDefined(typeof(VersionAttribute), false))
             {
@@ -54,7 +54,7 @@ namespace Daylily.Common.Models.Interface
                         Name = name.Name ?? t.Name;
                         break;
                     case AuthorAttribute author:
-                        Author = author.Author ?? "undefined";
+                        Author = author.Author ?? new[] { "undefined" };
                         break;
                     case VersionAttribute ver:
                         Major = ver.Major;

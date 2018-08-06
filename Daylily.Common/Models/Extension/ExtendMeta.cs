@@ -11,7 +11,7 @@ namespace Daylily.Common.Models.Extension
         public string Program { get; set; }
         public string File { get; set; }
         public string Name { get; set; }
-        public string Author { get; set; }
+        public string[] Author { get; set; }
         public string Version { get; set; }
         public PluginVersion State { get; set; }
         public string[] Help { get; set; }

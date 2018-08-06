@@ -17,7 +17,7 @@ using Daylily.Common.Utils.LogUtils;
 namespace Daylily.Common.Function.Application
 {
     [Name("嗅探龙图")]
-    [Author("yf_extension")]
+    [Author("yf_extension", "sahuang")]
     [Version(0, 0, 1, PluginVersion.Alpha)]
     [Help("发现龙图时做出不同操作")]
     public class DragonDetectorAlpha : ApplicationApp

@@ -16,7 +16,7 @@ using Daylily.Common.Utils;
 namespace Daylily.Plugin.Core.Command
 {
     [Name("黄花菜帮助")]
-    [Author("yf_extension")]
+    [Author("yf_extension","sdaf")]
     [Version(0, 1, 2, PluginVersion.Beta)]
     [Help("查看此帮助信息。")]
     [Command("help")]
@@ -45,7 +45,7 @@ namespace Daylily.Plugin.Core.Command
                 .Where(plugin => plugin.HelpType == messageObj.PermissionLevel).ToDictionary(
                     plugin => string.Join(", /", plugin.Commands),
                     plugin => $"{plugin.Name}。{plugin.Helps[0]}");
-                  //plugin => $"{plugin.Name}。{string.Join("。", plugin.Helps)}");
+            //plugin => $"{plugin.Name}。{string.Join("。", plugin.Helps)}");
 
             IEnumerable<KeyValuePair<string, string>> dicSort = from objDic in dictionary orderby objDic.Key select objDic;
 
@@ -193,7 +193,8 @@ namespace Daylily.Plugin.Core.Command
             Point pointAuthor = new Point(45, topAuthor);
             Point pointVer = new Point(205, topAuthor);
             Point pointState = new Point(285, topAuthor);
-            Size sizeAuthor = GetStrSize(g, custom.Author, fontH4);
+            string author = string.Join(", ", custom.Author);
+            Size sizeAuthor = GetStrSize(g, author, fontH4);
 
             int topUsage = topAuthor + sizeAuthor.Height + 40;
             Point pointUsage = new Point(30, topUsage);
@@ -246,7 +247,7 @@ namespace Daylily.Plugin.Core.Command
                 g.DrawString(_versionInfo, fontH4, brushLDarkGrey, 2, 2);
                 g.DrawString(custom.Title, fontH1, brushWhite, pointTitle);
                 g.DrawString(help, fontH3, brushGrey, pointHelp);
-                g.DrawString($"作者：{custom.Author}", fontH4, brushWhite, pointAuthor);
+                g.DrawString($"作者：{author}", fontH4, brushWhite, pointAuthor);
                 g.DrawString($"版本：{custom.Version}", fontH4, brushWhite, pointVer);
                 g.DrawString(custom.State.ToString(), fontH4, brushWhite, pointState);
                 g.DrawString("用法：", fontH2, brushWhite, pointUsage);
@@ -350,7 +351,7 @@ namespace Daylily.Plugin.Core.Command
         {
             public string Title { get; set; }
             public string[] Helps { get; set; }
-            public string Author { get; set; }
+            public string[] Author { get; set; }
             public string Version { get; set; }
             public PluginVersion State { get; set; }
             public string Usage { get; set; }

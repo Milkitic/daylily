@@ -16,11 +16,11 @@ namespace Daylily.Common.Models.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class AuthorAttribute : Attribute
     {
-        public AuthorAttribute(string author)
+        public AuthorAttribute(params string[] author)
         {
             Author = author;
         }
-        public string Author { get; }
+        public string[] Author { get; }
     }
 
     [AttributeUsage(AttributeTargets.Class)]
