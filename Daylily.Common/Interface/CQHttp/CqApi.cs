@@ -251,6 +251,8 @@ namespace Daylily.Common.Interface.CQHttp
         private static T Request<T>(string url, IDictionary<string, string> parameters, bool enableLog = false)
         {
             var jsonString = HttpClientUtil.HttpPost(url, parameters);
+            if (jsonString == null)
+                Logger.Error("请求HTTP API失败，请检查连接是否正常");
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString);
         }
     }

@@ -6,7 +6,12 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
 using System.Threading.Tasks;
+using CSharpOsu;
+using CSharpOsu.Module;
 using Daylily.Common.Assist;
+using Daylily.Common.Database.BLL;
+using Daylily.Common.Database.Model;
+using Daylily.Common.Interface;
 using Daylily.Common.Models;
 using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
@@ -19,7 +24,7 @@ namespace Daylily.Plugin.Core.Command
 {
     [Name("PP+查询")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Beta)]
+    [Version(0, 1, 1, PluginVersion.Beta)]
     [Help("获取发送者的PP+信息，并生成相应六维图。")]
     [Command("pp")]
     public class PpPlus : CommandApp
@@ -35,17 +40,33 @@ namespace Daylily.Plugin.Core.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            string userId = OsuId;
+            string userName;
+            if (OsuId == null)
+            {
+                BllUserRole bllUserRole = new BllUserRole();
+                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+                if (userInfo.Count == 0)
+                    return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
 
-            Logger.Origin("Sent request.");
-            var response = WebRequestUtil.CreatePostHttpResponse("https://syrin.me/pp+/u/" + userId);
-            Logger.Origin("Received request.");
-            if (response == null)
+                userName = userInfo[0].CurrentUname;
+            }
+            else
+            {
+
+                OsuClient osu = new OsuClient(OsuApi.ApiKey);
+                OsuUser[] userList = osu.GetUser(OsuId);
+                if (userList.Length == 0)
+                    return new CommonMessageResponse(LoliReply.IdNotFound, messageObj);
+
+                userName = userList[0].username;
+            }
+            
+            var jsonString = HttpClientUtil.HttpGet("https://syrin.me/pp+/u/" + userName);
+            if (jsonString == null)
                 return null;
 
-            string jsonString = WebRequestUtil.GetResponseString(response);
-            if (jsonString.IndexOf("Oops!", StringComparison.Ordinal) != -1)
-                throw new Exception(LoliReply.IdNotFound);
+            //if (jsonString.IndexOf("Oops!", StringComparison.Ordinal) != -1)
+            //    return new CommonMessageResponse(LoliReply.IdNotFound, messageObj);
             int index = jsonString.IndexOf("<div class=\"performance-table\">", StringComparison.Ordinal);
             int length = jsonString.IndexOf("</div>", index, StringComparison.Ordinal) - index;
             string innerText = jsonString.Substring(index, length);
@@ -83,7 +104,7 @@ namespace Daylily.Plugin.Core.Command
                 }
             }
 
-            var cqImg = new FileImage(Draw(userId, dValue)).ToString();
+            var cqImg = new FileImage(Draw(userName, dValue)).ToString();
             //Logger.InfoLine(resp);
             return new CommonMessageResponse(cqImg, messageObj);
         }

@@ -71,9 +71,9 @@ namespace Daylily.Common.Function.Application.Command
             const int count = 20;
             do
             {
-                string json = WebRequestUtil.GetResponseString(
-                    WebRequestUtil.CreateGetHttpResponse(
-                        "https://osu.ppy.sh/users/" + id + "/kudosu?offset=" + page + "&limit=" + count));
+                string json =
+                    HttpClientUtil.HttpGet("https://osu.ppy.sh/users/" + id + "/kudosu?offset=" + page + "&limit=" +
+                                           count);
                 Logger.Debug("GET JSON");
 
                 tmpList = JsonConvert.DeserializeObject<List<KudosuInfo>>(json);

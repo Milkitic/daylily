@@ -12,8 +12,11 @@ namespace Daylily.Common.Utils.HttpRequest
 {
     public static class HttpClientUtil
     {
-        public static bool EnableLog { get; set; } = false;
+        public static bool EnableLog { get; set; } = true;
+        public static int Timeout { get; set; } = 8000;
+        public static int RetryCount { get; set; } = 3;
         private static readonly HttpClient Http;
+
         static HttpClientUtil()
         {
             var handler = new HttpClientHandler
@@ -21,9 +24,9 @@ namespace Daylily.Common.Utils.HttpRequest
                 AutomaticDecompression = DecompressionMethods.GZip
             };
             ServicePointManager.ServerCertificateValidationCallback = CheckValidationResult;
-            Http = new HttpClient()
+            Http = new HttpClient(handler)
             {
-                Timeout = new TimeSpan(0, 0, 8)
+                Timeout = new TimeSpan(0, 0, 0, 0, Timeout),
             };
         }
 
@@ -62,7 +65,6 @@ namespace Daylily.Common.Utils.HttpRequest
         public static string HttpPost(string url, IDictionary<string, string> args, IDictionary<string, string> argsHeader = null)
         {
             HttpContent content;
-            //argDic.ToSortUrlParamString();
             if (args != null)
             {
                 var jsonStr = Newtonsoft.Json.JsonConvert.SerializeObject(args);
@@ -92,57 +94,70 @@ namespace Daylily.Common.Utils.HttpRequest
         /// <returns></returns>
         public static string HttpGet(string url, IDictionary<string, string> args = null, IDictionary<string, string> headerDic = null)
         {
-            try
+            string responseStr = null;
+            if (args != null)
             {
-                if (args != null)
-                {
-                    url = url + args.ToUrlParamString();
-                }
-
-                if (headerDic != null)
-                {
-                    foreach (var item in headerDic)
-                    {
-                        Http.DefaultRequestHeaders.Add(item.Key, item.Value);
-                    }
-                }
-
-                //await异步等待回应
-                if (EnableLog)
-                    Logger.Debug("Sent get request.");
-                var response = Http.GetStringAsync(url).Result;
-                if (EnableLog)
-                    Logger.Debug("Received get response.");
-                return response;
+                url = url + args.ToUrlParamString();
             }
-            catch (Exception ex)
+
+            if (headerDic != null)
             {
-                Logger.Exception(ex);
-                return null;
+                foreach (var item in headerDic)
+                {
+                    Http.DefaultRequestHeaders.Add(item.Key, item.Value);
+                }
             }
+
+            for (int i = 0; i < RetryCount; i++)
+            {
+                try
+                {
+                    if (EnableLog)
+                        Logger.Debug("Sent get request.");
+                    responseStr = Http.GetStringAsync(url).Result;
+                    if (EnableLog)
+                        Logger.Debug("Received get response.");
+                    return responseStr;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"尝试了{i + 1}次，请求超时 (>{Timeout}ms)");
+                    if (i == RetryCount - 1)
+                        Logger.Exception(ex);
+                }
+            }
+
+            return responseStr;
         }
 
         private static string HttpPost(string url, HttpContent content)
         {
-            try
+            string responseStr = null;
+            for (int i = 0; i < RetryCount; i++)
             {
-                if (EnableLog)
-                    Logger.Debug("Sent post request.");
-                var response = Http.PostAsync(url, content).Result;
-                if (EnableLog)
-                    Logger.Debug("Received post response.");
+                try
+                {
+                    if (EnableLog)
+                        Logger.Debug("Sent post request.");
+                    var response = Http.PostAsync(url, content).Result;
+                    if (EnableLog)
+                        Logger.Debug("Received post response.");
 
-                //确保HTTP成功状态值
-                response.EnsureSuccessStatusCode();
-                //await异步读取最后的JSON（注意此时gzip已经被自动解压缩了，因为上面的AutomaticDecompression = DecompressionMethods.GZip）
-                var reJson = response.Content.ReadAsStringAsync().Result;
-                return reJson;
+                    //确保HTTP成功状态值
+                    response.EnsureSuccessStatusCode();
+                    //await异步读取最后的JSON（注意此时gzip已经被自动解压缩了，因为上面的AutomaticDecompression = DecompressionMethods.GZip）
+                    responseStr = response.Content.ReadAsStringAsync().Result;
+                    return responseStr;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"尝试了{i + 1}次，请求超时 (>{Timeout}ms)");
+                    if (i == RetryCount - 1)
+                        Logger.Exception(ex);
+                }
             }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                return null;
-            }
+
+            return responseStr;
         }
 
         private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
