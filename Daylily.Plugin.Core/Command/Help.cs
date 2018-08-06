@@ -12,6 +12,7 @@ using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.StringUtils;
 
 namespace Daylily.Plugin.Core.Command
 {
@@ -100,14 +101,14 @@ namespace Daylily.Plugin.Core.Command
 
                 if (argStr != null)
                 {
-                    sbArg.Append($" [{argStr}{(isSwitch ? "" : " " + StringUtils.GetUnderLineString(argName))}]");
+                    sbArg.Append($" [{argStr}{(isSwitch ? "" : " " + StringConvert.ToUnderLineStyle(argName))}]");
                     custom.Arg.Add(argStr, helpStr);
                 }
 
                 if (freeStr != null)
                 {
-                    sbFree.Append($" [{StringUtils.GetUnderLineString(freeStr)}]");
-                    custom.FreeArg.Add(StringUtils.GetUnderLineString(freeStr), helpStr);
+                    sbFree.Append($" [{StringConvert.ToUnderLineStyle(freeStr)}]");
+                    custom.FreeArg.Add(StringConvert.ToUnderLineStyle(freeStr), helpStr);
                 }
             }
 

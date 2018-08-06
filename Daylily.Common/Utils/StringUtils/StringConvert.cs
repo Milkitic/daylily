@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
-namespace Daylily.Common.Utils
+namespace Daylily.Common.Utils.StringUtils
 {
-    public static class StringUtils
+    public static class StringConvert
     {
-        public static string GetUnderLineString(string source)
+        public static string ToUnderLineStyle(string source)
         {
             StringBuilder sb = new StringBuilder();
             bool isFirstUpper = true;

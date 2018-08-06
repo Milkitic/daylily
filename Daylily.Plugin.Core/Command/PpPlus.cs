@@ -17,14 +17,16 @@ using Daylily.Common.Models.Attributes;
 using Daylily.Common.Models.Enum;
 using Daylily.Common.Models.Interface;
 using Daylily.Common.Utils;
+using Daylily.Common.Utils.HtmlUtils;
 using Daylily.Common.Utils.HttpRequest;
 using Daylily.Common.Utils.LogUtils;
+using Daylily.Common.Utils.StringUtils;
 
 namespace Daylily.Plugin.Core.Command
 {
     [Name("PP+查询")]
     [Author("yf_extension")]
-    [Version(0, 1, 2, PluginVersion.Beta)]
+    [Version(0, 1, 3, PluginVersion.Stable)]
     [Help("获取发送者的PP+信息，并生成相应六维图。")]
     [Command("pp")]
     public class PpPlus : CommandApp
@@ -40,7 +42,7 @@ namespace Daylily.Plugin.Core.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            string userName,userId;
+            string userName, userId;
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
@@ -60,52 +62,32 @@ namespace Daylily.Plugin.Core.Command
                 userId = userList[0].user_id;
                 userName = userList[0].username;
             }
-            
+
             var jsonString = HttpClientUtil.HttpGet("https://syrin.me/pp+/u/" + userId);
             if (jsonString == null)
-                return null;
+                return new CommonMessageResponse("PP+获取超时，请重试…", messageObj, true);
 
-            //if (jsonString.IndexOf("Oops!", StringComparison.Ordinal) != -1)
-            //    return new CommonMessageResponse(LoliReply.IdNotFound, messageObj);
-            int index = jsonString.IndexOf("<div class=\"performance-table\">", StringComparison.Ordinal);
-            int length = jsonString.IndexOf("</div>", index, StringComparison.Ordinal) - index;
-            string innerText = jsonString.Substring(index, length);
+            StringFinder sf = new StringFinder(jsonString);
+            sf.FindNext("<div class=\"performance-table\">", false);
+            sf.FindNext("</div>");
 
-            Dictionary<string, int> dIndex = new Dictionary<string, int>
-            {
-                {"Performance", innerText.IndexOf("Performance", StringComparison.Ordinal)},
-                {"Total", innerText.IndexOf("Total", StringComparison.Ordinal)},
-                {"Jump", innerText.IndexOf("Jump", StringComparison.Ordinal)},
-                {"Flow", innerText.IndexOf("Flow", StringComparison.Ordinal)},
-                {"Precision", innerText.IndexOf("Precision", StringComparison.Ordinal)},
-                {"Speed", innerText.IndexOf("Speed", StringComparison.Ordinal)},
-                {"Stamina", innerText.IndexOf("Stamina", StringComparison.Ordinal)},
-                {"Accuracy", innerText.IndexOf("Accuracy", StringComparison.Ordinal)}
-            };
+            string innerText = sf.Cut().Trim('\n').Trim('\r');
+            HtmlTable htmlTable = new HtmlTable(innerText);
+
+            string[,] array = htmlTable.GetArray();
 
             Dictionary<string, int> dValue = new Dictionary<string, int>();
-            foreach (var kvp in dIndex)
+            for (var i = 0; i < array.GetLength(0); i++)
             {
-                if (kvp.Key == "Performance")
+                for (var j = 0; j < array.GetLength(1); j += 2)
                 {
-                    int tmp = innerText.IndexOf("<th>", kvp.Value, StringComparison.Ordinal) + 4;
-                    var str = innerText.Substring(tmp,
-                        innerText.IndexOf("pp", kvp.Value, StringComparison.Ordinal) - tmp);
-                    int pp = int.Parse(str.Replace(",", ""));
-                    dValue.Add(kvp.Key, pp);
-                }
-                else
-                {
-                    int tmp = innerText.IndexOf("<td>", kvp.Value, StringComparison.Ordinal) + 4;
-                    var str = innerText.Substring(tmp,
-                        innerText.IndexOf("pp", kvp.Value, StringComparison.Ordinal) - tmp);
-                    int pp = int.Parse(str.Replace(",", ""));
-                    dValue.Add(kvp.Key, pp);
+                    string key = array[i, j].Trim(':').Replace("Aim (", "").Replace(")", "");
+                    int value = int.Parse(array[i, j + 1].Replace(",", "").Trim('p'));
+                    dValue.Add(key, value);
                 }
             }
 
             var cqImg = new FileImage(Draw(userName, dValue)).ToString();
-            //Logger.InfoLine(resp);
             return new CommonMessageResponse(cqImg, messageObj);
         }
 
