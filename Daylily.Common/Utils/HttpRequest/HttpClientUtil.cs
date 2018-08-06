@@ -12,7 +12,7 @@ namespace Daylily.Common.Utils.HttpRequest
 {
     public static class HttpClientUtil
     {
-        public static bool EnableLog { get; set; } = true;
+        public static bool EnableLog { get; set; } = false;
         public static int Timeout { get; set; } = 8000;
         public static int RetryCount { get; set; } = 3;
         private static readonly HttpClient Http;

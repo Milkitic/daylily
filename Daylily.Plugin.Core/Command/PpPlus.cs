@@ -24,7 +24,7 @@ namespace Daylily.Plugin.Core.Command
 {
     [Name("PP+查询")]
     [Author("yf_extension")]
-    [Version(0, 1, 1, PluginVersion.Beta)]
+    [Version(0, 1, 2, PluginVersion.Beta)]
     [Help("获取发送者的PP+信息，并生成相应六维图。")]
     [Command("pp")]
     public class PpPlus : CommandApp
@@ -40,14 +40,14 @@ namespace Daylily.Plugin.Core.Command
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            string userName;
+            string userName,userId;
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
                 List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
                 if (userInfo.Count == 0)
                     return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
-
+                userId = userInfo[0].UserId.ToString();
                 userName = userInfo[0].CurrentUname;
             }
             else
@@ -57,11 +57,11 @@ namespace Daylily.Plugin.Core.Command
                 OsuUser[] userList = osu.GetUser(OsuId);
                 if (userList.Length == 0)
                     return new CommonMessageResponse(LoliReply.IdNotFound, messageObj);
-
+                userId = userList[0].user_id;
                 userName = userList[0].username;
             }
             
-            var jsonString = HttpClientUtil.HttpGet("https://syrin.me/pp+/u/" + userName);
+            var jsonString = HttpClientUtil.HttpGet("https://syrin.me/pp+/u/" + userId);
             if (jsonString == null)
                 return null;
 

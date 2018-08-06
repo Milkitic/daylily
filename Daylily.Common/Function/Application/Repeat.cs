@@ -48,7 +48,7 @@ namespace Daylily.Common.Function.Application
             }
 
             GroupDic[groupId].IntQueue++;
-            Logger.Debug(groupId + " incresed to " + GroupDic[groupId].IntQueue);
+            //Logger.Debug(groupId + " incresed to " + GroupDic[groupId].IntQueue);
             return null;
 
             Task DecreaseQueue()
@@ -70,7 +70,7 @@ namespace Daylily.Common.Function.Application
                     if (Rnd.NextDouble() < 0.02) Thread.Sleep(Rnd.Next(30000, 45000));
 
                     GroupDic[groupId].IntQueue--;
-                    Logger.Debug(groupId + " decresed to " + GroupDic[groupId].IntQueue);
+                    //Logger.Debug(groupId + " decresed to " + GroupDic[groupId].IntQueue);
                 }
             }
         }

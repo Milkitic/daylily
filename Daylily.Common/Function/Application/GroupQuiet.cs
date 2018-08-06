@@ -65,7 +65,7 @@ namespace Daylily.Common.Function.Application
                 _groupDic[groupId].LastSentIsMe = false;
                 //GroupDic[groupId].TrigTime = Rnd.Next(4, 5);
                 _groupDic[groupId].TrigTime = Rnd.Next(60 * 60 * 2, 60 * 60 * 3);
-                Logger.Debug(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
+                //Logger.Debug(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
                 SaveSettings(_groupDic);
             }
             else
