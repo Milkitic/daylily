@@ -37,6 +37,8 @@ namespace Daylily.Common.Function.Application.Command
         private const FontStyle FontStyle = System.Drawing.FontStyle.Regular;
         private const int SmFontSize = 13, NmFontSize = 16, LgFontSize = 24;
 
+        private const string MagicalWord = "                              .";
+
         public override void Initialize(string[] args)
         {
 
@@ -85,7 +87,7 @@ namespace Daylily.Common.Function.Application.Command
                     g.DrawImage(img, centerX - img.Width / 2f, 4, img.Width, img.Height);
                     for (int i = 0; i < words.Count; i++)
                     {
-                        g.DrawString(words[i], f, b,
+                        g.DrawString(words[i] + MagicalWord, f, b,
                             new PointF(centerX - eachWidth[i] / 2f, 5 + img.Height + i * eachHeight[i]));
                     }
 
@@ -136,10 +138,12 @@ namespace Daylily.Common.Function.Application.Command
             {
                 foreach (var item in words)
                 {
-                    SizeF sizeF = g1.MeasureString(item, f);
-                    eachWidth.Add(sizeF.Width);
+                    SizeF sizeF = g1.MeasureString(item + MagicalWord, f);
+                    SizeF sizeF2 = g1.MeasureString(MagicalWord, f);
+                    float width = sizeF.Width - sizeF2.Width;
+                    eachWidth.Add(width);
                     eachHeight.Add(sizeF.Height);
-                    if (sizeF.Width > maxWidth) maxWidth = sizeF.Width;
+                    if (width > maxWidth) maxWidth = width;
                     maxHeight += sizeF.Height;
                 }
             }

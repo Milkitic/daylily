@@ -1,11 +1,13 @@
-﻿using Daylily.Common.Assist;
+﻿using System;
+using Daylily.Common.Assist;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Web;
 using Daylily.Common.Utils.HttpRequest;
 
 namespace Daylily.Common.Interface.DaylilyAssist
 {
-    public class AssistApi
+    public static class AssistApi
     {
         public static string ApiUrl { get; set; } = "http://139.199.103.11:23334";
 
@@ -26,5 +28,10 @@ namespace Daylily.Common.Interface.DaylilyAssist
             return str;
         }
 
+        public static Bitmap GetStrokeString(string str)
+        {
+            var response = WebRequestUtil.GetImageFromUrl(ApiUrl + "/api/strokestring?str=" + str, Guid.NewGuid().ToString(), "png");
+            return new Bitmap(response);
+        }
     }
 }

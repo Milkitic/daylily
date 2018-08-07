@@ -17,7 +17,7 @@ using Daylily.Common.Utils.StringUtils;
 namespace Daylily.Plugin.Core.Command
 {
     [Name("黄花菜帮助")]
-    [Author("yf_extension","sdaf")]
+    [Author("yf_extension", "sdaf")]
     [Version(0, 1, 2, PluginVersion.Beta)]
     [Help("查看此帮助信息。")]
     [Command("help")]
@@ -102,7 +102,18 @@ namespace Daylily.Plugin.Core.Command
                 if (argStr != null)
                 {
                     sbArg.Append($" [{argStr}{(isSwitch ? "" : " " + StringConvert.ToUnderLineStyle(argName))}]");
-                    custom.Arg.Add(argStr, helpStr);
+
+                    if (!custom.Arg.ContainsKey(argStr))
+                    {
+                        custom.Arg.Add(argStr, helpStr);
+                    }
+                    else
+                    {
+                        int i = 0;
+                        while (custom.Arg.ContainsKey(argStr + " (" + i + ")"))
+                            i++;
+                        custom.Arg.Add(argStr + " (" + i + ")", helpStr);
+                    }
                 }
 
                 if (freeStr != null)
