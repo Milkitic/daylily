@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using Daylily.Common.Utils.StringUtils;
 
 namespace Daylily.Common.Assist
 {
@@ -27,7 +28,7 @@ namespace Daylily.Common.Assist
         /// <returns></returns>
         public static string Decode(string source)
         {
-            source = DecodeImageToText(source);
+            source = source.DecodeImageToText().DecodeFaceToText().DecodeBFaceToText().DecodeAtToText();
             // TODO
             return source;
         }
@@ -37,16 +38,82 @@ namespace Daylily.Common.Assist
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        private static string DecodeImageToText(string source)
+        private static string DecodeImageToText(this string source)
         {
             StringBuilder sb = new StringBuilder(source);
-            int index = 0;
-            string str1 = "[CQ:image,";
-            while ((index = sb.ToString().IndexOf(str1, index, StringComparison.Ordinal)) != -1)
+            StringFinder sf = new StringFinder(source);
+            const string str1 = "[CQ:image,";
+            while (sf.FindNext(str1) != -1)
             {
-                int length = source.IndexOf("]", index, StringComparison.Ordinal) - index + 1;
-                sb.Remove(index, length);
-                sb.Insert(index, "[图片]");
+                sf.FindNext("]", false);
+                sb.Remove(sf.StartIndex, sf.Length);
+                sb.Insert(sf.StartIndex, "[图片]");
+                sf = new StringFinder(sb.ToString());
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 将消息中出现的图片类型CQ码转换为可读形式。
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private static string DecodeFaceToText(this string source)
+        {
+            StringBuilder sb = new StringBuilder(source);
+            StringFinder sf = new StringFinder(source);
+            const string str1 = "[CQ:face,";
+            while (sf.FindNext(str1) != -1)
+            {
+                sf.FindNext("]", false);
+                sb.Remove(sf.StartIndex, sf.Length);
+                sb.Insert(sf.StartIndex, "[表情]");
+                sf = new StringFinder(sb.ToString());
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 将消息中出现的图片类型CQ码转换为可读形式。
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private static string DecodeBFaceToText(this string source)
+        {
+            StringBuilder sb = new StringBuilder(source);
+            StringFinder sf = new StringFinder(source);
+            const string str1 = "[CQ:bface,";
+            while (sf.FindNext(str1) != -1)
+            {
+                sf.FindNext("]", false);
+                sb.Remove(sf.StartIndex, sf.Length);
+                sb.Insert(sf.StartIndex, "[大表情]");
+                sf = new StringFinder(sb.ToString());
+            }
+
+            return sb.ToString();
+        }
+
+
+        /// <summary>
+        /// 将消息中出现的图片类型CQ码转换为可读形式。
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private static string DecodeAtToText(this string source)
+        {
+            StringBuilder sb = new StringBuilder(source);
+            StringFinder sf = new StringFinder(source);
+            const string str1 = "[CQ:at,";
+            while (sf.FindNext(str1) != -1)
+            {
+                sf.FindNext("]", false);
+                string qq = GetAt(sf.Cut())[0];
+                sb.Remove(sf.StartIndex, sf.Length);
+                sb.Insert(sf.StartIndex, $"@{qq} ");
+                sf = new StringFinder(sb.ToString());
             }
 
             return sb.ToString();

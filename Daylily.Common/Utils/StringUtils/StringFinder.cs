@@ -4,7 +4,10 @@ namespace Daylily.Common.Utils.StringUtils
 {
     public class StringFinder
     {
-        private int _preIndex, _currentIndex;
+        public int StartIndex { get; private set; }
+        public int EndIndex { get; private set; }
+        public int Length => EndIndex - StartIndex;
+
         private readonly string _originStr;
 
         public StringFinder(string originStr)
@@ -14,23 +17,27 @@ namespace Daylily.Common.Utils.StringUtils
 
         public int FindNext(string str, bool ignoreLength = true)
         {
-            _preIndex = _currentIndex;
-            _currentIndex = ignoreLength
-                ? _originStr.IndexOf(str, _preIndex, StringComparison.Ordinal)
-                : _originStr.IndexOf(str, _preIndex, StringComparison.Ordinal) + str.Length;
-            return _currentIndex;
+            StartIndex = EndIndex;
+            EndIndex = ignoreLength
+                ? _originStr.IndexOf(str, StartIndex, StringComparison.Ordinal)
+                : _originStr.IndexOf(str, StartIndex, StringComparison.Ordinal) + str.Length;
+            return EndIndex;
         }
 
         public string Cut()
         {
-            int length = _currentIndex - _preIndex;
-            return _originStr.Substring(_preIndex, length);
+            return _originStr.Substring(StartIndex, Length);
+        }
+        public void GetBound(out int startIndex, out int length)
+        {
+            startIndex = StartIndex;
+            length = EndIndex - StartIndex;
         }
 
         public void Reset()
         {
-            _preIndex = 0;
-            _currentIndex = 0;
+            StartIndex = 0;
+            EndIndex = 0;
         }
 
         public override string ToString()

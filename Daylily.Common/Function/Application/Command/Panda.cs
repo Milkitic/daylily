@@ -18,7 +18,7 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("熊猫生成器")]
     [Author("yf_extension")]
-    [Version(0, 1, 2, PluginVersion.Beta)]
+    [Version(0, 1, 3, PluginVersion.Beta)]
     [Help("生成可自定义文字的熊猫图（表情与文字随机）。")]
     [Command("panda")]
     public class Panda : CommandApp
@@ -30,7 +30,7 @@ namespace Daylily.Common.Function.Application.Command
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
         private static readonly string FontDir = Path.Combine(Domain.CurrentDirectory, "font");
 
-        private readonly string[] _blankReply = { "傻逼，动动脑子写参数", "你倒是说话啊" };
+        private readonly string[] _blankReply = { "傻B，动动脑子写参数", "你倒是说话啊" };
         private readonly string[] _invalidReply = { "你话太多了，沙雕" };
 
         private const int MaxW = 250, MaxH = 220;
@@ -48,7 +48,7 @@ namespace Daylily.Common.Function.Application.Command
             string pandaPath = GetRandPanda(GetPandas());
 
             string word = GetRealWord(font, pandaPath);
-            string[] words = word.Split(',', '，');
+            string[] words = word.Split('\n');
             int renderSize = GetFontSize(word);
 
             var cqImg = new FileImage(Draw(words, renderSize, pandaPath, font), 65).ToString();
@@ -57,8 +57,7 @@ namespace Daylily.Common.Function.Application.Command
 
         private static Bitmap Draw(IReadOnlyList<string> words, int renderSize, string pandaPath, FontFamily font)
         {
-            foreach (var item in words)
-                Logger.Debug(item);
+            words = words.Select(t => t.Replace("\r", "")).ToList();
 
             using (Image img = Image.FromFile(pandaPath))
             using (Brush b = new SolidBrush(Color.Black))
@@ -86,7 +85,6 @@ namespace Daylily.Common.Function.Application.Command
                     g.DrawImage(img, centerX - img.Width / 2f, 4, img.Width, img.Height);
                     for (int i = 0; i < words.Count; i++)
                     {
-                        Logger.Debug(words[i]);
                         g.DrawString(words[i], f, b,
                             new PointF(centerX - eachWidth[i] / 2f, 5 + img.Height + i * eachHeight[i]));
                     }
@@ -153,8 +151,8 @@ namespace Daylily.Common.Function.Application.Command
         /// <returns></returns>
         private string GetRealWord(FontFamily font, string pandaPath)
         {
-            string word = PandaWord;
-            if (word.Replace("\n", "").Replace("\r", "").Trim() == "")
+            string word = CqCode.Decode(PandaWord.Replace("！", "!").Replace("？", "?"));
+            if (word == null || word.Replace("\n", "").Replace("\r", "").Trim() == "")
                 word = _blankReply[Rnd.Next(0, _blankReply.Length)];
             else if (!IsLengthValid(word, pandaPath, font))
                 word = _invalidReply[Rnd.Next(0, _invalidReply.Length)];
