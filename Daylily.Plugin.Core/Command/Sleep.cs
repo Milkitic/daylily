@@ -10,7 +10,7 @@ namespace Daylily.Plugin.Core.Command
 {
     [Name("自助禁言")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Version(0, 1, 0, PluginVersion.Stable)]
     [Help("当Daylily是管理员时，将命令发送者禁言（30分钟到12小时）。")]
     [Command("sleep", "slip")]
     public class Sleep : CommandApp
