@@ -18,7 +18,7 @@ namespace Daylily.Common.Function.Application.Command
 {
     [Name("熊猫生成器")]
     [Author("yf_extension")]
-    [Version(0, 1, 3, PluginVersion.Beta)]
+    [Version(0, 1, 4, PluginVersion.Beta)]
     [Help("生成可自定义文字的熊猫图（表情与文字随机）。")]
     [Command("panda")]
     public class Panda : CommandApp
@@ -26,6 +26,14 @@ namespace Daylily.Common.Function.Application.Command
         [FreeArg]
         [Help("需要生成的配套文字。以逗号分隔作为行数。若带空格，请使用引号。")]
         public string PandaWord { get; set; }
+
+        [FreeArg]
+        [Help("需要使用的表情序号。")]
+        public int PandaNum { get; set; }
+
+        [Arg("all", IsSwitch = true)]
+        [Help("生成所有熊猫图，发送者按需截取。")]
+        public bool UseAll { get; set; }
 
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
         private static readonly string FontDir = Path.Combine(Domain.CurrentDirectory, "font");
@@ -47,14 +55,50 @@ namespace Daylily.Common.Function.Application.Command
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
             FontFamily font = GetRandFont(GetFonts());
-            string pandaPath = GetRandPanda(GetPandas());
+            var pandas = GetPandas();
+            if (UseAll)
+            {
+                List<Bitmap> bmps = pandas.Select(item => GenerateOne(font, item.FullName)).ToList();
+                int maxWidth = bmps.Max(item => item.Width);
+                int maxHeight = bmps.Sum(item => item.Height);
+                Bitmap bitmap = new Bitmap(maxWidth, maxHeight);
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    g.Clear(Color.White);
+                    int y = 0;
+                    foreach (var item in bmps)
+                    {
+                        g.DrawImage(item, 0, y);
+                        y += item.Height;
+                    }
+                }
 
+                var cqImg2 = new FileImage(bitmap, 85).ToString();
+                return new CommonMessageResponse(cqImg2, messageObj);
+            }
+            string pandaPath;
+            if (PandaNum >= 1)
+            {
+                int trueNum = PandaNum - 1;
+                if (PandaNum > pandas.Length)
+                    return new CommonMessageResponse($"超过了范围哦，一共有{pandas.Length}张表情", messageObj, true);
+                pandaPath = pandas[trueNum].FullName;
+            }
+            else
+                pandaPath = GetRandPanda(pandas);
+
+            Bitmap bmp = GenerateOne(font, pandaPath);
+            var cqImg = new FileImage(bmp, 65).ToString();
+            return new CommonMessageResponse(cqImg, messageObj);
+        }
+
+        private Bitmap GenerateOne(FontFamily font, string pandaPath)
+        {
             string word = GetRealWord(font, pandaPath);
             string[] words = word.Split('\n');
             int renderSize = GetFontSize(word);
-
-            var cqImg = new FileImage(Draw(words, renderSize, pandaPath, font), 65).ToString();
-            return new CommonMessageResponse(cqImg, messageObj);
+            var bmp = Draw(words, renderSize, pandaPath, font);
+            return bmp;
         }
 
         private static Bitmap Draw(IReadOnlyList<string> words, int renderSize, string pandaPath, FontFamily font)
