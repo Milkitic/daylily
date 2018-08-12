@@ -15,6 +15,10 @@ namespace Daylily.Plugin.Core.Command
     [Command("sleep", "slip")]
     public class Sleep : CommandApp
     {
+        [FreeArg(Default = -1)]
+        [Help("要禁言的时长，小时为单位，支持小数")]
+        public double SleepTime { get; set; }
+
         public override void Initialize(string[] args)
         {
 
@@ -27,17 +31,19 @@ namespace Daylily.Plugin.Core.Command
             if (messageObj.GroupId == null)
                 return null;
             if (messageObj.ArgString.Trim() == "")
-                return new CommonMessageResponse("要睡多少小时呀? 你不写是要30循吗??", messageObj, true);
+                return new CommonMessageResponse("要睡多少小时呀??", messageObj, true);
+
+            double sleepTime;
+            if (SleepTime > 12) sleepTime = 12;
+            else if (SleepTime < 0.5) sleepTime = 0.5;
+            else if (SleepTime > 0) sleepTime = SleepTime;
+            else return new CommonMessageResponse("穿越是不可以的……", messageObj, true);
 
             DateTime dt = new DateTime();
-            if (!double.TryParse(messageObj.ArgString, out double result))
-                return new CommonMessageResponse("我只要一个数表示小时，支持小数", messageObj, true);
-            if (result > 12) result = 12;
-            else if (result < 0.5) result = 0.5;
-            dt = dt.AddHours(result);
+            dt = dt.AddHours(sleepTime);
             int s = (int)(dt.Ticks / 10000000);
             CqApi.SetGroupBan(messageObj.GroupId, messageObj.UserId, s);
-            string msg = "祝你一觉睡到" + DateTime.Now.AddHours(result).ToString("HH:mm") + " :D";
+            string msg = "祝你一觉睡到" + DateTime.Now.AddHours(sleepTime).ToString("HH:mm") + " :D";
 
             return new CommonMessageResponse(msg, messageObj, true);
         }
