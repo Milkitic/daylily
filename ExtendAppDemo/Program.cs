@@ -30,10 +30,11 @@ namespace ExtendAppDemo
                 Message = message
             };
 
-            // 最终将Json结果直接Print到CLI中
+            // 最终将Json结果直接Print到CLI中（一行）
             Console.WriteLine(JsonConvert.SerializeObject(sent));
         }
 
+        // 发出的消息需要包含以下内容。目前还没有支持禁言、撤回等接口。
         public class SentJson
         {
             public bool EnableAt { get; set; }
