@@ -52,7 +52,7 @@ namespace Daylily.Common.Function.Application
                 {
                     MessageObj = messageObj,
                     LastSentIsMe = false,
-                    CdTime = 60 * 60 * 9,
+                    CdTime = 60 * 60 * 24,
                     //CdTime = 15,
                 });
 
@@ -63,8 +63,8 @@ namespace Daylily.Common.Function.Application
             {
                 _groupDic[groupId].LastSent = DateTime.Now;
                 _groupDic[groupId].LastSentIsMe = false;
-                //GroupDic[groupId].TrigTime = Rnd.Next(4, 5);
                 _groupDic[groupId].TrigTime = Rnd.Next(60 * 60 * 2, 60 * 60 * 3);
+                //_groupDic[groupId].TrigTime = Rnd.Next(4, 5);
                 //Logger.Debug(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
                 SaveSettings(_groupDic);
             }

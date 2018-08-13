@@ -59,21 +59,34 @@ namespace Daylily.Common.Function.Application.Command
             if (UseAll)
             {
                 List<Bitmap> bmps = pandas.Select(item => GenerateOne(font, item.FullName)).ToList();
-                int maxWidth = bmps.Max(item => item.Width);
+                int maxWidthP = bmps.Max(item => item.Width);
                 int maxHeight = bmps.Sum(item => item.Height);
+                const int addWidth = 50;
+                int maxWidth = maxWidthP + addWidth;
                 Bitmap bitmap = new Bitmap(maxWidth, maxHeight);
                 using (Graphics g = Graphics.FromImage(bitmap))
+                using (Brush b = new SolidBrush(Color.Black))
+                using (Pen p = new Pen(Color.Black))
+                using (Font f = new Font("等线", 30, FontStyle.Bold))
                 {
                     g.Clear(Color.White);
                     int y = 0;
-                    foreach (var item in bmps)
+                    for (var i = 0; i < bmps.Count; i++)
                     {
-                        g.DrawImage(item, 0, y);
+                        var item = bmps[i];
+                        g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                        g.DrawImage(item, addWidth + maxWidthP / 2f - item.Width / 2f, y);
+                        string numStr = (i + 1).ToString();
+                        var size = g.MeasureString(numStr, f);
+                        g.DrawString(numStr, f, b, addWidth / 2f - size.Width / 2f,
+                            y + item.Height / 2f - size.Height / 2f);
+                        g.DrawRectangle(p, new Rectangle(0, y, addWidth, item.Height));
+                        g.DrawRectangle(p, new Rectangle(addWidth, y, maxWidthP, item.Height));
                         y += item.Height;
                     }
                 }
 
-                var cqImg2 = new FileImage(bitmap, 85).ToString();
+                var cqImg2 = new FileImage(bitmap, 75).ToString();
                 return new CommonMessageResponse(cqImg2, messageObj);
             }
             string pandaPath;

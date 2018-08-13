@@ -72,7 +72,7 @@ namespace Daylily.Common.Utils
         public FileCoolQCode(FileSystemInfo file)
         {
             string path = file.FullName;
-            Contract.Requires<ArgumentException>(File.Exists(path));
+            Contract.Requires<FileNotFoundException>(File.Exists(path));
             Path = Escape(path);
             FileType = FileTypeEnum.Local;
         }
