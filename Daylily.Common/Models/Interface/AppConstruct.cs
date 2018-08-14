@@ -109,10 +109,14 @@ namespace Daylily.Common.Models.Interface
                 string json = ConcurrentFile.ReadAllText(saveName);
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
             }
+            catch (FileNotFoundException)
+            {
+                return default;
+            }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                return default;
+                throw;
             }
         }
 

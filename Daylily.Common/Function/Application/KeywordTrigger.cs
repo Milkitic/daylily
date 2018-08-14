@@ -21,50 +21,91 @@ namespace Daylily.Common.Function.Application
     public class KeywordTrigger : ApplicationApp
     {
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
-        private static readonly string[] Me = { "我" };
-        private static readonly string[] MeOut = { "me1.jpg" };
+        private static List<TriggerObject> _triggerObjects;
+        public KeywordTrigger()
+        {
+            _triggerObjects = LoadSettings<List<TriggerObject>>("UserDictionary") ?? new List<TriggerObject>
+            {
+                new TriggerObject(new[] {"我"}, new[] {"me1.jpg"}, 0.5),
+                new TriggerObject(new[] {"你"}, new[] {"you1.jpg", "you2.jpg"}, 2),
+                new TriggerObject(new[] {"为啥", "为什么", "为毛", "为嘛", "why "}, new[] {"why1.jpg"}, 20),
+                new TriggerObject(new[] {"看来", "原来"}, new[] {"kanlai1.jpg", "kanlai2.jpg"}, 30),
+                new TriggerObject(new[] {"黄花菜"},
+                    new[]
+                    {
+                        "sb1.jpg", "sb2.jpg", "sb3.jpg", "sb4.jpg", "sb5.jpg", "sb6.jpg", "sb7.jpg", "sb8.jpg",
+                        "sb9.jpg"
+                    }, 50)
+            };
 
-        private static readonly string[] You = { "你" };
-        private static readonly string[] YouOut = { "you1.jpg", "you2.jpg" };
-
-        private static readonly string[] Why = { "为啥", "为什么", "为毛", "为嘛", "why " };
-        private static readonly string[] WhyOut = { "why1.jpg" };
-
-        private static readonly string[] Kanlai = { "看来", "原来" };
-        private static readonly string[] KanlaiOut = { "kanlai1.jpg", "kanlai2.jpg" };
-
-        private static readonly string[] Sb = { "黄花菜" };
-        private static readonly string[] SbOut = { "sb1.jpg", "sb2.jpg", "sb3.jpg", "sb4.jpg", "sb5.jpg", "sb6.jpg", "sb7.jpg", "sb8.jpg", "sb9.jpg" };
+            // 概率从小到大排序，更科学
+            _triggerObjects.Sort(new TriggerComparer());
+            _triggerObjects.RemoveAll(p => p == null);
+            SaveSettings(_triggerObjects, "UserDictionary");
+        }
 
         public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
         {
-            //概率从小到大排序，更科学
+            if (messageObj.Command == "keyedit")
+            {
+                if (messageObj.FreeArgs.Count == 1)
+                    return new CommonMessageResponse(messageObj.FreeArgs[0] + " (KeywordTrigger)", messageObj);
+            }
             string msg = messageObj.Message;
-            if (Trig(msg, Me, MeOut, out string img, 0.005)) // 0.05%
-                return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
-            if (Trig(msg, You, YouOut, out img, 0.02)) // 2%
-                return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
-            if (Trig(msg, Why, WhyOut, out img, 0.2)) // 20%
-                return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
-            if (Trig(msg, Kanlai, KanlaiOut, out img, 0.3)) // 30%
-                return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
-            if (Trig(msg, Sb, SbOut, out img, 0.5)) // 50%
-                return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
+
+            foreach (var item in _triggerObjects)
+            {
+                if (Trig(msg, item.Words, item.Pictrues, out string img, item.ChancePercent))
+                    return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
+            }
+
             return null;
         }
 
         private static bool Trig(string message, IEnumerable<string> keywords, IReadOnlyList<string> pics,
-            out string imgP, double hold = 0.1)
+            out string imgP, double chancePercent = 10)
         {
+            var chance = chancePercent / 100d;
             string msg = message.ToLower();
             if (keywords.Any(msg.Contains))
             {
                 imgP = pics[Rnd.Next(pics.Count)];
-                return Rnd.NextDouble() < hold;
+                return Rnd.NextDouble() < chance;
             }
 
             imgP = null;
             return false;
+        }
+
+        public class TriggerObject
+        {
+            public TriggerObject(IEnumerable<string> words, IReadOnlyList<string> pictrues, double chancePercent)
+            {
+                Contract.Requires<ArgumentOutOfRangeException>(chancePercent >= 0 && chancePercent <= 100);
+                Contract.Requires<ArgumentOutOfRangeException>(words != null);
+                Contract.Requires<ArgumentOutOfRangeException>(pictrues != null);
+                Words = words;
+                Pictrues = pictrues;
+                ChancePercent = chancePercent;
+            }
+
+            public IEnumerable<string> Words { get; set; }
+            public IReadOnlyList<string> Pictrues { get; set; }
+            public double ChancePercent { get; set; }
+        }
+
+        private class TriggerComparer : IComparer<TriggerObject>
+        {
+            public int Compare(TriggerObject obj1, TriggerObject obj2)
+            {
+                if (obj1 == null && obj2 == null)
+                    return 0;
+                if (obj1 != null && obj2 == null)
+                    return 1;
+                if (obj1 == null && obj2 != null)
+                    return -1;
+                return obj1.ChancePercent >= obj2.ChancePercent ? 1 : -1;
+            }
         }
     }
 }

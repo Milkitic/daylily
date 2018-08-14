@@ -231,6 +231,7 @@ namespace Daylily.Common.Function
             catch (Exception ex)
             {
                 Logger.Exception(ex.InnerException ?? ex);
+                Logger.Error($"加载插件{type.Name}失败。");
             }
         }
 
