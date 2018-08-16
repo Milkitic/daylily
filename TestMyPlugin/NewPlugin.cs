@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Daylily.Common.Models;
-using Daylily.Common.Models.Interface;
-using Daylily.Common.Utils.LogUtils;
+using Daylily.Bot.Models;
+using Daylily.Bot.PluginBase;
+using Daylily.Common;
+using Daylily.Common.Utils.LoggerUtils;
 
 namespace TestMyPlugin
 {
-    class NewPlugin: CommandApp
+    class NewPlugin: CommandPlugin
     {
         public override void Initialize(string[] args)
         {
             Console.WriteLine(string.Join('\n', args));
         }
 
-        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             Logger.Info(messageObj.UserId);
             Logger.Info(messageObj.GroupId);

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Daylily.Common.Models;
-using Daylily.Common.Models.Attributes;
-using Daylily.Common.Models.Enum;
-using Daylily.Common.Models.Interface;
+using Daylily.Bot.Attributes;
+using Daylily.Bot.Enum;
+using Daylily.Bot.Models;
+using Daylily.Bot.PluginBase;
 
 namespace Daylily.Plugin.Core.Command
 {
@@ -14,7 +12,7 @@ namespace Daylily.Plugin.Core.Command
     [Version(0, 1, 0, PluginVersion.Stable)]
     [Help("获取一个或多个随机数。")]
     [Command("roll")]
-    public class Roll : CommandApp
+    public class Roll : CommandPlugin
     {
         [Arg("r", IsSwitch = true, Default = false)]
         [Help("若启用，则使抽取含重复结果。否则结果不包含重复结果。")]
@@ -34,7 +32,7 @@ namespace Daylily.Plugin.Core.Command
 
         }
 
-        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             bool isParam1 = int.TryParse(Param1, out int param1);
             bool isParam2 = int.TryParse(Param2, out int param2);

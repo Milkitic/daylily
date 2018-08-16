@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks;
-using Daylily.Common.Models;
-using Daylily.Common.Models.Attributes;
-using Daylily.Common.Models.Enum;
-using Daylily.Common.Models.Interface;
+using Daylily.Bot.Attributes;
+using Daylily.Bot.Enum;
+using Daylily.Bot.Models;
+using Daylily.Bot.PluginBase;
 
 namespace Daylily.Plugin.Core.Command
 {
@@ -14,14 +13,14 @@ namespace Daylily.Plugin.Core.Command
     [Version(0, 1, 0, PluginVersion.Alpha)]
     [Help("浏览磁盘目录。", HelpType = PermissionLevel.Root)]
     [Command("cd")]
-    public class Cd : CommandApp
+    public class Cd : CommandPlugin
     {
         public override void Initialize(string[] args)
         {
 
         }
 
-        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             if (messageObj.GroupId != null) // 不给予群聊权限
                 return null;

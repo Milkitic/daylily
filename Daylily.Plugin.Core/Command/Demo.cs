@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
-using Daylily.Common.Assist;
-using Daylily.Common.Models;
-using Daylily.Common.Models.Attributes;
-using Daylily.Common.Models.CQResponse;
-using Daylily.Common.Models.Enum;
-using Daylily.Common.Models.Interface;
-using Daylily.Common.Utils;
-using Daylily.Common.Utils.LogUtils;
+using Daylily.Bot.Attributes;
+using Daylily.Bot.Enum;
+using Daylily.Bot.Models;
+using Daylily.Bot.PluginBase;
+using Daylily.Common;
+using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.Models.CqResponse;
 
 namespace Daylily.Plugin.Core.Command
 {
@@ -22,7 +20,7 @@ namespace Daylily.Plugin.Core.Command
     [Version(0, 1, 0, PluginVersion.Stable)]
     // 插件说明，用于help查询
     [Help("用于对于插件开发进行Demo演示")]
-    class Demo : CommandApp // 继承此类做为命令，此外还有其他两种类型
+    class Demo : CommandPlugin // 继承此类做为命令，此外还有其他两种类型
     {
         private static Thread _tThread;
         private static string UserId { get; set; }
@@ -32,7 +30,7 @@ namespace Daylily.Plugin.Core.Command
 
         }
 
-        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             // 接收的信息
             string message = messageObj.Message;

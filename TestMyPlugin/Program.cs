@@ -1,8 +1,9 @@
 ﻿using System;
-using Daylily.Common.Models;
-using Daylily.Common.Models.CQResponse;
-using Daylily.Common.Models.Enum;
-using Daylily.Common.Utils.LogUtils;
+using Daylily.Bot.Enum;
+using Daylily.Bot.Models;
+using Daylily.Common;
+using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.Models.CqResponse;
 
 namespace TestMyPlugin
 {

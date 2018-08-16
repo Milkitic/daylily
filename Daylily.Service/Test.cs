@@ -1,12 +1,10 @@
-﻿using Daylily.Common.Models;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Common.Models.Attributes;
-using Daylily.Common.Models.Enum;
-using Daylily.Common.Models.Interface;
-using Daylily.Common.Utils.LogUtils;
+using Daylily.Bot.Attributes;
+using Daylily.Bot.Enum;
+using Daylily.Bot.PluginBase;
 
 namespace Daylily.Service
 {
@@ -14,7 +12,7 @@ namespace Daylily.Service
     [Author("yf_extension")]
     [Version(0, 0, 1, PluginVersion.Stable)]
     [Help("后台计时")]
-    public class Test : ServiceApp
+    public class Test : ServicePlugin
     {
         public override void RunTask(string[] args)
         {

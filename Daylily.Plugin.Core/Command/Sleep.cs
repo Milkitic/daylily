@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Daylily.Common.Interface.CQHttp;
-using Daylily.Common.Models;
-using Daylily.Common.Models.Attributes;
-using Daylily.Common.Models.Enum;
-using Daylily.Common.Models.Interface;
+using Daylily.Bot.Attributes;
+using Daylily.Bot.Enum;
+using Daylily.Bot.Models;
+using Daylily.Bot.PluginBase;
+using Daylily.Common;
+using Daylily.CoolQ.Interface.CqHttp;
 
 namespace Daylily.Plugin.Core.Command
 {
@@ -13,7 +13,7 @@ namespace Daylily.Plugin.Core.Command
     [Version(0, 1, 0, PluginVersion.Stable)]
     [Help("当Daylily是管理员时，将命令发送者禁言（30分钟到12小时）。")]
     [Command("sleep", "slip")]
-    public class Sleep : CommandApp
+    public class Sleep : CommandPlugin
     {
         [FreeArg(Default = -1)]
         [Help("要禁言的时长，小时为单位，支持小数")]
@@ -24,7 +24,7 @@ namespace Daylily.Plugin.Core.Command
 
         }
 
-        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             if (messageObj.GroupId == "133605766")
                 return null;

@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
-using Daylily.Common.Assist;
-using Daylily.Common.Database;
-using Daylily.Common.Function;
-using Daylily.Common.Interface;
-using Daylily.Common.Interface.CQHttp;
-using Daylily.Common.Models;
-using Daylily.Common.Utils;
-using Daylily.Common.Utils.LogUtils;
+using Daylily.Bot.Function;
+using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Utils.Socket;
+using Daylily.CoolQ;
+using Daylily.CoolQ.Interface.CqHttp;
+using Daylily.Cos;
+using Daylily.Osu.Database;
+using Daylily.Osu.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -34,7 +33,7 @@ namespace Daylily.Web
             DbHelper.ConnectionString.Add("cabbage", Configuration.GetConnectionString("DefaultConnection"));
             DbHelper.ConnectionString.Add("daylily", Configuration.GetConnectionString("MyConnection"));
 
-            OsuApi.ApiKey = (string)Configuration.GetSection("OsuSettings").GetValue(typeof(string), "ApiKey");
+            OsuApiKey.ApiKey = (string)Configuration.GetSection("OsuSettings").GetValue(typeof(string), "ApiKey");
 
             Signature.AppId = (int)Configuration.GetSection("CosSettings").GetValue(typeof(int), "appId");
             Signature.SecretId = (string)Configuration.GetSection("CosSettings").GetValue(typeof(string), "secretId");
@@ -100,7 +99,7 @@ namespace Daylily.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            Common.Console.Startup.RunConsole();
+            Bot.Console.Startup.RunConsole();
             if (MessageHandler.PrivateDisabledList == null)
                 MessageHandler.PrivateDisabledList =
                     new System.Collections.Concurrent.ConcurrentDictionary<long, System.Collections.Generic.List<string>>();

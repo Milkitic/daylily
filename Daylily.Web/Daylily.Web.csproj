@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CSharpOSU" Version="1.4.5" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
     <PackageReference Include="MySql.Data" Version="8.0.12" />
@@ -30,7 +29,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Daylily.Assist\Daylily.Assist.csproj" />
+    <ProjectReference Include="..\Daylily.Bot\Daylily.Bot.csproj" />
     <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
+    <ProjectReference Include="..\Daylily.CoolQ\Daylily.CoolQ.csproj" />
+    <ProjectReference Include="..\Daylily.Cos\Daylily.Cos.csproj" />
+    <ProjectReference Include="..\Daylily.Osu\Daylily.Osu.csproj" />
   </ItemGroup>
 
 </Project>

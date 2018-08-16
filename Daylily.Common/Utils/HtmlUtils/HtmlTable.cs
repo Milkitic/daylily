@@ -6,53 +6,52 @@ namespace Daylily.Common.Utils.HtmlUtils
     public class HtmlTable
     {
         private readonly string _htmlStr;
-        public THead Head { get; }
-        public TBody Body { get; }
-        public TFoot Foot { get; }
+        public TableHead TableHead { get; }
+        public TableBody TableBody { get; }
+        public TableFoot TableFoot { get; }
         public int Width
         {
             get
             {
                 int max = 0;
-                if (Head?.Width > max)
-                    max = Head.Width;
-                if (Body?.Width > max)
-                    max = Body.Width;
-                if (Foot?.Width > max)
-                    max = Foot.Width;
+                if (TableHead?.Width > max)
+                    max = TableHead.Width;
+                if (TableBody?.Width > max)
+                    max = TableBody.Width;
+                if (TableFoot?.Width > max)
+                    max = TableFoot.Width;
                 return max;
             }
         }
 
-        public int Height => (Head == null ? 0 : Head.Height) + (Body == null ? 0 : Body.Height) +
-                             (Foot == null ? 0 : Foot.Height);
+        public int Height => (TableHead?.Height ?? 0) + (TableBody?.Height ?? 0) + (TableFoot?.Height ?? 0);
 
         public HtmlTable(string htmlStr)
         {
             _htmlStr = htmlStr.Replace("\r", "").Replace("\n", "");
-            StringFinder sfHBF = new StringFinder(_htmlStr);
-            if (sfHBF.FindNext("<thead") != -1)
+            StringFinder sf = new StringFinder(_htmlStr);
+            if (sf.FindNext("<thead") != -1)
             {
-                Head = new THead();
-                sfHBF.FindNext("</thead>", false);
-                string ori = sfHBF.Cut();
-                SetRows(Head, ori, "tr");
+                TableHead = new TableHead();
+                sf.FindNext("</thead>", false);
+                string ori = sf.Cut();
+                SetRows(TableHead, ori, "tr");
             }
 
-            if (sfHBF.FindNext("<tbody") != -1)
+            if (sf.FindNext("<tbody") != -1)
             {
-                Body = new TBody();
-                sfHBF.FindNext("</tbody>");
-                string ori = sfHBF.Cut();
-                SetRows(Body, ori, "tr");
+                TableBody = new TableBody();
+                sf.FindNext("</tbody>");
+                string ori = sf.Cut();
+                SetRows(TableBody, ori, "tr");
             }
 
-            if (sfHBF.FindNext("<tfoot") != -1)
+            if (sf.FindNext("<tfoot") != -1)
             {
-                Foot = new TFoot();
-                sfHBF.FindNext("</tfoot>");
-                string ori = sfHBF.Cut();
-                SetRows(Foot, ori, "tr");
+                TableFoot = new TableFoot();
+                sf.FindNext("</tfoot>");
+                string ori = sf.Cut();
+                SetRows(TableFoot, ori, "tr");
             }
         }
 
@@ -60,43 +59,43 @@ namespace Daylily.Common.Utils.HtmlUtils
         {
             string[,] sb = new string[Height, Width];
             int offset = 0;
-            for (int i = 0; i < Head?.Height; i++, offset++)
+            for (int i = 0; i < TableHead?.Height; i++, offset++)
             {
-                for (int j = 0; j < Head.Rows[i].Length; j++)
+                for (int j = 0; j < TableHead.Rows[i].Length; j++)
                 {
-                    sb[offset, j] = Head.Rows[i][j];
+                    sb[offset, j] = TableHead.Rows[i][j];
                 }
             }
 
-            for (int i = 0; i < Body?.Height; i++, offset++)
+            for (int i = 0; i < TableBody?.Height; i++, offset++)
             {
-                for (int j = 0; j < Body.Rows[i].Length; j++)
+                for (int j = 0; j < TableBody.Rows[i].Length; j++)
                 {
-                    sb[offset, j] = Body.Rows[i][j];
+                    sb[offset, j] = TableBody.Rows[i][j];
                 }
             }
 
-            for (int i = 0; i < Foot?.Height; i++, offset++)
+            for (int i = 0; i < TableFoot?.Height; i++, offset++)
             {
-                for (int j = 0; j < Foot.Rows[i].Length; j++)
+                for (int j = 0; j < TableFoot.Rows[i].Length; j++)
                 {
-                    sb[offset, j] = Foot.Rows[i][j];
+                    sb[offset, j] = TableFoot.Rows[i][j];
                 }
             }
             return sb;
         }
 
-        private void SetRows(TElement element, string ori, string key)
+        private void SetRows(TableElement tableElement, string ori, string key)
         {
-            StringFinder sfTR = new StringFinder(ori);
-            while (sfTR.FindNext($"<{key}") != -1)
+            StringFinder sf = new StringFinder(ori);
+            while (sf.FindNext($"<{key}") != -1)
             {
-                sfTR.FindNext($"</{key}>", false);
-                string oriRow = sfTR.Cut();
+                sf.FindNext($"</{key}>", false);
+                string oriRow = sf.Cut();
 
                 var list = GetColList(oriRow, "th", "td");
 
-                element.Rows.AddRow(list);
+                tableElement.Rows.AddRow(list);
             }
         }
 
@@ -131,10 +130,10 @@ namespace Daylily.Common.Utils.HtmlUtils
 
     public class Cols
     {
-        private List<string> _cols { get; set; } = new List<string>();
         public int Length => _cols.Count;
         public string this[int index] => _cols[index];
 
+        private readonly List<string> _cols = new List<string>();
         public Cols(IEnumerable<string> strs)
         {
             _cols.AddRange(strs);
@@ -142,17 +141,17 @@ namespace Daylily.Common.Utils.HtmlUtils
     }
     public class Rows
     {
-        private List<Cols> _rows { get; set; } = new List<Cols>();
         public int Length => _rows.Count;
         public Cols this[int index] => _rows[index];
 
+        private readonly List<Cols> _rows = new List<Cols>();
         public void AddRow(IEnumerable<string> strs)
         {
             _rows.Add(new Cols(strs));
         }
     }
 
-    public abstract class TElement
+    public abstract class TableElement
     {
         public Rows Rows { get; set; } = new Rows();
 
@@ -172,9 +171,9 @@ namespace Daylily.Common.Utils.HtmlUtils
 
         public int Height => Rows.Length;
     }
-    public class THead : TElement { }
+    public class TableHead : TableElement { }
 
-    public class TBody : TElement { }
+    public class TableBody : TableElement { }
 
-    public class TFoot : TElement { }
+    public class TableFoot : TableElement { }
 }

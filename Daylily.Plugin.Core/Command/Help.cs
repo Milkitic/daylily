@@ -5,14 +5,15 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Daylily.Common.Function;
-using Daylily.Common.Models;
-using Daylily.Common.Models.Attributes;
-using Daylily.Common.Models.Enum;
-using Daylily.Common.Models.Interface;
-using Daylily.Common.Utils;
+using Daylily.Bot;
+using Daylily.Bot.Attributes;
+using Daylily.Bot.Enum;
+using Daylily.Bot.Function;
+using Daylily.Bot.Models;
+using Daylily.Bot.PluginBase;
+using Daylily.Common;
 using Daylily.Common.Utils.StringUtils;
+using Daylily.CoolQ;
 
 namespace Daylily.Plugin.Core.Command
 {
@@ -21,7 +22,7 @@ namespace Daylily.Plugin.Core.Command
     [Version(0, 1, 2, PluginVersion.Beta)]
     [Help("查看此帮助信息。")]
     [Command("help")]
-    public class Help : CommandApp
+    public class Help : CommandPlugin
     {
         private static string _versionInfo;
         [FreeArg]
@@ -32,7 +33,7 @@ namespace Daylily.Plugin.Core.Command
             _versionInfo = args[0];
         }
 
-        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             return CommandName == null
                 ? new CommonMessageResponse(ShowList(messageObj), messageObj)
@@ -41,7 +42,7 @@ namespace Daylily.Plugin.Core.Command
 
         private static string ShowList(CommonMessage messageObj)
         {
-            CommandApp[] plugins = PluginManager.CommandMapStatic.Values.Distinct().ToArray();
+            CommandPlugin[] plugins = PluginManager.CommandMapStatic.Values.Distinct().ToArray();
             Dictionary<string, string> dictionary = plugins
                 .Where(plugin => plugin.HelpType == messageObj.PermissionLevel).ToDictionary(
                     plugin => string.Join(", /", plugin.Commands),
@@ -57,7 +58,7 @@ namespace Daylily.Plugin.Core.Command
         {
             if (!PluginManager.CommandMapStatic.Keys.Contains(CommandName))
                 return "未找到相关资源...";
-            CommandApp plugin = PluginManager.CommandMapStatic[CommandName];
+            CommandPlugin plugin = PluginManager.CommandMapStatic[CommandName];
             Custom custom = new Custom
             {
                 Title = plugin.Name,

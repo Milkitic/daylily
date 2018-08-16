@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
+    <ProjectReference Include="..\Daylily.Bot\Daylily.Bot.csproj" />
   </ItemGroup>
 
 </Project>

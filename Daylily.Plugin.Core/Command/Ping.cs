@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Daylily.Common.Models;
-using Daylily.Common.Models.Attributes;
-using Daylily.Common.Models.Enum;
-using Daylily.Common.Models.Interface;
+using Daylily.Bot.Attributes;
+using Daylily.Bot.Enum;
+using Daylily.Bot.Models;
+using Daylily.Bot.PluginBase;
 
 namespace Daylily.Plugin.Core.Command
 {
@@ -12,14 +11,14 @@ namespace Daylily.Plugin.Core.Command
     [Version(0, 1, 0, PluginVersion.Stable)]
     [Help("返回\"pong\"。")]
     [Command("ping")]
-    public class Ping : CommandApp
+    public class Ping : CommandPlugin
     {
         public override void Initialize(string[] args)
         {
 
         }
 
-        public override CommonMessageResponse Message_Received(in CommonMessage messageObj)
+        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             if (messageObj.GroupId != null) // 不给予群聊权限
                 return null;
