@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot.Function;
+using Daylily.Bot;
 using Daylily.Bot.PluginBase;
 
 namespace Daylily.Plugin.Core.Service

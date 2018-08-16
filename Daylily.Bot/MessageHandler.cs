@@ -17,7 +17,7 @@ using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Models.CqResponse;
 using Daylily.CoolQ.Models.CqResponse.Api.Abstract;
 
-namespace Daylily.Bot.Function
+namespace Daylily.Bot
 {
     public class MessageHandler
     {

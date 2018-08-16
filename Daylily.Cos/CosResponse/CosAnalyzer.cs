@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Daylily.Bot.Models.CosResponse
+namespace Daylily.Cos.CosResponse
 {
     public class CosAnalyzer
     {

@@ -8,7 +8,6 @@ using System.Text;
 using Daylily.Bot;
 using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Function;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common;

@@ -21,11 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Daylily.Assist\Daylily.Assist.csproj" />
     <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
     <ProjectReference Include="..\Daylily.CoolQ\Daylily.CoolQ.csproj" />
-    <ProjectReference Include="..\Daylily.Cos\Daylily.Cos.csproj" />
-    <ProjectReference Include="..\Daylily.Osu\Daylily.Osu.csproj" />
   </ItemGroup>
 
 </Project>

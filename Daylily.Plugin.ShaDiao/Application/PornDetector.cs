@@ -3,13 +3,13 @@ using System.Linq;
 using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
-using Daylily.Bot.Models.CosResponse;
 using Daylily.Bot.PluginBase;
 using Daylily.Common.Utils.HttpRequest;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.Cos;
+using Daylily.Cos.CosResponse;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {

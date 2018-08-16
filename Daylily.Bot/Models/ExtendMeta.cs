@@ -1,7 +1,7 @@
 ﻿using Daylily.Bot.Enum;
 using Newtonsoft.Json;
 
-namespace Daylily.Bot.Models.Extension
+namespace Daylily.Bot.Models
 {
     public class ExtendMeta
     {

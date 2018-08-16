@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Daylily.Bot.Function.Beta;
 using Daylily.Bot.Models.MessageList;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Models.CqResponse;
 using Newtonsoft.Json;
 
-namespace Daylily.Bot.Function
+namespace Daylily.Bot
 {
     public static class JsonHandler
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Daylily.Bot.Function;
+using Daylily.Bot;
 using Daylily.Common.Utils.LoggerUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

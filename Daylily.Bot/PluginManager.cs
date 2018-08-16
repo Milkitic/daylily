@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Models.Extension;
+using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common;
 using Daylily.Common.IO;

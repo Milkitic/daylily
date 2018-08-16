@@ -2,7 +2,6 @@
 using System.IO;
 using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Function;
 using Daylily.Bot.Models;
 using Daylily.Common;
 using Daylily.Common.IO;

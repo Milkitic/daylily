@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Daylily.Bot.Function;
+using Daylily.Bot;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.Socket;
 using Daylily.CoolQ;

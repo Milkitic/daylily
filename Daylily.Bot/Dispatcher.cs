@@ -2,7 +2,7 @@
 using Daylily.Bot.Models.MessageList;
 using Daylily.CoolQ.Models.CqResponse;
 
-namespace Daylily.Bot.Function.Beta
+namespace Daylily.Bot
 {
     class Dispatcher
     {
