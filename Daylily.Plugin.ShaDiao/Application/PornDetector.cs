@@ -11,7 +11,7 @@ using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.Cos;
 
-namespace Daylily.Bot.Function.Application
+namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("嗅探黄图")]
     [Author("yf_extension")]

@@ -1,8 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot.Function;
 using Daylily.Bot.PluginBase;
 
-namespace Daylily.Bot.Function.Application.Service
+namespace Daylily.Plugin.Core.Service
 {
     class UpdateGroupList : ServicePlugin
     {

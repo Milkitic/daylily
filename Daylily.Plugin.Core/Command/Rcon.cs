@@ -5,9 +5,8 @@ using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
-using Daylily.Common;
 
-namespace Daylily.Bot.Function.Application.Command
+namespace Daylily.Plugin.Core.Command
 {
     [Name("日程提醒")]
     [Author("yf_extension")]

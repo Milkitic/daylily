@@ -3,10 +3,9 @@ using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
-using Daylily.Common;
 using Daylily.CoolQ.Interface.CqHttp;
 
-namespace Daylily.Plugin.Core.Command
+namespace Daylily.Plugin.ShaDiao.Command
 {
     [Name("自助禁言")]
     [Author("yf_extension")]

@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Bot", "Daylily.Bot\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Web", "Daylily.Web\Daylily.Web.csproj", "{5BAB2B81-1E84-41DD-884B-2365495A1356}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Service", "Daylily.Service\Daylily.Service.csproj", "{5B357AA3-4160-48F7-AEE1-607EEA0E12C0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendAppDemo", "ExtendAppDemo\ExtendAppDemo.csproj", "{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestMyPlugin", "TestMyPlugin\TestMyPlugin.csproj", "{CB60AE85-10D1-484E-A575-55D61D00DAE3}"
@@ -27,11 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Osu", "Daylily.Osu\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Common", "Daylily.Common\Daylily.Common.csproj", "{369AD1D2-F1F5-4DBA-B4DC-A18927A04805}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daylily.CoolQ", "Daylily.CoolQ\Daylily.CoolQ.csproj", "{F66D342F-EFCF-4067-8157-3BDE850311D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.CoolQ", "Daylily.CoolQ\Daylily.CoolQ.csproj", "{F66D342F-EFCF-4067-8157-3BDE850311D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daylily.Cos", "Daylily.Cos\Daylily.Cos.csproj", "{F639D3EC-B942-465C-8AD5-CD1E5510E50F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Cos", "Daylily.Cos\Daylily.Cos.csproj", "{F639D3EC-B942-465C-8AD5-CD1E5510E50F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daylily.Plugin.ShaDiao", "Daylily.Plugin.ShaDiao\Daylily.Plugin.ShaDiao.csproj", "{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.ShaDiao", "Daylily.Plugin.ShaDiao\Daylily.Plugin.ShaDiao.csproj", "{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,10 +53,6 @@ Global
 		{5BAB2B81-1E84-41DD-884B-2365495A1356}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BAB2B81-1E84-41DD-884B-2365495A1356}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BAB2B81-1E84-41DD-884B-2365495A1356}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5B357AA3-4160-48F7-AEE1-607EEA0E12C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B357AA3-4160-48F7-AEE1-607EEA0E12C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B357AA3-4160-48F7-AEE1-607EEA0E12C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B357AA3-4160-48F7-AEE1-607EEA0E12C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -97,7 +91,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8} = {210CBD05-D624-4DA0-BF6A-444E4DBD4772}
-		{5B357AA3-4160-48F7-AEE1-607EEA0E12C0} = {210CBD05-D624-4DA0-BF6A-444E4DBD4772}
 		{452FC868-4FA2-4955-8D12-DD45C16CE4E1} = {210CBD05-D624-4DA0-BF6A-444E4DBD4772}
 		{C65B49D0-BE66-4E5A-8CAC-8F2B42BADC7A} = {A647853D-3BE2-4A06-875C-575E54575E84}
 		{F66D342F-EFCF-4067-8157-3BDE850311D4} = {A647853D-3BE2-4A06-875C-575E54575E84}

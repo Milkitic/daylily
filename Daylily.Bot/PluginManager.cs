@@ -5,9 +5,6 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Function.Application;
-using Daylily.Bot.Function.Application.Command;
-using Daylily.Bot.Function.Application.Service;
 using Daylily.Bot.Models.Extension;
 using Daylily.Bot.PluginBase;
 using Daylily.Common;
@@ -37,8 +34,8 @@ namespace Daylily.Bot
 
         public static void LoadAllPlugins(string[] args)
         {
-            Logger.Info("===加载内部插件中==");
-            LoadBuiltIn(args);
+            //Logger.Info("===加载内部插件中==");
+            //LoadBuiltIn(args);
             Logger.Info("===加载外部插件中==");
             LoadFromFile(args);
             Logger.Info("===加载扩展插件中==");
@@ -49,14 +46,7 @@ namespace Daylily.Bot
         {
             Type[] iType =
             {
-                typeof(PornDetector),
-                
-                typeof(Rcon),
-                typeof(Send),
-                typeof(Shutdown),
-                typeof(PluginManager),
-
-                typeof(UpdateGroupList),
+             
             };
 
             foreach (var item in iType)

@@ -24,10 +24,10 @@ namespace Daylily.Plugin.Core.Command
     [Command("help")]
     public class Help : CommandPlugin
     {
-        private static string _versionInfo;
         [FreeArg]
         public string CommandName { get; set; }
 
+        private static string _versionInfo;
         public override void Initialize(string[] args)
         {
             _versionInfo = args[0];

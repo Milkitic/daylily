@@ -8,13 +8,12 @@ using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common;
-using Daylily.Common.Utils;
 using Daylily.Common.Utils.HttpRequest;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 
-namespace Daylily.Bot.Function.Application
+namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("嗅探龙图")]
     [Author("yf_extension", "sahuang")]

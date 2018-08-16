@@ -3,9 +3,8 @@ using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
-using Daylily.Common;
 
-namespace Daylily.Bot.Function.Application.Command
+namespace Daylily.Plugin.Core.Command
 {
     [Name("强制停止")]
     [Author("yf_extension")]

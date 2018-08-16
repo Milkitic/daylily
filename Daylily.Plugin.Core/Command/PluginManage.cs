@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text;
 using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
+using Daylily.Bot.Function;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
-using Daylily.Common;
 
-namespace Daylily.Bot.Function.Application.Command
+namespace Daylily.Plugin.Core.Command
 {
     [Name("插件管理")]
     [Author("yf_extension")]
     [Version(0, 1, 4, PluginVersion.Alpha)]
     [Help("动态管理插件的启用状态。", "仅限当前群生效。", HelpType = PermissionLevel.Admin)]
     [Command("plugin")]
-    public class PluginManager : CommandPlugin
+    public class PluginManage : CommandPlugin
     {
         [Arg("list", IsSwitch = true)]
         [Help("若启用，显示插件列表。")]
