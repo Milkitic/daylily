@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Web", "Daylily.Web\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendAppDemo", "ExtendAppDemo\ExtendAppDemo.csproj", "{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestMyPlugin", "TestMyPlugin\TestMyPlugin.csproj", "{CB60AE85-10D1-484E-A575-55D61D00DAE3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Osu", "Daylily.Plugin.Osu\Daylily.Plugin.Osu.csproj", "{452FC868-4FA2-4955-8D12-DD45C16CE4E1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{210CBD05-D624-4DA0-BF6A-444E4DBD4772}"
@@ -57,10 +55,6 @@ Global
 		{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CB60AE85-10D1-484E-A575-55D61D00DAE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CB60AE85-10D1-484E-A575-55D61D00DAE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CB60AE85-10D1-484E-A575-55D61D00DAE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CB60AE85-10D1-484E-A575-55D61D00DAE3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{452FC868-4FA2-4955-8D12-DD45C16CE4E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{452FC868-4FA2-4955-8D12-DD45C16CE4E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{452FC868-4FA2-4955-8D12-DD45C16CE4E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
