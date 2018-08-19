@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Web;
-using Daylily.Common.Utils.HttpRequest;
+using Daylily.Common.Utils.RequestUtils;
 
 namespace Daylily.Assist.Interface
 {

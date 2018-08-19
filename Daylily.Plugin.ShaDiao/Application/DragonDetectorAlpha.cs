@@ -8,8 +8,8 @@ using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common;
-using Daylily.Common.Utils.HttpRequest;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Utils.RequestUtils;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 
@@ -19,7 +19,7 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Author("yf_extension", "sahuang")]
     [Version(0, 0, 1, PluginVersion.Alpha)]
     [Help("发现龙图时做出不同操作")]
-    public class DragonDetectorAlpha : ApplicationPlugin
+    class DragonDetectorAlpha : ApplicationPlugin
     {
         private readonly List<string> _pathList = new List<string>();
         private readonly List<string> _receivedString = new List<string>();

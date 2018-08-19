@@ -6,6 +6,7 @@ using Daylily.Common.Utils.Socket;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.Cos;
+using Daylily.Osu;
 using Daylily.Osu.Database;
 using Daylily.Osu.Models;
 using Microsoft.AspNetCore.Builder;
@@ -34,6 +35,8 @@ namespace Daylily.Web
             DbHelper.ConnectionString.Add("daylily", Configuration.GetConnectionString("MyConnection"));
 
             OsuApiKey.ApiKey = (string)Configuration.GetSection("OsuSettings").GetValue(typeof(string), "ApiKey");
+            OsuApiKey.UserName = (string)Configuration.GetSection("OsuSettings").GetValue(typeof(string), "UserName");
+            OsuApiKey.Password = (string)Configuration.GetSection("OsuSettings").GetValue(typeof(string), "Password");
 
             Signature.AppId = (int)Configuration.GetSection("CosSettings").GetValue(typeof(int), "appId");
             Signature.SecretId = (string)Configuration.GetSection("CosSettings").GetValue(typeof(string), "secretId");
@@ -100,6 +103,8 @@ namespace Daylily.Web
             app.UseCookiePolicy();
 
             Bot.Console.Startup.RunConsole();
+            PluginManager.LoadAllPlugins(new[] { "" });
+
             if (MessageHandler.PrivateDisabledList == null)
                 MessageHandler.PrivateDisabledList =
                     new System.Collections.Concurrent.ConcurrentDictionary<long, System.Collections.Generic.List<string>>();
@@ -110,14 +115,12 @@ namespace Daylily.Web
                 MessageHandler.GroupDisabledList =
                     new System.Collections.Concurrent.ConcurrentDictionary<long, System.Collections.Generic.List<string>>();
 
-
-
             app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+                   {
+                       routes.MapRoute(
+                           name: "default",
+                           template: "{controller=Home}/{action=Index}/{id?}");
+                   });
         }
     }
 }

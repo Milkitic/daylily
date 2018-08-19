@@ -129,7 +129,8 @@ namespace Daylily.Common.Utils.LoggerUtils
             string writeStr = $"[{n.Hour:00}:{n.Minute:00}:{n.Second:00}]{methodName}";
             System.Console.Write(writeStr);
             System.Console.ResetColor();
-            System.Console.Write(" ");
+            System.Console.WriteLine();
+            System.Console.Write("  ");
             return writeStr;
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Daylily.Common.Utils.HttpRequest;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Utils.RequestUtils;
 using Daylily.Osu.Models;
 
 namespace Daylily.Osu.Interface

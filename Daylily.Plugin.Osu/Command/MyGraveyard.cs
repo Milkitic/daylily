@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bleatingsheep.Osu.ApiV2b.Models;
 using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
-using Daylily.Common.Utils.HttpRequest;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Utils.RequestUtils;
 using Daylily.CoolQ;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;

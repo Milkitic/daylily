@@ -6,9 +6,10 @@ using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using Daylily.Common.Utils.LoggerUtils;
 
-namespace Daylily.Common.Utils.HttpRequest
+namespace Daylily.Common.Utils.RequestUtils
 {
     public static class HttpClientUtil
     {
@@ -92,42 +93,39 @@ namespace Daylily.Common.Utils.HttpRequest
         /// <param name="args">参数字典</param>
         /// <param name="headerDic">请求头字典</param>
         /// <returns></returns>
-        public static string HttpGet(string url, IDictionary<string, string> args = null, IDictionary<string, string> headerDic = null)
+        public static string HttpGet(string url, IDictionary<string, string> args = null, IDictionary<string, string> argsHeader = null)
         {
-            string responseStr = null;
-            if (args != null)
-            {
-                url = url + args.ToUrlParamString();
-            }
-
-            if (headerDic != null)
-            {
-                foreach (var item in headerDic)
-                {
-                    Http.DefaultRequestHeaders.Add(item.Key, item.Value);
-                }
-            }
-
             for (int i = 0; i < RetryCount; i++)
             {
                 try
                 {
-                    if (EnableLog)
-                        Logger.Debug("Sent get request.");
-                    responseStr = Http.GetStringAsync(url).Result;
-                    if (EnableLog)
-                        Logger.Debug("Received get response.");
-                    return responseStr;
+                    if (args != null)
+                    {
+                        url = url + args.ToUrlParamString();
+                    }
+
+                    var message = new HttpRequestMessage(HttpMethod.Get, url);
+                    if (argsHeader != null)
+                    {
+                        foreach (var item in argsHeader)
+                        {
+                            message.Headers.Add(item.Key, item.Value);
+                        }
+                    }
+                    CancellationTokenSource cts = new CancellationTokenSource(Timeout);
+                    HttpResponseMessage response = Http.SendAsync(message, cts.Token).Result;
+
+                    return response.Content.ReadAsStringAsync().Result;
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"尝试了{i + 1}次，请求超时 (>{Timeout}ms)");
+                    Logger.Error($"尝试了{i + 1}次，请求超时 (>{Timeout}ms): " + url);
                     if (i == RetryCount - 1)
                         Logger.Exception(ex);
                 }
             }
 
-            return responseStr;
+            return null;
         }
 
         private static string HttpPost(string url, HttpContent content)
@@ -151,7 +149,7 @@ namespace Daylily.Common.Utils.HttpRequest
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"尝试了{i + 1}次，请求超时 (>{Timeout}ms)");
+                    Logger.Error($"尝试了{i + 1}次，请求超时 (>{Timeout}ms): " + url);
                     if (i == RetryCount - 1)
                         Logger.Exception(ex);
                 }

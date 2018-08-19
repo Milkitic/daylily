@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Daylily.Common.Utils.LoggerUtils;
 
-namespace Daylily.Common.Utils.HttpRequest
+namespace Daylily.Common.Utils.RequestUtils
 {
     /// <summary>
     /// Web请求帮助类

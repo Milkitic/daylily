@@ -5,4 +5,4 @@ copy Daylily.Plugin.ShaDiao\bin\Release\netcoreapp2.1\Daylily.Plugin.ShaDiao.dll
 copy Daylily.Plugin.Core\bin\Release\netcoreapp2.1\Daylily.Plugin.Core.dll Daylily.Web\bin\Release\PublishOutput\plugins\Daylily.Plugin.Core.dll
 copy Daylily.Plugin.Osu\bin\Release\netcoreapp2.1\Daylily.Plugin.Osu.dll Daylily.Web\bin\Release\PublishOutput\plugins\Daylily.Plugin.Osu.dll
 @echo off
-ping -n 3 127.0.0.1>nul
+ping -n 2 127.0.0.1>nul

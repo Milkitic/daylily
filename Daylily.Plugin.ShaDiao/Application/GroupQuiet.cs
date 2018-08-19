@@ -16,7 +16,7 @@ namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("死群熊猫")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Version(0, 0, 2, PluginVersion.Stable)]
     [Help("群长时间不说话时，发一张相关的熊猫。")]
     public class GroupQuiet : ApplicationPlugin
     {
@@ -67,7 +67,9 @@ namespace Daylily.Plugin.ShaDiao.Application
                 SaveSettings(_groupDic);
             }
             else
-                Logger.Debug(groupId + ". CD");
+            {
+                //Logger.Debug(groupId + ". CD");
+            }
             return null;
         }
         private void DelayScan(object groupIdObj)

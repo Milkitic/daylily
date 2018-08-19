@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Daylily.Common.Utils.HttpRequest;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Utils.RequestUtils;
 using Daylily.CoolQ.Models.CqResponse.Api;
 using Daylily.CoolQ.Models.CqResponse.Api.Abstract;
 
