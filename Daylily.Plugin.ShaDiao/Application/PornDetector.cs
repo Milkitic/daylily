@@ -13,10 +13,10 @@ using Daylily.Cos.CosResponse;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
-    [Name("嗅探黄图")]
+    [Name("黄图检测")]
     [Author("yf_extension")]
     [Version(0, 0, 1, PluginVersion.Beta)]
-    [Help("发现福利图和黄图时进行提醒和禁言（仅新人mapper群）")]
+    [Help("发现福利图和黄图时进行提醒和禁言（仅新人mapper群）。")]
     public class PornDetector : ApplicationPlugin
     {
         private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();

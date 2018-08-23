@@ -5,29 +5,20 @@ using Daylily.Osu.Models;
 
 namespace Daylily.Osu.Interface
 {
-    public class EloApi
+    public static class EloApi
     {
         public static string ApiUrl { get; set; } = "http://elo.milkitic.name";
 
-        public EloUserInfo GetEloByUid(long uid)
+        public static EloUserInfo GetEloByUid(long uid)
         {
-            string jsonString = null;
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
                 {"user_id", uid.ToString()}
             };
 
-            var response = WebRequestUtil.CreateUrlGetHttpResponse(ApiUrl + "/user", parameters);
-            Logger.Debug("Sent request.");
+            string jsonString = HttpClientUtil.HttpGet(ApiUrl + "/user", parameters);
 
-            if (response != null)
-            {
-                jsonString = WebRequestUtil.GetResponseString(response);
-                Logger.Debug("Received response.");
-            }
-
-            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<EloUserInfo>(jsonString);
-            return obj;
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<EloUserInfo>(jsonString);
         }
     }
 }

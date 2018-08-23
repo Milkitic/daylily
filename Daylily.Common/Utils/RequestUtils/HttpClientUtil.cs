@@ -91,7 +91,7 @@ namespace Daylily.Common.Utils.RequestUtils
         /// </summary>
         /// <param name="url">Http地址</param>
         /// <param name="args">参数字典</param>
-        /// <param name="headerDic">请求头字典</param>
+        /// <param name="argsHeader">请求头字典</param>
         /// <returns></returns>
         public static string HttpGet(string url, IDictionary<string, string> args = null, IDictionary<string, string> argsHeader = null)
         {

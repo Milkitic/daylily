@@ -11,6 +11,7 @@ using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.Models.MessageList;
 using Daylily.Bot.PluginBase;
+using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
@@ -24,6 +25,8 @@ namespace Daylily.Bot
         public static GroupList GroupInfo { get; } = new GroupList();
         public static DiscussList DiscussInfo { get; } = new DiscussList();
         public static PrivateList PrivateInfo { get; } = new PrivateList();
+        public static SessionList SessionInfo { get; } = new SessionList();
+
 
         public static ConcurrentDictionary<long, List<string>> GroupDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
@@ -31,6 +34,7 @@ namespace Daylily.Bot
             new ConcurrentDictionary<long, List<string>>();
         public static ConcurrentDictionary<long, List<string>> PrivateDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
+        public static ConcurrentDictionary<string, int> CommandHot { get; set; }
 
 
         public static string CommandFlag = "!";
@@ -38,6 +42,12 @@ namespace Daylily.Bot
         private readonly Random _rnd = new Random();
         private const int MinTime = 100; // 每条缓冲时间
         private const int MaxTime = 300; // 每条缓冲时间
+
+        static MessageHandler()
+        {
+            CommandHot = Settings.LoadSettings<ConcurrentDictionary<string, int>>("CommandHot") ??
+                         new ConcurrentDictionary<string, int>();
+        }
 
         /// <summary>
         /// 群聊消息
@@ -106,6 +116,47 @@ namespace Daylily.Bot
             {
                 Logger.Info("当前已有" + PrivateInfo[id].MsgQueue.Count + "条消息在" + id + "排队");
             }
+        }
+
+        private void DispatchMessage(Msg msg)
+        {
+            void Dequeue<T>((long id, MessageType type) valueTuple) where T : Msg
+            {
+                while (SessionInfo[valueTuple].MsgQueue.TryDequeue(out object current))
+                {
+                    T currentMsg = (T)current;
+                    try
+                    {
+                        CommonMessage commonMessage = new CommonMessage(currentMsg);
+                        HandleMessage(commonMessage);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Exception(ex);
+                    }
+                }
+            }
+
+            (long id, MessageType type) identity;
+            switch (msg)
+            {
+                case PrivateMsg privateMsg:
+                    identity = (privateMsg.UserId, MessageType.Private);
+                    Dequeue<PrivateMsg>(identity);
+                    break;
+                case DiscussMsg discussMsg:
+                    identity = (discussMsg.DiscussId, MessageType.Discuss);
+                    Dequeue<DiscussMsg>(identity);
+                    break;
+                case GroupMsg groupMsg:
+                    identity = (groupMsg.GroupId, MessageType.Group);
+                    Dequeue<GroupMsg>(identity);
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
+
+            SessionInfo[identity].LockMsg = false;
         }
 
         private void HandleGroupMessage(GroupMsg parsedObj)
@@ -177,16 +228,16 @@ namespace Daylily.Bot
             switch (commonMessage.MessageType)
             {
                 case MessageType.Private:
-                    Logger.Message($"{userId}:\r\n  {CqCode.Decode(message)}");
+                    Logger.Message($"{userId}:\r\n  {CqCode.DecodeToString(message)}");
                     break;
                 case MessageType.Discuss:
-                    Logger.Message($"({DiscussInfo[discussId].Name}) {userId}:\r\n  {CqCode.Decode(message)}");
+                    Logger.Message($"({DiscussInfo[discussId].Name}) {userId}:\r\n  {CqCode.DecodeToString(message)}");
                     break;
                 case MessageType.Group:
                     var userInfo = CqApi.GetGroupMemberInfo(groupId.ToString(), userId.ToString()); // 有点费时间
                     Logger.Message(string.Format("({0}) {1}:\r\n  {2}", GroupInfo[groupId].Info.GroupName,
                         string.IsNullOrEmpty(userInfo.Data.Card) ? "(n)" + userInfo.Data.Nickname : userInfo.Data.Card,
-                        CqCode.Decode(message)));
+                        CqCode.DecodeToString(message)));
                     break;
             }
 
@@ -266,7 +317,16 @@ namespace Daylily.Bot
             }
 
             CommandPlugin plugin = t == typeof(ExtendPlugin) ? PluginManager.CommandMapStatic[cm.Command] : GetInstance(t);
+            if (!CommandHot.Keys.Contains(cm.Command))
+            {
+                CommandHot.TryAdd(cm.Command, 1);
+            }
+            else
+            {
+                CommandHot[cm.Command]++;
+            }
 
+            Settings.SaveSettings(CommandHot, "CommandHot");
             Task.Run(() =>
             {
                 try
@@ -292,16 +352,21 @@ namespace Daylily.Bot
                 case MessageType.Group:
                     SendGroupMsgResp groupMsgResp = CqApi.SendGroupMessageAsync(response.GroupId,
                         (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
+                    Logger.Message(string.Format("({0}) 我: {{status: {1}}}\r\n  {2}",
+                        DiscussInfo[long.Parse(response.GroupId)].Name, groupMsgResp.Status,
+                        CqCode.DecodeToString(response.Message)));
                     break;
                 case MessageType.Discuss:
                     SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(response.DiscussId,
                         (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
+                    Logger.Message(string.Format("({0}) 我: {{status: {1}}}\r\n  {2}",
+                        DiscussInfo[long.Parse(response.DiscussId)].Name, discussMsgResp.Status,
+                        CqCode.DecodeToString(response.Message)));
                     break;
                 case MessageType.Private:
                     SendPrivateMsgResp privateMsgResp = CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
+                    Logger.Message(string.Format("({0}) 我: {{status: {1}}}\r\n  {2}", response.UserId,
+                        privateMsgResp.Status, CqCode.DecodeToString(response.Message)));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -316,16 +381,16 @@ namespace Daylily.Bot
                 case MessageType.Group:
                     SendGroupMsgResp groupMsgResp = CqApi.SendGroupMessageAsync(groupId,
                         (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
+                    Logger.Info($"我: {CqCode.DecodeToString(response.Message)} {{status: {groupMsgResp.Status}}})");
                     break;
                 case MessageType.Discuss:
                     SendDiscussMsgResp discussMsgResp = CqApi.SendDiscussMessageAsync(discussId,
                         (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
+                    Logger.Info($"我: {CqCode.DecodeToString(response.Message)} {{status: {discussMsgResp.Status}}})");
                     break;
                 case MessageType.Private:
                     SendPrivateMsgResp privateMsgResp = CqApi.SendPrivateMessageAsync(response.UserId, response.Message);
-                    Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
+                    Logger.Info($"我: {CqCode.DecodeToString(response.Message)} {{status: {privateMsgResp.Status}}})");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -447,7 +512,7 @@ namespace Daylily.Bot
             }
             else if (prop.PropertyType == typeof(string))
             {
-                obj = argStr;//Convert.ToString(cmd);
+                obj = CqCode.Decode(argStr); // Convert.ToString(cmd);
             }
             else if (prop.PropertyType == typeof(bool))
             {

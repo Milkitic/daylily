@@ -12,6 +12,7 @@ using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ;
 using Daylily.Osu.Interface;
 
 namespace Daylily.Plugin.Osu.Command.Subscribes
@@ -150,7 +151,7 @@ namespace Daylily.Plugin.Osu.Command.Subscribes
             if (SubscribeMapper != null)
             {
                 if (messageObj.MessageType == MessageType.Group && messageObj.PermissionLevel == PermissionLevel.Public)
-                    return new CommonMessageResponse("群内的推送需管理员设定，个人推送请私聊.", messageObj);
+                    return new CommonMessageResponse(LoliReply.AdminOnly + "个人推送请私聊.", messageObj);
 
                 List<string> subedId = GetSubscribed(messageObj.MessageType, subId).ToList();
                 subedId.Sort();
@@ -196,7 +197,7 @@ namespace Daylily.Plugin.Osu.Command.Subscribes
             if (UnsubscribeMapper != null)
             {
                 if (messageObj.MessageType == MessageType.Group && messageObj.PermissionLevel == PermissionLevel.Public)
-                    return new CommonMessageResponse("群内的推送需管理员设定，个人推送请私聊.", messageObj);
+                    return new CommonMessageResponse(LoliReply.AdminOnly + "个人推送请私聊.", messageObj);
 
                 int count = OldSiteApi.GetUser(UnsubscribeMapper, out var userObj);
                 if (count == 0)
@@ -317,9 +318,7 @@ namespace Daylily.Plugin.Osu.Command.Subscribes
             Beatmapsets[] mapsetsStatusChanged = mapsets.Where(set =>
             {
                 var matchedSet = todayThisCreatorSet.FirstOrDefault(k => k.Id == set.Id);
-                if (matchedSet != null)
-                    return matchedSet.Status != set.Status;
-                return false;
+                return matchedSet != null && matchedSet.Status != set.Status;
             }).ToArray();
             // 若状态改变，删除之前的已保存信息
             if (mapsetsStatusChanged.Length > 0)

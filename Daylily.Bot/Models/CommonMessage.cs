@@ -56,6 +56,32 @@ namespace Daylily.Bot.Models
         {
         }
 
+        public CommonMessage(Msg msg, PermissionLevel level = PermissionLevel.Public)
+        {
+            Message = msg.Message;
+            UserId = msg.UserId.ToString();
+            MessageId = msg.MessageId;
+            PermissionLevel = level;
+
+            switch (msg)
+            {
+                case PrivateMsg privateMsg:
+                    MessageType = MessageType.Private;
+                    Private = privateMsg;
+                    break;
+                case DiscussMsg discussMsg:
+                    MessageType = MessageType.Discuss;
+                    Discuss = discussMsg;
+                    DiscussId = discussMsg.DiscussId.ToString();
+                    break;
+                case GroupMsg groupMsg:
+                    MessageType = MessageType.Group;
+                    Group = groupMsg;
+                    GroupId = groupMsg.GroupId.ToString();
+                    break;
+            }
+        }
+
         public CommonMessage(PrivateMsg privateMsg, PermissionLevel level = PermissionLevel.Public)
         {
             Message = privateMsg.Message;

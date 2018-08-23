@@ -14,7 +14,7 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Name("关键词触发")]
     [Author("yf_extension")]
     [Version(0, 0, 1, PluginVersion.Alpha)]
-    [Help("收到已给的关键词时，根据已给几率返回一张熊猫图")]
+    [Help("收到已给的关键词时，根据已给几率返回一张熊猫图。")]
     public class KeywordTrigger : ApplicationPlugin
     {
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");

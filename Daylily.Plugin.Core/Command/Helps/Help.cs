@@ -13,8 +13,10 @@ using Daylily.Bot.PluginBase;
 using Daylily.Common;
 using Daylily.Common.Utils.StringUtils;
 using Daylily.CoolQ;
+using System.IO;
+using System.Drawing.Imaging;
 
-namespace Daylily.Plugin.Core.Command
+namespace Daylily.Plugin.Core.Command.Helps
 {
     [Name("黄花菜帮助")]
     [Author("yf_extension", "sdaf")]
@@ -27,6 +29,7 @@ namespace Daylily.Plugin.Core.Command
         public string CommandName { get; set; }
 
         private static string _versionInfo;
+        private CommonMessage _cm;
         public override void Initialize(string[] args)
         {
             _versionInfo = args[0];
@@ -34,40 +37,67 @@ namespace Daylily.Plugin.Core.Command
 
         public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
+            _cm = messageObj;
             return CommandName == null
-                ? new CommonMessageResponse(ShowList(messageObj), messageObj)
-                : new CommonMessageResponse(ShowDetail().Trim('\n').Trim('\r'), messageObj);
+                ? new CommonMessageResponse(ShowList(), _cm)
+                : new CommonMessageResponse(ShowDetail().Trim('\n').Trim('\r'), _cm);
         }
 
-        private static string ShowList(CommonMessage messageObj)
+        private static readonly string HelpDir = Path.Combine(Domain.CurrentDirectory, "resource", "help");
+        private static readonly string StaticDir = Path.Combine(HelpDir, "static");
+
+        private string ShowList()
         {
             CommandPlugin[] plugins = PluginManager.CommandMapStatic.Values.Distinct().ToArray();
-            Dictionary<string, string> dictionary = plugins
-                .Where(plugin => plugin.HelpType == messageObj.PermissionLevel).ToDictionary(
-                    plugin => string.Join(", /", plugin.Commands),
-                    plugin => $"{plugin.Name}。{plugin.Helps[0]}");
-            //plugin => $"{plugin.Name}。{string.Join("。", plugin.Helps)}");
+            ApplicationPlugin[] apps = PluginManager.ApplicationList.ToArray();
+            Dictionary<string, string> dictionary = plugins.Where(plugin => plugin.HelpType == _cm.PermissionLevel)
+                .ToDictionary(plugin => "/" + string.Join(", /", plugin.Commands),
+                    plugin => $"{plugin.Name}。{plugin.Helps[0]}").OrderBy(objDic => objDic.Key)
+                .Union(apps.Where(plugin => plugin.HelpType == _cm.PermissionLevel)
+                    .ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]).OrderBy(objDic => objDic.Key))
+                .ToDictionary(k => k.Key, k => k.Value);
 
-            IEnumerable<KeyValuePair<string, string>> dicSort = from objDic in dictionary orderby objDic.Key select objDic;
-
-            return new FileImage(DrawList(dicSort)).ToString();
+            string[] hot = MessageHandler.CommandHot.OrderByDescending(k => k.Value)
+                  .Take(5)
+                  .Where(k => k.Value > 50)
+                  .Select(k => "/" + k.Key).ToArray();
+            return new FileImage(DrawList(dictionary, hot)).ToString();
         }
 
         private string ShowDetail()
         {
-            if (!PluginManager.CommandMapStatic.Keys.Contains(CommandName))
-                return "未找到相关资源...";
-            CommandPlugin plugin = PluginManager.CommandMapStatic[CommandName];
-            Custom custom = new Custom
+            Custom custom;
+            Bot.PluginBase.Plugin plugin;
+            if (PluginManager.CommandMapStatic.Keys.Contains(CommandName))
             {
-                Title = plugin.Name,
-                Helps = plugin.Helps,
-                Author = plugin.Author,
-                Version = plugin.Version,
-                State = plugin.State,
-                Arg = new Dictionary<string, string>(),
-                FreeArg = new Dictionary<string, string>()
-            };
+                plugin = PluginManager.CommandMapStatic[CommandName];
+                custom = new Custom
+                {
+                    Title = plugin.Name,
+                    Helps = plugin.Helps,
+                    Author = plugin.Author,
+                    Version = plugin.Version,
+                    State = plugin.State,
+                    Arg = new Dictionary<string, string>(),
+                    FreeArg = new Dictionary<string, string>()
+                };
+            }
+            else if (PluginManager.ApplicationList.Select(k => k.Name).Contains(CommandName))
+            {
+                plugin = PluginManager.ApplicationList.First(k => k.Name == CommandName);
+                custom = new Custom
+                {
+                    Title = plugin.Name,
+                    Helps = plugin.Helps,
+                    Author = plugin.Author,
+                    Version = plugin.Version,
+                    State = plugin.State,
+                    Arg = new Dictionary<string, string>(),
+                    FreeArg = new Dictionary<string, string>()
+                };
+            }
+            else
+                return "未找到相关资源...";
 
             var sbArg = new StringBuilder();
             var sbFree = new StringBuilder();
@@ -90,7 +120,7 @@ namespace Daylily.Plugin.Core.Command
                             argName = prop.Name;
                             isSwitch = argAttrib.IsSwitch;
                             break;
-                        case FreeArgAttribute freeArgAttrib:
+                        case FreeArgAttribute _:
                             freeStr = prop.Name;
                             break;
                         case HelpAttribute helpAttrib:
@@ -123,18 +153,30 @@ namespace Daylily.Plugin.Core.Command
                 }
             }
 
-            custom.Usage = $"/{CommandName}{sbArg}{sbFree}";
+            custom.Usage = plugin is ApplicationPlugin ? "自动触发。" : $"/{CommandName}{sbArg}{sbFree}";
             return new FileImage(DrawDetail(custom)).ToString();
         }
 
-        private static Bitmap DrawList(IEnumerable<KeyValuePair<string, string>> dictionary)
+        private Bitmap DrawList(Dictionary<string, string> dictionary, string[] hot)
         {
-            const string title = "黄花菜Help";
-            const string sub = "（输入 \"/help [command]\" 查找某个命令的详细信息。）";
-
+            string title;
+            string sub;
+            if (_cm.PermissionLevel == PermissionLevel.Public)
+            {
+                title = "黄花菜Help";
+                sub = "（输入 \"/help [command]\" 查找某个命令的详细信息。）" + Environment.NewLine +
+                      "（输入 \"/sudo help\" 查看管理员的帮助。）";
+            }
+            else
+            {
+                title = "黄花菜管理员Help";
+                sub = "（管理员/群主可用的命令，类似的命令使用方法如同本help。）" + Environment.NewLine +
+                      "（例：/sudo plugin）";
+            }
+            const string sub2 = "无需命令自动激活的插件：";
+            const int offsetH = 30;
             Point pointTitle = new Point(30, 30);
             Point pointSub = new Point(20, 57);
-            const int x = 9, y = 90;
             const int step = 25, offset1 = 25, offset2 = 160;
 
             Font fontH1 = new Font("等线", 14);
@@ -143,36 +185,68 @@ namespace Daylily.Plugin.Core.Command
             Font fontH3 = new Font("等线", 11);
             Font fontH4 = new Font("等线", 10);
 
+            const int x = 9;
             Size size = MeasureListSize(dictionary, fontH2, x, step, offset2);
+            size = new Size(size.Width, 80 + size.Height + offsetH + 7);
 
-            Bitmap bitmap = new Bitmap(size.Width, 80 + size.Height);
+            DirectoryInfo di = InitDirectory(HelpDir);
+            FileInfo[] pics = di.GetFiles();
+            string picPath = pics[Rnd.Next(pics.Length)].FullName;
+
+            Bitmap bitmap = new Bitmap(size.Width, size.Height);
+            using (Image backImg = Image.FromFile(picPath))
+            using (Image coverImg = Image.FromFile(Path.Combine(StaticDir, "damnae.png")))
+            using (Image hotImg = Image.FromFile(Path.Combine(StaticDir, "hot.png")))
             using (Brush brushWhite = new SolidBrush(Color.White))
+            using (Brush brushBlue = new SolidBrush(Color.FromArgb(123, 150, 255)))
             using (Brush brushYellow = new SolidBrush(Color.FromArgb(255, 243, 82)))
             using (Brush brushGrey = new SolidBrush(Color.FromArgb(185, 185, 185)))
-            using (Brush brushDarkGrey = new SolidBrush(Color.FromArgb(45, 45, 48)))
+            using (Brush brushDarkGrey = new SolidBrush(Color.FromArgb(128, 45, 45, 48)))
             using (Brush brushLDarkGrey = new SolidBrush(Color.FromArgb(64, 64, 64)))
+            using (Brush brushBack = new SolidBrush(Color.FromArgb(210, 30, 30, 30)))
             using (Graphics g = Graphics.FromImage(bitmap))
             {
-                g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                g.CompositingQuality = CompositingQuality.HighQuality;
-                g.SmoothingMode = SmoothingMode.HighQuality;
-                g.Clear(Color.FromArgb(30, 30, 30));
+                g.InitialHighQuality();
+                g.FillImage(backImg, size);
+                g.FillRectangle(brushBack, -1, -1, size.Width + 2, size.Height + 2);
+                g.DrawImage(coverImg, 0, 0, size.Width, size.Height);
 
                 g.DrawString(_versionInfo, fontH4, brushLDarkGrey, 2, 2);
                 g.DrawString(title, fontH1, brushWhite, pointTitle);
                 g.DrawString(sub, fontH3, brushGrey, pointSub);
 
                 int i = 0;
+                var sizeSub = g.MeasureString(sub, fontH3);
+                int y = (int)(pointSub.Y + sizeSub.Height + 10);
+                bool app = false;
                 foreach (var item in dictionary)
                 {
                     float width = g.MeasureString(item.Value, fontH2).Width;
+                    if (!item.Key.StartsWith('/') && !app)
+                    {
+                        app = true;
+                        g.DrawString(sub2, fontH3, brushWhite, x + offset1, y + i * step + 3);
+                        y += offsetH;
+                    }
+
                     Rectangle rec = new Rectangle(x + offset1 - 3, y + i * step - 3,
                         offset2 - offset1 + (int)width + 6, step - 3);
-                    FillRoundRectangle(g, brushDarkGrey, rec, 10);
 
-                    g.DrawString(">", fontH1B, brushWhite, x, y + i * step);
-                    g.DrawString(item.Key, fontH2, brushYellow, x + offset1, y + i * step);
-                    g.DrawString(item.Value, fontH2, brushWhite, x + offset2, y + i * step);
+                    if (!app)
+                    {
+                        g.FillRoundRectangle(brushDarkGrey, rec, 10);
+                        if (hot.Contains(item.Key))
+                            g.DrawImage(hotImg, x, y + i * step, 16, 16);
+                        //g.DrawString(">", fontH1B, brushWhite, x, y + i * step);
+                        g.DrawString(item.Key, fontH2, brushYellow, x + offset1, y + i * step);
+                        g.DrawString(item.Value, fontH2, brushWhite, x + offset2, y + i * step);
+                    }
+                    else
+                    {
+                        g.FillRectangle(brushDarkGrey, rec);
+                        g.DrawString(item.Key, fontH2, brushBlue, x + offset1, y + i * step);
+                        g.DrawString(item.Value, fontH2, brushWhite, x + offset2, y + i * step);
+                    }
 
                     i++;
                 }
@@ -184,6 +258,25 @@ namespace Daylily.Plugin.Core.Command
             fontH3.Dispose();
 
             return bitmap;
+        }
+
+        private static DirectoryInfo InitDirectory(string path)
+        {
+            var di = new DirectoryInfo(path);
+            if (!di.Exists)
+            {
+                Directory.CreateDirectory(di.FullName);
+                using (Bitmap bi = new Bitmap(200, 200))
+                using (Graphics g = Graphics.FromImage(bi))
+                {
+                    g.Clear(Color.FromArgb(30, 30, 30));
+                    bi.Save(Path.Combine(di.FullName, "b.png"), ImageFormat.Png);
+                }
+
+                di = new DirectoryInfo(HelpDir);
+            }
+
+            return di;
         }
 
         private static Bitmap DrawDetail(Custom custom)
@@ -199,18 +292,18 @@ namespace Daylily.Plugin.Core.Command
             Point pointTitle = new Point(30, 30);
             Point pointHelp = new Point(45, 54);
             string help = string.Join(Environment.NewLine, custom.Helps);
-            Size sizeHelp = GetStrSize(g, help, fontH3);
+            Size sizeHelp = g.MeasureStringSize(help, fontH3);
 
             int topAuthor = 54 + sizeHelp.Height + 3;
             Point pointAuthor = new Point(45, topAuthor);
             Point pointVer = new Point(205, topAuthor);
             Point pointState = new Point(285, topAuthor);
             string author = string.Join(", ", custom.Author);
-            Size sizeAuthor = GetStrSize(g, author, fontH4);
+            Size sizeAuthor = g.MeasureStringSize(author, fontH4);
 
             int topUsage = topAuthor + sizeAuthor.Height + 40;
             Point pointUsage = new Point(30, topUsage);
-            Size sizeUsage = GetStrSize(g, custom.Usage, fontH3);
+            Size sizeUsage = g.MeasureStringSize(custom.Usage, fontH3);
 
             int topUsage2 = topUsage + 22;
             Point pointUsage2 = new Point(45, topUsage2);
@@ -244,17 +337,24 @@ namespace Daylily.Plugin.Core.Command
             };
             Size size = new Size(rightList.Max(), bottomFree + 20);
 
+            DirectoryInfo di = InitDirectory(HelpDir);
+            FileInfo[] pics = di.GetFiles();
+            string picPath = pics[Rnd.Next(pics.Length)].FullName;
+
             bitmap = new Bitmap(size.Width, size.Height);
             g = Graphics.FromImage(bitmap);
+            using (Image backImg = Image.FromFile(picPath))
+            using (Image coverImg = Image.FromFile(Path.Combine(StaticDir, "damnae.png")))
             using (Brush brushWhite = new SolidBrush(Color.White))
             using (Brush brushYellow = new SolidBrush(Color.FromArgb(255, 243, 82)))
             using (Brush brushGrey = new SolidBrush(Color.FromArgb(185, 185, 185)))
+            using (Brush brushBack = new SolidBrush(Color.FromArgb(210, 30, 30, 30)))
             using (Brush brushLDarkGrey = new SolidBrush(Color.FromArgb(64, 64, 64)))
             {
-                g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                g.CompositingQuality = CompositingQuality.HighQuality;
-                g.SmoothingMode = SmoothingMode.HighQuality;
-                g.Clear(Color.FromArgb(30, 30, 30));
+                g.InitialHighQuality();
+                g.FillImage(backImg, size);
+                g.FillRectangle(brushBack, -1, -1, size.Width + 2, size.Height + 2);
+                g.DrawImage(coverImg, 0, 0, size.Width, size.Height);
 
                 g.DrawString(_versionInfo, fontH4, brushLDarkGrey, 2, 2);
                 g.DrawString(custom.Title, fontH1, brushWhite, pointTitle);
@@ -298,15 +398,9 @@ namespace Daylily.Plugin.Core.Command
             right = 0;
             foreach (var item in keyValues)
             {
-                Size size = GetStrSize(g, item.Value, f);
+                Size size = g.MeasureStringSize(item.Value, f);
                 if (offsetDisp + size.Width > right) right = offsetDisp + size.Width;
             }
-        }
-
-        private static Size GetStrSize(Graphics g, string str, Font font)
-        {
-            var ok = g.MeasureString(str, font);
-            return new Size((int)ok.Width, (int)ok.Height);
         }
 
         private static Size MeasureListSize(IEnumerable<KeyValuePair<string, string>> dictionary, Font fontH2, int x, int step, int offset2)
@@ -328,36 +422,7 @@ namespace Daylily.Plugin.Core.Command
             return new Size(maxW, maxH + 20);
         }
 
-        private static void DrawRoundRectangle(Graphics g, Pen pen, Rectangle rect, int cornerRadius)
-        {
-            using (GraphicsPath path = CreateRoundedRectanglePath(rect, cornerRadius))
-            {
-                g.DrawPath(pen, path);
-            }
-        }
 
-        private static void FillRoundRectangle(Graphics g, Brush brush, Rectangle rect, int cornerRadius)
-        {
-            using (GraphicsPath path = CreateRoundedRectanglePath(rect, cornerRadius))
-            {
-                g.FillPath(brush, path);
-            }
-        }
-
-        private static GraphicsPath CreateRoundedRectanglePath(Rectangle rect, int cornerRadius)
-        {
-            GraphicsPath roundedRect = new GraphicsPath();
-            roundedRect.AddArc(rect.X, rect.Y, cornerRadius * 2, cornerRadius * 2, 180, 90);
-            roundedRect.AddLine(rect.X + cornerRadius, rect.Y, rect.Right - cornerRadius * 2, rect.Y);
-            roundedRect.AddArc(rect.X + rect.Width - cornerRadius * 2, rect.Y, cornerRadius * 2, cornerRadius * 2, 270, 90);
-            roundedRect.AddLine(rect.Right, rect.Y + cornerRadius * 2, rect.Right, rect.Y + rect.Height - cornerRadius * 2);
-            roundedRect.AddArc(rect.X + rect.Width - cornerRadius * 2, rect.Y + rect.Height - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 0, 90);
-            roundedRect.AddLine(rect.Right - cornerRadius * 2, rect.Bottom, rect.X + cornerRadius * 2, rect.Bottom);
-            roundedRect.AddArc(rect.X, rect.Bottom - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 90, 90);
-            roundedRect.AddLine(rect.X, rect.Bottom - cornerRadius * 2, rect.X, rect.Y + cornerRadius * 2);
-            roundedRect.CloseFigure();
-            return roundedRect;
-        }
 
         private class Custom
         {

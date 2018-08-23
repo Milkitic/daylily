@@ -17,7 +17,7 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Name("死群熊猫")]
     [Author("yf_extension")]
     [Version(0, 0, 2, PluginVersion.Stable)]
-    [Help("群长时间不说话时，发一张相关的熊猫。")]
+    [Help("群内长时间无人发言发一张相关的熊猫。")]
     public class GroupQuiet : ApplicationPlugin
     {
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");

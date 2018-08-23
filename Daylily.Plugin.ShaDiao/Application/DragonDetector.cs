@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
@@ -12,16 +14,15 @@ using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
 using Daylily.CoolQ;
-
-//using System.Threading;
+using Daylily.CoolQ.Interface.CqHttp;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
-    [Name("熊猫斗图")]
+    [Name("龙图检测")]
     [Author("yf_extension", "sahuang")]
-    [Version(0, 0, 1, PluginVersion.Beta)]
-    [Help("发现熊猫图时有几率返回一张熊猫图。")]
-    public class PandaDetector : ApplicationPlugin
+    [Version(0, 1, 0, PluginVersion.Alpha)]
+    [Help("发现龙图时作出回应。", "仅供娱乐。")]
+    class DragonDetector : ApplicationPlugin
     {
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
 
@@ -39,7 +40,6 @@ namespace Daylily.Plugin.ShaDiao.Application
                     GroupId = groupId,
                     MessageObj = messageObj
                 });
-            //GroupDic[groupId].GroupType = messageObj.GroupId == null ? MessageType.Discuss : MessageType.Group;
 
             var imgList = CqCode.GetImageInfo(messageObj.Message);
             if (imgList == null) return null;
@@ -66,7 +66,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 GroupDic[groupId].Task.IsCanceled)
             {
                 GroupDic[groupId].Task = Task.Run(() => RunDetector(GroupDic[groupId]));
-                Logger.Info("[" + groupId + "] (熊猫) 共 " + _totalCount);
+                Logger.Info("[" + groupId + "] (龙图) 共 " + _totalCount);
             }
 
             return null;
@@ -75,10 +75,8 @@ namespace Daylily.Plugin.ShaDiao.Application
         /// <summary>
         /// 核心识别by sahuang
         /// </summary>
-        private static void RunDetector(object groupSets)
+        private static void RunDetector(GroupSettings gSets)
         {
-            var gSets = (GroupSettings)groupSets;
-
             while (gSets.PathQueue.Count != 0)
             {
                 try
@@ -93,26 +91,13 @@ namespace Daylily.Plugin.ShaDiao.Application
                 finally
                 {
                     _totalCount--;
-                    Logger.Info("(熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
+                    Logger.Info("(龙图) " + (_totalCount + 1) + " ---> " + _totalCount);
                 }
             }
 
-            if (gSets.PandaCount < 1) return;
-            Logger.Info("[" + gSets.GroupId + "] (熊猫) " + gSets.PandaCount);
-
-            for (int i = 0; i < gSets.PandaCount; i++)
-            {
-                var perc = Rnd.NextDouble();
-                if (perc >= 0.15)
-                    continue;
-                Logger.Success("[" + gSets.GroupId + "] (熊猫) 几率: " + perc);
-
-                string resPath = Path.Combine(Domain.CurrentDirectory, "dragon", "resource_panda_send");
-                FileInfo[] files = new DirectoryInfo(resPath).GetFiles();
-                var cqImg = new FileImage(files[Rnd.Next(files.Length)].FullName).ToString();
-                SendMessage(new CommonMessageResponse(cqImg, gSets.MessageObj));
-            }
-
+            if (gSets.DragonCount < 1) return;
+            Logger.Info("[" + gSets.GroupId + "] (龙图) " + gSets.DragonCount);
+            SendMessage(new CommonMessageResponse("你龙了?", gSets.MessageObj));
             gSets.Clear();
         }
 
@@ -140,9 +125,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 {
                     FileName = "python3",
                     Arguments =
-                        $"{Path.Combine(Domain.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
-                    //FileName = "ping",
-                    //Arguments = "127.0.0.1",
+                        $"{Path.Combine(Domain.CurrentDirectory, "dragon", "dragon-detection.py")} \"{fullPath}\"",
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     WindowStyle = ProcessWindowStyle.Hidden,
@@ -166,6 +149,7 @@ namespace Daylily.Plugin.ShaDiao.Application
             gSets.Process.Start();
             gSets.Process.BeginOutputReadLine();
             gSets.Process.BeginErrorReadLine();
+
             gSets.Process.WaitForExit();
         }
 
@@ -173,20 +157,19 @@ namespace Daylily.Plugin.ShaDiao.Application
         {
             if (gSets.ReceivedString.Count == 0) return;
             string line = gSets.ReceivedString[gSets.ReceivedString.Count - 1];
-            //Logger.WarningLine(line);
 
             var tmp = line.Split(' ');
             if (int.TryParse(tmp[0], out int status))
             {
                 if (double.TryParse(tmp[1], out double confidence))
                 {
-                    if (status == 1 && confidence > 50)
-                        gSets.PandaCount++;
+                    if (status == 1 && confidence > 68)
+                        gSets.DragonCount++;
                     return;
                 }
             }
 
-            Logger.Error("检测图片失败。");
+            Logger.Error("检测龙图失败。");
         }
 
         private class GroupSettings
@@ -197,11 +180,11 @@ namespace Daylily.Plugin.ShaDiao.Application
             public Queue<string> PathQueue { get; } = new Queue<string>();
             public Task Task { get; set; }
             public Process Process { get; set; }
-            public int PandaCount { get; set; }
+            public int DragonCount { get; set; }
 
             public void Clear()
             {
-                PandaCount = 0;
+                DragonCount = 0;
                 ReceivedString.Clear();
             }
         }

@@ -18,7 +18,7 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Name("嗅探龙图")]
     [Author("yf_extension", "sahuang")]
     [Version(0, 0, 1, PluginVersion.Alpha)]
-    [Help("发现龙图时做出不同操作")]
+    [Help("发现龙图时作出回应。")]
     class DragonDetectorAlpha : ApplicationPlugin
     {
         private readonly List<string> _pathList = new List<string>();

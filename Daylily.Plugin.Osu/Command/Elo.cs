@@ -54,18 +54,17 @@ namespace Daylily.Plugin.Osu.Command
                 uname = userObj.username;
             }
 
-            EloApi eloApi = new EloApi();
-            var obj = eloApi.GetEloByUid(long.Parse(id));
-            switch (obj.Result.ToLower())
+            var eloInfo = EloApi.GetEloByUid(long.Parse(id));
+            switch (eloInfo.Result.ToLower())
             {
-                case "fail" when obj.Message.ToLower() == "unranked":
+                case "fail" when eloInfo.Message.ToLower() == "unranked":
                     return new CommonMessageResponse(uname + "大概没有参加什么mapping赛事..所以没有数据..", messageObj,
                         true);
                 case "fail":
                     return new CommonMessageResponse("未知错误..查询不到..", messageObj, true);
                 default:
                     return new CommonMessageResponse(
-                        $"{obj.User.Name}，有elo点{Math.Round(obj.User.Elo)}，当前#{obj.User.Ranking}.", messageObj, true);
+                        $"{eloInfo.User.Name}，有elo点{Math.Round(eloInfo.User.Elo, 2)}，当前#{eloInfo.User.Ranking}.", messageObj, true);
             }
         }
     }

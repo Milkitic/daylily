@@ -23,9 +23,9 @@ namespace Daylily.CoolQ
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static string Decode(string source)
+        public static string DecodeToString(string source)
         {
-            source = source.DecodeImageToText().DecodeFaceToText().DecodeBFaceToText().DecodeAtToText();
+            source = Decode(source.DecodeImageToText().DecodeFaceToText().DecodeBFaceToText().DecodeAtToText());
             // TODO
             return source;
         }
@@ -162,9 +162,14 @@ namespace Daylily.CoolQ
 
         #endregion
 
-        private static string Escape(string text)
+        public static string Encode(string text)
         {
-            return text.Replace("&", "&amp").Replace("[", "&#91").Replace("]", "&#93").Replace(",", "&#44");
+            return text.Replace("&", "&amp;").Replace("[", "&#91;").Replace("]", "&#93;").Replace(",", "&#44;");
+        }
+
+        public static string Decode(string text)
+        {
+            return text.Replace("&#91;", "[").Replace("&#93;", "]").Replace("&#44;", ",").Replace("&amp;", "&");
         }
     }
 }

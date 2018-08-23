@@ -11,7 +11,7 @@ using Daylily.CoolQ;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
-    [Name("嗅探at")]
+    [Name("@检测")]
     [Author("yf_extension")]
     [Version(0, 0, 1, PluginVersion.Stable)]
     [Help("当自己被at时回击at对方")]

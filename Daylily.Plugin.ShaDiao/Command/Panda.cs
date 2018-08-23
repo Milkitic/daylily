@@ -35,7 +35,7 @@ namespace Daylily.Plugin.ShaDiao.Command
         private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
         private static readonly string FontDir = Path.Combine(Domain.CurrentDirectory, "font");
 
-        private readonly string[] _blankReply = { "傻B，动动脑子写参数", "你倒是说话啊" };
+        private readonly string[] _blankReply = { "傻逼，动动脑子写参数", "你倒是说话啊" };
         private readonly string[] _invalidReply = { "你话太多了，沙雕" };
 
         private const int MaxW = 250, MaxH = 220;
@@ -209,13 +209,20 @@ namespace Daylily.Plugin.ShaDiao.Command
         /// <returns></returns>
         private string GetRealWord(FontFamily font, string pandaPath)
         {
-            string word = CqCode.Decode(PandaWord.Replace("！", "!").Replace("？", "?"));
+            string word = PandaWord;
             if (word == null || word.Replace("\n", "").Replace("\r", "").Trim() == "")
+            {
                 word = _blankReply[Rnd.Next(0, _blankReply.Length)];
-            else if (!IsLengthValid(word, pandaPath, font))
+                return word;
+            }
+
+            word = CqCode.DecodeToString(PandaWord.Replace("！", "!").Replace("？", "?"));
+            if (!IsLengthValid(word, pandaPath, font))
+            {
                 word = _invalidReply[Rnd.Next(0, _invalidReply.Length)];
+            }
             return word;
-        }
+         }
 
         /// <summary>
         /// 确定字体大小，由字体数量决定。

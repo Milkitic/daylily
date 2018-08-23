@@ -12,7 +12,7 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Name("复读")]
     [Author("yf_extension")]
     [Version(0, 0, 1, PluginVersion.Beta)]
-    [Help("按一定条件触发复读")]
+    [Help("按一定条件触发复读。")]
     public class Repeat : ApplicationPlugin
     {
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();

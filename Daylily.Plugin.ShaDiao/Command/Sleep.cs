@@ -11,7 +11,7 @@ namespace Daylily.Plugin.ShaDiao.Command
     [Author("yf_extension")]
     [Version(0, 1, 0, PluginVersion.Stable)]
     [Help("当Daylily是管理员时，将命令发送者禁言（30分钟到12小时）。")]
-    [Command("sleep", "slip")]
+    [Command("sleep")]
     public class Sleep : CommandPlugin
     {
         [FreeArg(Default = -1)]
