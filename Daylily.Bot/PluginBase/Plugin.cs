@@ -75,10 +75,7 @@ namespace Daylily.Bot.PluginBase
 
         protected static readonly Random Rnd = new Random();
 
-        protected static void SendMessage(CommonMessageResponse response) => MessageHandler.SendMessage(response);
-
-        protected static void SendMessage(CommonMessageResponse response, string groupId, string discussId,
-            MessageType messageType) => MessageHandler.SendMessage(response, groupId, discussId, messageType);
+        protected static void SendMessage(CommonMessageResponse response) => CoolQDispatcher.SendMessage(response);
 
         protected void SaveSettings<T>(T cls, string fileName = null)
         {

@@ -57,7 +57,7 @@ namespace Daylily.Plugin.Core.Command.Helps
                     .ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]).OrderBy(objDic => objDic.Key))
                 .ToDictionary(k => k.Key, k => k.Value);
 
-            string[] hot = MessageHandler.CommandHot.OrderByDescending(k => k.Value)
+            string[] hot = CoolQDispatcher.CommandHot.OrderByDescending(k => k.Value)
                   .Take(5)
                   .Where(k => k.Value > 50)
                   .Select(k => "/" + k.Key).ToArray();

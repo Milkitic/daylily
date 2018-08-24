@@ -16,6 +16,7 @@ namespace Daylily.Web
 |__/(_]\_||||\_|
        ._|   ._|");
             Logger.Raw($"{app.ApplicationName.Split('.')[0]} {app.ApplicationVersion} based on {app.RuntimeFramework}");
+            Core.InitCore(new CoolQJsonDeserializer(), new CoolQDispatcher());
             CreateWebHostBuilder(args).Build().Run();
 
         }

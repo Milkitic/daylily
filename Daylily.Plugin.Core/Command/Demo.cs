@@ -108,10 +108,8 @@ namespace Daylily.Plugin.Core.Command
             // 若需回复至别处，需以下实现
             string reply2 = "回复到了别处";
             string userId2 = "xxxxxxx";
-            string groupId2 = "xxxxxxx";
-            string discussId2 = "xxxxxxx";
-            MessageType type2 = MessageType.Group;
-            SendMessage(new CommonMessageResponse(reply2, userId2, true), groupId2, discussId2, type2);
+            long groupId2 = 123456;
+            SendMessage(new CommonMessageResponse(reply2, new Identity(groupId2, MessageType.Group), userId2));
             return null;
         }
 
@@ -130,7 +128,7 @@ namespace Daylily.Plugin.Core.Command
                 {
                     // 这里可以做大量其他操作，更新数据库等，不阻塞主线程
                     string message = "Pong!";
-                    SendMessage(new CommonMessageResponse(message, UserId, true), null, null, MessageType.Private);
+                    SendMessage(new CommonMessageResponse(message, new Identity(UserId, MessageType.Private)));
                 }
                 catch (Exception ex)
                 {

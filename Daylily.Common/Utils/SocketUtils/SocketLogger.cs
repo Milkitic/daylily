@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Daylily.Common.Utils.LoggerUtils;
 using Newtonsoft.Json;
 
-namespace Daylily.Common.Utils.Socket
+namespace Daylily.Common.Utils.SocketUtils
 {
     public static class SocketLogger
     {

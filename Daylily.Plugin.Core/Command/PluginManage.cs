@@ -65,7 +65,7 @@ namespace Daylily.Plugin.Core.Command
             {
                 case MessageType.Private:
                     {
-                        var list = MessageHandler.PrivateDisabledList[long.Parse(_cm.UserId)];
+                        var list = CoolQDispatcher.PrivateDisabledList[long.Parse(_cm.UserId)];
                         foreach (var item in list)
                         {
                             if (item != DisabledPlugin) continue;
@@ -78,7 +78,7 @@ namespace Daylily.Plugin.Core.Command
                     break;
                 case MessageType.Discuss:
                     {
-                        var list = MessageHandler.DiscussDisabledList[long.Parse(_cm.DiscussId)];
+                        var list = CoolQDispatcher.DiscussDisabledList[long.Parse(_cm.DiscussId)];
                         foreach (var item in list)
                         {
                             if (item != DisabledPlugin) continue;
@@ -91,7 +91,7 @@ namespace Daylily.Plugin.Core.Command
                     break;
                 case MessageType.Group:
                     {
-                        var list = MessageHandler.GroupDisabledList[long.Parse(_cm.GroupId)];
+                        var list = CoolQDispatcher.GroupDisabledList[long.Parse(_cm.GroupId)];
                         foreach (var item in list)
                         {
                             if (item != DisabledPlugin) continue;
@@ -115,7 +115,7 @@ namespace Daylily.Plugin.Core.Command
             {
                 case MessageType.Private:
                     {
-                        list = MessageHandler.PrivateDisabledList[long.Parse(_cm.UserId)];
+                        list = CoolQDispatcher.PrivateDisabledList[long.Parse(_cm.UserId)];
                         listCmd = Bot.PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
                         listApp = Bot.PluginManager.ApplicationList;
                         listSvc = Bot.PluginManager.ServiceList;
@@ -124,7 +124,7 @@ namespace Daylily.Plugin.Core.Command
                     break;
                 case MessageType.Discuss:
                     {
-                        list = MessageHandler.DiscussDisabledList[long.Parse(_cm.DiscussId)];
+                        list = CoolQDispatcher.DiscussDisabledList[long.Parse(_cm.DiscussId)];
                         listCmd = Bot.PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
                         listApp = Bot.PluginManager.ApplicationList;
                         listSvc = Bot.PluginManager.ServiceList;
@@ -134,7 +134,7 @@ namespace Daylily.Plugin.Core.Command
                 case MessageType.Group:
                 default:
                     {
-                        list = MessageHandler.GroupDisabledList[long.Parse(_cm.GroupId)];
+                        list = CoolQDispatcher.GroupDisabledList[long.Parse(_cm.GroupId)];
                         listCmd = Bot.PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
                         listApp = Bot.PluginManager.ApplicationList;
                         listSvc = Bot.PluginManager.ServiceList;
@@ -180,18 +180,18 @@ namespace Daylily.Plugin.Core.Command
 
         private void SaveDisableSettings()
         {
-            SaveSettings(MessageHandler.GroupDisabledList, "GroupDisabledList");
-            SaveSettings(MessageHandler.DiscussDisabledList, "DiscussDisabledList");
-            SaveSettings(MessageHandler.PrivateDisabledList, "PrivateDisabledList");
+            SaveSettings(CoolQDispatcher.GroupDisabledList, "GroupDisabledList");
+            SaveSettings(CoolQDispatcher.DiscussDisabledList, "DiscussDisabledList");
+            SaveSettings(CoolQDispatcher.PrivateDisabledList, "PrivateDisabledList");
         }
 
         private void LoadDisableSettings()
         {
-            MessageHandler.GroupDisabledList =
+            CoolQDispatcher.GroupDisabledList =
                 LoadSettings<ConcurrentDictionary<long, List<string>>>("GroupDisabledList");
-            MessageHandler.DiscussDisabledList =
+            CoolQDispatcher.DiscussDisabledList =
                 LoadSettings<ConcurrentDictionary<long, List<string>>>("DiscussDisabledList");
-            MessageHandler.PrivateDisabledList =
+            CoolQDispatcher.PrivateDisabledList =
                 LoadSettings<ConcurrentDictionary<long, List<string>>>("PrivateDisabledList");
         }
 
@@ -216,11 +216,11 @@ namespace Daylily.Plugin.Core.Command
                 dicPlugin[appKey].Add(new PluginInfo(item.Name, item.GetType().Name));
 
             var sb = new StringBuilder();
+            sb.AppendLine(CoolQDispatcher.SessionInfo[_cm.Identity].Name + " 的插件情况：");
             switch (_cm.MessageType)
             {
                 case MessageType.Discuss:
-                    sb.AppendLine(MessageHandler.DiscussInfo[long.Parse(_cm.IdentityId)].Name + " 的插件情况：");
-                    foreach (var item in MessageHandler.DiscussDisabledList[long.Parse(_cm.IdentityId)])
+                    foreach (var item in CoolQDispatcher.DiscussDisabledList[_cm.Identity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -233,8 +233,7 @@ namespace Daylily.Plugin.Core.Command
 
                     break;
                 case MessageType.Private:
-                    sb.AppendLine(_cm.IdentityId + " 的插件情况：");
-                    foreach (var item in MessageHandler.PrivateDisabledList[long.Parse(_cm.IdentityId)])
+                    foreach (var item in CoolQDispatcher.PrivateDisabledList[_cm.Identity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -244,8 +243,7 @@ namespace Daylily.Plugin.Core.Command
 
                     break;
                 case MessageType.Group:
-                    sb.AppendLine(MessageHandler.GroupInfo[long.Parse(_cm.IdentityId)].Info.GroupName + " 的插件情况：");
-                    foreach (var item in MessageHandler.GroupDisabledList[long.Parse(_cm.IdentityId)])
+                    foreach (var item in CoolQDispatcher.GroupDisabledList[_cm.Identity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -279,7 +277,7 @@ namespace Daylily.Plugin.Core.Command
             }
 
             sb.Append("（为避免消息过长，本条消息为私聊发送）");
-            SendMessage(new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), _cm.UserId), null, null, MessageType.Private);
+            SendMessage(new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), new Identity(_cm.UserId, MessageType.Private)));
             return null;
         }
 

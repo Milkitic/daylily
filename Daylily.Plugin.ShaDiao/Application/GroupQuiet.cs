@@ -50,8 +50,11 @@ namespace Daylily.Plugin.ShaDiao.Application
                 {
                     MessageObj = messageObj,
                     LastSentIsMe = false,
+#if DEBUG
+                    CdTime = 15,
+#else
                     CdTime = 60 * 60 * 24,
-                    //CdTime = 15,
+#endif
                 });
 
                 _groupDic[groupId].Task = Task.Run(() => DelayScan(groupId));
@@ -61,14 +64,19 @@ namespace Daylily.Plugin.ShaDiao.Application
             {
                 _groupDic[groupId].LastSent = DateTime.Now;
                 _groupDic[groupId].LastSentIsMe = false;
+#if DEBUG
+                _groupDic[groupId].TrigTime = Rnd.Next(4, 5);
+                Logger.Debug(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
+#else
                 _groupDic[groupId].TrigTime = Rnd.Next(60 * 60 * 2, 60 * 60 * 3);
-                //_groupDic[groupId].TrigTime = Rnd.Next(4, 5);
-                //Logger.Debug(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
+#endif
                 SaveSettings(_groupDic);
             }
             else
             {
-                //Logger.Debug(groupId + ". CD");
+#if DEBUG
+                Logger.Debug(groupId + ". CD");
+#endif
             }
             return null;
         }

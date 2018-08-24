@@ -1,54 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
-using Daylily.Bot.Models.MessageList;
+using Daylily.Bot.Interface;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Models.CqResponse;
 using Newtonsoft.Json;
 
 namespace Daylily.Bot
 {
-    public static class JsonHandler
+    public class CoolQJsonDeserializer : IJsonDeserializer
     {
-        public static object HandleReportJson(string json)
+        public CoolQJsonDeserializer()
         {
+            Core.JsonReceived += Json_Received;
+        }
+
+        public void Json_Received(object sender, JsonReceivedEventArgs args)
+        {
+            string json = args.JsonString;
+
             dynamic obj = JsonConvert.DeserializeObject(json);
             // 判断post类别
             try
             {
                 if (obj.post_type == "message")
                 {
-                    Msg parsed = null;
                     // 私聊
                     if (obj.message_type == "private")
                     {
                         PrivateMsg parsedObj = JsonConvert.DeserializeObject<PrivateMsg>(json);
-                        parsed = JsonConvert.DeserializeObject<PrivateMsg>(json);
-                        _ = new MessageHandler(parsedObj);
+                        Core.ReceiveMessage(parsedObj);
                     }
 
                     // 群聊
                     else if (obj.message_type == "group")
                     {
                         GroupMsg parsedObj = JsonConvert.DeserializeObject<GroupMsg>(json);
-                        parsed = JsonConvert.DeserializeObject<GroupMsg>(json);
-                        _ = new MessageHandler(parsedObj);
+                        Core.ReceiveMessage(parsedObj);
                     }
 
                     // 讨论组
                     else if (obj.message_type == "discuss")
                     {
                         DiscussMsg parsedObj = JsonConvert.DeserializeObject<DiscussMsg>(json);
-                        parsed = JsonConvert.DeserializeObject<DiscussMsg>(json);
-                        _ = new MessageHandler(parsedObj);
+                        Core.ReceiveMessage(parsedObj);
                     }
-
-                    Dispatcher dispatcher = new Dispatcher(new List<IMessageList>
-                    {
-                        //new GroupList(),
-                        //new PrivateList(),
-                        //new DiscussList()
-                    });
-                    dispatcher.SendToBack(parsed);
                 }
                 else if (obj.post_type == "notice")
                 {
@@ -97,7 +92,6 @@ namespace Daylily.Bot
             {
                 Logger.Exception(ex);
             }
-            return null;
         }
     }
 }

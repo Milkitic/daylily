@@ -6,7 +6,7 @@ using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Models.CqResponse;
 using Daylily.Osu.Interface;
-using Daylily.Plugin.Osu.Command.Subscribes;
+using Daylily.Plugin.Osu.Command;
 
 namespace Daylily.Plugin.Osu
 {
@@ -24,7 +24,7 @@ namespace Daylily.Plugin.Osu
                 //List = true
             };
             newPlugin.Initialize(args);
-            CommonMessage cm = new CommonMessage()
+            CommonMessage cm = new CommonMessage
             {
                 GroupId = "123456788",
                 UserId = "2241521134",

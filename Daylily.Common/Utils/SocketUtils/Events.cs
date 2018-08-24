@@ -1,7 +1,7 @@
 ﻿using System;
 using Daylily.Common.Utils.LoggerUtils;
 
-namespace Daylily.Common.Utils.Socket
+namespace Daylily.Common.Utils.SocketUtils
 {
     public delegate void WsMessageReceivedEventHandler(LogList sender, WsMessageReceivedEventArgs args);
     public delegate void WsMessageSendEventHandler(LogList sender, WsMessageSendEventArgs args);

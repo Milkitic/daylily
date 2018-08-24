@@ -38,7 +38,7 @@ namespace Daylily.Plugin.Core.Command
         private static CancellationToken Ct = Cts.Token;
         private static DateTime _newTime;
         private static string _message;
-        
+
         public override void Initialize(string[] args) { }
 
         public override CommonMessageResponse Message_Received(CommonMessage messageObj)
@@ -76,7 +76,7 @@ namespace Daylily.Plugin.Core.Command
                         Ct.ThrowIfCancellationRequested();
                     }
 
-                    SendMessage(new CommonMessageResponse(_message, userId, true), null, null, MessageType.Private);
+                    SendMessage(new CommonMessageResponse(_message, new Identity(userId, MessageType.Private)));
                 });
                 string reply = $"日程提醒已新建，{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。";
                 return new CommonMessageResponse(reply, messageObj, true);

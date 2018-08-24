@@ -40,8 +40,8 @@ namespace Daylily.Plugin.Core.Command
 
         public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
-            string innerUser = null, innerGroup = null, innerDiscuss = null;
-            var innerType = MessageType.Private;
+            string sessionId = null;
+            var sessionType = MessageType.Private;
             if (messageObj.PermissionLevel != PermissionLevel.Root)
                 return new CommonMessageResponse(LoliReply.RootOnly, messageObj);
             if (Message == null)
@@ -52,7 +52,7 @@ namespace Daylily.Plugin.Core.Command
             string innerMessage = Decode(Message);
             if (UseAllGroup)
             {
-                innerType = MessageType.Group;
+                sessionType = MessageType.Group;
                 List<GroupInfo> list = CqApi.GetGroupList().Data;
                 List<string> failedList = new List<string>();
                 string ok = $"◈◈ {DateTime.Now:M月d日 H:mm}公告 ◈◈{Environment.NewLine}";
@@ -62,9 +62,8 @@ namespace Daylily.Plugin.Core.Command
                     {
                         try
                         {
-                            innerGroup = groupInfo.GroupId.ToString();
-                            SendMessage(new CommonMessageResponse(msg, innerUser), innerGroup, innerDiscuss,
-                                innerType);
+                            sessionId = groupInfo.GroupId.ToString();
+                            SendMessage(new CommonMessageResponse(msg, new Identity(sessionId, sessionType)));
                             Thread.Sleep(3000);
                         }
                         catch
@@ -84,21 +83,21 @@ namespace Daylily.Plugin.Core.Command
             }
             if (DiscussId != null)
             {
-                innerDiscuss = DiscussId;
-                innerType = MessageType.Discuss;
+                sessionId = DiscussId;
+                sessionType = MessageType.Discuss;
             }
             else if (GroupId != null)
             {
-                innerGroup = GroupId;
-                innerType = MessageType.Group;
+                sessionId = GroupId;
+                sessionType = MessageType.Group;
             }
             if (UserId != null)
-                innerUser = UserId;
+                sessionId = UserId;
 
             if (DiscussId == null && GroupId == null && UserId == null)
                 return new CommonMessageResponse(Decode(messageObj.ArgString), messageObj);
 
-            SendMessage(new CommonMessageResponse(innerMessage, innerUser), innerGroup, innerDiscuss, innerType);
+            SendMessage(new CommonMessageResponse(innerMessage, new Identity(sessionId, sessionType)));
             return null;
         }
 

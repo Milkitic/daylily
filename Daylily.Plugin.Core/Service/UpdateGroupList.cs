@@ -13,7 +13,7 @@ namespace Daylily.Plugin.Core.Service
             {
                 while (true)
                 {
-                    SaveSettings(MessageHandler.GroupInfo);
+                    SaveSettings(CoolQDispatcher.SessionInfo);
                     Thread.Sleep(1000 * 60);
                 }
             });

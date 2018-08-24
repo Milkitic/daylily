@@ -1,7 +1,7 @@
 ﻿using System;
 using Daylily.Bot.Command;
 using Daylily.Common.Utils.LoggerUtils;
-using Daylily.Common.Utils.Socket;
+using Daylily.Common.Utils.SocketUtils;
 
 namespace Daylily.Bot.Console
 {

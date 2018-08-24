@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Daylily.Bot;
 using Daylily.Common.Utils.LoggerUtils;
-using Daylily.Common.Utils.Socket;
+using Daylily.Common.Utils.SocketUtils;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.Cos;
@@ -45,7 +45,7 @@ namespace Daylily.Web
 
             CqApi.ApiUrl = (string)Configuration.GetSection("BotSettings").GetValue(typeof(string), "PostUrl");
             CqCode.CqRoot = (string)Configuration.GetSection("BotSettings").GetValue(typeof(string), "CQDir");
-            MessageHandler.CommandFlag = (string)Configuration.GetSection("BotSettings").GetValue(typeof(string), "commandFlag");
+            CoolQDispatcher.CommandFlag = (string)Configuration.GetSection("BotSettings").GetValue(typeof(string), "commandFlag");
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -105,14 +105,14 @@ namespace Daylily.Web
             Bot.Console.Startup.RunConsole();
             PluginManager.LoadAllPlugins(new[] { "" });
 
-            if (MessageHandler.PrivateDisabledList == null)
-                MessageHandler.PrivateDisabledList =
+            if (CoolQDispatcher.PrivateDisabledList == null)
+                CoolQDispatcher.PrivateDisabledList =
                     new System.Collections.Concurrent.ConcurrentDictionary<long, System.Collections.Generic.List<string>>();
-            if (MessageHandler.DiscussDisabledList == null)
-                MessageHandler.DiscussDisabledList =
+            if (CoolQDispatcher.DiscussDisabledList == null)
+                CoolQDispatcher.DiscussDisabledList =
                     new System.Collections.Concurrent.ConcurrentDictionary<long, System.Collections.Generic.List<string>>();
-            if (MessageHandler.GroupDisabledList == null)
-                MessageHandler.GroupDisabledList =
+            if (CoolQDispatcher.GroupDisabledList == null)
+                CoolQDispatcher.GroupDisabledList =
                     new System.Collections.Concurrent.ConcurrentDictionary<long, System.Collections.Generic.List<string>>();
 
             app.UseMvc(routes =>

@@ -17,7 +17,6 @@ namespace Daylily.Bot
 {
     public static class PluginManager
     {
-        //public static ConcurrentDictionary<string, CommandApp> CommandMap { get; } = new ConcurrentDictionary<string, CommandApp>();
         public static ConcurrentDictionary<string, Type> CommandMap { get; } =
             new ConcurrentDictionary<string, Type>();
         public static ConcurrentDictionary<string, CommandPlugin> CommandMapStatic { get; } =
@@ -46,7 +45,7 @@ namespace Daylily.Bot
         {
             Type[] iType =
             {
-             
+
             };
 
             foreach (var item in iType)

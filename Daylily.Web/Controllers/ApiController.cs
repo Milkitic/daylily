@@ -23,15 +23,16 @@ namespace Daylily.Web.Controllers
                 return Json(new { });
             }
 
-            string json;
             using (var sr = new StreamReader(Request.Body))
             {
-                json = await sr.ReadToEndAsync();
+                string json = await sr.ReadToEndAsync();
+                Core.ReceiveJson(json);
             }
 
-            object ret = JsonHandler.HandleReportJson(json);
+            //object ret = Core.JsonDeserializer.HandleReportJson(json);
 
-            return Json(ret ?? new { });
+            //return Json(ret ?? new { });
+            return Json(new { });
         }
     }
 }

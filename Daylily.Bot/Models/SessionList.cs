@@ -2,8 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Models.MessageList;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Models.CqResponse;
 using Daylily.CoolQ.Models.CqResponse.Api;
@@ -12,10 +12,10 @@ namespace Daylily.Bot.Models
 {
     public class SessionList
     {
-        private readonly ConcurrentDictionary<(long id, MessageType type), SessionSettings> _dicSession =
-            new ConcurrentDictionary<(long id, MessageType type), SessionSettings>();
+        private readonly ConcurrentDictionary<Identity, SessionSettings> _dicSession =
+            new ConcurrentDictionary<Identity, SessionSettings>();
 
-        public SessionSettings this[(long id, MessageType type) identity] => _dicSession[identity];
+        public SessionSettings this[Identity identity] => _dicSession[identity];
 
         public void Add(Msg message)
         {
@@ -23,7 +23,7 @@ namespace Daylily.Bot.Models
             {
                 case PrivateMsg privateMsg:
                     {
-                        var item = (privateMsg.UserId, MessageType.Private);
+                        var item = new Identity(privateMsg.UserId, MessageType.Private);
                         if (_dicSession.Keys.Contains(item))
                             return;
                         _dicSession.TryAdd(item, new SessionSettings(privateMsg));
@@ -31,7 +31,7 @@ namespace Daylily.Bot.Models
                     }
                 case DiscussMsg discussMsg:
                     {
-                        var item = (discussMsg.DiscussId, MessageType.Discuss);
+                        var item = new Identity(discussMsg.DiscussId, MessageType.Discuss);
                         if (_dicSession.Keys.Contains(item))
                             return;
                         _dicSession.TryAdd(item, new SessionSettings(discussMsg));
@@ -39,7 +39,7 @@ namespace Daylily.Bot.Models
                     }
                 case GroupMsg groupMsg:
                     {
-                        var item = (groupMsg.GroupId, MessageType.Group);
+                        var item = new Identity(groupMsg.GroupId, MessageType.Group);
                         if (_dicSession.Keys.Contains(item))
                             return;
                         _dicSession.TryAdd(item, new SessionSettings(groupMsg));
@@ -55,7 +55,8 @@ namespace Daylily.Bot.Models
             public MessageType MessageType { get; }
             public int MsgLimit { get; }
             public bool LockMsg { get; set; } = false; // 用于判断是否超出消息阀值
-            public GroupInfoV2 Info { get; }
+            public GroupInfoV2 GroupInfo { get; }
+            public StrangerInfo PrivateInfo { get; }
             public ConcurrentQueue<object> MsgQueue { get; } = new ConcurrentQueue<object>();
 
             public SessionSettings(Msg message)
@@ -66,7 +67,8 @@ namespace Daylily.Bot.Models
                         Id = privateMsg.UserId.ToString();
                         MessageType = MessageType.Private;
                         MsgLimit = 4;
-                        Name = "私聊" + Id; // todo
+                        PrivateInfo = UpdatePrivateInfo(privateMsg.UserId);
+                        Name = PrivateInfo.Nickname;
                         break;
                     case DiscussMsg discussMsg:
                         Id = discussMsg.DiscussId.ToString();
@@ -78,9 +80,57 @@ namespace Daylily.Bot.Models
                         Id = groupMsg.GroupId.ToString();
                         MessageType = MessageType.Group;
                         MsgLimit = 10;
-                        Info = UpdateGroupInfo(groupMsg.GroupId);
-                        Name = Info.GroupName;
+                        GroupInfo = UpdateGroupInfo(groupMsg.GroupId);
+                        Name = GroupInfo.GroupName;
                         break;
+                }
+            }
+
+            private readonly object _taskLock = new object();
+            private Task _task;
+
+            public bool TryRun(Action action)
+            {
+                bool isTaskFree = _task == null || _task.IsCanceled || _task.IsCompleted;
+                if (isTaskFree)
+                {
+                    lock (_taskLock)
+                    {
+                        isTaskFree = _task == null || _task.IsCanceled || _task.IsCompleted;
+                        if (isTaskFree)
+                        {
+                            _task = Task.Run(action);
+                        }
+                    }
+                }
+
+                return isTaskFree;
+            }
+
+            private static StrangerInfo UpdatePrivateInfo(long id)
+            {
+                StrangerInfo obj;
+                try
+                {
+                    obj = CqApi.GetStrangerInfo(id.ToString()).Data;
+                }
+                catch
+                {
+                    obj = InitInfo();
+                }
+
+                return obj ?? InitInfo();
+
+                StrangerInfo InitInfo()
+                {
+                    var groupInfoV2 = new StrangerInfo
+                    {
+                        Nickname = id.ToString(),
+                        UserId = id,
+                        Age = "-1",
+                        Sex = "unknown",
+                    };
+                    return groupInfoV2;
                 }
             }
 

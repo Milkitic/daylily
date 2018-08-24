@@ -87,17 +87,17 @@ namespace Daylily.Plugin.ShaDiao.Application
                     case 1:
                     case 2:
                         CqApi.SetGroupBan(messageObj.GroupId, messageObj.UserId, 24 * 60 * 60);
-                        return new CommonMessageResponse("……………………");
+                        return new CommonMessageResponse("...", messageObj);
                     default:
                         break;
                 }
 
                 if (item.data.porn_score >= item.data.hot_score && item.data.porn_score > 65)
-                    return AddCount(messageObj.UserId, messageObj.GroupId);
+                    return AddCount(messageObj);
 
                 if (item.data.hot_score >= item.data.porn_score && item.data.hot_score > item.data.normal_score &&
                     item.data.hot_score > 80)
-                    return AddCount(messageObj.UserId, messageObj.GroupId);
+                    return AddCount(messageObj);
 
                 break;
             }
@@ -107,8 +107,10 @@ namespace Daylily.Plugin.ShaDiao.Application
             //if (user != "2241521134") return null;
         }
 
-        private CommonMessageResponse AddCount(string user, string group)
+        private CommonMessageResponse AddCount(CommonMessage cm)
         {
+            string user = cm.UserId, group = cm.GroupId;
+
             try
             {
                 Logger.Warn("发现好图，存了");
@@ -116,12 +118,12 @@ namespace Daylily.Plugin.ShaDiao.Application
                     UserCount.Add(user, 2);
                 UserCount[user]--;
                 if (UserCount[user] != 0)
-                    return new CommonMessageResponse("..黄花菜看了都脸红..求你少发点", user, true);
+                    return new CommonMessageResponse("？", cm, true);
                 else
                 {
                     UserCount[user] = 2;
                     CqApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
-                    return new CommonMessageResponse("...", user, true);
+                    return new CommonMessageResponse("？", cm, true);
                 }
             }
             finally

@@ -15,12 +15,12 @@ using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
 using Daylily.Osu.Interface;
 
-namespace Daylily.Plugin.Osu.Command.Subscribes
+namespace Daylily.Plugin.Osu.Command
 {
     [Name("Mapper订阅")]
     [Author("yf_extension")]
-    [Version(0, 1, 1, PluginVersion.Alpha)]
-    [Help("订阅某个mapper的qua、rank、love、传图提醒。", "限制为群内推送8个名额，个人推送3个名额。")]
+    [Version(0, 1, 2, PluginVersion.Alpha)]
+    [Help("订阅某个mapper的qua、rank、love、传图提醒。", "限制为群内推送10个名额，个人推送5个名额。")]
     [Command("sub")]
     public class Subscribe : CommandPlugin
     {
@@ -43,8 +43,8 @@ namespace Daylily.Plugin.Osu.Command.Subscribes
 #else
         private static readonly TimeSpan RangeTime = new TimeSpan(24, 0, 0);
 #endif
-        private const int PrivateMax = 3;
-        private const int GroupMax = 8;
+        private const int PrivateMax = 5;
+        private const int GroupMax = 10;
 
         public override void Initialize(string[] args)
         {
@@ -58,7 +58,7 @@ namespace Daylily.Plugin.Osu.Command.Subscribes
 #if DEBUG
                 const int sleepTime = 5000;
 #else
-                const int sleepTime = 1000 * 60 * 60; 
+                const int sleepTime = 1000 * 60 * 60;
 #endif
 
                 while (true)
@@ -239,38 +239,39 @@ namespace Daylily.Plugin.Osu.Command.Subscribes
         {
             foreach (var userTuple in userList) // 遍历发给订阅此mapper的用户
             {
-                var user = userTuple.User;
-                var msgType = userTuple.MessageType;
+                var session = userTuple.User;
+                var sessionType = userTuple.MessageType;
 
                 StringBuilder sb = new StringBuilder(mapsets[0].Creator + "有新的动态：\r\n");
                 foreach (var mapset in mapsets)
                 {
                     sb.AppendLine(string.Format(
-                        "● {0}了{1} - {2} (https://osu.ppy.sh/beatmapsets/{3})",
-                        mapset.Status == "pending" || mapset.Status == "wip" ? "上传" : mapset.Status,
+                        "● {0}了{1} - {2} (https://osu.ppy.sh/beatmapsets/{3})", StatusToReadable(mapset.Status),
                         mapset.Artist, mapset.Title, mapset.Id));
-                }
-
-                string userId = null, disscussId = null, groupId = null;
-                switch (msgType)
-                {
-                    case MessageType.Private:
-                        userId = user;
-                        break;
-                    case MessageType.Discuss:
-                        disscussId = user;
-                        break;
-                    case MessageType.Group:
-                        groupId = user;
-                        break;
                 }
 #if DEBUG
                 Logger.Success(sb.ToString().Trim('\n').Trim('\r'));
 #else
-                SendMessage(new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), userId, false), groupId,
-                    disscussId, msgType);
+                SendMessage(new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), new Identity(session, sessionType)));
                 Thread.Sleep(3000);
 #endif
+            }
+            string StatusToReadable(string status)
+            {
+                switch (status)
+                {
+                    case "pending":
+                    case "wip":
+                        return "上传";
+                    case "ranked":
+                        return "Rank";
+                    case "qualified":
+                        return "Qualify";
+                    case "loved":
+                        return "Love";
+                    default:
+                        return status;
+                }
             }
         }
 

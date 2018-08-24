@@ -20,20 +20,19 @@ namespace Daylily.Bot.Models
 
         public MessageType MessageType { get; set; }
 
-        public string IdentityId
+        public Identity Identity
         {
             get
             {
                 switch (MessageType)
                 {
-                    case MessageType.Discuss:
-                        return DiscussId;
                     case MessageType.Private:
-                        return UserId;
+                        return new Identity(Convert.ToInt64(UserId), MessageType.Private);
+                    case MessageType.Discuss:
+                        return new Identity(Convert.ToInt64(DiscussId), MessageType.Discuss);
                     case MessageType.Group:
-                        return GroupId;
                     default:
-                        return null;
+                        return new Identity(Convert.ToInt64(GroupId), MessageType.Group);
                 }
             }
         }

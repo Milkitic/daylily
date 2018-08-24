@@ -25,53 +25,7 @@ namespace Daylily.CoolQ.Interface.CqHttp
         private const string GroupMemberListPath = "/get_group_member_list";
 
         private const string GroupInfoPath = "/_get_group_info";
-
-        //public static void SendMessage(CommonMessageResponse response)
-        //{
-        //    switch (response.MessageType)
-        //    {
-        //        case MessageType.Group:
-        //            SendGroupMsgResp groupMsgResp = SendGroupMessageAsync(response.GroupId,
-        //                (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-        //            Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
-        //            break;
-        //        case MessageType.Discuss:
-        //            SendDiscussMsgResp discussMsgResp = SendDiscussMessageAsync(response.DiscussId,
-        //                (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-        //            Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
-        //            break;
-        //        case MessageType.Private:
-        //            SendPrivateMsgResp privateMsgResp = SendPrivateMessageAsync(response.UserId, response.Message);
-        //            Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
-        //            break;
-        //        default:
-        //            throw new ArgumentOutOfRangeException();
-        //    }
-        //}
-
-        //public static void SendMessage(CommonMessageResponse response, string groupId, string discussId,
-        //    MessageType messageType)
-        //{
-        //    switch (messageType)
-        //    {
-        //        case MessageType.Group:
-        //            SendGroupMsgResp groupMsgResp = SendGroupMessageAsync(groupId,
-        //                (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-        //            Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {groupMsgResp.Status}}})");
-        //            break;
-        //        case MessageType.Discuss:
-        //            SendDiscussMsgResp discussMsgResp = SendDiscussMessageAsync(discussId,
-        //                (response.EnableAt ? new At(response.UserId) + " " : "") + response.Message);
-        //            Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {discussMsgResp.Status}}})");
-        //            break;
-        //        case MessageType.Private:
-        //            SendPrivateMsgResp privateMsgResp = SendPrivateMessageAsync(response.UserId, response.Message);
-        //            Logger.Info($"我: {CqCode.Decode(response.Message)} {{status: {privateMsgResp.Status}}})");
-        //            break;
-        //        default:
-        //            throw new ArgumentOutOfRangeException();
-        //    }
-        //}
+        private const string StrangerInfoPath = "/get_stranger_info";
 
         /// <summary>
         /// 发送私聊消息
@@ -83,11 +37,12 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "user_id", id },
-                { "message", message }
+                {"user_id", id},
+                {"message", message}
             };
             return Request<SendPrivateMsgResp>(ApiUrl + PrivateMsgPath, parameters);
         }
+
         /// <summary>
         /// 发送私聊消息（异步版本）
         /// </summary>
@@ -98,8 +53,8 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "user_id", id },
-                { "message", message }
+                {"user_id", id},
+                {"message", message}
             };
             return Request<SendPrivateMsgResp>(ApiUrl + PrivateMsgAsyncPath, parameters);
         }
@@ -114,11 +69,12 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "discuss_id", discussId },
-                { "message", message }
+                {"discuss_id", discussId},
+                {"message", message}
             };
             return Request<SendDiscussMsgResp>(ApiUrl + DiscussMsgPath, parameters);
         }
+
         /// <summary>
         /// 发送讨论组消息（异步版本）
         /// </summary>
@@ -129,8 +85,8 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "discuss_id", discussId },
-                { "message", message }
+                {"discuss_id", discussId},
+                {"message", message}
             };
             return Request<SendDiscussMsgResp>(ApiUrl + DiscussMsgAsyncPath, parameters);
         }
@@ -145,11 +101,12 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", groupId },
-                { "message", message }
+                {"group_id", groupId},
+                {"message", message}
             };
             return Request<SendGroupMsgResp>(ApiUrl + GroupMsgPath, parameters);
         }
+
         /// <summary>
         /// 发送群聊消息（异步版本）
         /// </summary>
@@ -160,10 +117,20 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", groupId },
-                { "message", message }
+                {"group_id", groupId},
+                {"message", message}
             };
             return Request<SendGroupMsgResp>(ApiUrl + GroupMsgAsyncPath, parameters);
+        }
+
+        public static GetStrangerInfo GetStrangerInfo(string userId, bool noCache = false)
+        {
+            IDictionary<string, string> parameters = new Dictionary<string, string>
+            {
+                {"user_id", userId},
+                {"no_cache", noCache.ToString()}
+            };
+            return Request<GetStrangerInfo>(ApiUrl + StrangerInfoPath, parameters);
         }
 
         /// <summary>
@@ -174,7 +141,7 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "message_id", messageId.ToString() }
+                {"message_id", messageId.ToString()}
             };
             Request(ApiUrl + MsgDelPath, parameters);
         }
@@ -183,9 +150,9 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", groupId },
-                { "user_id", userId },
-                { "duration", duration.ToString() }
+                {"group_id", groupId},
+                {"user_id", userId},
+                {"duration", duration.ToString()}
             };
             Request(ApiUrl + GroupBanPath, parameters);
         }
@@ -196,9 +163,9 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", groupId },
-                { "user_id", userId },
-                { "no_cache", noCache.ToString() }
+                {"group_id", groupId},
+                {"user_id", userId},
+                {"no_cache", noCache.ToString()}
             };
 
             return Request<GetGroupMemberInfo>(ApiUrl + GroupMemberInfoPath, parameters);
@@ -208,7 +175,7 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", groupId }
+                {"group_id", groupId}
             };
             return Request<GetGroupMemberList>(ApiUrl + GroupMemberListPath, parameters);
         }
@@ -222,7 +189,7 @@ namespace Daylily.CoolQ.Interface.CqHttp
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {
-                { "group_id", groupId }
+                {"group_id", groupId}
             };
             return Request<GetGroupInfo>(ApiUrl + GroupInfoPath, parameters);
         }
