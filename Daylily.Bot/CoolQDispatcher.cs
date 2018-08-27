@@ -134,24 +134,23 @@ namespace Daylily.Bot
             var type = cm.MessageType;
 
             string group, sender, message = cm.Message;
-            switch (cm.MessageType)
+            if (cm.MessageType == MessageType.Private)
             {
-                case MessageType.Private:
-                    group = "私聊";
-                    sender = SessionInfo[cm.Identity].Name;
-                    break;
-                case MessageType.Discuss:
-                    group = SessionInfo[cm.Identity].Name;
-                    sender = cm.UserId;
-                    break;
-                default:
-                case MessageType.Group:
-                    var userInfo = CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId); // 有点费时间
-                    group = SessionInfo[cm.Identity].Name;
-                    sender = string.IsNullOrEmpty(userInfo.Data.Card)
-                        ? userInfo.Data.Nickname
-                        : userInfo.Data.Card;
-                    break;
+                group = "私聊";
+                sender = SessionInfo[cm.Identity].Name;
+            }
+            else if (cm.MessageType == MessageType.Discuss)
+            {
+                group = SessionInfo[cm.Identity].Name;
+                sender = cm.UserId;
+            }
+            else
+            {
+                var userInfo = CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId); // 有点费时间
+                group = SessionInfo[cm.Identity].Name;
+                sender = string.IsNullOrEmpty(userInfo.Data.Card)
+                    ? userInfo.Data.Nickname
+                    : userInfo.Data.Card;
             }
 
             Message($"({group}) {sender}:\r\n  {CqCode.DecodeToString(message)}");
@@ -188,6 +187,12 @@ namespace Daylily.Bot
                 }
                 else
                 {
+                    // auto
+                    if (SessionInfo[cm.Identity].GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
+                        cm.PermissionLevel = PermissionLevel.Admin;
+                    if (cm.UserId == "2241521134")
+                        cm.PermissionLevel = PermissionLevel.Root;
+
                     cm.FullCommand = message.Substring(1, message.Length - 1);
                     HandleMessageCmd(cm);
                 }
@@ -243,7 +248,8 @@ namespace Daylily.Bot
             {
                 try
                 {
-                    SetValues(cm, t, plugin);
+                    if (!TrySetValues(cm, t, plugin))
+                        return;
                     replyObj = plugin.Message_Received(cm);
                 }
                 catch (Exception ex)
@@ -261,7 +267,9 @@ namespace Daylily.Bot
         {
             var msg = (resp.EnableAt && resp.MessageType != MessageType.Private ? new At(resp.UserId) + " " : "") +
                     resp.Message;
-            var info = SessionInfo[resp.Identity].Name;
+            var info = SessionInfo[resp.Identity] == null
+                ? $"{resp.Identity.Type}{resp.Identity.Id}"
+                : SessionInfo[resp.Identity].Name;
             string status;
             switch (resp.MessageType)
             {
@@ -280,7 +288,7 @@ namespace Daylily.Bot
 
             Message(string.Format("({0}) 我: {{status: {1}}}\r\n  {2}", info, status, CqCode.DecodeToString(msg)));
         }
-     
+
         private static bool ValidateDisabled(CommonMessage cm, MemberInfo t)
         {
             switch (cm.MessageType)
@@ -317,12 +325,15 @@ namespace Daylily.Bot
             return false;
         }
 
-        private static void SetValues(CommonMessage cm, Type t, CommandPlugin plugin)
+        private static bool TrySetValues(CommonMessage cm, Type t, CommandPlugin plugin)
         {
             var props = t.GetProperties();
             int freeIndex = 0;
             string[] freeArray = cm.FreeArgs.ToArray();
-            int length = freeArray.Length;
+            int freeCount = freeArray.Length;
+            int swCount = cm.Switches.Count;
+            int argCount = cm.Args.Count;
+
             foreach (var prop in props)
             {
                 var infos = prop.GetCustomAttributes(false);
@@ -335,14 +346,27 @@ namespace Daylily.Bot
                             if (cm.Switches.ContainsKey(argAttrib.Name))
                             {
                                 if (argAttrib.IsSwitch)
+                                {
                                     prop.SetValue(plugin, true);
+                                    swCount--;
+                                }
                             }
                             else if (cm.Args.ContainsKey(argAttrib.Name))
                             {
                                 if (!argAttrib.IsSwitch)
                                 {
-                                    dynamic obj = ParseStr(prop, cm.Args[argAttrib.Name]);
-                                    prop.SetValue(plugin, obj);
+                                    if (TryParse(prop, cm.Args[argAttrib.Name], out var parsed))
+                                    {
+                                        //dynamic obj = TryParse(prop, cm.Args[argAttrib.Name]);
+                                        prop.SetValue(plugin, parsed);
+                                        argCount--;
+                                    }
+                                    else
+                                    {
+                                        SendMessage(
+                                            new CommonMessageResponse($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。", cm));
+                                        return false;
+                                    }
                                 }
                             }
                             else if (argAttrib.Default != null)
@@ -353,66 +377,87 @@ namespace Daylily.Bot
                             break;
                         case FreeArgAttribute freeArgAttrib:
                             {
-                                if (freeIndex > length - 1)
+                                if (freeIndex > freeCount - 1)
                                 {
                                     if (freeArgAttrib.Default != null)
                                         prop.SetValue(plugin, freeArgAttrib.Default); //不再转换，提升效率
                                     break;
                                 }
 
-                                dynamic obj = ParseStr(prop, freeArray[freeIndex]);
-                                prop.SetValue(plugin, obj);
-                                freeIndex++;
-                                break;
+                                if (TryParse(prop, freeArray[freeIndex], out var parsed))
+                                {
+                                    prop.SetValue(plugin, parsed);
+                                    freeIndex++;
+                                    break;
+                                }
+                                else
+                                {
+                                    SendMessage(new CommonMessageResponse($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。",
+                                        cm));
+                                    return false;
+                                }
                             }
                     }
                 }
 
             }
+
+            if (swCount <= 0 && argCount <= 0)
+                return true;
+            SendMessage(new CommonMessageResponse($"包含多余的参数. 发送 \"/help {cm.Command}\" 了解如何使用。", cm));
+            return false;
         }
 
-        private static dynamic ParseStr(PropertyInfo prop, string argStr)
+        private static bool TryParse(PropertyInfo prop, string argStr, out dynamic parsed)
         {
-            dynamic obj;
-            if (prop.PropertyType == typeof(int))
+            try
             {
-                obj = Convert.ToInt32(argStr);
-            }
-            else if (prop.PropertyType == typeof(long))
-            {
-                obj = Convert.ToInt64(argStr);
-            }
-            else if (prop.PropertyType == typeof(short))
-            {
-                obj = Convert.ToInt16(argStr);
-            }
-            else if (prop.PropertyType == typeof(float))
-            {
-                obj = Convert.ToSingle(argStr);
-            }
-            else if (prop.PropertyType == typeof(double))
-            {
-                obj = Convert.ToDouble(argStr);
-            }
-            else if (prop.PropertyType == typeof(string))
-            {
-                obj = CqCode.Decode(argStr); // Convert.ToString(cmd);
-            }
-            else if (prop.PropertyType == typeof(bool))
-            {
-                string tmpCmd = argStr == "" ? "true" : argStr;
-                if (tmpCmd == "0")
-                    tmpCmd = "false";
-                else if (tmpCmd == "1")
-                    tmpCmd = "true";
-                obj = Convert.ToBoolean(tmpCmd);
-            }
-            else
-            {
-                throw new NotSupportedException("sb");
-            }
+                if (prop.PropertyType == typeof(int))
+                {
+                    parsed = Convert.ToInt32(argStr);
+                }
+                else if (prop.PropertyType == typeof(long))
+                {
+                    parsed = Convert.ToInt64(argStr);
+                }
+                else if (prop.PropertyType == typeof(short))
+                {
+                    parsed = Convert.ToInt16(argStr);
+                }
+                else if (prop.PropertyType == typeof(float))
+                {
+                    parsed = Convert.ToSingle(argStr);
+                }
+                else if (prop.PropertyType == typeof(double))
+                {
+                    parsed = Convert.ToDouble(argStr);
+                }
+                else if (prop.PropertyType == typeof(string))
+                {
+                    parsed = CqCode.Decode(argStr); // Convert.ToString(cmd);
+                }
+                else if (prop.PropertyType == typeof(bool))
+                {
+                    string tmpCmd = argStr == "" ? "true" : argStr;
+                    if (tmpCmd == "0")
+                        tmpCmd = "false";
+                    else if (tmpCmd == "1")
+                        tmpCmd = "true";
+                    parsed = Convert.ToBoolean(tmpCmd);
+                }
+                else
+                {
+                    throw new NotSupportedException("sb");
+                }
 
-            return obj;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Exception(ex);
+                parsed = null;
+                return false;
+            }
         }
 
         private static CommandPlugin GetInstance(Type type) => Activator.CreateInstance(type) as CommandPlugin;

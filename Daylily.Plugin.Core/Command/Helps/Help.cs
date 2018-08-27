@@ -50,10 +50,10 @@ namespace Daylily.Plugin.Core.Command.Helps
         {
             CommandPlugin[] plugins = PluginManager.CommandMapStatic.Values.Distinct().ToArray();
             ApplicationPlugin[] apps = PluginManager.ApplicationList.ToArray();
-            Dictionary<string, string> dictionary = plugins.Where(plugin => plugin.HelpType == _cm.PermissionLevel)
+            Dictionary<string, string> dictionary = plugins/*.Where(plugin => plugin.HelpType == _cm.PermissionLevel)*/
                 .ToDictionary(plugin => "/" + string.Join(", /", plugin.Commands),
                     plugin => $"{plugin.Name}。{plugin.Helps[0]}").OrderBy(objDic => objDic.Key)
-                .Union(apps.Where(plugin => plugin.HelpType == _cm.PermissionLevel)
+                .Union(apps/*.Where(plugin => plugin.HelpType == _cm.PermissionLevel)*/
                     .ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]).OrderBy(objDic => objDic.Key))
                 .ToDictionary(k => k.Key, k => k.Value);
 
@@ -159,20 +159,21 @@ namespace Daylily.Plugin.Core.Command.Helps
 
         private Bitmap DrawList(Dictionary<string, string> dictionary, string[] hot)
         {
-            string title;
-            string sub;
-            if (_cm.PermissionLevel == PermissionLevel.Public)
-            {
-                title = "黄花菜Help";
-                sub = "（输入 \"/help [command]\" 查找某个命令的详细信息。）" + Environment.NewLine +
-                      "（输入 \"/sudo help\" 查看管理员的帮助。）";
-            }
-            else
-            {
-                title = "黄花菜管理员Help";
-                sub = "（管理员/群主可用的命令，类似的命令使用方法如同本help。）" + Environment.NewLine +
-                      "（例：/sudo plugin）";
-            }
+            string title = "黄花菜Help";
+            string sub = "（输入 \"/help [command]\" 查找某个命令的详细信息。）" + Environment.NewLine +
+                         "（例：/help sub。）";
+            //if (_cm.PermissionLevel == PermissionLevel.Public)
+            //{
+            //    title = "黄花菜Help";
+            //    sub = "（输入 \"/help [command]\" 查找某个命令的详细信息。）" + Environment.NewLine +
+            //          "（例：/help 。）";
+            //}
+            //else
+            //{
+            //    title = "黄花菜管理员Help";
+            //    sub = "（管理员/群主可用的命令，类似的命令使用方法如同本help。）" + Environment.NewLine +
+            //          "（例：/sudo plugin）";
+            //}
             const string sub2 = "无需命令自动激活的插件：";
             const int offsetH = 30;
             Point pointTitle = new Point(30, 30);

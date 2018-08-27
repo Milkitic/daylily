@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Daylily.Bot.Interface;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Models.CqResponse;
 using Newtonsoft.Json;
 
@@ -78,13 +79,23 @@ namespace Daylily.Bot
                     if (obj.request_type == "friend")
                     {
                         FriendRequest parsedObj = JsonConvert.DeserializeObject<FriendRequest>(json);
-                        // TODO
+                        // TODO，临时
+                        CqApi.SendPrivateMessage("2241521134",
+                            string.Format("{0} ({1})邀请加我为好友",
+                                CqApi.GetStrangerInfo(parsedObj.UserId.ToString()).Data?.Nickname, parsedObj.UserId));
                     }
                     // 加群请求／邀请
                     else if (obj.request_type == "group")
                     {
                         GroupInvite parsedObj = JsonConvert.DeserializeObject<GroupInvite>(json);
-                        // TODO
+                        // TODO，临时
+                        if (parsedObj.SubType == "invite")
+                        {
+                            CqApi.SendPrivateMessage("2241521134",
+                                string.Format("{0} ({1})邀请我加入群{2}",
+                                    CqApi.GetStrangerInfo(parsedObj.UserId.ToString()).Data?.Nickname, parsedObj.UserId,
+                                    parsedObj.GroupId));
+                        }
                     }
                 }
             }

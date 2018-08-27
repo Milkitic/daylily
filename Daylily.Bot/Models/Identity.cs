@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 using Daylily.Bot.Enum;
+using Newtonsoft.Json;
 
 namespace Daylily.Bot.Models
 {
     public struct Identity
     {
-        public long Id { get; }
-        public MessageType Type { get; }
+        [JsonProperty("id")] public long Id { get; set; }
+        [JsonProperty("type")] public MessageType Type { get; set; }
+
         public Identity(long id, MessageType type) : this()
         {
             Id = id;

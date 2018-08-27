@@ -15,7 +15,8 @@ namespace Daylily.Bot.Models
         private readonly ConcurrentDictionary<Identity, SessionSettings> _dicSession =
             new ConcurrentDictionary<Identity, SessionSettings>();
 
-        public SessionSettings this[Identity identity] => _dicSession[identity];
+        public SessionSettings this[Identity identity] =>
+            _dicSession.ContainsKey(identity) ? _dicSession[identity] : null;
 
         public void Add(Msg message)
         {

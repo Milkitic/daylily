@@ -38,11 +38,8 @@ namespace Daylily.Plugin.Osu.Command
 
         private static ConcurrentDictionary<string, List<UserInfo>> _userDic;
         private static List<SlimBeatmapsets> _todaySets;
-#if DEBUG
-        private static readonly TimeSpan RangeTime = new TimeSpan(365, 0, 0, 0);
-#else
+
         private static readonly TimeSpan RangeTime = new TimeSpan(24, 0, 0);
-#endif
         private const int PrivateMax = 5;
         private const int GroupMax = 10;
 
@@ -83,25 +80,23 @@ namespace Daylily.Plugin.Osu.Command
 
                                 Beatmapsets[] mapsets = GetBeatmapsets(mapper);
 
-                                if (mapsets.Length > 0)
+                                if (mapsets.Length <= 0) continue;
+                                foreach (var item in mapsets)
                                 {
-                                    PushNews(userList, mapsets);
-                                    foreach (var item in mapsets)
+                                    _todaySets.Add(new SlimBeatmapsets
                                     {
-                                        _todaySets.Add(new SlimBeatmapsets
-                                        {
-                                            Creator = item.Creator,
-                                            Id = item.Id,
-                                            RankedDate = item.RankedDate,
-                                            Status = item.Status,
-                                            SubmittedDate = item.SubmittedDate
-                                        });
-                                    }
-
-                                    SaveTodaySettings();
+                                        Creator = item.Creator,
+                                        Id = item.Id,
+                                        RankedDate = item.RankedDate,
+                                        Status = item.Status,
+                                        SubmittedDate = item.SubmittedDate
+                                    });
                                 }
 
+                                SaveTodaySettings();
                                 Logger.Debug($"{pair.Key}: Find {mapsets.Length} results.");
+                                PushNews(userList, mapsets);
+
                             }
                             catch (Exception ex)
                             {
@@ -230,31 +225,37 @@ namespace Daylily.Plugin.Osu.Command
             return new CommonMessageResponse(LoliReply.ParamMissing, messageObj);
         }
 
-        private static string[] GetSubscribed(MessageType messageType, string subId)
+        private static IEnumerable<string> GetSubscribed(MessageType messageType, string subId)
         {
-            return _userDic.Where(k => k.Value.Contains(new UserInfo(subId, messageType))).Select(k => k.Key).ToArray();
+            return _userDic.Where(k => k.Value.Contains(new UserInfo(subId, messageType))).Select(k => k.Key);
         }
 
-        private static void PushNews(IEnumerable<UserInfo> userList, IReadOnlyList<Beatmapsets> mapsets)
+        private void PushNews(IEnumerable<UserInfo> userList, IReadOnlyList<Beatmapsets> mapsets)
         {
             foreach (var userTuple in userList) // 遍历发给订阅此mapper的用户
             {
-                var session = userTuple.User;
-                var sessionType = userTuple.MessageType;
+                var session = userTuple.Id;
+                var sessionType = userTuple.Type;
 
                 StringBuilder sb = new StringBuilder(mapsets[0].Creator + "有新的动态：\r\n");
                 foreach (var mapset in mapsets)
                 {
                     sb.AppendLine(string.Format(
-                        "● {0}了{1} - {2} (https://osu.ppy.sh/beatmapsets/{3})", StatusToReadable(mapset.Status),
+                        "・{0}了{1} - {2} (https://osu.ppy.sh/beatmapsets/{3})", StatusToReadable(mapset.Status),
                         mapset.Artist, mapset.Title, mapset.Id));
                 }
+
+                var str = sb.ToString().Trim('\n').Trim('\r');
+                Logger.Success(str);
+
 #if DEBUG
-                Logger.Success(sb.ToString().Trim('\n').Trim('\r'));
+
 #else
-                SendMessage(new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), new Identity(session, sessionType)));
+                SaveLogs(str, "pushes");
+                SendMessage(new CommonMessageResponse(str, new Identity(session, sessionType)));
                 Thread.Sleep(3000);
 #endif
+
             }
             string StatusToReadable(string status)
             {
@@ -353,13 +354,13 @@ namespace Daylily.Plugin.Osu.Command
 
         public struct UserInfo
         {
-            public string User { get; set; }
-            public MessageType MessageType { get; set; }
+            public string Id { get; set; }
+            public MessageType Type { get; set; }
 
-            public UserInfo(string user, MessageType messageType) : this()
+            public UserInfo(string id, MessageType type) : this()
             {
-                User = user;
-                MessageType = messageType;
+                Id = id;
+                Type = type;
             }
         }
     }

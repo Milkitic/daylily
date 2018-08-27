@@ -77,7 +77,7 @@ namespace Daylily.Bot.PluginBase
 
         protected static void SendMessage(CommonMessageResponse response) => CoolQDispatcher.SendMessage(response);
 
-        protected void SaveSettings<T>(T cls, string fileName = null)
+        protected void SaveSettings<T>(T cls, string fileName = null, bool writeLog = false)
         {
             Type clsT = cls.GetType();
 
@@ -87,9 +87,14 @@ namespace Daylily.Bot.PluginBase
                 Directory.CreateDirectory(SettingsPath);
 
             ConcurrentFile.WriteAllText(saveName, Newtonsoft.Json.JsonConvert.SerializeObject(cls));
+            if (writeLog)
+            {
+                var fileInfo = new FileInfo(saveName);
+                Logger.Success($"写入了 {Path.Combine("~", fileInfo.Directory?.Name, fileInfo.Name)}。");
+            }
         }
 
-        protected T LoadSettings<T>(string fileName = null)
+        protected T LoadSettings<T>(string fileName = null, bool writeLog = false)
         {
             try
             {
@@ -101,6 +106,12 @@ namespace Daylily.Bot.PluginBase
                     Directory.CreateDirectory(SettingsPath);
 
                 string json = ConcurrentFile.ReadAllText(saveName);
+                if (writeLog)
+                {
+                    var fileInfo = new FileInfo(saveName);
+                    Logger.Success($"读取了 {Path.Combine("~", fileInfo.Directory?.Name, fileInfo.Name)}。");
+                }
+
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
             }
             catch (FileNotFoundException)

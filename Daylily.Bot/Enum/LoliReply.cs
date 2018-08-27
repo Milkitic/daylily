@@ -11,7 +11,7 @@ namespace Daylily.Bot.Enum
         public const string GroupDiscussOnly = "这个功能，是仅限群聊的。";
 
         public const string RootOnly = "这样子是不可以的…它需要root权限才能启动。";
-        public const string AdminOnly = "这样子是不可以的…它需要本群管理员(/sudo [命令])才能启动。";
+        public const string AdminOnly = "这样子是不可以的…它需要本群管理员才能启动。";
 
         public const string ParamError = "命令后面参数的不对哦，请使用 /help [命令] 查看说明。";
         public const string ParamMissing = "请填写参数…请使用 /help [命令] 查看说明。";

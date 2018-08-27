@@ -9,7 +9,6 @@ namespace Daylily.Bot.Models
     public class CommonMessage : ICloneable
     {
         public string Message { get; set; }
-
         public string FullCommand { get; set; }
         public string Command { get; set; }
         public string ArgString { get; set; }
@@ -17,7 +16,7 @@ namespace Daylily.Bot.Models
         public List<string> FreeArgs { get; set; }
         public Dictionary<string, string> Switches { get; set; }
         public List<string> SimpleArgs { get; set; }
-
+        public PermissionLevel PermissionLevel { get; set; }
         public MessageType MessageType { get; set; }
 
         public Identity Identity
@@ -37,8 +36,6 @@ namespace Daylily.Bot.Models
             }
         }
 
-        public PermissionLevel PermissionLevel { get; set; }
-
         public string UserId { get; set; }
         public string DiscussId { get; set; }
         public string GroupId { get; set; }
@@ -51,9 +48,7 @@ namespace Daylily.Bot.Models
         [JsonIgnore]
         public GroupMsg Group { get; set; }
 
-        public CommonMessage()
-        {
-        }
+        public CommonMessage() { }
 
         public CommonMessage(Msg msg, PermissionLevel level = PermissionLevel.Public)
         {
@@ -79,44 +74,6 @@ namespace Daylily.Bot.Models
                     GroupId = groupMsg.GroupId.ToString();
                     break;
             }
-        }
-
-        public CommonMessage(PrivateMsg privateMsg, PermissionLevel level = PermissionLevel.Public)
-        {
-            Message = privateMsg.Message;
-            UserId = privateMsg.UserId.ToString();
-            MessageId = privateMsg.MessageId;
-
-            MessageType = MessageType.Private;
-            PermissionLevel = level;
-
-            Private = privateMsg;
-        }
-
-        public CommonMessage(DiscussMsg discussMsg, PermissionLevel level = PermissionLevel.Public)
-        {
-            Message = discussMsg.Message;
-            UserId = discussMsg.UserId.ToString();
-            DiscussId = discussMsg.DiscussId.ToString();
-            MessageId = discussMsg.MessageId;
-
-            MessageType = MessageType.Discuss;
-            PermissionLevel = level;
-
-            Discuss = discussMsg;
-        }
-
-        public CommonMessage(GroupMsg groupMsg, PermissionLevel level = PermissionLevel.Public)
-        {
-            Message = groupMsg.Message;
-            UserId = groupMsg.UserId.ToString();
-            GroupId = groupMsg.GroupId.ToString();
-            MessageId = groupMsg.MessageId;
-
-            MessageType = MessageType.Group;
-            PermissionLevel = level;
-
-            Group = groupMsg;
         }
 
         public object Clone()

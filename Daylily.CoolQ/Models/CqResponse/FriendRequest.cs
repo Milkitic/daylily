@@ -21,7 +21,7 @@ namespace Daylily.CoolQ.Models.CqResponse
         /// 验证信息。
         /// </summary>
         [JsonProperty(PropertyName = "comment")]
-        public long Comment { get; set; }
+        public string Comment { get; set; }
         /// <summary>
         /// 请求 flag，在调用处理请求的 API 时需要传入。
         /// </summary>
