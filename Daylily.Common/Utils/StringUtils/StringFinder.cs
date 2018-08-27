@@ -24,6 +24,11 @@ namespace Daylily.Common.Utils.StringUtils
             return EndIndex;
         }
 
+        public void FindToLast()
+        {
+            StartIndex = EndIndex;
+            EndIndex = _originStr.Length - 1;
+        }
         public string Cut()
         {
             return _originStr.Substring(StartIndex, Length);

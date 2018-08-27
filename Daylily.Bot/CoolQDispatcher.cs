@@ -22,6 +22,8 @@ namespace Daylily.Bot
 {
     public class CoolQDispatcher : IDispatcher
     {
+        public static event SessionReceivedEventHandler SessionReceived;
+
         public static SessionList SessionInfo { get; } = new SessionList();
 
         public static ConcurrentDictionary<long, List<string>> GroupDisabledList { get; set; } =
@@ -128,6 +130,7 @@ namespace Daylily.Bot
 
         private static void HandleMessage(CommonMessage cm)
         {
+            bool cmdFlag = false;
             long groupId = Convert.ToInt64(cm.GroupId);
             long userId = Convert.ToInt64(cm.UserId);
             long discussId = Convert.ToInt64(cm.DiscussId);
@@ -167,6 +170,7 @@ namespace Daylily.Bot
                     {
                         cm.FullCommand = cm.Message.Substring(6, cm.Message.Length - 6);
                         cm.PermissionLevel = PermissionLevel.Root;
+                        cmdFlag = true;
                         HandleMessageCmd(cm);
                     }
 
@@ -182,6 +186,7 @@ namespace Daylily.Bot
                     {
                         cm.FullCommand = message.Substring(6, message.Length - 6);
                         cm.PermissionLevel = PermissionLevel.Admin;
+                        cmdFlag = true;
                         HandleMessageCmd(cm);
                     }
                 }
@@ -194,9 +199,15 @@ namespace Daylily.Bot
                         cm.PermissionLevel = PermissionLevel.Root;
 
                     cm.FullCommand = message.Substring(1, message.Length - 1);
+                    cmdFlag = true;
                     HandleMessageCmd(cm);
                 }
             }
+            if (!cmdFlag)
+                SessionReceived?.Invoke(null, new SessionReceivedEventArgs
+                {
+                    MessageObj = cm
+                });
 
             HandleMesasgeApp(cm);
             Thread.Sleep(Rnd.Next(MinTime, MaxTime));
@@ -224,6 +235,12 @@ namespace Daylily.Bot
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
             ca.Analyze(fullCmd, cm);
             CommonMessageResponse replyObj = null;
+
+            SessionReceived?.Invoke(null, new SessionReceivedEventArgs
+            {
+                MessageObj = cm
+            });
+
             if (!PluginManager.CommandMap.ContainsKey(cm.Command)) return;
 
             Type t = PluginManager.CommandMap[cm.Command];

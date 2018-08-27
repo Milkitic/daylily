@@ -50,11 +50,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 {
                     MessageObj = messageObj,
                     LastSentIsMe = false,
-#if DEBUG
-                    CdTime = 15,
-#else
                     CdTime = 60 * 60 * 24,
-#endif
                 });
 
                 _groupDic[groupId].Task = Task.Run(() => DelayScan(groupId));
