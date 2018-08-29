@@ -50,12 +50,12 @@ namespace Daylily.Plugin.Osu.Command.Cabbage
                             new Identity(cabbageId, MessageType.Private)));
                     try
                     {
-                        CommonMessage result = session.GetMessageAsync().Result;
+                        CommonMessage result = session.GetMessage();
                         session.Timeout = 600;
                         CommonMessage result2 = null;
                         try
                         {
-                            result2 = session.GetMessageAsync().Result;
+                            result2 = session.GetMessage();
                         }
                         catch
                         {
@@ -99,21 +99,14 @@ namespace Daylily.Plugin.Osu.Command.Cabbage
                         string msg = e.Message;
                         CoolQDispatcher.SendMessage(new CommonMessageResponse(msg, messageObj, true));
                     }
+                    catch (TimeoutException)
+                    {
+                        string msg = "查询失败，白菜没有搭理人家..";
+                        CoolQDispatcher.SendMessage(new CommonMessageResponse(msg, messageObj, true));
+                    }
                     catch (Exception ex)
                     {
                         string msg = "查询失败，未知错误。";
-                        if (ex.InnerException != null)
-                        {
-                            switch (ex.InnerException)
-                            {
-                                case TimeoutException _:
-                                    msg = "查询失败，白菜没有搭理人家..";
-                                    break;
-                                default:
-                                    msg = "查询失败，未知错误。";
-                                    break;
-                            }
-                        }
                         Logger.Exception(ex);
                         CoolQDispatcher.SendMessage(new CommonMessageResponse(msg, messageObj, true));
                     } // catch

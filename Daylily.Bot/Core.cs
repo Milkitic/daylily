@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Daylily.Bot.Interface;
+using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Models.CqResponse;
 
@@ -14,6 +16,18 @@ namespace Daylily.Bot
 
         private static IJsonDeserializer _jsonDeserializer;
         private static IDispatcher _dispatcher;
+
+        static Core()
+        {
+            Type t = typeof(Domain);
+            var infos = t.GetProperties();
+            foreach (var item in infos)
+            {
+                string path = item.GetValue(null, null) as string;
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+            }
+        }
 
         public static void InitCore(IJsonDeserializer jsonDeserializer, IDispatcher dispatcher)
         {

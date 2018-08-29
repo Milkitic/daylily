@@ -14,8 +14,12 @@ namespace Daylily.Bot
         private static readonly ConcurrentDictionary<SessionId, Queue<CommonMessage>> Sessions =
             new ConcurrentDictionary<SessionId, Queue<CommonMessage>>();
 
-        public int Timeout { get; set; }
-        private readonly SessionId _sessionId;
+        private static readonly object LockObj = new object();
+
+        public int Timeout { private get; set; }
+
+        public SessionId SessionId => _sessionId;
+        private SessionId _sessionId;
 
         public Session(int timeout, Identity identity, params string[] userId) : this(timeout, identity,
             userId.Select(long.Parse).ToArray())
@@ -26,36 +30,57 @@ namespace Daylily.Bot
             Timeout = timeout;
             _sessionId = new SessionId(identity, userId);
 
-            if (!Sessions.Keys.Contains(_sessionId))
-                Sessions.TryAdd(_sessionId, new Queue<CommonMessage>());
-            else
-                throw new NotSupportedException("尚不支持同时操作。");
+            if (Sessions.Keys.Any(item => item.Contains(SessionId)))
+                throw new NotSupportedException("不支持同时两个会话操作。");
 
+            Sessions.TryAdd(SessionId, new Queue<CommonMessage>());
             CoolQDispatcher.SessionReceived += Session_Received;
         }
 
-        private void Session_Received(object sender, SessionReceivedEventArgs args)
+        public void AddMember(params long[] userId)
         {
-            if (_sessionId.Identity.Equals(args.MessageObj.Identity) &&
-                _sessionId.UserId.Contains(long.Parse(args.MessageObj.UserId)))
-                Sessions[_sessionId].Enqueue(args.MessageObj);
+            lock (LockObj)
+            {
+                Sessions.TryRemove(SessionId, out var msgQueue);
+                _sessionId.UserId = SessionId.UserId.Concat(userId).ToArray();
+                Sessions.TryAdd(SessionId, msgQueue);
+            }
         }
 
+        public void AddMember(params string[] userId)
+        {
+            AddMember(userId.Select(long.Parse).ToArray());
+        }
 
-        public async Task<CommonMessage> GetMessageAsync()
+        public CommonMessage GetMessage()
+        {
+            TryGetMessage(out var messageObj);
+            return messageObj ?? throw new TimeoutException($"Timed out. ({Timeout})");
+        }
+
+        public bool TryGetMessage(out CommonMessage messageObj)
         {
             CancellationTokenSource cts = new CancellationTokenSource(Timeout);
-            return await Task.Run(() =>
+            messageObj = Task.Run(() =>
             {
-                while (Sessions[_sessionId].Count < 1)
+                int count;
+                lock (LockObj)
+                    count = Sessions[SessionId].Count;
+
+                while (count < 1)
                 {
                     if (cts.Token.IsCancellationRequested)
-                        throw new TimeoutException($"Timed out. ({Timeout})");
+                        return null;
                     Thread.Sleep(500);
+                    lock (LockObj)
+                        count = Sessions[SessionId].Count;
                 }
 
-                return Sessions[_sessionId].Dequeue();
-            }, cts.Token);
+                lock (LockObj)
+                    return Sessions[SessionId].Dequeue();
+            }, cts.Token).Result;
+
+            return messageObj != null;
         }
 
         public void Dispose()
@@ -67,20 +92,51 @@ namespace Daylily.Bot
             finally
             {
                 CoolQDispatcher.SessionReceived -= Session_Received;
-                Sessions.TryRemove(_sessionId, out _);
+                Sessions.TryRemove(SessionId, out _);
             }
+        }
+
+        private void Session_Received(object sender, SessionReceivedEventArgs args)
+        {
+            lock (LockObj)
+                if (SessionId.Identity == args.MessageObj.Identity &&
+                    SessionId.UserId.Contains(long.Parse(args.MessageObj.UserId)))
+                    Sessions[SessionId].Enqueue(args.MessageObj);
         }
     }
 
     public struct SessionId
     {
         public Identity Identity { get; }
-        public long[] UserId { get; }
+
+        public long[] UserId { get; set; }
 
         public SessionId(Identity identity, long[] userId)
         {
             Identity = identity;
             UserId = userId;
         }
+
+        /// <summary>
+        /// 单用户会话
+        /// </summary>
+        public bool Equals(SessionId obj) => Identity == obj.Identity && UserId.SequenceEqual(obj.UserId);
+
+        /// <summary>
+        /// 要求更为严格的会话
+        /// </summary>
+        public bool Contains(SessionId obj)
+        {
+            long[] userId = UserId;
+            return Identity.Equals(obj.Identity) && obj.UserId.Any(k => userId.Contains(k));
+        }
+
+        public override bool Equals(object obj) => !(obj is null) && obj is SessionId id && Equals(id);
+
+        public override int GetHashCode() => HashCode.Combine(Identity, UserId);
+
+        public static bool operator !=(SessionId s1, SessionId s2) => !s1.Equals(s2);
+
+        public static bool operator ==(SessionId s1, SessionId s2) => s1.Equals(s2);
     }
 }

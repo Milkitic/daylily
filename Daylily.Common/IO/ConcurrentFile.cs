@@ -133,6 +133,21 @@ namespace Daylily.Common.IO
             }
         }
 
+        public static void Delete(string path)
+        {
+            path = GetFormattedPath(path);
+            var cacheLock = LockDic.GetOrAdd(path, new ReaderWriterLockSlim());
+            cacheLock.EnterWriteLock();
+            try
+            {
+                SysIO.File.Delete(path);
+            }
+            finally
+            {
+                cacheLock.ExitWriteLock();
+            }
+        }
+
 #if NETCOREAPP && NETCOREAPP2_1
         public static async Task<byte[]> ReadAllBytesAsync(string path)
         {

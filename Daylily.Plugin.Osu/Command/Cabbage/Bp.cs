@@ -19,7 +19,7 @@ namespace Daylily.Plugin.Osu.Command.Cabbage
     [Author("yf_extension")]
     [Version(0, 0, 1, PluginVersion.Alpha)]
     [Help("详情问白菜。")]
-    [Command("bpme", "mybp", "bp")]
+    [Command("bpme", "bp")]
     public class Bp : CommandPlugin
     {
 

@@ -30,8 +30,11 @@ namespace Daylily.CoolQ.Models
         {
             // TODO 这里还没考虑 file=base64:// 的情况
             const string file = "file=";
-            var index = source.IndexOf(file, StringComparison.Ordinal) + file.Length;
-            var index2 = source.IndexOf(",", index, StringComparison.Ordinal);
+            var index = source.IndexOf(file, StringComparison.InvariantCulture) + file.Length;
+            var index2 = source.IndexOf("]", index, StringComparison.InvariantCulture);
+            var index3 = source.IndexOf(",", index, StringComparison.InvariantCulture);
+            if ((index3 < index2) & (index3 != -1))
+                index2 = index3;
             string fileName = source.Substring(index, index2 - index) + ".cqimg";
             string fullPath = Path.Combine(CqCode.CqRoot, "data", "image", fileName);
             FileInfo = new FileInfo(fullPath);

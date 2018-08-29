@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -7,6 +10,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
 
 namespace Daylily.Common.Utils.RequestUtils
@@ -126,6 +130,26 @@ namespace Daylily.Common.Utils.RequestUtils
             }
 
             return null;
+        }
+
+        public static Image GetImageFromUrl(string url)
+        {
+            Uri uri = new Uri(Uri.EscapeUriString(url));
+            byte[] urlContents = Http.GetByteArrayAsync(uri).Result;
+            string fullName = Path.Combine(Domain.CacheImageDirectory, Guid.NewGuid().ToString());
+            FileStream fs = new FileStream(fullName, FileMode.OpenOrCreate);
+            fs.Write(urlContents, 0, urlContents.Length);
+            return Image.FromStream(fs);
+        }
+
+        public static string SaveImageFromUrl(string url, ImageFormat format, string filename = null, string savePath = null)
+        {
+            var img = GetImageFromUrl(url);
+            string imgPath = Domain.CacheImageDirectory;
+            filename = filename ?? Guid.NewGuid().ToString();
+            savePath = savePath ?? imgPath;
+            img.Save(Path.Combine(savePath, filename), format);
+            return new FileInfo(Path.Combine(savePath, filename)).FullName;
         }
 
         private static string HttpPost(string url, HttpContent content)

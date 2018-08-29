@@ -15,11 +15,12 @@ using Daylily.Common.Utils.StringUtils;
 using Daylily.CoolQ;
 using System.IO;
 using System.Drawing.Imaging;
+using Daylily.Common.IO;
 
 namespace Daylily.Plugin.Core.Command.Helps
 {
     [Name("黄花菜帮助")]
-    [Author("yf_extension", "sdaf")]
+    [Author("yf_extension")]
     [Version(0, 1, 2, PluginVersion.Beta)]
     [Help("查看此帮助信息。")]
     [Command("help")]
@@ -38,9 +39,61 @@ namespace Daylily.Plugin.Core.Command.Helps
         public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             _cm = messageObj;
-            return CommandName == null
-                ? new CommonMessageResponse(ShowList(), _cm)
-                : new CommonMessageResponse(ShowDetail().Trim('\n').Trim('\r'), _cm);
+            if (CommandName == null)
+            {
+                using (Session session = new Session(20000, _cm.Identity, _cm.UserId))
+                {
+                    Dictionary<string, string> dic = new Dictionary<string, string>
+                    {
+                        {"你是谁", "你是谁。"},
+                        {"基础帮助", "查看通用的基础使用方法。"},
+                        {"查列表", "查看所有可用的命令和应用列表。"}
+                    };
+
+                    string[] sb = dic.Select(k => $"【{k.Key}】 {k.Value}").ToArray();
+
+                    string msg = "被召唤啦！请选择你要查看的帮助类型：\r\n" + string.Join("\r\n", sb);
+                    SendMessage(new CommonMessageResponse(msg, _cm));
+                    try
+                    {
+                        var a = dic.Select(k => k.Key).ToArray();
+
+                        CommonMessage cm;
+                        do
+                        {
+                            cm = session.GetMessage();
+                            if (cm.Message.Contains("你是谁"))
+                                return new CommonMessageResponse(
+                                    new FileImage(Path.Combine(StaticDir, "help.jpg")).ToString(), _cm);
+                            if (cm.Message.Contains("基础帮助"))
+                            {
+                                if (cm.MessageType == MessageType.Private)
+                                    return new CommonMessageResponse(
+                                        ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt")), _cm);
+                                SendMessage(new CommonMessageResponse("已发送至私聊，请查看。", _cm, true));
+                                SendMessage(new CommonMessageResponse(
+                                    ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt")),
+                                    new Identity(_cm.UserId, MessageType.Private)));
+                                return null;
+                            }
+
+                            if (cm.Message.Contains("查列表"))
+                                return new CommonMessageResponse(ShowList(), _cm);
+                            SendMessage(new CommonMessageResponse("请回复大括号内的文字。", _cm));
+
+                        } while (!a.Contains(cm.Message));
+
+                        return new CommonMessageResponse(ShowList(), _cm);
+                    }
+                    catch (TimeoutException)
+                    {
+                        return new CommonMessageResponse("没人鸟我，走了.jpg", _cm);
+                    }
+
+                }
+            }
+            else
+                return new CommonMessageResponse(ShowDetail().Trim('\n').Trim('\r'), _cm);
         }
 
         private static readonly string HelpDir = Path.Combine(Domain.CurrentDirectory, "resource", "help");
@@ -61,7 +114,7 @@ namespace Daylily.Plugin.Core.Command.Helps
                   .Take(5)
                   .Where(k => k.Value > 50)
                   .Select(k => "/" + k.Key).ToArray();
-            return new FileImage(DrawList(dictionary, hot)).ToString();
+            return new FileImage(DrawList(dictionary, hot), 90).ToString();
         }
 
         private string ShowDetail()
