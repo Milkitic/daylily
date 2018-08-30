@@ -27,7 +27,7 @@ namespace Daylily.Common.Utils.StringUtils
         public void FindToLast()
         {
             StartIndex = EndIndex;
-            EndIndex = _originStr.Length - 1;
+            EndIndex = _originStr.Length;
         }
         public string Cut()
         {

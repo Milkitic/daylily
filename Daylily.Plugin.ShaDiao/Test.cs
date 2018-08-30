@@ -15,7 +15,7 @@ using Daylily.CoolQ;
 
 namespace Daylily.Plugin.ShaDiao
 {
-    public class Test : ApplicationPlugin
+    class Test : ApplicationPlugin
     {
         public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {

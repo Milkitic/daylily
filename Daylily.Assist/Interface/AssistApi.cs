@@ -27,10 +27,9 @@ namespace Daylily.Assist.Interface
             return str;
         }
 
-        public static Bitmap GetStrokeString(string str)
+        public static Image GetStrokeString(string str)
         {
-            var response = WebRequestUtil.GetImageFromUrl(ApiUrl + "/api/strokestring?str=" + str, Guid.NewGuid().ToString(), "png");
-            return new Bitmap(response);
+            return HttpClientUtil.GetImageFromUrl(ApiUrl + "/api/strokestring?str=" + str);
         }
     }
 }

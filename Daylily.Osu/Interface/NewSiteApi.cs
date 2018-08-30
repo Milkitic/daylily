@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Bleatingsheep.Osu.ApiV2b;
 using Bleatingsheep.Osu.ApiV2b.Models;
 
@@ -8,6 +9,47 @@ namespace Daylily.Osu.Interface
 {
     public static class NewSiteApi
     {
+        public static async Task<Beatmapsets> GetBeatmapsetsBySidAsync(string sId)
+        {
+            OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
+            try
+            {
+                Beatmapsets set = await client.GetBeatmapsetBySIdAsync(sId);
+                return set;
+            }
+            catch (NetworkFailException e)
+            {
+                if (e.InnerException.Message.Contains("404"))
+                    return null;
+                throw;
+            }
+        }
+        public static async Task<Beatmapsets> GetBeatmapsetsByBidAsync(string bId)
+        {
+            OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
+            try
+            {
+                Beatmapsets set = await client.GetBeatmapsetByBIdAsync(bId);
+                return set;
+            }
+            catch (NetworkFailException e)
+            {
+                if (e.InnerException.Message.Contains("404"))
+                    return null;
+                throw;
+            }
+        }
+
+        public static Beatmapsets GetBeatmapsetsBySid(string sId)
+        {
+            OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
+            return client.GetBeatmapsetBySIdAsync(sId).Result;
+        }
+        public static Beatmapsets GetBeatmapsetsByBid(string bId)
+        {
+            OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
+            return client.GetBeatmapsetByBIdAsync(bId).Result;
+        }
         public static Beatmapsets[] SearchBeatmaps(string keyword, BeatmapsetsSearchOptions options = null)
         {
             OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);

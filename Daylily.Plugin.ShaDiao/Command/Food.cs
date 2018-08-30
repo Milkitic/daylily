@@ -299,13 +299,13 @@ namespace Daylily.Plugin.ShaDiao.Command
             FileInfo fi = new FileInfo(path);
             string mark = fi.Directory.Name;
             Bitmap bmp = new Bitmap(path);
-            Bitmap bmpStr = AssistApi.GetStrokeString(mark);
+            Image imgStr = AssistApi.GetStrokeString(mark);
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                float width = 5, height = 5 * (bmpStr.Height / (float)bmpStr.Width);
-                g.DrawImage(bmpStr, 2, 2, bmpStr.Width + width, bmpStr.Height + height);
+                float width = 5, height = 5 * (imgStr.Height / (float)imgStr.Width);
+                g.DrawImage(imgStr, 2, 2, imgStr.Width + width, imgStr.Height + height);
                 return bmp;
             }
         }

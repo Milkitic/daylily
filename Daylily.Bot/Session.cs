@@ -14,7 +14,7 @@ namespace Daylily.Bot
         private static readonly ConcurrentDictionary<SessionId, Queue<CommonMessage>> Sessions =
             new ConcurrentDictionary<SessionId, Queue<CommonMessage>>();
 
-        private static readonly object LockObj = new object();
+        private static readonly object LockObj = new object(); // static: for safe
 
         public int Timeout { private get; set; }
 

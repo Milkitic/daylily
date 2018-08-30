@@ -24,13 +24,17 @@ namespace Daylily.Plugin.ShaDiao.Application
     public class PandaDetector : ApplicationPlugin
     {
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
-
+#if DEBUG
         private static int _totalCount;
+#endif
 
         public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             if (messageObj.MessageType == MessageType.Private)
                 return null;
+            var imgList = CqCode.GetImageInfo(messageObj.Message);
+            if (imgList == null) return null;
+
             string groupId = messageObj.GroupId ?? messageObj.DiscussId;
 
             if (!GroupDic.ContainsKey(groupId))
@@ -39,10 +43,6 @@ namespace Daylily.Plugin.ShaDiao.Application
                     GroupId = groupId,
                     MessageObj = messageObj
                 });
-            //GroupDic[groupId].GroupType = messageObj.GroupId == null ? MessageType.Discuss : MessageType.Group;
-
-            var imgList = CqCode.GetImageInfo(messageObj.Message);
-            if (imgList == null) return null;
 
             foreach (var item in imgList)
             {
@@ -54,19 +54,21 @@ namespace Daylily.Plugin.ShaDiao.Application
                 }
                 else
                 {
-                    WebRequestUtil.GetImageFromUrl(item.Url, item.Md5, item.Extension);
-                    GroupDic[groupId].PathQueue.Enqueue(Path.Combine(Domain.CurrentDirectory, "images",
-                        item.Md5 + item.Extension));
+                    string path = HttpClientUtil.SaveImageFromUrl(item.Url, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    GroupDic[groupId].PathQueue.Enqueue(path);
                 }
-
+#if DEBUG
                 _totalCount++;
+#endif
             }
 
             if (GroupDic[groupId].Task == null || GroupDic[groupId].Task.IsCompleted ||
                 GroupDic[groupId].Task.IsCanceled)
             {
                 GroupDic[groupId].Task = Task.Run(() => RunDetector(GroupDic[groupId]));
+#if DEBUG
                 Logger.Info("[" + groupId + "] (熊猫) 共 " + _totalCount);
+#endif
             }
 
             return null;
@@ -92,14 +94,17 @@ namespace Daylily.Plugin.ShaDiao.Application
                 }
                 finally
                 {
+#if DEBUG
                     _totalCount--;
                     Logger.Info("(熊猫) " + (_totalCount + 1) + " ---> " + _totalCount);
+#endif
                 }
             }
 
             if (gSets.PandaCount < 1) return;
+#if DEBUG
             Logger.Info("[" + gSets.GroupId + "] (熊猫) " + gSets.PandaCount);
-
+#endif
             for (int i = 0; i < gSets.PandaCount; i++)
             {
                 var perc = Rnd.NextDouble();
@@ -141,8 +146,6 @@ namespace Daylily.Plugin.ShaDiao.Application
                     FileName = "python3",
                     Arguments =
                         $"{Path.Combine(Domain.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
-                    //FileName = "ping",
-                    //Arguments = "127.0.0.1",
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     WindowStyle = ProcessWindowStyle.Hidden,
@@ -153,13 +156,17 @@ namespace Daylily.Plugin.ShaDiao.Application
 
             gSets.Process.OutputDataReceived += (sender, e) =>
             {
+#if DEBUG
                 Logger.Debug(e.Data);
+#endif
                 if (e.Data != null && e.Data.Trim() != "") gSets.ReceivedString.Add(e.Data);
             };
 
             gSets.Process.ErrorDataReceived += (sender, e) =>
             {
-                Logger.Debug(e.Data);
+#if DEBUG
+                Logger.Warn(e.Data);
+#endif
                 if (e.Data != null && e.Data.Trim() != "") gSets.ReceivedString.Add(e.Data);
             };
 
@@ -173,7 +180,6 @@ namespace Daylily.Plugin.ShaDiao.Application
         {
             if (gSets.ReceivedString.Count == 0) return;
             string line = gSets.ReceivedString[gSets.ReceivedString.Count - 1];
-            //Logger.WarningLine(line);
 
             var tmp = line.Split(' ');
             if (int.TryParse(tmp[0], out int status))

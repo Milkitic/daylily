@@ -271,7 +271,7 @@ namespace Daylily.Bot
                 }
                 catch (Exception ex)
                 {
-                    Exception(ex, fullCmd, plugin?.Name ?? "Unknown plugin");
+                    Exception(ex.InnerException ?? ex, fullCmd, plugin?.Name ?? "Unknown plugin");
                 }
 
                 if (replyObj == null) return;

@@ -144,12 +144,24 @@ namespace Daylily.Common.Utils.RequestUtils
 
         public static string SaveImageFromUrl(string url, ImageFormat format, string filename = null, string savePath = null)
         {
+            Contract.Requires<NotSupportedException>(Equals(format, ImageFormat.Jpeg) ||
+                                                     Equals(format, ImageFormat.Png) ||
+                                                     Equals(format, ImageFormat.Gif));
             var img = GetImageFromUrl(url);
             string imgPath = Domain.CacheImageDirectory;
             filename = filename ?? Guid.NewGuid().ToString();
             savePath = savePath ?? imgPath;
-            img.Save(Path.Combine(savePath, filename), format);
-            return new FileInfo(Path.Combine(savePath, filename)).FullName;
+
+            string ext = "";
+            if (Equals(format, ImageFormat.Jpeg))
+                ext = ".jpg";
+            else if (Equals(format, ImageFormat.Png))
+                ext = ".png";
+            else if (Equals(format, ImageFormat.Gif))
+                ext = ".gif";
+            string fullname = Path.Combine(savePath, filename + ext);
+            img.Save(fullname, format);
+            return new FileInfo(fullname).FullName;
         }
 
         private static string HttpPost(string url, HttpContent content)
