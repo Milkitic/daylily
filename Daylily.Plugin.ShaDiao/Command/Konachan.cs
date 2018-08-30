@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Daylily.Bot.Attributes;
+using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.CoolQ;
 
 namespace Daylily.Plugin.ShaDiao.Command
 {
+    [Name("konachan")]
+    [Author("bleatingsheep")]
+    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Help("设了")]
     [Command("konachan")]
     public class Konachan : CommandPlugin
     {
