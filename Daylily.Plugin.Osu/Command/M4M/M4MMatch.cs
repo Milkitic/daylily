@@ -194,10 +194,13 @@ namespace Daylily.Plugin.Osu.Command.M4M
                                 new Identity(oInfo.Qq, MessageType.Private)));
                             return new CommonMessageResponse("已发送完成请求。", _cm);
                         }
-                        // Finish
+                        // Cancel
                         else if (Cancel)
                         {
                             var oInfo = _matchList.FirstOrDefault(q => q.Qq == _myInfo.TargetQq);
+
+                            if (oInfo.MatchTime == null)
+                                oInfo.MatchTime = DateTime.Now; // 临时补救
 
                             if (DateTime.Now - oInfo.MatchTime < new TimeSpan(7, 0, 0, 0))
                                 return new CommonMessageResponse("取消失败，仅匹配持续一周以上才可取消。", _cm);
@@ -238,7 +241,7 @@ namespace Daylily.Plugin.Osu.Command.M4M
                                    $"    备注：{oInfo.Mark}\r\n" +
                                    $"当你摸图完成时，请使用 \"/m4m -完成\" 提醒对方审阅。\r\n" +
                                    $"当对方向你提出审阅请求后，请使用 \"/m4m -确认\" 完成审阅。\r\n" +
-                                   $"若对方超过一周扔未审核你的摸，可使用  \"/m4m -取消\" 强制取消，且下次不会匹配到此图。";
+                                   $"若匹配持续超过一周，可使用  \"/m4m -取消\" 强制取消，且下次不会匹配到此图。";
                             return new CommonMessageResponse(info, _cm);
                         }
 
@@ -352,8 +355,8 @@ namespace Daylily.Plugin.Osu.Command.M4M
                                     nick2 = data2.Nickname;
                                 }
 
-                                _myInfo.TargetQq = matchInfo.Qq;
-                                matchInfo.TargetQq = _myInfo.Qq;
+                                _myInfo.Start(matchInfo.Qq);
+                                matchInfo.Start(_myInfo.Qq);
                                 SaveMatchList(); //apply
 
                                 const string tip = "当你选择完成摸图时，对方会收到一条消息确认你的mod，反之亦然。" +
@@ -687,10 +690,10 @@ namespace Daylily.Plugin.Osu.Command.M4M
             Mark = null;
         }
 
-        public void Start(string qq)
+        public void Start(string targetQq)
         {
-            Contract.Requires<InvalidOperationException>(TargetQq != qq);
-            TargetQq = qq;
+            Contract.Requires<InvalidOperationException>(TargetQq != targetQq);
+            TargetQq = targetQq;
             LastNoticeTime = null;
             LastConfirmedTime = null;
             MatchTime = DateTime.Now;
