@@ -136,7 +136,7 @@ namespace Daylily.Common.Utils.RequestUtils
         {
             Uri uri = new Uri(Uri.EscapeUriString(url));
             byte[] urlContents = Http.GetByteArrayAsync(uri).Result;
-            string fullName = Path.Combine(Domain.CacheImageDirectory, Guid.NewGuid().ToString());
+            string fullName = Path.Combine(Domain.CacheImagePath, Guid.NewGuid().ToString());
             FileStream fs = new FileStream(fullName, FileMode.OpenOrCreate);
             fs.Write(urlContents, 0, urlContents.Length);
             return Image.FromStream(fs);
@@ -148,7 +148,7 @@ namespace Daylily.Common.Utils.RequestUtils
                                                      Equals(format, ImageFormat.Png) ||
                                                      Equals(format, ImageFormat.Gif));
             var img = GetImageFromUrl(url);
-            string imgPath = Domain.CacheImageDirectory;
+            string imgPath = Domain.CacheImagePath;
             filename = filename ?? Guid.NewGuid().ToString();
             savePath = savePath ?? imgPath;
 

@@ -20,7 +20,7 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Help("群内长时间无人发言发一张相关的熊猫。")]
     public class GroupQuiet : ApplicationPlugin
     {
-        private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
+        private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
         private static ConcurrentDictionary<string, GroupSettings> _groupDic;
 
         public GroupQuiet()

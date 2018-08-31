@@ -17,7 +17,7 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Help("当自己被at时回击at对方")]
     public class CheckCqAt : ApplicationPlugin
     {
-        private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
+        private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
 
         public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {

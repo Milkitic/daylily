@@ -54,9 +54,8 @@ namespace Daylily.Plugin.ShaDiao.Application
                 }
                 else
                 {
-                    WebRequestUtil.GetImageFromUrl(item.Url, item.Md5, item.Extension);
-                    GroupDic[groupId].PathQueue.Enqueue(Path.Combine(Domain.CurrentDirectory, "images",
-                        item.Md5 + item.Extension));
+                    var root = WebRequestUtil.GetImageFromUrl(item.Url, item.Md5, item.Extension);
+                    GroupDic[groupId].PathQueue.Enqueue(root);
                 }
 
                 _totalCount++;
@@ -125,7 +124,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 {
                     FileName = "python3",
                     Arguments =
-                        $"{Path.Combine(Domain.CurrentDirectory, "dragon", "dragon-detection.py")} \"{fullPath}\"",
+                        $"{Path.Combine(Domain.PluginPath, "dragon", "dragon-detection.py")} \"{fullPath}\"",
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     WindowStyle = ProcessWindowStyle.Hidden,

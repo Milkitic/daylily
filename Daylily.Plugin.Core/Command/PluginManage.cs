@@ -116,18 +116,18 @@ namespace Daylily.Plugin.Core.Command
                 case MessageType.Private:
                     {
                         list = CoolQDispatcher.PrivateDisabledList[long.Parse(_cm.UserId)];
-                        listCmd = Bot.PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
-                        listApp = Bot.PluginManager.ApplicationList;
-                        listSvc = Bot.PluginManager.ServiceList;
+                        listCmd = PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
+                        listApp = PluginManager.ApplicationList;
+                        listSvc = PluginManager.ServiceList;
                     }
 
                     break;
                 case MessageType.Discuss:
                     {
                         list = CoolQDispatcher.DiscussDisabledList[long.Parse(_cm.DiscussId)];
-                        listCmd = Bot.PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
-                        listApp = Bot.PluginManager.ApplicationList;
-                        listSvc = Bot.PluginManager.ServiceList;
+                        listCmd = PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
+                        listApp = PluginManager.ApplicationList;
+                        listSvc = PluginManager.ServiceList;
                     }
 
                     break;
@@ -135,9 +135,9 @@ namespace Daylily.Plugin.Core.Command
                 default:
                     {
                         list = CoolQDispatcher.GroupDisabledList[long.Parse(_cm.GroupId)];
-                        listCmd = Bot.PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
-                        listApp = Bot.PluginManager.ApplicationList;
-                        listSvc = Bot.PluginManager.ServiceList;
+                        listCmd = PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
+                        listApp = PluginManager.ApplicationList;
+                        listSvc = PluginManager.ServiceList;
                     }
 
                     break;
@@ -188,11 +188,14 @@ namespace Daylily.Plugin.Core.Command
         private void LoadDisableSettings()
         {
             CoolQDispatcher.GroupDisabledList =
-                LoadSettings<ConcurrentDictionary<long, List<string>>>("GroupDisabledList");
+                LoadSettings<ConcurrentDictionary<long, List<string>>>("GroupDisabledList") ??
+                new ConcurrentDictionary<long, List<string>>();
             CoolQDispatcher.DiscussDisabledList =
-                LoadSettings<ConcurrentDictionary<long, List<string>>>("DiscussDisabledList");
+                LoadSettings<ConcurrentDictionary<long, List<string>>>("DiscussDisabledList") ??
+                new ConcurrentDictionary<long, List<string>>();
             CoolQDispatcher.PrivateDisabledList =
-                LoadSettings<ConcurrentDictionary<long, List<string>>>("PrivateDisabledList");
+                LoadSettings<ConcurrentDictionary<long, List<string>>>("PrivateDisabledList") ??
+                new ConcurrentDictionary<long, List<string>>();
         }
 
         private CommonMessageResponse ShowPluginList()
@@ -200,7 +203,7 @@ namespace Daylily.Plugin.Core.Command
             var dicPlugin = new Dictionary<string, List<PluginInfo>>();
             const string cmdKey = "命令插件", svcKey = "服务插件", appKey = "应用插件";
 
-            var commandMap = Bot.PluginManager.CommandMapStatic.Values.Distinct();
+            var commandMap = PluginManager.CommandMapStatic.Values.Distinct();
 
             dicPlugin.Add(cmdKey, new List<PluginInfo>());
             dicPlugin.Add(svcKey, new List<PluginInfo>());
@@ -209,10 +212,10 @@ namespace Daylily.Plugin.Core.Command
             foreach (var item in commandMap)
                 dicPlugin[cmdKey].Add(new PluginInfo(item.Name, item.GetType().Name));
 
-            foreach (var item in Bot.PluginManager.ServiceList)
+            foreach (var item in PluginManager.ServiceList)
                 dicPlugin[svcKey].Add(new PluginInfo(item.Name, item.GetType().Name));
 
-            foreach (var item in Bot.PluginManager.ApplicationList)
+            foreach (var item in PluginManager.ApplicationList)
                 dicPlugin[appKey].Add(new PluginInfo(item.Name, item.GetType().Name));
 
             var sb = new StringBuilder();

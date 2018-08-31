@@ -8,7 +8,7 @@ namespace Daylily.Common.IO
 {
     public static class Settings
     {
-        private static readonly string SettingsPath = Path.Combine(Domain.CurrentDirectory, "BotSettings");
+        private static readonly string SettingsPath = Domain.SettingsPath;
         public static T LoadSettings<T>(string fileName)
         {
             try

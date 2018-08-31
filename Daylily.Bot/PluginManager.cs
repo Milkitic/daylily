@@ -28,8 +28,8 @@ namespace Daylily.Bot
         public static ConcurrentDictionary<string, Assembly> AssemblyList { get; } =
             new ConcurrentDictionary<string, Assembly>();
 
-        private static readonly string PluginDir = Path.Combine(Domain.CurrentDirectory, "plugins");
-        private static readonly string ExtendedDir = Path.Combine(PluginDir, "extended");
+        private static readonly string PluginDir = Domain.PluginPath;
+        private static readonly string ExtendedDir = Domain.ExtendedPluginPath;
 
         public static void LoadAllPlugins(string[] args)
         {

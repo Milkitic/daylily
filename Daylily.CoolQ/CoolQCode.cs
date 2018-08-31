@@ -346,7 +346,7 @@ namespace Daylily.CoolQ
         /// <param name="imageQualityValue">为欲保存的图片质量，参数为1至100的整数（JPEG格式）</param>
         public FileImage(Image img, int imageQualityValue)
         {
-            string path = System.IO.Path.Combine(Domain.CurrentDirectory, "images", Guid.NewGuid() + ".png");
+            string path = System.IO.Path.Combine(Domain.CacheImagePath, Guid.NewGuid() + ".jpg");
 
             EncoderParameters encoderParameters = new EncoderParameters();
             EncoderParameter encoderParameter = new EncoderParameter(Encoder.Quality, imageQualityValue);
@@ -367,7 +367,7 @@ namespace Daylily.CoolQ
         /// <param name="format">为欲保存的图片格式</param>
         public FileImage(Image img, ImageFormat format)
         {
-            string path = System.IO.Path.Combine(Domain.CurrentDirectory, "images", Guid.NewGuid() + ".png");
+            string path = System.IO.Path.Combine(Domain.CacheImagePath, Guid.NewGuid() + ".png");
             img.Save(path, format);
             Path = Escape(path);
         }
@@ -378,7 +378,7 @@ namespace Daylily.CoolQ
         /// <param name="img">为欲发送的图片</param>
         public FileImage(Image img)
         {
-            string path = System.IO.Path.Combine(Domain.CurrentDirectory, "images", Guid.NewGuid() + ".png");
+            string path = System.IO.Path.Combine(Domain.CacheImagePath, Guid.NewGuid() + ".png");
             img.Save(path, ImageFormat.Png);
             Path = Escape(path);
         }

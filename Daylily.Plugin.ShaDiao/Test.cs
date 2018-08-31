@@ -128,7 +128,7 @@ namespace Daylily.Plugin.ShaDiao
             // 0 means to animate forever.
             loopPropertyItem.Value = BitConverter.GetBytes((ushort)0);
 
-            string fileName = Path.Combine(Domain.CacheImageDirectory, Guid.NewGuid() + ".gif");
+            string fileName = Path.Combine(Domain.CacheImagePath, Guid.NewGuid() + ".gif");
             using (var stream = new FileStream(fileName, FileMode.Create))
             {
                 bool first = true;

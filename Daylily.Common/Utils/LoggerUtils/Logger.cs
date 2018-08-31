@@ -11,7 +11,7 @@ namespace Daylily.Common.Utils.LoggerUtils
         internal static readonly LogLists LogLists = new LogLists();
         public static void Raw(string str)
         {
-            System.Console.ResetColor();
+            Console.ResetColor();
             //string source = WriteSource();
             string info = WriteInfo(str);
             LogLists.RawList.Add(null, info);
@@ -22,7 +22,7 @@ namespace Daylily.Common.Utils.LoggerUtils
         /// <param name="msg">消息</param>
         public static void Origin(string msg)
         {
-            System.Console.ResetColor();
+            Console.ResetColor();
             string source = WriteSource();
             string info = WriteInfo(msg);
             LogLists.OriginList.Add(source, info);
@@ -30,7 +30,7 @@ namespace Daylily.Common.Utils.LoggerUtils
 
         public static void Message(string msg)
         {
-            System.Console.ResetColor();
+            Console.ResetColor();
             string source = WriteSource(true);
             string info = WriteInfo(msg);
             LogLists.MessageList.Add(source, info);
@@ -38,60 +38,60 @@ namespace Daylily.Common.Utils.LoggerUtils
 
         public static void Debug(string msg)
         {
-            System.Console.BackgroundColor = ConsoleColor.Cyan;
-            System.Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.Black;
             string source = WriteSource();
 
-            System.Console.ForegroundColor = ConsoleColor.Cyan;
-            System.Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.BackgroundColor = ConsoleColor.Black;
             string info = WriteInfo(msg);
             LogLists.DebugList.Add(source, info);
         }
 
         public static void Info(string msg)
         {
-            System.Console.BackgroundColor = ConsoleColor.Blue;
-            System.Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.White;
             string source = WriteSource();
 
-            System.Console.ForegroundColor = ConsoleColor.Blue;
-            System.Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.BackgroundColor = ConsoleColor.Black;
             string info = WriteInfo(msg);
             LogLists.InfoList.Add(source, info);
         }
 
         public static void Warn(string msg)
         {
-            System.Console.BackgroundColor = ConsoleColor.Yellow;
-            System.Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.Yellow;
+            Console.ForegroundColor = ConsoleColor.Black;
             string source = WriteSource();
 
-            System.Console.ForegroundColor = ConsoleColor.Yellow;
-            System.Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.BackgroundColor = ConsoleColor.Black;
             string info = WriteInfo(msg);
             LogLists.WarnList.Add(source, info);
         }
 
         public static void Error(string msg)
         {
-            System.Console.BackgroundColor = ConsoleColor.Red;
-            System.Console.ForegroundColor = ConsoleColor.Gray;
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Gray;
             string source = WriteSource();
 
-            System.Console.ForegroundColor = ConsoleColor.Red;
-            System.Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.BackgroundColor = ConsoleColor.Black;
             string info = WriteInfo(msg);
             LogLists.ErrorList.Add(source, info);
         }
 
         public static void Success(string msg)
         {
-            System.Console.BackgroundColor = ConsoleColor.DarkGreen;
-            System.Console.ForegroundColor = ConsoleColor.Gray;
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            Console.ForegroundColor = ConsoleColor.Gray;
             string source = WriteSource();
 
-            System.Console.ForegroundColor = ConsoleColor.DarkGreen;
-            System.Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.BackgroundColor = ConsoleColor.Black;
             string info = WriteInfo(msg);
             LogLists.SuccessList.Add(source, info);
         }
@@ -118,19 +118,24 @@ namespace Daylily.Common.Utils.LoggerUtils
         private static string WriteSource(bool ignoreMethod = false, int offset = 0)
         {
             string methodName = "";
+            string time = "";
             if (!ignoreMethod)
             {
                 StackTrace st = new StackTrace(true);
                 MethodBase mb = st.GetFrame(2 + offset).GetMethod();
                 methodName = $"[{mb.DeclaringType.Namespace}.{mb.DeclaringType.Name}.{mb.Name}]";
             }
+            else
+            {
+                var n = DateTime.Now;
+                time = $"[{n.Hour:00}:{n.Minute:00}:{n.Second:00}]";
+            }
 
-            var n = DateTime.Now;
-            string writeStr = $"[{n.Hour:00}:{n.Minute:00}:{n.Second:00}]{methodName}";
-            System.Console.Write(writeStr);
-            System.Console.ResetColor();
-            System.Console.WriteLine();
-            System.Console.Write("  ");
+            string writeStr = time + methodName;
+            Console.Write(writeStr);
+            Console.ResetColor();
+            //Console.WriteLine();
+            Console.Write(" ");
             return writeStr;
         }
 
@@ -138,8 +143,8 @@ namespace Daylily.Common.Utils.LoggerUtils
         {
             if (msg != null && msg.Length >= 2000) msg = msg.Remove(2000) + ".....(Too long)";
             string writeStr = msg;
-            System.Console.WriteLine(writeStr);
-            System.Console.ResetColor();
+            Console.WriteLine(writeStr);
+            Console.ResetColor();
             return writeStr;
         }
 
@@ -147,7 +152,7 @@ namespace Daylily.Common.Utils.LoggerUtils
         {
             contents = string.Format("-----{0} {1}{2}{3}{4}", DateTime.Now.ToLongDateString(),
                 DateTime.Now.ToLongTimeString(), Environment.NewLine, contents, Environment.NewLine + Environment.NewLine);
-            string logPath = Path.Combine(Domain.CurrentDirectory, "log");
+            var logPath = Domain.LogPath;
             if (!Directory.Exists(logPath))
                 Directory.CreateDirectory(logPath);
             ConcurrentFile.AppendAllText(Path.Combine(logPath, "exception.log"), contents);
@@ -155,12 +160,12 @@ namespace Daylily.Common.Utils.LoggerUtils
 
         private static void Error(string msg, int offset)
         {
-            System.Console.BackgroundColor = ConsoleColor.Red;
-            System.Console.ForegroundColor = ConsoleColor.Gray;
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Gray;
             string source = WriteSource(offset: offset);
 
-            System.Console.ForegroundColor = ConsoleColor.Red;
-            System.Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.BackgroundColor = ConsoleColor.Black;
             string info = WriteInfo(msg);
             LogLists.ErrorList.Add(source, info);
         }

@@ -112,7 +112,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                     continue;
                 Logger.Success("[" + gSets.GroupId + "] (熊猫) 几率: " + perc);
 
-                string resPath = Path.Combine(Domain.CurrentDirectory, "dragon", "resource_panda_send");
+                string resPath = Path.Combine(Domain.PluginPath, "dragon", "resource_panda_send");
                 FileInfo[] files = new DirectoryInfo(resPath).GetFiles();
                 var cqImg = new FileImage(files[Rnd.Next(files.Length)].FullName).ToString();
                 SendMessage(new CommonMessageResponse(cqImg, gSets.MessageObj));
@@ -145,7 +145,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 {
                     FileName = "python3",
                     Arguments =
-                        $"{Path.Combine(Domain.CurrentDirectory, "dragon", "panda-detection.py")} \"{fullPath}\"",
+                        $"{Path.Combine(Domain.PluginPath, "dragon", "panda-detection.py")} \"{fullPath}\"",
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     WindowStyle = ProcessWindowStyle.Hidden,

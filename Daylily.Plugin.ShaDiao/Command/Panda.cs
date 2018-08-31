@@ -16,7 +16,7 @@ namespace Daylily.Plugin.ShaDiao.Command
     [Name("熊猫生成器")]
     [Author("yf_extension")]
     [Version(0, 1, 4, PluginVersion.Beta)]
-    [Help("生成可自定义文字的熊猫图（表情与文字随机）。")]
+    [Help("生成可自定义文字的熊猫图（表情可选）。")]
     [Command("panda")]
     public class Panda : CommandPlugin
     {
@@ -32,8 +32,8 @@ namespace Daylily.Plugin.ShaDiao.Command
         [Help("生成所有熊猫图，发送者按需截取。")]
         public bool UseAll { get; set; }
 
-        private static readonly string PandaDir = Path.Combine(Domain.CurrentDirectory, "panda");
-        private static readonly string FontDir = Path.Combine(Domain.CurrentDirectory, "font");
+        private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
+        private static readonly string FontDir = Path.Combine(Domain.ResourcePath, "font");
 
         private readonly string[] _blankReply = { "傻逼，动动脑子写参数", "你倒是说话啊" };
         private readonly string[] _invalidReply = { "你话太多了，沙雕" };

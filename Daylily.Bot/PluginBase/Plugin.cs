@@ -71,7 +71,7 @@ namespace Daylily.Bot.PluginBase
 
         protected PermissionLevel CurrentLevel { get; set; }
 
-        protected string SettingsPath => Path.Combine(_pluginDir, GetType().Name);
+        protected string SettingsPath => Path.Combine(Domain.PluginPath, GetType().Name);
 
         protected static readonly Random Rnd = new Random();
 
@@ -138,11 +138,5 @@ namespace Daylily.Bot.PluginBase
         }
 
         #endregion protected members
-
-        #region private members
-
-        private readonly string _pluginDir = Path.Combine(Domain.CurrentDirectory, "plugins");
-
-        #endregion private members
     }
 }

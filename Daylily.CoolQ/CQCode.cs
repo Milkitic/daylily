@@ -14,7 +14,7 @@ namespace Daylily.CoolQ
         /// <summary>
         /// CoolQ所在的目录，由appsettings.json配置，若CQ与本程序在同一平台，此属性有效，可节省网络请求。
         /// </summary>
-        public static string CqRoot { get; set; }
+        public static string CqPath { get; set; }
 
         #region Decode
 

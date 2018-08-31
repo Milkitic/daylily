@@ -19,7 +19,7 @@ namespace Daylily.Web.Controllers
 
             if (ip == "74.120.171.198")
             {
-                Logger.Warn("来自白菜的请求：" + ip);
+                //Logger.Warn("来自白菜的请求：" + ip);
                 return Json(new { });
             }
 
@@ -29,9 +29,6 @@ namespace Daylily.Web.Controllers
                 Core.ReceiveJson(json);
             }
 
-            //object ret = Core.JsonDeserializer.HandleReportJson(json);
-
-            //return Json(ret ?? new { });
             return Json(new { });
         }
     }

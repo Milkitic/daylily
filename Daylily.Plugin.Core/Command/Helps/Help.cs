@@ -96,7 +96,7 @@ namespace Daylily.Plugin.Core.Command.Helps
                 return new CommonMessageResponse(ShowDetail().Trim('\n').Trim('\r'), _cm);
         }
 
-        private static readonly string HelpDir = Path.Combine(Domain.CurrentDirectory, "resource", "help");
+        private static readonly string HelpDir = Path.Combine(Domain.ResourcePath, "help");
         private static readonly string StaticDir = Path.Combine(HelpDir, "static");
 
         private string ShowList()

@@ -36,7 +36,7 @@ namespace Daylily.CoolQ.Models
             if ((index3 < index2) & (index3 != -1))
                 index2 = index3;
             string fileName = source.Substring(index, index2 - index) + ".cqimg";
-            string fullPath = Path.Combine(CqCode.CqRoot, "data", "image", fileName);
+            string fullPath = Path.Combine(CqCode.CqPath, "data", "image", fileName);
             FileInfo = new FileInfo(fullPath);
 
             string[] settings;
