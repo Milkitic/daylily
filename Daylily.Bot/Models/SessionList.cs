@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
@@ -12,38 +13,53 @@ namespace Daylily.Bot.Models
 {
     public class SessionList
     {
-        private readonly ConcurrentDictionary<Identity, SessionSettings> _dicSession =
+        public ConcurrentDictionary<Identity, SessionSettings> Sessions { get; } =
             new ConcurrentDictionary<Identity, SessionSettings>();
 
         public SessionSettings this[Identity identity] =>
-            _dicSession.ContainsKey(identity) ? _dicSession[identity] : null;
+            Sessions.ContainsKey(identity) ? Sessions[identity] : null;
 
-        public void Add(Msg message)
+        public void AddOrUpdateGroup(GroupInfoV2 info)
+        {
+            var item = new Identity(info.GroupId, MessageType.Group);
+            if (Sessions.Keys.Contains(item))
+                Sessions[item].Update(info);
+            Sessions.TryAdd(item, new SessionSettings(info));
+        }
+
+        public void RemoveGroup(string groupId)
+        {
+            var item = new Identity(groupId, MessageType.Group);
+            if (Sessions.Keys.Contains(item))
+                Sessions.TryRemove(item, out _);
+        }
+
+        public void TryAdd(Msg message)
         {
             switch (message)
             {
                 case PrivateMsg privateMsg:
                     {
                         var item = new Identity(privateMsg.UserId, MessageType.Private);
-                        if (_dicSession.Keys.Contains(item))
+                        if (Sessions.Keys.Contains(item))
                             return;
-                        _dicSession.TryAdd(item, new SessionSettings(privateMsg));
+                        Sessions.TryAdd(item, new SessionSettings(privateMsg));
                         break;
                     }
                 case DiscussMsg discussMsg:
                     {
                         var item = new Identity(discussMsg.DiscussId, MessageType.Discuss);
-                        if (_dicSession.Keys.Contains(item))
+                        if (Sessions.Keys.Contains(item))
                             return;
-                        _dicSession.TryAdd(item, new SessionSettings(discussMsg));
+                        Sessions.TryAdd(item, new SessionSettings(discussMsg));
                         break;
                     }
                 case GroupMsg groupMsg:
                     {
                         var item = new Identity(groupMsg.GroupId, MessageType.Group);
-                        if (_dicSession.Keys.Contains(item))
+                        if (Sessions.Keys.Contains(item))
                             return;
-                        _dicSession.TryAdd(item, new SessionSettings(groupMsg));
+                        Sessions.TryAdd(item, new SessionSettings(groupMsg));
                         break;
                     }
             }
@@ -51,13 +67,13 @@ namespace Daylily.Bot.Models
 
         public class SessionSettings
         {
-            public string Id { get; }
-            public string Name { get; }
-            public MessageType MessageType { get; }
-            public int MsgLimit { get; }
+            public string Id { get; private set; }
+            public string Name { get; private set; }
+            public MessageType MessageType { get; private set; }
+            public int MsgLimit { get; private set; }
             public bool LockMsg { get; set; } = false; // 用于判断是否超出消息阀值
-            public GroupInfoV2 GroupInfo { get; }
-            public StrangerInfo PrivateInfo { get; }
+            public GroupInfoV2 GroupInfo { get; private set; }
+            public StrangerInfo PrivateInfo { get; private set; }
             public ConcurrentQueue<object> MsgQueue { get; } = new ConcurrentQueue<object>();
 
             public SessionSettings(Msg message)
@@ -85,6 +101,20 @@ namespace Daylily.Bot.Models
                         Name = GroupInfo.GroupName;
                         break;
                 }
+            }
+
+            public SessionSettings(GroupInfoV2 info)
+            {
+                Update(info);
+            }
+
+            public void Update(GroupInfoV2 info)
+            {
+                Id = info.GroupId.ToString();
+                Name = info.GroupName;
+                MessageType = MessageType.Group;
+                MsgLimit = 10;
+                GroupInfo = info;
             }
 
             private readonly object _taskLock = new object();

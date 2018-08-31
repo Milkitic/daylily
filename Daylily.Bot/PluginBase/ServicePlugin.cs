@@ -5,6 +5,6 @@ namespace Daylily.Bot.PluginBase
     public abstract class ServicePlugin : Plugin
     {
         public sealed override PluginType PluginType => PluginType.Service;
-        public abstract void RunTask(string[] args);
+        public abstract void Execute(string[] args);
     }
 }

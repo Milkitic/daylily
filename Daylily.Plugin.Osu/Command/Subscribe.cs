@@ -55,7 +55,7 @@ namespace Daylily.Plugin.Osu.Command
 #if DEBUG
                 const int sleepTime = 5000;
 #else
-                const int sleepTime = 1000 * 60 * 60;
+                const int sleepTime = 1000 * 60 * 20;
 #endif
 
                 while (true)

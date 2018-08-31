@@ -227,7 +227,7 @@ namespace Daylily.Bot
                 case PluginType.Service:
                 default:
                     ServicePlugin svcPlugin = (ServicePlugin)plugin;
-                    Task.Run(() => { svcPlugin.RunTask(args); });
+                    svcPlugin.Execute(args);
                     ServiceList.Add(svcPlugin);
                     Logger.Origin($"服务 \"{svcPlugin.Name}\" 已经加载完毕。");
                     break;

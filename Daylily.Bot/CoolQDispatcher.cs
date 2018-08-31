@@ -15,7 +15,6 @@ using Daylily.Common.IO;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Models.CqResponse;
-using Daylily.CoolQ.Models.CqResponse.Api.Abstract;
 using static Daylily.Common.Utils.LoggerUtils.Logger;
 
 namespace Daylily.Bot
@@ -25,7 +24,7 @@ namespace Daylily.Bot
         public static event SessionReceivedEventHandler SessionReceived;
 
         public static SessionList SessionInfo { get; } = new SessionList();
-
+        public static List<GroupMemberGroupInfo> GroupMemberGroupInfo { get; set; } = new List<GroupMemberGroupInfo>();
         public static ConcurrentDictionary<long, List<string>> GroupDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
         public static ConcurrentDictionary<long, List<string>> DiscussDisabledList { get; set; } =
@@ -70,7 +69,7 @@ namespace Daylily.Bot
                     throw new ArgumentException();
             }
 
-            SessionInfo.Add(originObj);
+            SessionInfo.TryAdd(originObj);
             if (SessionInfo[id].MsgQueue.Count < SessionInfo[id].MsgLimit) // 允许缓存n条，再多的丢弃
             {
                 SessionInfo[id].MsgQueue.Enqueue(originObj);
@@ -149,11 +148,12 @@ namespace Daylily.Bot
             }
             else
             {
-                var userInfo = CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId); // 有点费时间
+                var userInfo = SessionInfo[cm.Identity].GroupInfo.Members.FirstOrDefault(i => i.UserId == userId) ??
+                               CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
                 group = SessionInfo[cm.Identity].Name;
-                sender = string.IsNullOrEmpty(userInfo.Data.Card)
-                    ? userInfo.Data.Nickname
-                    : userInfo.Data.Card;
+                sender = string.IsNullOrEmpty(userInfo.Card)
+                    ? userInfo.Nickname
+                    : userInfo.Card;
             }
 
             Message($"({group}) {sender}:\r\n  {CqCode.DecodeToString(message)}");

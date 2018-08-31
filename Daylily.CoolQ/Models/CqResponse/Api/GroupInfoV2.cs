@@ -19,6 +19,8 @@ namespace Daylily.CoolQ.Models.CqResponse.Api
         public string Introduction { get; set; }
         [JsonProperty(PropertyName = "admins")]
         public List<GroupInfoV2Admins> Admins { get; set; }
+        [JsonProperty(PropertyName = "_members")]
+        public List<GroupMember> Members { get; set; }
     }
 
     public class GroupInfoV2Admins
