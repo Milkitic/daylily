@@ -42,7 +42,7 @@ namespace Daylily.Plugin.ShaDiao.Command
         private const FontStyle FontStyle = System.Drawing.FontStyle.Regular;
         private const int SmFontSize = 13, NmFontSize = 16, LgFontSize = 24;
 
-        private const string MagicalWord = "                              .";
+        private const string MagicalWord = "                              ."; // 解决底层跨平台傻吊bug的方案
 
         public override void Initialize(string[] args)
         {
@@ -158,7 +158,7 @@ namespace Daylily.Plugin.ShaDiao.Command
         /// <returns></returns>
         private static bool IsLengthValid(string word, string pandaPath, FontFamily font)
         {
-            string[] lines = word.Split(',', '，');
+            string[] lines = word.Split('\n');
             int renderSize = GetFontSize(word);
 
             using (Bitmap bmp = new Bitmap(MaxW, MaxH))

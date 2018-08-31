@@ -199,7 +199,7 @@ namespace Daylily.Plugin.Osu.Command.M4M
                         {
                             var oInfo = _matchList.FirstOrDefault(q => q.Qq == _myInfo.TargetQq);
 
-                            if (DateTime.Now - oInfo.MatchTime < new TimeSpan(0, 0, 1, 0))
+                            if (DateTime.Now - oInfo.MatchTime < new TimeSpan(7, 0, 0, 0))
                                 return new CommonMessageResponse("取消失败，仅匹配持续一周以上才可取消。", _cm);
 
                             string nick = CqApi.GetStrangerInfo(oInfo.Qq).Data?.Nickname ?? "玩家";
