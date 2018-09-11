@@ -44,7 +44,7 @@ namespace Daylily.Plugin.ShaDiao.Command.Moebooru
             IEnumerable<Post> result = await GetTAsync<Post[]>(Popular);
 
             if (!EnableR18)
-                result = result.Where(p => p.rating == SafeRating);
+                result = result?.Where(p => p.rating == SafeRating);
             return result;
         }
 

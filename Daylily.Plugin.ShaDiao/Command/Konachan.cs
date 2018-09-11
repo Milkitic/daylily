@@ -10,12 +10,12 @@ namespace Daylily.Plugin.ShaDiao.Command
 {
     [Name("konachan")]
     [Author("bleatingsheep")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Version(0, 0, 2, PluginVersion.Stable)]
     [Help("设了")]
     [Command("konachan")]
     public class Konachan : CommandPlugin
     {
-        private const string Website = "https://konachan.net";
+        protected virtual string Website => "https://konachan.net";
 
         public override void Initialize(string[] args)
         {
