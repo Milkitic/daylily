@@ -1,33 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Daylily.Bot;
+﻿using Daylily.Bot;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Models.CqResponse.Api;
 using Daylily.CoolQ.Models.CqResponse.Api.Abstract;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Daylily.Plugin.Core.Service
 {
-    public class SessionService : ServicePlugin
+    class SessionService : ServicePlugin
     {
         public override void Execute(string[] args)
         {
             int i = 0;
-            UpdateGroupList(i);
+            //UpdateGroupList(i);
 
             Task.Run(() =>
             {
                 while (true)
                 {
-                    i++;
                     Thread.Sleep(1000 * 60 * 30);
                     UpdateGroupList(i);
-
+                    i++;
                 }
             });
         }

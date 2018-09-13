@@ -148,9 +148,9 @@ namespace Daylily.Bot
             }
             else
             {
-                var userInfo = SessionInfo[cm.Identity].GroupInfo.Members.FirstOrDefault(i => i.UserId == userId) ??
+                var userInfo = SessionInfo[cm.Identity]?.GroupInfo?.Members?.FirstOrDefault(i => i.UserId == userId) ??
                                CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
-                group = SessionInfo[cm.Identity].Name;
+                group = SessionInfo?[cm.Identity]?.Name;
                 sender = string.IsNullOrEmpty(userInfo.Card)
                     ? userInfo.Nickname
                     : userInfo.Card;
