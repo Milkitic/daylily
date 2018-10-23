@@ -3,7 +3,6 @@ using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Models.CqResponse;
-using Daylily.Plugin.ShaDiao.Command;
 
 namespace Daylily.Plugin.ShaDiao
 {

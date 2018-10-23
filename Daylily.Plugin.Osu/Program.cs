@@ -6,7 +6,6 @@ using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Models.CqResponse;
 using Daylily.Osu.Interface;
-using Daylily.Plugin.Osu.Command;
 
 namespace Daylily.Plugin.Osu
 {

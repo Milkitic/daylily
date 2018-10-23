@@ -11,7 +11,7 @@ using Daylily.Bot.PluginBase;
 using Daylily.Common;
 using Daylily.CoolQ;
 
-namespace Daylily.Plugin.ShaDiao.Command
+namespace Daylily.Plugin.ShaDiao
 {
     [Name("熊猫生成器")]
     [Author("yf_extension")]

@@ -13,7 +13,7 @@ using Daylily.CoolQ.Models;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 
-namespace Daylily.Plugin.Osu.Command.Cabbage
+namespace Daylily.Plugin.Osu.Cabbage
 {
     [Name("Cost查询（白菜）")]
     [Author("yf_extension")]

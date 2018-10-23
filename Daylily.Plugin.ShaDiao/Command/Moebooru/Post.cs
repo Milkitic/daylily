@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 #pragma warning disable IDE1006 // 命名样式
-namespace Daylily.Plugin.ShaDiao.Command.Moebooru
+namespace Daylily.Plugin.ShaDiao
 {
     public class Post
     {

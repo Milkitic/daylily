@@ -13,7 +13,7 @@ using Daylily.Osu.Database.Model;
 using Daylily.Osu.Models;
 using Newtonsoft.Json;
 
-namespace Daylily.Plugin.Osu.Command
+namespace Daylily.Plugin.Osu
 {
     [Name("随机挖坑")]
     [Author("yf_extension")]
@@ -36,8 +36,8 @@ namespace Daylily.Plugin.Osu.Command
 
             var id = userInfo[0].UserId.ToString();
 
-            List<Beatmapsets> totalList = new List<Beatmapsets>();
-            Beatmapsets[] tmpArray;
+            List<Beatmapset> totalList = new List<Beatmapset>();
+            Beatmapset[] tmpArray;
             int page = 0;
             const int count = 10;
             do
@@ -47,7 +47,7 @@ namespace Daylily.Plugin.Osu.Command
                         "https://osu.ppy.sh/users/" + id + "/beatmapsets/graveyard?offset=" + page + "&limit=" + count));
                 Logger.Debug("GET JSON");
 
-                tmpArray = JsonConvert.DeserializeObject<Beatmapsets[]>(json);
+                tmpArray = JsonConvert.DeserializeObject<Beatmapset[]>(json);
                 totalList.AddRange(tmpArray);
                 page += count;
 
@@ -60,7 +60,7 @@ namespace Daylily.Plugin.Osu.Command
             }
 
             Random rnd = new Random();
-            Beatmapsets beatmap = totalList[rnd.Next(totalList.Count)];
+            Beatmapset beatmap = totalList[rnd.Next(totalList.Count)];
             var cqMusic = new CustomMusic("https://osu.ppy.sh/s/" + beatmap.Id, $"https://b.ppy.sh/preview/{beatmap.Id}.mp3", beatmap.Title,
                 $"{beatmap.Artist}\r\n({beatmap.FavouriteCount} fav)", $"https://b.ppy.sh/thumb/{beatmap.Id}l.jpg");
 

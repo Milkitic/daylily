@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Daylily.Bot.Attributes;
+﻿using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.CoolQ;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
-namespace Daylily.Plugin.ShaDiao.Command
+namespace Daylily.Plugin.ShaDiao
 {
     [Name("konachan")]
     [Author("bleatingsheep")]
@@ -44,10 +44,10 @@ namespace Daylily.Plugin.ShaDiao.Command
                 return new CommonMessageResponse("并不支持这个网站哦~~", messageObj);
             }
 
-            var k = new Moebooru.Api(domain);
+            var k = new Api(domain);
             var result = k.PopularRecentAsync().Result;
             var post = result?.FirstOrDefault();
-            return post == null ? null : new CommonMessageResponse(new FileImage(post.JpegUrl, true).ToString(), messageObj);
+            return post == null ? null : new CommonMessageResponse(new FileImage(new Uri(post.JpegUrl)).ToString(), messageObj);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Daylily.Plugin.ShaDiao.Command.Moebooru
+namespace Daylily.Plugin.ShaDiao
 {
     class Api
     {

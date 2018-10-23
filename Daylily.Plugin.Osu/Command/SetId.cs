@@ -6,7 +6,7 @@ using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
 
-namespace Daylily.Plugin.Osu.Command
+namespace Daylily.Plugin.Osu
 {
     [Name("绑定id")]
     [Author("yf_extension")]

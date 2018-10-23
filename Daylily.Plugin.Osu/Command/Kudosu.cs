@@ -16,7 +16,7 @@ using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
 using Newtonsoft.Json;
 
-namespace Daylily.Plugin.Osu.Command
+namespace Daylily.Plugin.Osu
 {
     [Name("Modding查询")]
     [Author("yf_extension")]

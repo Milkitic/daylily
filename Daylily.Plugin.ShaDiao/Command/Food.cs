@@ -15,7 +15,7 @@ using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
 
-namespace Daylily.Plugin.ShaDiao.Command
+namespace Daylily.Plugin.ShaDiao
 {
     [Name("深夜美食")]
     [Author("yf_extension")]

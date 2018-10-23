@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Bleatingsheep.Osu.ApiV2b.Models;
 
-namespace Daylily.Plugin.Osu.Command.M4M
+namespace Daylily.Plugin.Osu
 {
     public static class M4MTool
     {

@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Text;
 
-namespace Daylily.Plugin.Core.Command.Helps
+namespace Daylily.Plugin.Core
 {
     public static class GraphicExtension
     {

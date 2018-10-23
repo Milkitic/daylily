@@ -15,10 +15,9 @@ using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
-using Daylily.Plugin.Osu.Application;
 using Newtonsoft.Json;
 
-namespace Daylily.Plugin.Osu.Command.M4M
+namespace Daylily.Plugin.Osu
 {
     [Name("m4m匹配")]
     [Author("yf_extension")]
@@ -452,7 +451,7 @@ namespace Daylily.Plugin.Osu.Command.M4M
             Thread.Sleep(2000);
             SendMessage(new CommonMessageResponse("请将你的地图链接发送给我 :)", _cm));
             _session.Timeout = 120000;
-            Beatmapsets set = null;
+            Beatmapset set = null;
             bool valid = false;
             int retry = 0;
             while (!valid && retry < 3)
@@ -555,7 +554,7 @@ namespace Daylily.Plugin.Osu.Command.M4M
             return retryCount < 3;
         }
 
-        private Beatmapsets GetBeatmapset(string url)
+        private Beatmapset GetBeatmapset(string url)
         {
             StringFinder sf = new StringFinder(url);
             if (url.Length > 8 && sf.FindNext("ppy.sh/b/", false) != 8)
@@ -655,7 +654,7 @@ namespace Daylily.Plugin.Osu.Command.M4M
             }
         }
 
-        public void UpdateSet(Beatmapsets set, string mark)
+        public void UpdateSet(Beatmapset set, string mark)
         {
             Contract.Requires<InvalidOperationException>(TargetQq == null);
             LightSets tmpSets = new LightSets

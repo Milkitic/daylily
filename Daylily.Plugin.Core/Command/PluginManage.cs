@@ -8,7 +8,7 @@ using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 
-namespace Daylily.Plugin.Core.Command
+namespace Daylily.Plugin.Core
 {
     [Name("插件管理")]
     [Author("yf_extension")]

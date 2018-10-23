@@ -78,7 +78,7 @@ namespace Daylily.CoolQ
                         sb.Append(InnerCompose(code));
                     return sb.ToString();
                 default:
-                    throw new NotImplementedException();
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -113,7 +113,7 @@ namespace Daylily.CoolQ
         protected CoolQCode Share(string linkUrl, string title, string content, string imageUrl) =>
             new Share(linkUrl, title, content, imageUrl);
         protected CoolQCode Image(string path) => new FileImage(path);
-        protected CoolQCode UImage(string url) => new FileImage(url, true);
+        protected CoolQCode UImage(string url) => new FileImage(new Uri(url));
         protected CoolQCode Image(Image image) => new FileImage(image);
         protected CoolQCode Record(string path) => new FileImage(path);
         protected CoolQCode URecord(string url) => new FileRecord(url, true);

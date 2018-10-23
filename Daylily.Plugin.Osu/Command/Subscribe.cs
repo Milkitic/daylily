@@ -15,7 +15,7 @@ using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
 using Daylily.Osu.Interface;
 
-namespace Daylily.Plugin.Osu.Command
+namespace Daylily.Plugin.Osu
 {
     [Name("Mapper订阅")]
     [Author("yf_extension")]
@@ -78,7 +78,7 @@ namespace Daylily.Plugin.Osu.Command
                                     continue;
                                 }
 
-                                Beatmapsets[] mapsets = GetBeatmapsets(mapper);
+                                Beatmapset[] mapsets = GetBeatmapsets(mapper);
 
                                 if (mapsets.Length <= 0) continue;
                                 foreach (var item in mapsets)
@@ -230,7 +230,7 @@ namespace Daylily.Plugin.Osu.Command
             return _userDic.Where(k => k.Value.Contains(new UserInfo(subId, messageType))).Select(k => k.Key);
         }
 
-        private void PushNews(IEnumerable<UserInfo> userList, IReadOnlyList<Beatmapsets> mapsets)
+        private void PushNews(IEnumerable<UserInfo> userList, IReadOnlyList<Beatmapset> mapsets)
         {
             foreach (var userTuple in userList) // 遍历发给订阅此mapper的用户
             {
@@ -292,11 +292,11 @@ namespace Daylily.Plugin.Osu.Command
             }
         }
 
-        private Beatmapsets[] GetBeatmapsets(string mapperId)
+        private Beatmapset[] GetBeatmapsets(string mapperId)
         {
             var mapperName = OldSiteApi.GetUsernameByUid(mapperId);
 
-            Beatmapsets[] mapsets = NewSiteApi
+            Beatmapset[] mapsets = NewSiteApi
                 .SearchAllBeatmaps(mapperName,
                     new BeatmapsetsSearchOptions { Status = BeatmapStatus.Qualified })
                 .Union(NewSiteApi.SearchAllBeatmaps(mapperName,
@@ -314,10 +314,10 @@ namespace Daylily.Plugin.Osu.Command
             // 先从今日已提醒中筛选此mapper的图
             IEnumerable<SlimBeatmapsets> todayThisCreatorSet = _todaySets.Where(k => k.Creator == mapperName);
             // 从总集合中筛选未提醒过的图
-            IEnumerable<Beatmapsets> mapsetsNormal = mapsets.Where(set =>
+            IEnumerable<Beatmapset> mapsetsNormal = mapsets.Where(set =>
                 !todayThisCreatorSet.Select(todaySet => todaySet.Id).Contains(set.Id));
             // 从总集合中筛选提醒过，但是状态改变了的图
-            Beatmapsets[] mapsetsStatusChanged = mapsets.Where(set =>
+            Beatmapset[] mapsetsStatusChanged = mapsets.Where(set =>
             {
                 var matchedSet = todayThisCreatorSet.FirstOrDefault(k => k.Id == set.Id);
                 return matchedSet != null && matchedSet.Status != set.Status;

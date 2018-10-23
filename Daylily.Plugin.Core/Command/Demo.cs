@@ -8,7 +8,7 @@ using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Models.CqResponse;
 
-namespace Daylily.Plugin.Core.Command
+namespace Daylily.Plugin.Core
 {
     // 激活插件的命令，支持多字符串
     [Command("demo1")]

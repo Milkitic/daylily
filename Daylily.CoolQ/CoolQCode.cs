@@ -335,9 +335,8 @@ namespace Daylily.CoolQ
         /// <summary>
         /// 发送网络中的图片。
         /// </summary>
-        /// <param name="url">网络地址</param>
-        /// <param name="useUrl">为了重载区别</param>
-        public FileImage(string url, bool useUrl) : base(url) { }
+        /// <param name="uri">网络地址</param>
+        public FileImage(Uri uri) : base(uri.AbsolutePath) { }
 
         /// <summary>
         /// 发送Image对象中的图片。

@@ -9,12 +9,12 @@ namespace Daylily.Osu.Interface
 {
     public static class NewSiteApi
     {
-        public static async Task<Beatmapsets> GetBeatmapsetsBySidAsync(string sId)
+        public static async Task<Beatmapset> GetBeatmapsetsBySidAsync(string sId)
         {
             OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
             try
             {
-                Beatmapsets set = await client.GetBeatmapsetBySIdAsync(sId);
+                Beatmapset set = await client.GetBeatmapsetBySIdAsync(sId);
                 return set;
             }
             catch (NetworkFailException e)
@@ -24,12 +24,12 @@ namespace Daylily.Osu.Interface
                 throw;
             }
         }
-        public static async Task<Beatmapsets> GetBeatmapsetsByBidAsync(string bId)
+        public static async Task<Beatmapset> GetBeatmapsetsByBidAsync(string bId)
         {
             OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
             try
             {
-                Beatmapsets set = await client.GetBeatmapsetByBIdAsync(bId);
+                Beatmapset set = await client.GetBeatmapsetByBIdAsync(bId);
                 return set;
             }
             catch (NetworkFailException e)
@@ -40,27 +40,27 @@ namespace Daylily.Osu.Interface
             }
         }
 
-        public static Beatmapsets GetBeatmapsetsBySid(string sId)
+        public static Beatmapset GetBeatmapsetsBySid(string sId)
         {
             OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
             return client.GetBeatmapsetBySIdAsync(sId).Result;
         }
-        public static Beatmapsets GetBeatmapsetsByBid(string bId)
+        public static Beatmapset GetBeatmapsetsByBid(string bId)
         {
             OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
             return client.GetBeatmapsetByBIdAsync(bId).Result;
         }
-        public static Beatmapsets[] SearchBeatmaps(string keyword, BeatmapsetsSearchOptions options = null)
+        public static Beatmapset[] SearchBeatmaps(string keyword, BeatmapsetsSearchOptions options = null)
         {
             OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
-            return client.SearchBeatMapAsync(keyword, options).Result;
+            return client.SearchBeatMapAsync(keyword, options).Result.Beatmapsets;
         }
 
-        public static Beatmapsets[] SearchAllBeatmaps(string keyword, BeatmapsetsSearchOptions options = null)
+        public static Beatmapset[] SearchAllBeatmaps(string keyword, BeatmapsetsSearchOptions options = null)
         {
             OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
-            List<Beatmapsets> list = new List<Beatmapsets>();
-            Beatmapsets[] tmpArray;
+            List<Beatmapset> list = new List<Beatmapset>();
+            Beatmapset[] tmpArray;
             int i = 1;
             do
             {
@@ -79,7 +79,7 @@ namespace Daylily.Osu.Interface
                     newOptions.Status = options.Status;
                 }
 
-                tmpArray = client.SearchBeatMapAsync(keyword, newOptions).Result;
+                tmpArray = client.SearchBeatMapAsync(keyword, newOptions).Result.Beatmapsets;
                 if (tmpArray.Length > 0)
                     list.AddRange(tmpArray);
                 else

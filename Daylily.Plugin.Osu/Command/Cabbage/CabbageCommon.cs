@@ -14,7 +14,7 @@ using Daylily.CoolQ.Models;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 
-namespace Daylily.Plugin.Osu.Command.Cabbage
+namespace Daylily.Plugin.Osu.Cabbage
 {
     internal static class CabbageCommon
     {
@@ -76,7 +76,7 @@ namespace Daylily.Plugin.Osu.Command.Cabbage
                         var message = CqCode.DecodeToString(result.Message);
                         foreach (var item in imgList)
                         {
-                            var str = new FileImage(item.Url, true);
+                            var str = new FileImage(new Uri(item.Url));
                             StringFinder sf = new StringFinder(message);
                             sf.FindNext("[图片]");
                             string str1 = sf.Cut();

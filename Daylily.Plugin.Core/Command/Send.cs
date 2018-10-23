@@ -8,7 +8,7 @@ using Daylily.Bot.PluginBase;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Models.CqResponse.Api;
 
-namespace Daylily.Plugin.Core.Command
+namespace Daylily.Plugin.Core
 {
     [Name("发送自定义消息")]
     [Author("yf_extension")]

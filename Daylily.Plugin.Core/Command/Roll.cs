@@ -5,7 +5,7 @@ using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 
-namespace Daylily.Plugin.Core.Command
+namespace Daylily.Plugin.Core
 {
     [Name("获取随机数")]
     [Author("yf_extension")]

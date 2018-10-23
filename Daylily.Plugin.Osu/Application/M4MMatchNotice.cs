@@ -14,7 +14,7 @@ using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
 
-namespace Daylily.Plugin.Osu.Application
+namespace Daylily.Plugin.Osu
 {
     [Name("m4m匹配提示")]
     [Author("yf_extension")]

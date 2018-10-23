@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
-using System.Linq;
-using System.Text;
-using Daylily.Bot;
+﻿using Daylily.Bot;
 using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common;
+using Daylily.Common.IO;
 using Daylily.Common.Utils.StringUtils;
 using Daylily.CoolQ;
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using Daylily.Common.IO;
+using System.Drawing.Text;
+using System.IO;
+using System.Linq;
+using System.Text;
 
-namespace Daylily.Plugin.Core.Command.Helps
+namespace Daylily.Plugin.Core
 {
     [Name("黄花菜帮助")]
     [Author("yf_extension")]
@@ -29,8 +29,14 @@ namespace Daylily.Plugin.Core.Command.Helps
         [FreeArg]
         public string CommandName { get; set; }
 
+        [Arg("list", Abbreviate = 'l', Default = false, IsSwitch = true)]
+        public bool UseList { get; set; }
+
         private static string _versionInfo;
         private CommonMessage _cm;
+        private static readonly string HelpDir = Path.Combine(Domain.ResourcePath, "help");
+        private static readonly string StaticDir = Path.Combine(HelpDir, "static");
+
         public override void Initialize(string[] args)
         {
             _versionInfo = args[0];
@@ -39,6 +45,8 @@ namespace Daylily.Plugin.Core.Command.Helps
         public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             _cm = messageObj;
+            if (UseList)
+                return new CommonMessageResponse(ShowList(), _cm);
             if (CommandName == null)
             {
                 using (Session session = new Session(20000, _cm.Identity, _cm.UserId))
@@ -46,7 +54,7 @@ namespace Daylily.Plugin.Core.Command.Helps
                     Dictionary<string, string> dic = new Dictionary<string, string>
                     {
                         {"你是谁", "你是谁。"},
-                        {"基础帮助", "查看通用的基础使用方法。"},
+                        {"基础帮助", "查看通用的基础使用方法。(/help -list)"},
                         {"查列表", "查看所有可用的命令和应用列表。"}
                     };
 
@@ -96,25 +104,34 @@ namespace Daylily.Plugin.Core.Command.Helps
                 return new CommonMessageResponse(ShowDetail().Trim('\n').Trim('\r'), _cm);
         }
 
-        private static readonly string HelpDir = Path.Combine(Domain.ResourcePath, "help");
-        private static readonly string StaticDir = Path.Combine(HelpDir, "static");
-
         private string ShowList()
         {
             CommandPlugin[] plugins = PluginManager.CommandMapStatic.Values.Distinct().ToArray();
             ApplicationPlugin[] apps = PluginManager.ApplicationList.ToArray();
-            Dictionary<string, string> dictionary = plugins/*.Where(plugin => plugin.HelpType == _cm.PermissionLevel)*/
-                .ToDictionary(plugin => "/" + string.Join(", /", plugin.Commands),
-                    plugin => $"{plugin.Name}。{plugin.Helps[0]}").OrderBy(objDic => objDic.Key)
-                .Union(apps/*.Where(plugin => plugin.HelpType == _cm.PermissionLevel)*/
-                    .ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]).OrderBy(objDic => objDic.Key))
-                .ToDictionary(k => k.Key, k => k.Value);
+            var groupCmd = plugins.Where(plugin => plugin.HelpType <= _cm.PermissionLevel)
+                .GroupBy(k => k.GetType().Namespace);
+            Dictionary<string, Dictionary<string, string>> dicNs = new Dictionary<string, Dictionary<string, string>>();
+            foreach (IGrouping<string, CommandPlugin> group in groupCmd.OrderBy(k => k.Key))
+            {
+                var key = group.Key.Replace("Daylily.Bot.PluginBase", "扩展插件");
+                dicNs.Add(key, new Dictionary<string, string>());
+                var sb = group.OrderBy(o => o.Commands[0]);
+                foreach (var plugin in sb)
+                {
+                    var cmd = $"/{string.Join(", /", plugin.Commands)}";
+                    const int maxL = 23;
+                    dicNs[key].Add(cmd.Length > maxL ? cmd.Substring(0, maxL - 3) + "..." : cmd,
+                        $"{plugin.Name}。{plugin.Helps[0]}");
+                }
+            }
+            Dictionary<string, string> dicApp = apps.Where(plugin => plugin.HelpType <= _cm.PermissionLevel)
+                .OrderBy(k => k.Name).ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]);
 
             string[] hot = CoolQDispatcher.CommandHot.OrderByDescending(k => k.Value)
                   .Take(5)
                   .Where(k => k.Value > 50)
                   .Select(k => "/" + k.Key).ToArray();
-            return new FileImage(DrawList(dictionary, hot), 90).ToString();
+            return new FileImage(DrawList(dicNs.OrderBy(k => k.Key).ToDictionary(k => k.Key, k => k.Value), dicApp, hot), 95).ToString();
         }
 
         private string ShowDetail()
@@ -154,6 +171,7 @@ namespace Daylily.Plugin.Core.Command.Helps
 
             var sbArg = new StringBuilder();
             var sbFree = new StringBuilder();
+            var sbSw = new StringBuilder();
 
             Type t = plugin.GetType();
             var props = t.GetProperties();
@@ -184,7 +202,13 @@ namespace Daylily.Plugin.Core.Command.Helps
 
                 if (argStr != null)
                 {
-                    sbArg.Append($" [{argStr}{(isSwitch ? "" : " " + StringConvert.ToUnderLineStyle(argName))}]");
+                    //sbArg.Append($" [{argStr}{(isSwitch ? "" : " " + StringConvert.ToUnderLineStyle(argName))}]");
+                    if (isSwitch)
+                    {
+                        sbSw.Append($" [{argStr}]");
+                    }
+                    else
+                        sbArg.Append($" [{argStr} {argName.ToUnderLineStyle()}]");
 
                     if (!custom.Arg.ContainsKey(argStr))
                     {
@@ -201,47 +225,36 @@ namespace Daylily.Plugin.Core.Command.Helps
 
                 if (freeStr != null)
                 {
-                    sbFree.Append($" [{StringConvert.ToUnderLineStyle(freeStr)}]");
-                    custom.FreeArg.Add(StringConvert.ToUnderLineStyle(freeStr), helpStr);
+                    sbFree.Append($" [{freeStr.ToUnderLineStyle()}]");
+                    custom.FreeArg.Add(freeStr.ToUnderLineStyle(), helpStr);
                 }
             }
 
-            custom.Usage = plugin is ApplicationPlugin ? "自动触发。" : $"/{CommandName}{sbArg}{sbFree}";
+            custom.Usage = plugin is ApplicationPlugin ? "自动触发。" : $"/{CommandName}{sbArg}{sbFree}{sbSw}";
             return new FileImage(DrawDetail(custom)).ToString();
         }
 
-        private Bitmap DrawList(Dictionary<string, string> dictionary, string[] hot)
+        private Bitmap DrawList(Dictionary<string, Dictionary<string, string>> dicNs, Dictionary<string, string> dicApp, string[] hot)
         {
             string title = "黄花菜Help";
             string sub = "（输入 \"/help [command]\" 查找某个命令的详细信息。）" + Environment.NewLine +
                          "（例：/help sub。）";
-            //if (_cm.PermissionLevel == PermissionLevel.Public)
-            //{
-            //    title = "黄花菜Help";
-            //    sub = "（输入 \"/help [command]\" 查找某个命令的详细信息。）" + Environment.NewLine +
-            //          "（例：/help 。）";
-            //}
-            //else
-            //{
-            //    title = "黄花菜管理员Help";
-            //    sub = "（管理员/群主可用的命令，类似的命令使用方法如同本help。）" + Environment.NewLine +
-            //          "（例：/sudo plugin）";
-            //}
-            const string sub2 = "无需命令自动激活的插件：";
+            //const string sub2 = "无需命令自动激活：";
             const int offsetH = 30;
             Point pointTitle = new Point(30, 30);
             Point pointSub = new Point(20, 57);
-            const int step = 25, offset1 = 25, offset2 = 160;
+            const int step = 25, offset1 = 25, offset2 = 190;
 
             Font fontH1 = new Font("等线", 14);
             Font fontH1B = new Font("等线", 14, FontStyle.Bold);
             Font fontH2 = new Font("等线", 12);
+            Font fontH2B = new Font("等线", 12, FontStyle.Bold);
             Font fontH3 = new Font("等线", 11);
             Font fontH4 = new Font("等线", 10);
 
             const int x = 9;
-            Size size = MeasureListSize(dictionary, fontH2, x, step, offset2);
-            size = new Size(size.Width, 80 + size.Height + offsetH + 7);
+            Size size = MeasureListSize(dicNs, dicApp, fontH2, x, step, offset2);
+            size = new Size(size.Width, 80 + size.Height + offsetH * dicNs.Count + 7);
 
             DirectoryInfo di = InitDirectory(HelpDir);
             FileInfo[] pics = di.GetFiles();
@@ -252,10 +265,11 @@ namespace Daylily.Plugin.Core.Command.Helps
             using (Image coverImg = Image.FromFile(Path.Combine(StaticDir, "damnae.png")))
             using (Image hotImg = Image.FromFile(Path.Combine(StaticDir, "hot.png")))
             using (Brush brushWhite = new SolidBrush(Color.White))
-            using (Brush brushBlue = new SolidBrush(Color.FromArgb(123, 150, 255)))
+            using (Brush brushBlue = new SolidBrush(Color.FromArgb(43, 170, 235)))
             using (Brush brushYellow = new SolidBrush(Color.FromArgb(255, 243, 82)))
             using (Brush brushGrey = new SolidBrush(Color.FromArgb(185, 185, 185)))
             using (Brush brushDarkGrey = new SolidBrush(Color.FromArgb(128, 45, 45, 48)))
+            using (Brush brushLightGrey = new SolidBrush(Color.FromArgb(48, 45, 45, 48)))
             using (Brush brushLDarkGrey = new SolidBrush(Color.FromArgb(64, 64, 64)))
             using (Brush brushBack = new SolidBrush(Color.FromArgb(210, 30, 30, 30)))
             using (Graphics g = Graphics.FromImage(bitmap))
@@ -269,40 +283,50 @@ namespace Daylily.Plugin.Core.Command.Helps
                 g.DrawString(title, fontH1, brushWhite, pointTitle);
                 g.DrawString(sub, fontH3, brushGrey, pointSub);
 
-                int i = 0;
+                int i = 0, baseY = 0;
                 var sizeSub = g.MeasureString(sub, fontH3);
                 int y = (int)(pointSub.Y + sizeSub.Height + 10);
-                bool app = false;
-                foreach (var item in dictionary)
+                //bool app = false;
+                foreach (var dic in dicNs)
                 {
-                    float width = g.MeasureString(item.Value, fontH2).Width;
-                    if (!item.Key.StartsWith('/') && !app)
-                    {
-                        app = true;
-                        g.DrawString(sub2, fontH3, brushWhite, x + offset1, y + i * step + 3);
-                        y += offsetH;
-                    }
+                    float widthsb = g.MeasureString(dic.Key, fontH2B).Width;
+                    Rectangle recsb = new Rectangle(x + offset1 - 3 + 30, y + baseY + i * step - 2,
+                        (int)widthsb + 6, step - 3);
 
-                    Rectangle rec = new Rectangle(x + offset1 - 3, y + i * step - 3,
-                        offset2 - offset1 + (int)width + 6, step - 3);
-
-                    if (!app)
+                    g.FillRectangle(brushLightGrey, recsb);
+                    g.DrawString(dic.Key, fontH2B, brushBlue, x + offset1 + 30, y + baseY + i * step + 1);
+                    y += offsetH;
+                    foreach (var pair in dic.Value)
                     {
+                        float width = g.MeasureString(pair.Value, fontH2).Width;
+                        //if (!pair.Key.StartsWith('/') && !app)
+                        //{
+                        //    app = true;
+                        //    g.DrawString(sub2, fontH3, brushWhite, x + offset1, y + i * step + 3);
+                        //    y += offsetH;
+                        //}
+
+                        Rectangle rec = new Rectangle(x + offset1 - 3, y + i * step - 3,
+                            offset2 - offset1 + (int)width + 6, step - 3);
+
+                        //if (!app)
+                        //{
                         g.FillRoundRectangle(brushDarkGrey, rec, 10);
-                        if (hot.Contains(item.Key))
+                        if (hot.Contains(pair.Key))
                             g.DrawImage(hotImg, x, y + i * step, 16, 16);
                         //g.DrawString(">", fontH1B, brushWhite, x, y + i * step);
-                        g.DrawString(item.Key, fontH2, brushYellow, x + offset1, y + i * step);
-                        g.DrawString(item.Value, fontH2, brushWhite, x + offset2, y + i * step);
-                    }
-                    else
-                    {
-                        g.FillRectangle(brushDarkGrey, rec);
-                        g.DrawString(item.Key, fontH2, brushBlue, x + offset1, y + i * step);
-                        g.DrawString(item.Value, fontH2, brushWhite, x + offset2, y + i * step);
-                    }
+                        g.DrawString(pair.Key, fontH2, brushYellow, x + offset1, y + i * step);
+                        g.DrawString(pair.Value, fontH2, brushWhite, x + offset2, y + i * step);
+                        //}
+                        //else
+                        //{
+                        //    g.FillRectangle(brushDarkGrey, rec);
+                        //    g.DrawString(pair.Key, fontH2, brushBlue, x + offset1, y + i * step);
+                        //    g.DrawString(pair.Value, fontH2, brushWhite, x + offset2, y + i * step);
+                        //}
 
-                    i++;
+                        i++;
+                    }
                 }
             }
 
@@ -457,26 +481,28 @@ namespace Daylily.Plugin.Core.Command.Helps
             }
         }
 
-        private static Size MeasureListSize(IEnumerable<KeyValuePair<string, string>> dictionary, Font fontH2, int x, int step, int offset2)
+        private static Size MeasureListSize(Dictionary<string, Dictionary<string, string>> dicNs,
+            Dictionary<string, string> dicApp, Font fontH2, int x, int step, int offset2)
         {
             int maxW = 0, maxH = 0;
             using (Bitmap bitmap = new Bitmap(1, 1))
             using (Graphics g = Graphics.FromImage(bitmap))
             {
-                foreach (var t in dictionary)
+                foreach (var dic in dicNs)
                 {
-                    var item = t.Value;
-                    SizeF sInst = g.MeasureString(item, fontH2);
-                    float width = x + offset2 + sInst.Width + x;
-                    if (maxW < width) maxW = (int)width;
-                    maxH += step;
+                    foreach (var t in dic.Value)
+                    {
+                        var item = t.Value;
+                        SizeF sInst = g.MeasureString(item, fontH2);
+                        float width = x + offset2 + sInst.Width + x;
+                        if (maxW < width) maxW = (int)width;
+                        maxH += step;
+                    }
                 }
             }
 
             return new Size(maxW, maxH + 20);
         }
-
-
 
         private class Custom
         {
