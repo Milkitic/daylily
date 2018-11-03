@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Daylily.Common;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using Daylily.Common;
 using Contract = Daylily.Common.Contract;
 
 namespace Daylily.CoolQ
@@ -230,6 +230,22 @@ namespace Daylily.CoolQ
             Contract.Requires<ArgumentException>(IsNum(sFaceId));
             SFaceId = Escape(sFaceId);
         }
+    }
+
+    /// <summary>
+    /// 掷骰子魔法表情
+    /// </summary>
+    public class Dice : CoolQCode
+    {
+        public Dice() { }
+    }
+
+    /// <summary>
+    /// 猜拳魔法表情
+    /// </summary>
+    public class Rps : CoolQCode
+    {
+        public Rps() { }
     }
 
     /// <summary>

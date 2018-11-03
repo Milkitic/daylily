@@ -33,6 +33,10 @@ namespace Daylily.CoolQ
                     return $"[CQ:face,id={face.FaceId}]";
                 case Emoji emoji:
                     return $"[CQ:emoji,id={emoji.EmojiId}]";
+                case Dice _:
+                    return "[CQ:dice]";
+                case Rps _:
+                    return "[CQ:rps]";
                 case BFace bface:
                     return $"[CQ:bface,id={bface.BFaceId}]";
                 case SFace sface:
