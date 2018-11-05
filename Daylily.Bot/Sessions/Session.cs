@@ -1,13 +1,12 @@
-﻿using Daylily.Bot.Models;
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot.Models;
 
-namespace Daylily.Bot
+namespace Daylily.Bot.Sessions
 {
     public class Session : IDisposable
     {

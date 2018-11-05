@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Daylily.Bot;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
+using Daylily.Bot.Sessions;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.StringUtils;
 using Daylily.CoolQ;

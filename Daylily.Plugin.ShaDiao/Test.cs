@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using Daylily.Bot;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
+using Daylily.Bot.Sessions;
 using Daylily.Common;
 using Daylily.Common.Utils.RequestUtils;
 using Daylily.CoolQ;

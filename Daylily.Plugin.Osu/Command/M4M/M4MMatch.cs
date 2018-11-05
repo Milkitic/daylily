@@ -9,6 +9,7 @@ using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
+using Daylily.Bot.Sessions;
 using Daylily.Common;
 using Daylily.Common.Utils.StringUtils;
 using Daylily.CoolQ.Interface.CqHttp;

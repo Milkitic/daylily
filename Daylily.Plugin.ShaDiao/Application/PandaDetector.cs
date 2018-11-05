@@ -21,7 +21,7 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Author("yf_extension", "sahuang")]
     [Version(0, 0, 1, PluginVersion.Beta)]
     [Help("发现熊猫图时有几率返回一张熊猫图。")]
-    public class PandaDetector : ApplicationPlugin
+    class PandaDetector : ApplicationPlugin
     {
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
 #if DEBUG
