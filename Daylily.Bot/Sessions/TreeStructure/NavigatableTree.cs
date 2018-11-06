@@ -13,7 +13,7 @@ namespace Daylily.Bot.Sessions.TreeStructure
             _currentNode = rootNode;
         }
 
-        public NavigatableTree(string rootName, Func<object, ActionParam> actionCallback)
+        public NavigatableTree(string rootName, Func<object, Action> actionCallback)
             : this(new NavigatableNode(rootName, actionCallback))
         {
         }
@@ -48,7 +48,7 @@ namespace Daylily.Bot.Sessions.TreeStructure
         /// </summary>
         public void Run(object parameter)
         {
-            ActionParam param = new ActionParam(null, parameter);
+            Action param = new Action(null, parameter);
             do
             {
                 param = CurrentNode.Action.Invoke(param.TargetParam);

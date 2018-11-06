@@ -1,13 +1,13 @@
 ﻿namespace Daylily.Bot.Sessions.TreeStructure
 {
-    public struct ActionParam
+    public struct Action
     {
-        public ActionParam(string targetName) : this()
+        public Action(string targetName) : this()
         {
             TargetName = targetName;
         }
 
-        public ActionParam(string targetName, object targetParam) : this()
+        public Action(string targetName, object targetParam) : this()
         {
             TargetName = targetName;
             TargetParam = targetParam;

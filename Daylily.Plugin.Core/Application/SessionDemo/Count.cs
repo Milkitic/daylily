@@ -1,10 +1,10 @@
-﻿using System;
-using Daylily.Bot;
+﻿using Daylily.Bot;
 using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Bot.Sessions;
+using System;
 
 namespace Daylily.Plugin.Core.Application.SessionDemo
 {
@@ -14,6 +14,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
     [Help("数羊测试。Session应用的demo。")]
     internal class Count : ApplicationPlugin
     {
+
         public override CommonMessageResponse Message_Received(CommonMessage messageObj)
         {
             if (!messageObj.Message.Contains("数咩羊"))

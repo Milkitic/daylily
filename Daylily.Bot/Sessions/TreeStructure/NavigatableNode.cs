@@ -8,11 +8,11 @@ namespace Daylily.Bot.Sessions.TreeStructure
         {
         }
 
-        public NavigatableNode(string name, Func<object, ActionParam> actionCallback) : base(name)
+        public NavigatableNode(string name, Func<object, Action> actionCallback) : base(name)
         {
             Action = actionCallback;
         }
 
-        public Func<object, ActionParam> Action { get; set; }
+        public Func<object, Action> Action { get; set; }
     }
 }
