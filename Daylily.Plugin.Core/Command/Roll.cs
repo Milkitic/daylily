@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Daylily.Bot.Attributes;
+﻿using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
+using System;
+using System.Collections.Generic;
 
 namespace Daylily.Plugin.Core
 {
@@ -86,6 +86,19 @@ namespace Daylily.Plugin.Core
 
             newList.Sort();
             return string.Join(',', newList);
+        }
+    }
+
+    [Name("复读")]
+    [Author("yf_extension")]
+    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Help("复读")]
+    public class Repeat : ApplicationPlugin
+    {
+
+        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        {
+            return new CommonMessageResponse(messageObj.Message, messageObj);
         }
     }
 }

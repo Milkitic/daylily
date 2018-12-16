@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Cos", "Daylily.Cos\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.ShaDiao", "Daylily.Plugin.ShaDiao\Daylily.Plugin.ShaDiao.csproj", "{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMyPlugin", "TestMyPlugin\TestMyPlugin.csproj", "{E8689307-9A94-4809-8F08-EA04E8400969}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8689307-9A94-4809-8F08-EA04E8400969}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8689307-9A94-4809-8F08-EA04E8400969}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8689307-9A94-4809-8F08-EA04E8400969}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8689307-9A94-4809-8F08-EA04E8400969}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
