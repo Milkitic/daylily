@@ -2,7 +2,7 @@
 
 namespace Daylily.Bot.Interface
 {
-    public interface IConfigurable
+    public interface IMiddleware
     {
         MiddlewareConfig MiddlewareConfig { get; }
     }
