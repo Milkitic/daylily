@@ -72,7 +72,7 @@ namespace Daylily.Bot
                         string typeName = "";
                         try
                         {
-                            if (type.BaseType.BaseType != typeof(PluginBase.Plugin)) continue;
+                            if (!type.IsSubclassOf(typeof(Plugin))) continue;
                             typeName = type.Name ?? "";
                             InsertPlugin(type, startupConfig);
 
