@@ -28,8 +28,6 @@ namespace TestMyPlugin
 
                 Logger.Raw("回复：" + newPlugin.Message_Received(cm).Message);
             }
-
-            Console.ReadKey();
         }
     }
 }

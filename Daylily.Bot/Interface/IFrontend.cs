@@ -1,6 +1,6 @@
 ﻿namespace Daylily.Bot.Interface
 {
-    public interface IFrontend : IConfigurable
+    public interface IFrontend : IMiddleware
     {
         event MessageEventHandler MessageReceived;
         event ExceptionEventHandler ErrorOccured;
