@@ -1,6 +1,7 @@
-﻿using System;
-using Daylily.Bot.Models;
+﻿using Daylily.Bot.Models;
 using Daylily.CoolQ.Models.CqResponse;
+using System;
+using System.Collections.Generic;
 
 namespace Daylily.Bot
 {
@@ -54,5 +55,21 @@ namespace Daylily.Bot
             Exception = e;
         }
         public Exception Exception { get; }
+    }
+
+    public class BindingFailedEventArgs : EventArgs
+    {
+        public BindingFailedEventArgs(List<BindingFailedItem> failedItems)
+        {
+            FailedItems = failedItems;
+        }
+        public List<BindingFailedItem> FailedItems { get; }
+
+        public struct BindingFailedItem
+        {
+            public string Parameter { get; set; }
+            public string Value { get; set; }
+            public string Reason { get; set; }
+        }
     }
 }

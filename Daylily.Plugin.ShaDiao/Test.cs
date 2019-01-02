@@ -17,7 +17,7 @@ namespace Daylily.Plugin.ShaDiao
 {
     class Test : ApplicationPlugin
     {
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             if (!messageObj.Message.Equals("/转"))
                 return null;

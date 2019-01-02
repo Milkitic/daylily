@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using Daylily.Bot.Attributes;
+﻿using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
+using System;
+using System.IO;
 
 namespace Daylily.Bot.PluginBase
 {
@@ -24,6 +24,21 @@ namespace Daylily.Bot.PluginBase
         public string[] Helps { get; internal set; }
         public PermissionLevel HelpType { get; internal set; }
 
+        public virtual void OnInitialized(string[] args)
+        {
+
+        }
+        
+        public virtual void OnErrorOccured(ExceptionEventArgs args)
+        {
+
+        }
+
+        public virtual void AllPlugins_Initialized(string[] args)
+        {
+
+        }
+        
         #endregion public members
 
         #region protected members

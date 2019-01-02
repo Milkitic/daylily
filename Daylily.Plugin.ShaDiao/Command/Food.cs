@@ -60,7 +60,7 @@ namespace Daylily.Plugin.ShaDiao
         private static string _imagePath, _content;
         private CommonMessage _cm;
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
             _imagePath = Path.Combine(SettingsPath, "image");
             _content = Path.Combine(_imagePath, ".content");
@@ -80,7 +80,7 @@ namespace Daylily.Plugin.ShaDiao
 
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             _cm = messageObj;
             string[] fullContent = ConcurrentFile.ReadAllLines(_content);

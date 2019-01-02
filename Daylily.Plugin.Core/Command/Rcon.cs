@@ -39,9 +39,9 @@ namespace Daylily.Plugin.Core
         private static DateTime _newTime;
         private static string _message;
 
-        public override void Initialize(string[] args) { }
+        public override void OnInitialized(string[] args) { }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             string userId = messageObj.UserId;
             MessageType type = messageObj.MessageType;

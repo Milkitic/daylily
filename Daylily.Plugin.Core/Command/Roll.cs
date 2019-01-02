@@ -27,12 +27,12 @@ namespace Daylily.Plugin.Core
         [Help("此参数(c)为抽取的数量。")]
         public string Count { get; set; }
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
 
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             bool isParam1 = int.TryParse(Param1, out int param1);
             bool isParam2 = int.TryParse(Param2, out int param2);

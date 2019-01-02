@@ -188,7 +188,7 @@ namespace Daylily.Bot
                 else
                 {
                     CommandPlugin cmdPlugin = (CommandPlugin)plugin;
-                    cmdPlugin.Initialize(null);
+                    cmdPlugin.OnInitialized(null);
                     string str = "";
                     if (cmdPlugin.Commands != null)
                     {

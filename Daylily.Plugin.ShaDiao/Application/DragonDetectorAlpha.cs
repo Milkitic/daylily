@@ -33,7 +33,7 @@ namespace Daylily.Plugin.ShaDiao.Application
         private string _user, _group;
         private long _messageId;
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             if (messageObj.Group == null) return null;
 

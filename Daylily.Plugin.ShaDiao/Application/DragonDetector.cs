@@ -28,7 +28,7 @@ namespace Daylily.Plugin.ShaDiao.Application
 
         private static int _totalCount;
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             if (messageObj.MessageType == MessageType.Private)
                 return null;

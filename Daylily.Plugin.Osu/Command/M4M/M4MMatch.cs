@@ -53,12 +53,12 @@ namespace Daylily.Plugin.Osu
         [Help("查看目前的列表。")]
         public bool List { get; set; }
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
             _matchList = LoadSettings<List<MatchInfo>>("MatchList") ?? new List<MatchInfo>();
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             _cm = messageObj;
             if (List)

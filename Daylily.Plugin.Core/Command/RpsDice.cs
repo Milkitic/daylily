@@ -15,11 +15,11 @@ namespace Daylily.Plugin.Core.Command
     [Command("dice", "rps")]
     public class RpsDice : CommandPlugin
     {
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             switch (messageObj.Command)
             {

@@ -13,12 +13,12 @@ namespace Daylily.Plugin.Core
     [Command("sdown")]
     public class Shutdown : CommandPlugin
     {
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
 
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             if (messageObj.PermissionLevel != PermissionLevel.Root)
                 return new CommonMessageResponse(LoliReply.RootOnly, messageObj, true);

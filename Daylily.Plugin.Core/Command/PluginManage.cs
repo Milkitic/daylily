@@ -38,12 +38,12 @@ namespace Daylily.Plugin.Core
 
         private CommonMessage _cm;
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
             LoadDisableSettings();
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             _cm = messageObj;
 

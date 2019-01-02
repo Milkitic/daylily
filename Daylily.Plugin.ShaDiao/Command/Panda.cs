@@ -44,12 +44,12 @@ namespace Daylily.Plugin.ShaDiao
 
         private const string MagicalWord = "                              ."; // 解决底层跨平台傻吊bug的方案
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
 
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             FontFamily font = GetRandFont(GetFonts());
             var pandas = GetPandas();

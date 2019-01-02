@@ -18,12 +18,12 @@ namespace Daylily.Plugin.ShaDiao
         [Help("要禁言的时长，小时为单位，支持小数")]
         public double SleepTime { get; set; }
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
 
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             if (messageObj.GroupId == "133605766")
                 return null;

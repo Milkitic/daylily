@@ -22,7 +22,7 @@ namespace Daylily.Plugin.Osu
                 //SubscribeMapper = "pw384",
                 //List = true
             };
-            newPlugin.Initialize(args);
+            newPlugin.OnInitialized(args);
             CommonMessage cm = new CommonMessage
             {
                 GroupId = "123456788",
@@ -34,7 +34,7 @@ namespace Daylily.Plugin.Osu
                 Private = new PrivateMsg(),
             };
 
-            Logger.Success("收到：" + newPlugin.Message_Received(cm).Message);
+            Logger.Success("收到：" + newPlugin.OnMessageReceived(cm).Message);
             Console.ReadKey();
         }
     }

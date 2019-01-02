@@ -25,12 +25,12 @@ namespace Daylily.Plugin.Core
         private static Thread _tThread;
         private static string UserId { get; set; }
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
 
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             // 接收的信息
             string message = messageObj.Message;

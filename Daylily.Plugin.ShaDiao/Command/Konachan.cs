@@ -31,12 +31,12 @@ namespace Daylily.Plugin.ShaDiao
             return Websites.GetValueOrDefault(name);
         }
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
             return;
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             var domain = GetWebsite(messageObj);
             if (string.IsNullOrEmpty(domain))

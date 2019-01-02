@@ -21,11 +21,11 @@ namespace Daylily.Plugin.Osu.Cabbage
     [Command("statme", "stat")]
     public class Stat : CommandPlugin
     {
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             CabbageCommon.MessageQueue.Enqueue(messageObj);
 

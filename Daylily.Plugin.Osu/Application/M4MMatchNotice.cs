@@ -29,7 +29,7 @@ namespace Daylily.Plugin.Osu
                       new ConcurrentDictionary<string, DateTime>();
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             if (messageObj.MessageType == MessageType.Private)
                 return null;

@@ -19,12 +19,12 @@ namespace Daylily.Plugin.Osu
         [Help("绑定指定的osu用户名。若带空格，请使用引号。")]
         public string OsuId { get; set; }
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
 
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             string osuId = Decode(OsuId);
             if (string.IsNullOrEmpty(osuId))

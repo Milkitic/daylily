@@ -18,7 +18,7 @@ namespace Daylily.Plugin.ShaDiao.Application
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
         private const int MaxNum = 10;
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             if (messageObj.MessageType == MessageType.Private)
                 return null;

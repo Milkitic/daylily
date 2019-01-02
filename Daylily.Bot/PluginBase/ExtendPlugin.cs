@@ -11,9 +11,9 @@ namespace Daylily.Bot.PluginBase
         public string Program { get; set; }
         public string File { get; set; }
 
-        public sealed override void Initialize(string[] args) { }
+        public sealed override void OnInitialized(string[] args) { }
 
-        public sealed override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public sealed override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             return CreateProc(messageObj);
         }

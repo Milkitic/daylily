@@ -29,7 +29,7 @@ namespace Daylily.Plugin.ShaDiao.Application
             Logger.Origin("上次用户计数载入完毕。");
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             // 查黄图
             if (messageObj.Group == null || messageObj.GroupId != "133605766") return null;

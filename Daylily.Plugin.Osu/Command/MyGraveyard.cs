@@ -22,12 +22,12 @@ namespace Daylily.Plugin.Osu
     [Command("挖坑")]
     public class MyGraveyard : CommandPlugin
     {
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
 
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             BllUserRole bllUserRole = new BllUserRole();
             List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));

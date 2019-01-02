@@ -38,12 +38,12 @@ namespace Daylily.Plugin.Core
         private static readonly string HelpDir = Path.Combine(Domain.ResourcePath, "help");
         private static readonly string StaticDir = Path.Combine(HelpDir, "static");
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
             _versionInfo = args[0];
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             _cm = messageObj;
             if (UseList)

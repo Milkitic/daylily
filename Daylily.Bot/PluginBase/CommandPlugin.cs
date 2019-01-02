@@ -1,19 +1,23 @@
-﻿using System;
-using Daylily.Bot.Attributes;
+﻿using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
+using System;
 
 namespace Daylily.Bot.PluginBase
 {
-    public abstract class CommandPlugin : Plugin
+    public abstract class CommandPlugin : ResponsivePlugin
     {
         public sealed override PluginType PluginType => PluginType.Command;
         public string[] Commands { get; internal set; }
+        public override bool RunInMultiThreading { get; } = true;
+        public override bool RunInMultipleInstances { get; } = true;
 
-        public abstract void Initialize(string[] args);
-        public abstract CommonMessageResponse Message_Received(CommonMessage messageObj);
+        public virtual void OnCommandBindingFailed(BindingFailedEventArgs args)
+        {
 
+        }
+        
         protected CommandPlugin()
         {
             Type t = GetType();

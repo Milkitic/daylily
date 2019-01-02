@@ -223,7 +223,7 @@ namespace Daylily.Bot
 
                 Task.Run(() =>
                 {
-                    CommonMessageResponse replyObj = item.Message_Received(cm);
+                    CommonMessageResponse replyObj = item.OnMessageReceived(cm);
                     if (replyObj != null) SendMessage(replyObj);
                 });
             }
@@ -267,7 +267,7 @@ namespace Daylily.Bot
                 {
                     if (!TrySetValues(cm, t, plugin))
                         return;
-                    replyObj = plugin.Message_Received(cm);
+                    replyObj = plugin.OnMessageReceived(cm);
                 }
                 catch (Exception ex)
                 {

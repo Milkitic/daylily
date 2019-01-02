@@ -43,7 +43,7 @@ namespace Daylily.Plugin.Osu
         private const int PrivateMax = 5;
         private const int GroupMax = 10;
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
             _userDic = LoadSettings<ConcurrentDictionary<string, List<UserInfo>>>("userDictionary") ??
                        new ConcurrentDictionary<string, List<UserInfo>>();
@@ -112,7 +112,7 @@ namespace Daylily.Plugin.Osu
             });
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             string subId;
             switch (messageObj.MessageType)

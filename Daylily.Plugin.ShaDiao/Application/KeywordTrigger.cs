@@ -41,7 +41,7 @@ namespace Daylily.Plugin.ShaDiao.Application
             SaveSettings(_triggerObjects, "UserDictionary");
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             if (messageObj.Command == "keyedit")
             {

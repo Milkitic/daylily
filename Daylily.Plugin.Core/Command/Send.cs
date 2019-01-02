@@ -33,12 +33,12 @@ namespace Daylily.Plugin.Core
         [Help("要发送的信息。")]
         public string Message { get; set; }
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
 
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             string sessionId = null;
             var sessionType = MessageType.Private;

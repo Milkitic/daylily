@@ -4,6 +4,7 @@
     {
         Command,
         Application,
-        Service
+        Service,
+        Unknown
     }
 }

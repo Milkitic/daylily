@@ -14,7 +14,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
     internal class Count : ApplicationPlugin
     {
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             if (!messageObj.Message.Contains("数咩羊"))
                 return null;

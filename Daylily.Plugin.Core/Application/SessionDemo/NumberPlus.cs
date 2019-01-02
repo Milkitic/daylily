@@ -18,7 +18,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
     {
         private static readonly ConcurrentDictionary<Session, (string, List<string>)> SessionsList =
             new ConcurrentDictionary<Session, (string, List<string>)>();
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             if (messageObj.Message.Contains("两数相加"))
             {
