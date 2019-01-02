@@ -2,6 +2,6 @@
 {
     public interface IDispatcher : IConfigurable
     {
-        void Message_Received(object sender, MessageReceivedEventArgs args);
+        bool Message_Received(object sender, MessageReceivedEventArgs args);
     }
 }

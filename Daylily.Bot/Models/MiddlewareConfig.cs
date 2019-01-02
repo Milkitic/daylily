@@ -6,6 +6,6 @@ namespace Daylily.Bot.Models
 {
     public class MiddlewareConfig
     {
-        public int Priority { get; set; }
+        public int Priority { get; set; } = 0;
     }
 }

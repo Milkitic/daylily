@@ -5,6 +5,6 @@
         event MessageEventHandler MessageReceived;
         event ExceptionEventHandler ErrorOccured;
 
-        void RawObject_Received(object rawObject);
+        bool RawObject_Received(object rawObject);
     }
 }

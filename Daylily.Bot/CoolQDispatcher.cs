@@ -21,7 +21,7 @@ namespace Daylily.Bot
 {
     public class CoolQDispatcher : IDispatcher
     {
-        public MiddlewareConfig MiddlewareConfig { get; set; }
+        public MiddlewareConfig MiddlewareConfig { get; set; } = new MiddlewareConfig();
 
         public static event SessionReceivedEventHandler SessionReceived;
 
@@ -47,8 +47,9 @@ namespace Daylily.Bot
                          new ConcurrentDictionary<string, int>();
         }
 
-        public void Message_Received(object sender, MessageReceivedEventArgs args)
+        public bool Message_Received(object sender, MessageReceivedEventArgs args)
         {
+            bool handled = false;
             var originObj = args.MessageObj;
             Identity id;
             switch (originObj)
@@ -81,6 +82,8 @@ namespace Daylily.Bot
             {
                 Logger.Info("当前已有" + SessionInfo[id].MsgQueue.Count + "条消息在" + SessionInfo[id].Name + "排队");
             }
+
+            return handled;
         }
 
         private static void DispatchMessage(Msg msg)

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Daylily.Bot.Interface;
+﻿using Daylily.Bot.Interface;
 using Daylily.Bot.Models;
 using Daylily.Common;
 using Daylily.Common.IO;
@@ -14,14 +10,16 @@ using Daylily.CoolQ.Models.CqResponse;
 using Daylily.Cos;
 using Daylily.Osu;
 using Daylily.Osu.Database;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using SysConsole = System.Console;
 
 namespace Daylily.Bot
 {
     public class Core
     {
-        public event MessageReceivedEventHandler MessageReceived;
-
         private readonly List<IFrontend> _frontends = new List<IFrontend>();
         public IEnumerable<IFrontend> Frontends => _frontends;
 
@@ -83,9 +81,18 @@ namespace Daylily.Bot
 
         public void RaiseRawObjectEvents(object obj)
         {
-            foreach (var frontend in Frontends)
+            int? priority = int.MinValue;
+            bool handled = false;
+            foreach (var frontend in Frontends.OrderByDescending(k => k.MiddlewareConfig?.Priority))
             {
-                frontend.RawObject_Received(obj);
+                int? p = frontend.MiddlewareConfig?.Priority;
+                if (p < priority && handled)
+                {
+                    break;
+                }
+
+                priority = frontend.MiddlewareConfig?.Priority;
+                handled = frontend.RawObject_Received(obj);
             }
         }
 

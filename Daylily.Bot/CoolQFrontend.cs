@@ -8,7 +8,7 @@ namespace Daylily.Bot
 {
     public class CoolQFrontend : IFrontend
     {
-        public MiddlewareConfig MiddlewareConfig { get; set; }
+        public MiddlewareConfig MiddlewareConfig { get; set; } = new MiddlewareConfig();
 
         public event MessageEventHandler MessageReceived;
         public event MessageEventHandler PrivateMessageReceived;
@@ -25,10 +25,11 @@ namespace Daylily.Bot
 
         public event ExceptionEventHandler ErrorOccured;
 
-        public void RawObject_Received(object rawObject)
+        public bool RawObject_Received(object rawObject)
         {
+            var handled = false;
             if (!(rawObject is string rawJson))
-                return;
+                return handled;
 
             dynamic obj = JsonConvert.DeserializeObject(rawJson);
             try
@@ -118,6 +119,8 @@ namespace Daylily.Bot
             {
                 ErrorOccured?.Invoke(this, new ExceptionEventArgs(ex));
             }
+
+            return handled;
         }
     }
 }

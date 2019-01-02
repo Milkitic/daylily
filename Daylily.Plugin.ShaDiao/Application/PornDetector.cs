@@ -17,7 +17,7 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Author("yf_extension")]
     [Version(0, 0, 1, PluginVersion.Beta)]
     [Help("发现福利图和黄图时进行提醒和禁言（仅新人mapper群）。")]
-    public class PornDetector : ApplicationPlugin
+    class PornDetector : ApplicationPlugin
     {
         private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> Md5List { get; } = new Dictionary<string, CosObject>();
