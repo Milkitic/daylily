@@ -81,18 +81,12 @@ namespace Daylily.Bot
         {
         }
 
-        public void ReceiveMessage(Msg msg)
+        public void RaiseRawObjectEvents(object obj)
         {
-            if (MessageReceived == null)
+            foreach (var frontend in Frontends)
             {
-                Logger.Error("未配置message解析");
-                return;
+                frontend.RawObject_Received(obj);
             }
-
-            MessageReceived.Invoke(null, new MessageReceivedEventArgs
-            {
-                MessageObj = msg
-            });
         }
 
         /// <summary>

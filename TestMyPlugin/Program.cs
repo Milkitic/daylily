@@ -32,22 +32,4 @@ namespace TestMyPlugin
             Console.ReadKey();
         }
     }
-
-    [Name("复读")]
-    [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Beta)]
-    [Help("复读。")]
-    [Command("repeat")]
-    public class RepeatPlugin : CommandPlugin
-    {
-        public override void Initialize(string[] args)
-        {
-
-        }
-
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
-        {
-            return new CommonMessageResponse(messageObj.Message, messageObj);
-        }
-    }
 }

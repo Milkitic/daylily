@@ -58,6 +58,7 @@ namespace Daylily.Osu.Interface
 
         public static Beatmapset[] SearchAllBeatmaps(string keyword, BeatmapsetsSearchOptions options = null)
         {
+            return new Beatmapset[0];
             OsuApiV2Client client = new OsuApiV2Client(OsuApiKey.UserName, OsuApiKey.Password);
             List<Beatmapset> list = new List<Beatmapset>();
             Beatmapset[] tmpArray;

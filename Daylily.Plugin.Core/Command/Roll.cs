@@ -88,17 +88,4 @@ namespace Daylily.Plugin.Core
             return string.Join(',', newList);
         }
     }
-
-    [Name("复读")]
-    [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
-    [Help("复读")]
-    public class Repeat : ApplicationPlugin
-    {
-
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
-        {
-            return new CommonMessageResponse(messageObj.Message, messageObj);
-        }
-    }
 }
