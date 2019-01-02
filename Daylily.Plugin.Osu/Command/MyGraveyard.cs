@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Bleatingsheep.Osu.ApiV2b.Models;
+﻿using Bleatingsheep.Osu.ApiV2b.Models;
 using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
@@ -12,6 +10,8 @@ using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Models;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace Daylily.Plugin.Osu
 {

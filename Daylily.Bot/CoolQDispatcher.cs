@@ -1,26 +1,28 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Daylily.Bot.Attributes;
+﻿using Daylily.Bot.Attributes;
 using Daylily.Bot.Command;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Interface;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common.IO;
+using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Models.CqResponse;
-using static Daylily.Common.Utils.LoggerUtils.Logger;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Daylily.Bot
 {
     public class CoolQDispatcher : IDispatcher
     {
+        public MiddlewareConfig MiddlewareConfig { get; set; }
+
         public static event SessionReceivedEventHandler SessionReceived;
 
         public static SessionList SessionInfo { get; } = new SessionList();
@@ -43,11 +45,6 @@ namespace Daylily.Bot
         {
             CommandHot = Settings.LoadSettings<ConcurrentDictionary<string, int>>("CommandHot") ??
                          new ConcurrentDictionary<string, int>();
-        }
-
-        public CoolQDispatcher()
-        {
-            Core.MessageReceived += Message_Received;
         }
 
         public void Message_Received(object sender, MessageReceivedEventArgs args)
@@ -82,7 +79,7 @@ namespace Daylily.Bot
 
             if (!SessionInfo[id].TryRun(() => DispatchMessage(originObj)))
             {
-                Info("当前已有" + SessionInfo[id].MsgQueue.Count + "条消息在" + SessionInfo[id].Name + "排队");
+                Logger.Info("当前已有" + SessionInfo[id].MsgQueue.Count + "条消息在" + SessionInfo[id].Name + "排队");
             }
         }
 
@@ -121,7 +118,7 @@ namespace Daylily.Bot
                     }
                     catch (Exception ex)
                     {
-                        Exception(ex);
+                        Logger.Exception(ex);
                     }
                 }
             }
@@ -156,7 +153,7 @@ namespace Daylily.Bot
                     : userInfo.Card;
             }
 
-            Message($"({group}) {sender}:\r\n  {CqCode.DecodeToString(message)}");
+            Logger.Message($"({group}) {sender}:\r\n  {CqCode.DecodeToString(message)}");
 
             if (cm.Message.Substring(0, 1) == CommandFlag)
             {
@@ -271,7 +268,7 @@ namespace Daylily.Bot
                 }
                 catch (Exception ex)
                 {
-                    Exception(ex.InnerException ?? ex, fullCmd, plugin?.Name ?? "Unknown plugin");
+                    Logger.Exception(ex.InnerException ?? ex, fullCmd, plugin?.Name ?? "Unknown plugin");
                 }
 
                 if (replyObj == null) return;
@@ -303,7 +300,7 @@ namespace Daylily.Bot
                     throw new ArgumentOutOfRangeException();
             }
 
-            Message(string.Format("({0}) 我: {{status: {1}}}\r\n  {2}", info, status, CqCode.DecodeToString(msg)));
+            Logger.Message(string.Format("({0}) 我: {{status: {1}}}\r\n  {2}", info, status, CqCode.DecodeToString(msg)));
         }
 
         private static bool ValidateDisabled(CommonMessage cm, MemberInfo t)
@@ -471,7 +468,7 @@ namespace Daylily.Bot
             }
             catch (Exception ex)
             {
-                Exception(ex);
+                Logger.Exception(ex);
                 parsed = null;
                 return false;
             }

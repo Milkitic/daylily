@@ -1,7 +1,4 @@
-﻿using System;
-using Daylily.Bot.Enum;
-using Daylily.Common;
-using Daylily.CoolQ.Models.CqRequest.Api;
+﻿using Daylily.Bot.Enum;
 
 namespace Daylily.Bot.Models
 {

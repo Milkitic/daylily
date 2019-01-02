@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Daylily.Bot.Enum;
+﻿using Daylily.Bot.Enum;
 using Newtonsoft.Json;
 
 namespace Daylily.Bot.Models

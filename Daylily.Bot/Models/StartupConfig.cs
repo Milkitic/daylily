@@ -1,16 +1,19 @@
-﻿using Daylily.Bot.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Text;
+using Daylily.Bot.Interface;
 
-namespace Daylily.Bot
+namespace Daylily.Bot.Models
 {
-    public class Config
+    public class StartupConfig
     {
-        public Config(IDispatcher dispatcher, IFrontend[] frontends, Metadata metadata)
+        public StartupConfig(IDispatcher dispatcher, IFrontend[] frontends, Metadata metadata,
+            Action<IDispatcher> generalDispatcherConfig = null, Action<IFrontend> generalFrontendsConfig = null)
         {
             ApplicationMetadata = metadata;
+            GeneralDispatcherConfig = generalDispatcherConfig;
+            GeneralFrontendsConfig = generalFrontendsConfig;
             Dispatcher = dispatcher;
             Frontends = frontends;
         }
@@ -20,6 +23,9 @@ namespace Daylily.Bot
         public IDispatcher Dispatcher { get; }
 
         public IFrontend[] Frontends { get; }
+
+        public Action<IDispatcher> GeneralDispatcherConfig { get; }
+        public Action<IFrontend> GeneralFrontendsConfig { get; }
 
         public struct Metadata
         {

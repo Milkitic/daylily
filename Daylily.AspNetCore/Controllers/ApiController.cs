@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using Daylily.Bot;
+using Daylily.Bot.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daylily.AspNetCore.Controllers
@@ -21,7 +21,7 @@ namespace Daylily.AspNetCore.Controllers
             using (var sr = new StreamReader(Request.Body))
             {
                 string json = await sr.ReadToEndAsync();
-                Core.ReceiveJson(json);
+                //Core.ReceiveJson(json);
             }
 
             return Json(new { });

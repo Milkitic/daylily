@@ -1,5 +1,9 @@
-﻿using Daylily.Bot.Console;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Daylily.Bot.Interface;
+using Daylily.Bot.Models;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
@@ -10,10 +14,6 @@ using Daylily.CoolQ.Models.CqResponse;
 using Daylily.Cos;
 using Daylily.Osu;
 using Daylily.Osu.Database;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using SysConsole = System.Console;
 
 namespace Daylily.Bot
@@ -22,27 +22,29 @@ namespace Daylily.Bot
     {
         public event MessageReceivedEventHandler MessageReceived;
 
-        private List<IFrontend> _frontends = new List<IFrontend>();
+        private readonly List<IFrontend> _frontends = new List<IFrontend>();
+        public IEnumerable<IFrontend> Frontends => _frontends;
+
         private IDispatcher _dispatcher;
+        public IDispatcher Dispatcher => _dispatcher;
 
-
-        public Core(Config config)
+        public Core(StartupConfig startupConfig)
         {
             Logger.Raw(@".__       . .   
 |  \ _.  .|*|  .
 |__/(_]\_||||\_|
        ._|   ._|");
             var str = string.Format("{0} {1} based on {2}",
-                config.ApplicationMetadata.ApplicationName.Split('.')[0],
-                config.ApplicationMetadata.BotVersion.ToString().TrimEnd('.', '0'),
-                config.ApplicationMetadata.FrameworkName.FullName);
+                startupConfig.ApplicationMetadata.ApplicationName.Split('.')[0],
+                startupConfig.ApplicationMetadata.BotVersion.ToString().TrimEnd('.', '0'),
+                startupConfig.ApplicationMetadata.FrameworkName.FullName);
 
             Logger.Raw(str);
 
             CreateDirectories(); // 创建目录
             LoadSecret(); // 加载配置
 
-            PluginManager.LoadAllPlugins(config);
+            PluginManager.LoadAllPlugins(startupConfig);
         }
 
         public IDispatcher ConfigDispatcher(IDispatcher dispatcher, Action<IDispatcher> config = null)
@@ -57,18 +59,26 @@ namespace Daylily.Bot
             return frontend;
         }
 
-        public void ReceiveJson(string json)
+        public T GetFrontend<T>() where T : IFrontend
         {
-            if (JsonReceived == null)
-            {
-                Logger.Error("未配置json解析");
-                return;
-            }
+            return (T)_frontends.FirstOrDefault(k => k.GetType() == typeof(T));
+        }
 
-            JsonReceived.Invoke(null, new JsonReceivedEventArgs
-            {
-                RawObject = json
-            });
+        public IFrontend GetFrontend(Type type)
+        {
+            return _frontends.FirstOrDefault(k => k.GetType() == type);
+        }
+
+        private static void OnCqFrontendOnGroupRequested(object sender, RequestEventArgs e)
+        {
+        }
+
+        private static void OnCqFrontendOnFriendRequested(object sender, RequestEventArgs e)
+        {
+        }
+
+        private static void OnCqFrontendOnFriendAdded(object sender, NoticeEventArgs e)
+        {
         }
 
         public void ReceiveMessage(Msg msg)

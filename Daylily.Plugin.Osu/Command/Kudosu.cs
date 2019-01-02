@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
-using System.Linq;
-using Daylily.Bot.Attributes;
+﻿using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
@@ -15,6 +9,12 @@ using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
+using System.Linq;
 
 namespace Daylily.Plugin.Osu
 {
@@ -57,7 +57,7 @@ namespace Daylily.Plugin.Osu
                 {
                     // ignored
                 }
-                
+
                 id = userObj.user_id;
                 uname = userObj.username;
             }

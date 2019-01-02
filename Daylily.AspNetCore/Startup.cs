@@ -1,4 +1,6 @@
-﻿using Daylily.Bot.Interface;
+﻿using Daylily.Bot;
+using Daylily.Bot.Interface;
+using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.SocketUtils;
 using Microsoft.AspNetCore.Builder;
@@ -35,13 +37,13 @@ namespace Daylily.AspNetCore
 
             var metadata = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application;
             services.AddDaylily(
-                new Bot.Config(
-                    new Bot.CoolQDispatcher(),
+                new Bot.Models.StartupConfig(
+                    new CoolQDispatcher().Config(obj => { }),
                     new IFrontend[]
                     {
-                        new Bot.CoolQFrontend()
-                    }, 
-                    new Bot.Config.Metadata
+                        new CoolQFrontend().Config(obj =>{})
+                    },
+                    new Bot.Models.StartupConfig.Metadata
                     {
                         ApplicationName = metadata.ApplicationName,
                         FrameworkName = metadata.RuntimeFramework
@@ -51,8 +53,32 @@ namespace Daylily.AspNetCore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Core daylily)
         {
+            foreach (var frontend in daylily.Frontends)
+            {
+                var dispatcher = daylily.Dispatcher;
+                if (frontend is CoolQFrontend cqFrontend && dispatcher is CoolQDispatcher cqDispatcher)
+                {
+                    //cqFrontend.PrivateMessageReceived += (sender, e) => { };
+                    //cqFrontend.DiscussMessageReceived+= (sender, e) => { };
+                    //cqFrontend.GroupMessageReceived += (sender, e) => { };
+                    cqFrontend.FriendAdded += (sender, e) => { };
+                    cqFrontend.FriendRequested += (sender, e) => { };
+                    cqFrontend.GroupRequested += (sender, e) => { };
+                    cqFrontend.GroupAdminChanged += (sender, e) => { };
+                }
+
+                frontend.MessageReceived += (sender, e) =>
+                {
+                    dispatcher.Message_Received(sender, new MessageReceivedEventArgs
+                    {
+                        MessageObj = (CoolQ.Models.CqResponse.Msg)e.ParsedObject
+                    });
+                };
+                frontend.ErrorOccured += (sender, e) => { };
+            }
+
             var webSocketOptions = new WebSocketOptions()
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(120),

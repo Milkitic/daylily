@@ -1,6 +1,6 @@
-﻿using Daylily.Bot.Models;
+﻿using System;
+using Daylily.Bot.Models;
 using Daylily.CoolQ.Models.CqResponse;
-using System;
 
 namespace Daylily.Bot
 {

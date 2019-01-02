@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Daylily.Bot.Interface
+﻿namespace Daylily.Bot.Interface
 {
-    public interface IFrontend
+    public interface IFrontend : IConfigurable
     {
         event MessageEventHandler MessageReceived;
         event ExceptionEventHandler ErrorOccured;

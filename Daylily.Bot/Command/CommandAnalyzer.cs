@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Daylily.Bot.Models;
+﻿using Daylily.Bot.Models;
+using System.Collections.Generic;
 
 namespace Daylily.Bot.Command
 {

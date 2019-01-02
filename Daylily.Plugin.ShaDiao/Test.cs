@@ -6,7 +6,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using Daylily.Bot;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Bot.Sessions;

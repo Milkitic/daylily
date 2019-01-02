@@ -1,15 +1,15 @@
 ﻿using Daylily.Bot.Interface;
-using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ.Interface.CqHttp;
+using Daylily.Bot.Models;
 using Daylily.CoolQ.Models.CqResponse;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 
 namespace Daylily.Bot
 {
     public class CoolQFrontend : IFrontend
     {
+        public MiddlewareConfig MiddlewareConfig { get; set; }
+
         public event MessageEventHandler MessageReceived;
         public event MessageEventHandler PrivateMessageReceived;
         public event MessageEventHandler GroupMessageReceived;

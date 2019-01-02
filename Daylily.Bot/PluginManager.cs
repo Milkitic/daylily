@@ -1,17 +1,15 @@
-﻿using Daylily.Bot.Enum;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Threading.Tasks;
-using Plugin = Daylily.Bot.PluginBase.Plugin;
 
 namespace Daylily.Bot
 {
@@ -31,17 +29,17 @@ namespace Daylily.Bot
         private static readonly string PluginDir = Domain.PluginPath;
         private static readonly string ExtendedDir = Domain.ExtendedPluginPath;
 
-        public static void LoadAllPlugins(Config config)
+        public static void LoadAllPlugins(StartupConfig startupConfig)
         {
             //Logger.Info("===加载内部插件中==");
             //LoadBuiltIn(args);
             Logger.Info("===加载外部插件中==");
-            LoadFromFile(config);
+            LoadFromFile(startupConfig);
             Logger.Info("===加载扩展插件中==");
             LoadExtend();
         }
 
-        private static void LoadBuiltIn(Config config)
+        private static void LoadBuiltIn(StartupConfig startupConfig)
         {
             Type[] iType =
             {
@@ -50,11 +48,11 @@ namespace Daylily.Bot
 
             foreach (var item in iType)
             {
-                InsertPlugin(item, config);
+                InsertPlugin(item, startupConfig);
             }
         }
 
-        private static void LoadFromFile(Config config)
+        private static void LoadFromFile(StartupConfig startupConfig)
         {
             foreach (var item in Directory.GetFiles(PluginDir, "*.dll"))
             {
@@ -74,9 +72,9 @@ namespace Daylily.Bot
                         string typeName = "";
                         try
                         {
-                            if (type.BaseType.BaseType != typeof(Plugin)) continue;
+                            if (type.BaseType.BaseType != typeof(PluginBase.Plugin)) continue;
                             typeName = type.Name ?? "";
-                            InsertPlugin(type, config);
+                            InsertPlugin(type, startupConfig);
 
                             isValid = true;
                         }
@@ -171,21 +169,21 @@ namespace Daylily.Bot
             }
         }
 
-        public static void AddPlugin<T>(Config config)
+        public static void AddPlugin<T>(StartupConfig startupConfig)
         {
             Type type = typeof(T);
-            Plugin plugin = Activator.CreateInstance(type) as Plugin;
-            InsertPlugin(plugin, config);
+            PluginBase.Plugin plugin = Activator.CreateInstance(type) as PluginBase.Plugin;
+            InsertPlugin(plugin, startupConfig);
         }
 
-        private static void InsertPlugin(Type type, Config config)
+        private static void InsertPlugin(Type type, StartupConfig startupConfig)
         {
             try
             {
-                Plugin plugin = Activator.CreateInstance(type) as Plugin;
+                PluginBase.Plugin plugin = Activator.CreateInstance(type) as PluginBase.Plugin;
                 if (plugin.PluginType != PluginType.Command)
                 {
-                    InsertPlugin(plugin, config);
+                    InsertPlugin(plugin, startupConfig);
                 }
                 else
                 {
@@ -216,7 +214,7 @@ namespace Daylily.Bot
             }
         }
 
-        private static void InsertPlugin(Plugin plugin, Config config)
+        private static void InsertPlugin(PluginBase.Plugin plugin, StartupConfig startupConfig)
         {
             switch (plugin.PluginType)
             {

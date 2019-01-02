@@ -1,5 +1,4 @@
-﻿using Daylily.Bot;
-using Daylily.Bot.Attributes;
+﻿using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;

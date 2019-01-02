@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Daylily.Bot.Interface
+﻿namespace Daylily.Bot.Interface
 {
-    public interface IDispatcher
+    public interface IDispatcher : IConfigurable
     {
         void Message_Received(object sender, MessageReceivedEventArgs args);
     }

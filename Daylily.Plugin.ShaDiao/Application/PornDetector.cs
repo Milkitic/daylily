@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Daylily.Bot.Attributes;
+﻿using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
@@ -10,6 +8,8 @@ using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.Cos;
 using Daylily.Cos.CosResponse;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {

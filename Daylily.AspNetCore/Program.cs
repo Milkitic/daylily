@@ -1,4 +1,4 @@
-﻿using Daylily.Bot;
+﻿using Daylily.Bot.Models;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

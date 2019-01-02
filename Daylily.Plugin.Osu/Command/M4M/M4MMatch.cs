@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using Bleatingsheep.Osu.ApiV2b.Models;
+﻿using Bleatingsheep.Osu.ApiV2b.Models;
 using Daylily.Bot;
 using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
@@ -17,6 +12,11 @@ using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
 
 namespace Daylily.Plugin.Osu
 {

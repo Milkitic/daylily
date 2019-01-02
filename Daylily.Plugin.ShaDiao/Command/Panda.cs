@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
-using System.IO;
-using System.Linq;
-using Daylily.Bot.Attributes;
+﻿using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common;
 using Daylily.CoolQ;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
+using System.IO;
+using System.Linq;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -222,7 +222,7 @@ namespace Daylily.Plugin.ShaDiao
                 word = _invalidReply[Rnd.Next(0, _invalidReply.Length)];
             }
             return word;
-         }
+        }
 
         /// <summary>
         /// 确定字体大小，由字体数量决定。
