@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Threading.Tasks;
-using Daylily.Bot.Enum;
+﻿using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
 using Plugin = Daylily.Bot.PluginBase.Plugin;
 
 namespace Daylily.Bot
@@ -31,17 +31,17 @@ namespace Daylily.Bot
         private static readonly string PluginDir = Domain.PluginPath;
         private static readonly string ExtendedDir = Domain.ExtendedPluginPath;
 
-        public static void LoadAllPlugins(string[] args)
+        public static void LoadAllPlugins(Config config)
         {
             //Logger.Info("===加载内部插件中==");
             //LoadBuiltIn(args);
             Logger.Info("===加载外部插件中==");
-            LoadFromFile(args);
+            LoadFromFile(config);
             Logger.Info("===加载扩展插件中==");
             LoadExtend();
         }
 
-        private static void LoadBuiltIn(string[] args)
+        private static void LoadBuiltIn(Config config)
         {
             Type[] iType =
             {
@@ -50,11 +50,11 @@ namespace Daylily.Bot
 
             foreach (var item in iType)
             {
-                InsertPlugin(item, args);
+                InsertPlugin(item, config);
             }
         }
 
-        private static void LoadFromFile(string[] args)
+        private static void LoadFromFile(Config config)
         {
             foreach (var item in Directory.GetFiles(PluginDir, "*.dll"))
             {
@@ -76,7 +76,7 @@ namespace Daylily.Bot
                         {
                             if (type.BaseType.BaseType != typeof(Plugin)) continue;
                             typeName = type.Name ?? "";
-                            InsertPlugin(type, args);
+                            InsertPlugin(type, config);
 
                             isValid = true;
                         }
@@ -171,26 +171,26 @@ namespace Daylily.Bot
             }
         }
 
-        public static void AddPlugin<T>(string[] args)
+        public static void AddPlugin<T>(Config config)
         {
             Type type = typeof(T);
             Plugin plugin = Activator.CreateInstance(type) as Plugin;
-            InsertPlugin(plugin, args);
+            InsertPlugin(plugin, config);
         }
 
-        private static void InsertPlugin(Type type, string[] args)
+        private static void InsertPlugin(Type type, Config config)
         {
             try
             {
                 Plugin plugin = Activator.CreateInstance(type) as Plugin;
                 if (plugin.PluginType != PluginType.Command)
                 {
-                    InsertPlugin(plugin, args);
+                    InsertPlugin(plugin, config);
                 }
                 else
                 {
                     CommandPlugin cmdPlugin = (CommandPlugin)plugin;
-                    cmdPlugin.Initialize(args);
+                    cmdPlugin.Initialize(null);
                     string str = "";
                     if (cmdPlugin.Commands != null)
                     {
@@ -216,7 +216,7 @@ namespace Daylily.Bot
             }
         }
 
-        private static void InsertPlugin(Plugin plugin, string[] args)
+        private static void InsertPlugin(Plugin plugin, Config config)
         {
             switch (plugin.PluginType)
             {
@@ -227,7 +227,7 @@ namespace Daylily.Bot
                 case PluginType.Service:
                 default:
                     ServicePlugin svcPlugin = (ServicePlugin)plugin;
-                    svcPlugin.Execute(args);
+                    svcPlugin.Execute(null);
                     ServiceList.Add(svcPlugin);
                     Logger.Origin($"服务 \"{svcPlugin.Name}\" 已经加载完毕。");
                     break;

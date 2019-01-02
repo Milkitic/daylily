@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using Daylily.AspNetCore.Models;
 using Microsoft.AspNetCore.Mvc;
-using Daylily.Web.Models;
 
-namespace Daylily.Web.Controllers
+namespace Daylily.AspNetCore.Controllers
 {
     public class HomeController : Controller
     {

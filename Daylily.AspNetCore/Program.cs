@@ -1,8 +1,10 @@
 ﻿using Daylily.Bot;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
-namespace Daylily.Web
+namespace Daylily.AspNetCore
 {
     public class Program
     {
@@ -11,12 +13,15 @@ namespace Daylily.Web
             var app = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application;
             args = new[] { $"{app.ApplicationName.Split('.')[0]} {app.ApplicationVersion.Remove(app.ApplicationVersion.Length - 2)} based on {app.RuntimeFramework}" };
 
-            Core.InitCore(args, new CoolQJsonDeserializer(), new CoolQDispatcher());
             CreateWebHostBuilder(args).Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.AddCommandLine(args);
+                })
                 .UseStartup<Startup>()
                 .UseUrls("http://*:23333");
     }

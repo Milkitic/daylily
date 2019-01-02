@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Daylily.Bot.Console;
+﻿using Daylily.Bot.Console;
 using Daylily.Bot.Interface;
 using Daylily.Common;
 using Daylily.Common.IO;
@@ -14,39 +10,54 @@ using Daylily.CoolQ.Models.CqResponse;
 using Daylily.Cos;
 using Daylily.Osu;
 using Daylily.Osu.Database;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using SysConsole = System.Console;
 
 namespace Daylily.Bot
 {
-    public static class Core
+    public class Core
     {
-        public static event JsonReceivedEventHandler JsonReceived;
-        public static event MessageReceivedEventHandler MessageReceived;
+        public event MessageReceivedEventHandler MessageReceived;
 
-        private static IJsonDeserializer _jsonDeserializer;
-        private static IDispatcher _dispatcher;
+        private List<IFrontend> _frontends = new List<IFrontend>();
+        private IDispatcher _dispatcher;
 
 
-        public static void InitCore(string[] args, IJsonDeserializer jsonDeserializer, IDispatcher dispatcher)
+        public Core(Config config)
         {
             Logger.Raw(@".__       . .   
 |  \ _.  .|*|  .
 |__/(_]\_||||\_|
        ._|   ._|");
-            Logger.Raw(args[0]);
+            var str = string.Format("{0} {1} based on {2}",
+                config.ApplicationMetadata.ApplicationName.Split('.')[0],
+                config.ApplicationMetadata.BotVersion.ToString().TrimEnd('.', '0'),
+                config.ApplicationMetadata.FrameworkName.FullName);
+
+            Logger.Raw(str);
 
             CreateDirectories(); // 创建目录
             LoadSecret(); // 加载配置
-            // signup
-            _jsonDeserializer = jsonDeserializer;
-            _dispatcher = dispatcher;
 
-            Startup.RunConsole();
-
-            PluginManager.LoadAllPlugins(args);
+            PluginManager.LoadAllPlugins(config);
         }
 
-        public static void ReceiveJson(string json)
+        public IDispatcher ConfigDispatcher(IDispatcher dispatcher, Action<IDispatcher> config = null)
+        {
+            _dispatcher = dispatcher.Config(config);
+            return dispatcher;
+        }
+
+        public IFrontend AddFrontend(IFrontend frontend, Action<IFrontend> config = null)
+        {
+            _frontends.Add(frontend.Config(config));
+            return frontend;
+        }
+
+        public void ReceiveJson(string json)
         {
             if (JsonReceived == null)
             {
@@ -56,11 +67,11 @@ namespace Daylily.Bot
 
             JsonReceived.Invoke(null, new JsonReceivedEventArgs
             {
-                JsonString = json
+                RawObject = json
             });
         }
 
-        public static void ReceiveMessage(Msg msg)
+        public void ReceiveMessage(Msg msg)
         {
             if (MessageReceived == null)
             {

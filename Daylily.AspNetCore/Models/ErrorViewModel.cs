@@ -1,6 +1,4 @@
-using System;
-
-namespace Daylily.Web.Models
+namespace Daylily.AspNetCore.Models
 {
     public class ErrorViewModel
     {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Daylily.Bot.Interface;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.SocketUtils;
 using Microsoft.AspNetCore.Builder;
@@ -8,8 +7,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
 
-namespace Daylily.Web
+namespace Daylily.AspNetCore
 {
     public class Startup
     {
@@ -31,6 +32,22 @@ namespace Daylily.Web
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            var metadata = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application;
+            services.AddDaylily(
+                new Bot.Config(
+                    new Bot.CoolQDispatcher(),
+                    new IFrontend[]
+                    {
+                        new Bot.CoolQFrontend()
+                    }, 
+                    new Bot.Config.Metadata
+                    {
+                        ApplicationName = metadata.ApplicationName,
+                        FrameworkName = metadata.RuntimeFramework
+                    }
+                )
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

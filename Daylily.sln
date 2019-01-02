@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Assist", "Daylily.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Bot", "Daylily.Bot\Daylily.Bot.csproj", "{133C40AD-9219-4ACF-A2B8-A5D8CE7CE46B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Web", "Daylily.Web\Daylily.Web.csproj", "{5BAB2B81-1E84-41DD-884B-2365495A1356}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.AspNetCore", "Daylily.AspNetCore\Daylily.AspNetCore.csproj", "{5BAB2B81-1E84-41DD-884B-2365495A1356}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendAppDemo", "ExtendAppDemo\ExtendAppDemo.csproj", "{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}"
 EndProject
@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Cos", "Daylily.Cos\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.ShaDiao", "Daylily.Plugin.ShaDiao\Daylily.Plugin.ShaDiao.csproj", "{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMyPlugin", "TestMyPlugin\TestMyPlugin.csproj", "{E8689307-9A94-4809-8F08-EA04E8400969}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestMyPlugin", "TestMyPlugin\TestMyPlugin.csproj", "{E8689307-9A94-4809-8F08-EA04E8400969}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
