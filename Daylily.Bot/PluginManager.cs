@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using Daylily.Bot.Enum;
+﻿using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 namespace Daylily.Bot
 {
@@ -72,10 +72,10 @@ namespace Daylily.Bot
                         string typeName = "";
                         try
                         {
-                            if (!type.IsSubclassOf(typeof(CommandPlugin))&&
-                                !type.IsSubclassOf(typeof(ApplicationPlugin))&&
+                            if (!type.IsSubclassOf(typeof(CommandPlugin)) &&
+                                !type.IsSubclassOf(typeof(ApplicationPlugin)) &&
                                 !type.IsSubclassOf(typeof(ServicePlugin))) continue;
-                            typeName = type.Name ?? "";
+                            typeName = type.Name;
                             InsertPlugin(type, startupConfig);
 
                             isValid = true;
@@ -154,7 +154,7 @@ namespace Daylily.Bot
         {
             foreach (var item in CommandMap)
             {
-                if (typeof(T) != item.Value.GetType()) continue;
+                if (typeof(T) != item.Value) continue;
                 CommandMap.Remove(item.Key, out _);
             }
 
@@ -174,7 +174,7 @@ namespace Daylily.Bot
         public static void AddPlugin<T>(StartupConfig startupConfig)
         {
             Type type = typeof(T);
-            PluginBase.Plugin plugin = Activator.CreateInstance(type) as PluginBase.Plugin;
+            Plugin plugin = Activator.CreateInstance(type) as Plugin;
             InsertPlugin(plugin, startupConfig);
         }
 
@@ -182,7 +182,7 @@ namespace Daylily.Bot
         {
             try
             {
-                PluginBase.Plugin plugin = Activator.CreateInstance(type) as PluginBase.Plugin;
+                Plugin plugin = (Plugin)Activator.CreateInstance(type);
                 if (plugin.PluginType != PluginType.Command)
                 {
                     InsertPlugin(plugin, startupConfig);
@@ -216,7 +216,7 @@ namespace Daylily.Bot
             }
         }
 
-        private static void InsertPlugin(PluginBase.Plugin plugin, StartupConfig startupConfig)
+        private static void InsertPlugin(Plugin plugin, StartupConfig startupConfig)
         {
             switch (plugin.PluginType)
             {
