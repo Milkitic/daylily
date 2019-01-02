@@ -127,7 +127,7 @@ namespace Daylily.Bot
             }
         }
 
-        private static void HandleMessage(CommonMessage cm)
+        private static async void HandleMessage(CommonMessage cm)
         {
             bool cmdFlag = false;
             long groupId = Convert.ToInt64(cm.GroupId);
@@ -158,6 +158,7 @@ namespace Daylily.Bot
 
             Logger.Message($"({group}) {sender}:\r\n  {CqCode.DecodeToString(message)}");
 
+            await HandleMessageApp(cm);
             if (cm.Message.Substring(0, 1) == CommandFlag)
             {
                 if (cm.Message.IndexOf(CommandFlag + "root ", StringComparison.InvariantCulture) == 0)
@@ -209,11 +210,10 @@ namespace Daylily.Bot
                     MessageObj = cm
                 });
 
-            HandleMesasgeApp(cm);
             Thread.Sleep(Rnd.Next(MinTime, MaxTime));
         }
 
-        private static void HandleMesasgeApp(CommonMessage cm)
+        private static async Task HandleMessageApp(CommonMessage cm)
         {
             foreach (var item in PluginManager.ApplicationList)
             {
@@ -221,11 +221,14 @@ namespace Daylily.Bot
                 if (ValidateDisabled(cm, t))
                     continue;
 
-                Task.Run(() =>
+                var task = Task.Run(() =>
                 {
                     CommonMessageResponse replyObj = item.OnMessageReceived(cm);
                     if (replyObj != null) SendMessage(replyObj);
                 });
+
+                if (!item.RunInMultiThreading)
+                    await task.ConfigureAwait(false);
             }
         }
 
