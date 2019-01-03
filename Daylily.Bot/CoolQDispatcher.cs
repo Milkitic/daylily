@@ -220,13 +220,13 @@ namespace Daylily.Bot
 
             foreach (var appPlugin in PluginManager.ApplicationList)
             {
-                int? p = appPlugin.MiddlewareConfig?.Priority;
+                int? p = appPlugin.BackendConfig?.Priority;
                 if (p < priority && handled)
                 {
                     break;
                 }
 
-                priority = appPlugin.MiddlewareConfig?.Priority;
+                priority = appPlugin.BackendConfig?.Priority;
                 Type t = appPlugin.GetType();
                 if (ValidateDisabled(cm, t))
                     continue;

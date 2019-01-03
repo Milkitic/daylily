@@ -8,6 +8,6 @@ namespace Daylily.Bot.PluginBase
         public sealed override PluginType PluginType => PluginType.Application;
         public override bool RunInMultiThreading { get; } = true;
         public override bool RunInMultipleInstances { get; } = false;
-        public override MiddlewareConfig MiddlewareConfig { get; } = new MiddlewareConfig();
+        public override BackendConfig BackendConfig { get; } = new BackendConfig();
     }
 }

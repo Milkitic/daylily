@@ -1,16 +1,16 @@
 ﻿using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
+using Daylily.Bot.Interface;
 using Daylily.Bot.Models;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
 using System;
 using System.IO;
-using Daylily.Bot.Interface;
 
 namespace Daylily.Bot.PluginBase
 {
-    public abstract class Plugin: IMiddleware
+    public abstract class Plugin : IBackend
     {
         #region public members
 
@@ -24,13 +24,13 @@ namespace Daylily.Bot.PluginBase
         public PluginVersion State { get; internal set; }
         public string[] Helps { get; internal set; }
         public PermissionLevel HelpType { get; internal set; }
-        public abstract MiddlewareConfig MiddlewareConfig { get; }
+        public abstract BackendConfig BackendConfig { get; }
 
         public virtual void OnInitialized(string[] args)
         {
 
         }
-        
+
         public virtual void OnErrorOccured(ExceptionEventArgs args)
         {
 
@@ -40,7 +40,7 @@ namespace Daylily.Bot.PluginBase
         {
 
         }
-        
+
         #endregion public members
 
         #region protected members

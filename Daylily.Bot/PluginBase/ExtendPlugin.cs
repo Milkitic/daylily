@@ -11,7 +11,7 @@ namespace Daylily.Bot.PluginBase
         public string Program { get; set; }
         public string File { get; set; }
 
-        public override MiddlewareConfig MiddlewareConfig { get; } = new MiddlewareConfig
+        public override BackendConfig BackendConfig { get; } = new BackendConfig
         {
             Priority = 0
         };

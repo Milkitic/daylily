@@ -18,7 +18,7 @@ namespace Daylily.Bot.PluginBase
 
         }
 
-        public override MiddlewareConfig MiddlewareConfig { get; } = new MiddlewareConfig();
+        public override BackendConfig BackendConfig { get; } = new BackendConfig();
 
         protected CommandPlugin()
         {
