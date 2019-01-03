@@ -19,7 +19,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
             if (!messageObj.RawMessage.Contains("数咩羊"))
                 return null;
 
-            using (Session session = new Session(8000, messageObj.Identity, messageObj.UserId))
+            using (Session session = new Session(8000, messageObj.CqIdentity, messageObj.UserId))
             {
                 SendMessage(new CommonMessageResponse("睡不着那就一起数咩羊吧。来，我先开始，1！", messageObj));
                 int count = 1;

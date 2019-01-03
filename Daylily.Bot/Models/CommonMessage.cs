@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using Daylily.Bot.Enum;
+﻿using Daylily.Bot.Enum;
+using Daylily.Bot.Message;
 using Daylily.CoolQ.Models.CqResponse;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace Daylily.Bot.Models
 {
-    public class CommonMessage : ICloneable
+    public class CommonMessage : ICloneable, IMessage, ICommand
     {
         public string RawMessage { get; set; }
         public string FullCommand { get; set; }
@@ -19,19 +20,19 @@ namespace Daylily.Bot.Models
         public PermissionLevel PermissionLevel { get; set; }
         public MessageType MessageType { get; set; }
 
-        public Identity Identity
+        public CqIdentity CqIdentity
         {
             get
             {
                 switch (MessageType)
                 {
                     case MessageType.Private:
-                        return new Identity(Convert.ToInt64(UserId), MessageType.Private);
+                        return new CqIdentity(Convert.ToInt64(UserId), MessageType.Private);
                     case MessageType.Discuss:
-                        return new Identity(Convert.ToInt64(DiscussId), MessageType.Discuss);
+                        return new CqIdentity(Convert.ToInt64(DiscussId), MessageType.Discuss);
                     case MessageType.Group:
                     default:
-                        return new Identity(Convert.ToInt64(GroupId), MessageType.Group);
+                        return new CqIdentity(Convert.ToInt64(GroupId), MessageType.Group);
                 }
             }
         }

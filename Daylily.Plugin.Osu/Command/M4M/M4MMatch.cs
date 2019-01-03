@@ -100,7 +100,7 @@ namespace Daylily.Plugin.Osu
 
             try
             {
-                using (_session = new Session(DefaultTimeout, _cm.Identity, _cm.UserId))
+                using (_session = new Session(DefaultTimeout, _cm.CqIdentity, _cm.UserId))
                 {
                     BllUserRole bllUserRole = new BllUserRole();
                     List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
@@ -157,7 +157,7 @@ namespace Daylily.Plugin.Osu
 
                             string nick2 = CqApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
                             SendMessage(new CommonMessageResponse($"{nick2}({_myInfo.Qq})已经确认查收了你的摸。",
-                                new Identity(oInfo.Qq, MessageType.Private)));
+                                new CqIdentity(oInfo.Qq, MessageType.Private)));
 
                             if (oInfo.LastConfirmedTime == null || _myInfo.LastConfirmedTime == null)
                                 return null;
@@ -168,10 +168,10 @@ namespace Daylily.Plugin.Osu
                             _myInfo.Finish();
                             SendMessage(new CommonMessageResponse(
                                 $"你与{nick}({oInfo.Qq})的M4M ({oInfo.SetUrl}) 已完成，合作愉快！",
-                                new Identity(_myInfo.Qq, MessageType.Private)));
+                                new CqIdentity(_myInfo.Qq, MessageType.Private)));
                             SendMessage(new CommonMessageResponse(
                                 $"你与{nick2}({_myInfo.Qq})的M4M ({_myInfo.SetUrl}) 已完成，合作愉快！",
-                                new Identity(oInfo.Qq, MessageType.Private)));
+                                new CqIdentity(oInfo.Qq, MessageType.Private)));
                             SaveMatchList(); //apply 
                             return null;
                         }
@@ -191,7 +191,7 @@ namespace Daylily.Plugin.Osu
                                 $"正在等待你的摸。\r\n" +
                                 $"请检查他的modding情况，回复 \"/m4m -确认\" 查收。\r\n" +
                                 $"若对方没有摸完，请不要查收。若有疑问请相互交流。",
-                                new Identity(oInfo.Qq, MessageType.Private)));
+                                new CqIdentity(oInfo.Qq, MessageType.Private)));
                             return new CommonMessageResponse("已发送完成请求。", _cm);
                         }
                         // Cancel
@@ -214,10 +214,10 @@ namespace Daylily.Plugin.Osu
                             _myInfo.Finish();
                             SendMessage(new CommonMessageResponse(
                                 $"你与{nick}({oInfo.Qq})的M4M ({oInfo.SetUrl}) 已强制取消。",
-                                new Identity(_myInfo.Qq, MessageType.Private)));
+                                new CqIdentity(_myInfo.Qq, MessageType.Private)));
                             SendMessage(new CommonMessageResponse(
                                 $"你与{nick2}({_myInfo.Qq})的M4M ({_myInfo.SetUrl}) 已强制取消。",
-                                new Identity(oInfo.Qq, MessageType.Private)));
+                                new CqIdentity(oInfo.Qq, MessageType.Private)));
                             SaveMatchList(); //apply 
                             return null;
                         }
@@ -366,7 +366,7 @@ namespace Daylily.Plugin.Osu
                                 SendMessage(new CommonMessageResponse($"{nick2}({_myInfo.Qq}) 与你成功匹配\r\n" +
                                                                       $"{sub2}的地图：{_myInfo.SetUrl}\r\n" +
                                                                       $"{sub2}的备注：{_myInfo.Mark}\r\n" + tip,
-                                    new Identity(matchInfo.Qq, MessageType.Private)));
+                                    new CqIdentity(matchInfo.Qq, MessageType.Private)));
 
                                 return new CommonMessageResponse($"你与{nick1}({matchInfo.Qq}) 成功匹配\r\n" +
                                                                  $"{sub1}的地图：{matchInfo.SetUrl}\r\n" +

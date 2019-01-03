@@ -40,7 +40,7 @@ namespace Daylily.Plugin.Core
 
         public override void OnInitialized(string[] args)
         {
-            _versionInfo = args[0];
+            _versionInfo = args == null ? "" : args[0];
         }
 
         public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
@@ -50,7 +50,7 @@ namespace Daylily.Plugin.Core
                 return new CommonMessageResponse(ShowList(), _cm);
             if (CommandName == null)
             {
-                using (Session session = new Session(20000, _cm.Identity, _cm.UserId))
+                using (Session session = new Session(20000, _cm.CqIdentity, _cm.UserId))
                 {
                     Dictionary<string, string> dic = new Dictionary<string, string>
                     {
@@ -82,7 +82,7 @@ namespace Daylily.Plugin.Core
                                 SendMessage(new CommonMessageResponse("已发送至私聊，请查看。", _cm, true));
                                 SendMessage(new CommonMessageResponse(
                                     ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt")),
-                                    new Identity(_cm.UserId, MessageType.Private)));
+                                    new CqIdentity(_cm.UserId, MessageType.Private)));
                                 return null;
                             }
 

@@ -30,7 +30,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                 string roomNum = Guid.NewGuid().ToString().Split('-')[0];
                 try
                 {
-                    using (Session session = new Session(30000, messageObj.Identity, messageObj.UserId))
+                    using (Session session = new Session(30000, messageObj.CqIdentity, messageObj.UserId))
                     {
                         SessionsList.TryAdd(session, (roomNum, new List<string> { messageObj.UserId }));
                         try

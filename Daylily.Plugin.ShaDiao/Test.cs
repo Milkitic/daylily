@@ -21,7 +21,7 @@ namespace Daylily.Plugin.ShaDiao
         {
             if (!messageObj.RawMessage.Equals("/转"))
                 return null;
-            using (Session session = new Session(1000 * 60, messageObj.Identity, messageObj.UserId))
+            using (Session session = new Session(1000 * 60, messageObj.CqIdentity, messageObj.UserId))
             {
                 SendMessage(new CommonMessageResponse("请发送图片，5张以内，1分钟内有效。", messageObj, true));
                 try

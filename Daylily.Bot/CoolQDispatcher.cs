@@ -51,17 +51,17 @@ namespace Daylily.Bot
         {
             bool handled = false;
             var originObj = args.MessageObj;
-            Identity id;
+            CqIdentity id;
             switch (originObj)
             {
                 case PrivateMsg privateMsg:
-                    id = new Identity(privateMsg.UserId, MessageType.Private);
+                    id = new CqIdentity(privateMsg.UserId, MessageType.Private);
                     break;
                 case DiscussMsg discussMsg:
-                    id = new Identity(discussMsg.DiscussId, MessageType.Discuss);
+                    id = new CqIdentity(discussMsg.DiscussId, MessageType.Discuss);
                     break;
                 case GroupMsg groupMsg:
-                    id = new Identity(groupMsg.GroupId, MessageType.Group);
+                    id = new CqIdentity(groupMsg.GroupId, MessageType.Group);
                     break;
                 default:
                     throw new ArgumentException();
@@ -88,28 +88,28 @@ namespace Daylily.Bot
 
         private static void DispatchMessage(Msg msg)
         {
-            Identity identity;
+            CqIdentity cqIdentity;
             switch (msg)
             {
                 case PrivateMsg privateMsg:
-                    identity = new Identity(privateMsg.UserId, MessageType.Private);
-                    RunNext<PrivateMsg>(identity);
+                    cqIdentity = new CqIdentity(privateMsg.UserId, MessageType.Private);
+                    RunNext<PrivateMsg>(cqIdentity);
                     break;
                 case DiscussMsg discussMsg:
-                    identity = new Identity(discussMsg.DiscussId, MessageType.Discuss);
-                    RunNext<DiscussMsg>(identity);
+                    cqIdentity = new CqIdentity(discussMsg.DiscussId, MessageType.Discuss);
+                    RunNext<DiscussMsg>(cqIdentity);
                     break;
                 case GroupMsg groupMsg:
-                    identity = new Identity(groupMsg.GroupId, MessageType.Group);
-                    RunNext<GroupMsg>(identity);
+                    cqIdentity = new CqIdentity(groupMsg.GroupId, MessageType.Group);
+                    RunNext<GroupMsg>(cqIdentity);
                     break;
                 default:
                     throw new ArgumentException();
             }
 
-            SessionInfo[identity].LockMsg = false;
+            SessionInfo[cqIdentity].LockMsg = false;
 
-            void RunNext<T>(Identity id) where T : Msg
+            void RunNext<T>(CqIdentity id) where T : Msg
             {
                 while (SessionInfo[id].MsgQueue.TryDequeue(out object current))
                 {
@@ -139,18 +139,18 @@ namespace Daylily.Bot
             if (cm.MessageType == MessageType.Private)
             {
                 group = "私聊";
-                sender = SessionInfo[cm.Identity].Name;
+                sender = SessionInfo[cm.CqIdentity].Name;
             }
             else if (cm.MessageType == MessageType.Discuss)
             {
-                group = SessionInfo[cm.Identity].Name;
+                group = SessionInfo[cm.CqIdentity].Name;
                 sender = cm.UserId;
             }
             else
             {
-                var userInfo = SessionInfo[cm.Identity]?.GroupInfo?.Members?.FirstOrDefault(i => i.UserId == userId) ??
+                var userInfo = SessionInfo[cm.CqIdentity]?.GroupInfo?.Members?.FirstOrDefault(i => i.UserId == userId) ??
                                CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
-                group = SessionInfo?[cm.Identity]?.Name;
+                group = SessionInfo?[cm.CqIdentity]?.Name;
                 sender = string.IsNullOrEmpty(userInfo.Card)
                     ? userInfo.Nickname
                     : userInfo.Card;
@@ -179,7 +179,7 @@ namespace Daylily.Bot
                 else if (message.IndexOf(CommandFlag + "sudo ", StringComparison.InvariantCulture) == 0 &&
                          type == MessageType.Group)
                 {
-                    if (SessionInfo[cm.Identity].GroupInfo.Admins.Count(q => q.UserId == userId) == 0)
+                    if (SessionInfo[cm.CqIdentity].GroupInfo.Admins.Count(q => q.UserId == userId) == 0)
                     {
                         SendMessage(new CommonMessageResponse(LoliReply.FakeAdmin, cm));
                     }
@@ -194,7 +194,7 @@ namespace Daylily.Bot
                 else
                 {
                     // auto
-                    if (SessionInfo[cm.Identity].GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
+                    if (SessionInfo[cm.CqIdentity].GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
                         cm.PermissionLevel = PermissionLevel.Admin;
                     if (cm.UserId == "2241521134")
                         cm.PermissionLevel = PermissionLevel.Root;
@@ -297,9 +297,9 @@ namespace Daylily.Bot
         {
             var msg = (resp.EnableAt && resp.MessageType != MessageType.Private ? new At(resp.UserId) + " " : "") +
                     resp.Message;
-            var info = SessionInfo[resp.Identity] == null
-                ? $"{resp.Identity.Type}{resp.Identity.Id}"
-                : SessionInfo[resp.Identity].Name;
+            var info = SessionInfo[resp.CqIdentity] == null
+                ? $"{resp.CqIdentity.Type}{resp.CqIdentity.Id}"
+                : SessionInfo[resp.CqIdentity].Name;
             string status;
             switch (resp.MessageType)
             {

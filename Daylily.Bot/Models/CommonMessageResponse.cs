@@ -8,19 +8,19 @@ namespace Daylily.Bot.Models
         public string Message { get; }
         public MessageType MessageType { get; }
 
-        public Identity Identity
+        public CqIdentity CqIdentity
         {
             get
             {
                 switch (MessageType)
                 {
                     case MessageType.Private:
-                        return new Identity(long.Parse(UserId), MessageType.Private);
+                        return new CqIdentity(long.Parse(UserId), MessageType.Private);
                     case MessageType.Discuss:
-                        return new Identity(long.Parse(DiscussId), MessageType.Discuss);
+                        return new CqIdentity(long.Parse(DiscussId), MessageType.Discuss);
                     case MessageType.Group:
                     default:
-                        return new Identity(long.Parse(GroupId), MessageType.Group);
+                        return new CqIdentity(long.Parse(GroupId), MessageType.Group);
                 }
             }
         }
@@ -35,24 +35,24 @@ namespace Daylily.Bot.Models
         /// 此为指定一个特定的群时再使用
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="identity"></param>
+        /// <param name="cqIdentity"></param>
         /// <param name="atId"></param>
-        public CommonMessageResponse(string message, Identity identity, string atId = null)
+        public CommonMessageResponse(string message, CqIdentity cqIdentity, string atId = null)
         {
             Message = message;
-            switch (identity.Type)
+            switch (cqIdentity.Type)
             {
                 case MessageType.Private:
                     MessageType = MessageType.Private;
-                    UserId = identity.Id.ToString();
+                    UserId = cqIdentity.Id.ToString();
                     break;
                 case MessageType.Discuss:
                     MessageType = MessageType.Discuss;
-                    DiscussId = identity.Id.ToString();
+                    DiscussId = cqIdentity.Id.ToString();
                     break;
                 case MessageType.Group:
                     MessageType = MessageType.Group;
-                    GroupId = identity.Id.ToString();
+                    GroupId = cqIdentity.Id.ToString();
                     break;
             }
 

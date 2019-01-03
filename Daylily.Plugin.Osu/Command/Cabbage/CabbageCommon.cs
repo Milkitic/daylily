@@ -44,11 +44,11 @@ namespace Daylily.Plugin.Osu.Cabbage
                 else
                     uname = messageObj.ArgString;
 
-                using (Session session = new Session(25000, new Identity(cabbageId, MessageType.Private), cabbageId))
+                using (Session session = new Session(25000, new CqIdentity(cabbageId, MessageType.Private), cabbageId))
                 {
                     CoolQDispatcher.SendMessage(
                         new CommonMessageResponse($"!{cmd.Replace("my", "").Replace("me", "")} {uname}",
-                            new Identity(cabbageId, MessageType.Private)));
+                            new CqIdentity(cabbageId, MessageType.Private)));
                     try
                     {
                         CommonMessage result = session.GetMessage();

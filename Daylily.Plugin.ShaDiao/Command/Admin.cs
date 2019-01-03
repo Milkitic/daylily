@@ -36,7 +36,7 @@ namespace Daylily.Plugin.ShaDiao
             _cm = messageObj;
             try
             {
-                using (_session = new Session(1000 * (60 * 2), _cm.Identity, _cm.UserId))
+                using (_session = new Session(1000 * (60 * 2), _cm.CqIdentity, _cm.UserId))
                 {
                     try
                     {

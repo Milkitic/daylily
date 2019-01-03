@@ -63,7 +63,7 @@ namespace Daylily.Plugin.Core
                         try
                         {
                             sessionId = groupInfo.GroupId.ToString();
-                            SendMessage(new CommonMessageResponse(msg, new Identity(sessionId, sessionType)));
+                            SendMessage(new CommonMessageResponse(msg, new CqIdentity(sessionId, sessionType)));
                             Thread.Sleep(3000);
                         }
                         catch
@@ -97,7 +97,7 @@ namespace Daylily.Plugin.Core
             if (DiscussId == null && GroupId == null && UserId == null)
                 return new CommonMessageResponse(Decode(messageObj.ArgString), messageObj);
 
-            SendMessage(new CommonMessageResponse(innerMessage, new Identity(sessionId, sessionType)));
+            SendMessage(new CommonMessageResponse(innerMessage, new CqIdentity(sessionId, sessionType)));
             return null;
         }
 

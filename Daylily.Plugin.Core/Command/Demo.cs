@@ -109,7 +109,7 @@ namespace Daylily.Plugin.Core
             string reply2 = "回复到了别处";
             string userId2 = "xxxxxxx";
             long groupId2 = 123456;
-            SendMessage(new CommonMessageResponse(reply2, new Identity(groupId2, MessageType.Group), userId2));
+            SendMessage(new CommonMessageResponse(reply2, new CqIdentity(groupId2, MessageType.Group), userId2));
             return null;
         }
 
@@ -128,7 +128,7 @@ namespace Daylily.Plugin.Core
                 {
                     // 这里可以做大量其他操作，更新数据库等，不阻塞主线程
                     string message = "Pong!";
-                    SendMessage(new CommonMessageResponse(message, new Identity(UserId, MessageType.Private)));
+                    SendMessage(new CommonMessageResponse(message, new CqIdentity(UserId, MessageType.Private)));
                 }
                 catch (Exception ex)
                 {

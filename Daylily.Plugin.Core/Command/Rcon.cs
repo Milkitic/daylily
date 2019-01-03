@@ -76,7 +76,7 @@ namespace Daylily.Plugin.Core
                         Ct.ThrowIfCancellationRequested();
                     }
 
-                    SendMessage(new CommonMessageResponse(_message, new Identity(userId, MessageType.Private)));
+                    SendMessage(new CommonMessageResponse(_message, new CqIdentity(userId, MessageType.Private)));
                 });
                 string reply = $"日程提醒已新建，{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。";
                 return new CommonMessageResponse(reply, messageObj, true);

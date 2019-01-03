@@ -20,14 +20,14 @@ namespace Daylily.Bot.Sessions
         public SessionId SessionId => _sessionId;
         private SessionId _sessionId;
 
-        public Session(int timeout, Identity identity, params string[] userId) : this(timeout, identity,
+        public Session(int timeout, CqIdentity cqIdentity, params string[] userId) : this(timeout, cqIdentity,
             userId.Select(long.Parse).ToArray())
         { }
 
-        public Session(int timeout, Identity identity, params long[] userId)
+        public Session(int timeout, CqIdentity cqIdentity, params long[] userId)
         {
             Timeout = timeout;
-            _sessionId = new SessionId(identity, userId);
+            _sessionId = new SessionId(cqIdentity, userId);
 
             if (Sessions.Keys.Any(item => item.Contains(SessionId)))
                 throw new NotSupportedException("不支持同时两个会话操作。");
@@ -98,7 +98,7 @@ namespace Daylily.Bot.Sessions
         private void Session_Received(object sender, SessionReceivedEventArgs args)
         {
             lock (LockObj)
-                if (SessionId.Identity == args.MessageObj.Identity &&
+                if (SessionId.CqIdentity == args.MessageObj.CqIdentity &&
                     SessionId.UserId.Contains(long.Parse(args.MessageObj.UserId)))
                     Sessions[SessionId].Enqueue(args.MessageObj);
         }
@@ -106,20 +106,20 @@ namespace Daylily.Bot.Sessions
 
     public struct SessionId
     {
-        public Identity Identity { get; }
+        public CqIdentity CqIdentity { get; }
 
         public long[] UserId { get; set; }
 
-        public SessionId(Identity identity, long[] userId)
+        public SessionId(CqIdentity cqIdentity, long[] userId)
         {
-            Identity = identity;
+            CqIdentity = cqIdentity;
             UserId = userId;
         }
 
         /// <summary>
         /// 单用户会话
         /// </summary>
-        public bool Equals(SessionId obj) => Identity == obj.Identity && UserId.SequenceEqual(obj.UserId);
+        public bool Equals(SessionId obj) => CqIdentity == obj.CqIdentity && UserId.SequenceEqual(obj.UserId);
 
         /// <summary>
         /// 要求更为严格的会话
@@ -127,12 +127,12 @@ namespace Daylily.Bot.Sessions
         public bool Contains(SessionId obj)
         {
             long[] userId = UserId;
-            return Identity.Equals(obj.Identity) && obj.UserId.Any(k => userId.Contains(k));
+            return CqIdentity.Equals(obj.CqIdentity) && obj.UserId.Any(k => userId.Contains(k));
         }
 
         public override bool Equals(object obj) => !(obj is null) && obj is SessionId id && Equals(id);
 
-        public override int GetHashCode() => HashCode.Combine(Identity, UserId);
+        public override int GetHashCode() => HashCode.Combine(CqIdentity, UserId);
 
         public static bool operator !=(SessionId s1, SessionId s2) => !s1.Equals(s2);
 

@@ -11,15 +11,15 @@ namespace Daylily.Bot.Models
 {
     public class SessionList
     {
-        public ConcurrentDictionary<Identity, SessionSettings> Sessions { get; } =
-            new ConcurrentDictionary<Identity, SessionSettings>();
+        public ConcurrentDictionary<CqIdentity, SessionSettings> Sessions { get; } =
+            new ConcurrentDictionary<CqIdentity, SessionSettings>();
 
-        public SessionSettings this[Identity identity] =>
-            Sessions.ContainsKey(identity) ? Sessions[identity] : null;
+        public SessionSettings this[CqIdentity cqIdentity] =>
+            Sessions.ContainsKey(cqIdentity) ? Sessions[cqIdentity] : null;
 
         public void AddOrUpdateGroup(GroupInfoV2 info)
         {
-            var item = new Identity(info.GroupId, MessageType.Group);
+            var item = new CqIdentity(info.GroupId, MessageType.Group);
             if (Sessions.Keys.Contains(item))
                 Sessions[item].Update(info);
             Sessions.TryAdd(item, new SessionSettings(info));
@@ -27,7 +27,7 @@ namespace Daylily.Bot.Models
 
         public void RemoveGroup(string groupId)
         {
-            var item = new Identity(groupId, MessageType.Group);
+            var item = new CqIdentity(groupId, MessageType.Group);
             if (Sessions.Keys.Contains(item))
                 Sessions.TryRemove(item, out _);
         }
@@ -38,7 +38,7 @@ namespace Daylily.Bot.Models
             {
                 case PrivateMsg privateMsg:
                     {
-                        var item = new Identity(privateMsg.UserId, MessageType.Private);
+                        var item = new CqIdentity(privateMsg.UserId, MessageType.Private);
                         if (Sessions.Keys.Contains(item))
                             return;
                         Sessions.TryAdd(item, new SessionSettings(privateMsg));
@@ -46,7 +46,7 @@ namespace Daylily.Bot.Models
                     }
                 case DiscussMsg discussMsg:
                     {
-                        var item = new Identity(discussMsg.DiscussId, MessageType.Discuss);
+                        var item = new CqIdentity(discussMsg.DiscussId, MessageType.Discuss);
                         if (Sessions.Keys.Contains(item))
                             return;
                         Sessions.TryAdd(item, new SessionSettings(discussMsg));
@@ -54,7 +54,7 @@ namespace Daylily.Bot.Models
                     }
                 case GroupMsg groupMsg:
                     {
-                        var item = new Identity(groupMsg.GroupId, MessageType.Group);
+                        var item = new CqIdentity(groupMsg.GroupId, MessageType.Group);
                         if (Sessions.Keys.Contains(item))
                             return;
                         Sessions.TryAdd(item, new SessionSettings(groupMsg));

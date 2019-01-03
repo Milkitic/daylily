@@ -219,11 +219,11 @@ namespace Daylily.Plugin.Core
                 dicPlugin[appKey].Add(new PluginInfo(item.Name, item.GetType().Name));
 
             var sb = new StringBuilder();
-            sb.AppendLine(CoolQDispatcher.SessionInfo[_cm.Identity].Name + " 的插件情况：");
+            sb.AppendLine(CoolQDispatcher.SessionInfo[_cm.CqIdentity].Name + " 的插件情况：");
             switch (_cm.MessageType)
             {
                 case MessageType.Discuss:
-                    foreach (var item in CoolQDispatcher.DiscussDisabledList[_cm.Identity.Id])
+                    foreach (var item in CoolQDispatcher.DiscussDisabledList[_cm.CqIdentity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -236,7 +236,7 @@ namespace Daylily.Plugin.Core
 
                     break;
                 case MessageType.Private:
-                    foreach (var item in CoolQDispatcher.PrivateDisabledList[_cm.Identity.Id])
+                    foreach (var item in CoolQDispatcher.PrivateDisabledList[_cm.CqIdentity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -246,7 +246,7 @@ namespace Daylily.Plugin.Core
 
                     break;
                 case MessageType.Group:
-                    foreach (var item in CoolQDispatcher.GroupDisabledList[_cm.Identity.Id])
+                    foreach (var item in CoolQDispatcher.GroupDisabledList[_cm.CqIdentity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -280,7 +280,7 @@ namespace Daylily.Plugin.Core
             }
 
             sb.Append("（为避免消息过长，本条消息为私聊发送）");
-            SendMessage(new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), new Identity(_cm.UserId, MessageType.Private)));
+            SendMessage(new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), new CqIdentity(_cm.UserId, MessageType.Private)));
             return null;
         }
 
