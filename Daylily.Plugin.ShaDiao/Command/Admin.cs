@@ -49,7 +49,7 @@ namespace Daylily.Plugin.ShaDiao
                                                     " 2. 投票指令";
                             SendMessage(new CommonMessageResponse(mainText, _cm));
                             CommonMessage cmMain = SessionCondition("1", "2");
-                            switch (cmMain.Message)
+                            switch (cmMain.RawMessage)
                             {
                                 case "1":
                                     return new Action(memberMenuNode);
@@ -96,7 +96,7 @@ namespace Daylily.Plugin.ShaDiao
                                           " 9. 返回";
                 SendMessage(new CommonMessageResponse(memberText, _cm));
                 CommonMessage cmPlayer = SessionCondition("1", "2", "3", "4", "5", "6", "7", "8", "9");
-                switch (cmPlayer.Message)
+                switch (cmPlayer.RawMessage)
                 {
                     case "9":
                         return new Action(mainNode);
@@ -117,7 +117,7 @@ namespace Daylily.Plugin.ShaDiao
             _session.Timeout = 30000;
             CommonMessage cmPub = _session.GetMessage();
             int retryCount = 0;
-            while (!conditions.Contains(cmPub.Message) && retryCount < 3)
+            while (!conditions.Contains(cmPub.RawMessage) && retryCount < 3)
             {
                 retryCount++;
                 cmPub = _session.GetMessage();

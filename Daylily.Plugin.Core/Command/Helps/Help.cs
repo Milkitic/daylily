@@ -71,10 +71,10 @@ namespace Daylily.Plugin.Core
                         do
                         {
                             cm = session.GetMessage();
-                            if (cm.Message.Contains("你是谁"))
+                            if (cm.RawMessage.Contains("你是谁"))
                                 return new CommonMessageResponse(
                                     new FileImage(Path.Combine(StaticDir, "help.jpg")).ToString(), _cm);
-                            if (cm.Message.Contains("基础帮助"))
+                            if (cm.RawMessage.Contains("基础帮助"))
                             {
                                 if (cm.MessageType == MessageType.Private)
                                     return new CommonMessageResponse(
@@ -86,11 +86,11 @@ namespace Daylily.Plugin.Core
                                 return null;
                             }
 
-                            if (cm.Message.Contains("查列表"))
+                            if (cm.RawMessage.Contains("查列表"))
                                 return new CommonMessageResponse(ShowList(), _cm);
                             SendMessage(new CommonMessageResponse("请回复大括号内的文字。", _cm));
 
-                        } while (!a.Contains(cm.Message));
+                        } while (!a.Contains(cm.RawMessage));
 
                         return new CommonMessageResponse(ShowList(), _cm);
                     }

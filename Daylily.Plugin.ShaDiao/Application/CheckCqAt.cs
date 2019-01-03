@@ -24,7 +24,7 @@ namespace Daylily.Plugin.ShaDiao.Application
             if (messageObj.MessageType == MessageType.Private)
                 return null;
 
-            string[] ids = CqCode.GetAt(messageObj.Message);
+            string[] ids = CqCode.GetAt(messageObj.RawMessage);
             if (ids == null || !ids.Contains("2181697779") && !ids.Contains("3421735167")) return null;
             Thread.Sleep(Rnd.Next(200, 300));
             if (Rnd.NextDouble() < 0.9)

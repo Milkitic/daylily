@@ -32,7 +32,7 @@ namespace Daylily.Plugin.ShaDiao.Application
         {
             if (messageObj.MessageType == MessageType.Private)
                 return null;
-            var imgList = CqCode.GetImageInfo(messageObj.Message);
+            var imgList = CqCode.GetImageInfo(messageObj.RawMessage);
             if (imgList == null) return null;
 
             string groupId = messageObj.GroupId ?? messageObj.DiscussId;

@@ -256,13 +256,13 @@ namespace Daylily.Plugin.Osu
 
                         SendMessage(new CommonMessageResponse(info, _cm));
                         CommonMessage cmMain = SessionCondition("1", "2", "3");
-                        switch (cmMain.Message)
+                        switch (cmMain.RawMessage)
                         {
                             case "1":
                                 SendMessage(new CommonMessageResponse("删除现有地图，确认吗？\r\n" +
                                                                       "【1】是 【2】否", _cm));
                                 CommonMessage cmPub = SessionCondition("1", "2");
-                                if (cmPub.Message == "1")
+                                if (cmPub.RawMessage == "1")
                                 {
                                     _myInfo.RemoveSet();
                                     SaveMatchList(); //apply 
@@ -310,7 +310,7 @@ namespace Daylily.Plugin.Osu
                                     SendMessage(new CommonMessageResponse("目前没有最佳的匹配，继续尝试不佳的匹配吗？\r\n" +
                                                                           "【1】是 【2】否", _cm));
                                     CommonMessage cmContinue = SessionCondition("1", "2");
-                                    if (cmContinue.Message == "1")
+                                    if (cmContinue.RawMessage == "1")
                                     {
                                         MatchInfo[] notBestList = new MatchInfo[0];
                                         int c = count;
@@ -403,7 +403,7 @@ namespace Daylily.Plugin.Osu
             SendMessage(new CommonMessageResponse("你还没有发布任何一张图，需要现在发布吗？\r\n" + "【1】是 【2】否", _cm));
             CommonMessage cmPub = SessionCondition("1", "2");
 
-            return cmPub.Message == "1"
+            return cmPub.RawMessage == "1"
                 ? SessionAddMap()
                 : new CommonMessageResponse("由于你没有发布地图，已退出m4m模式。", _cm);
         }
@@ -458,7 +458,7 @@ namespace Daylily.Plugin.Osu
             while (!valid && retry < 3)
             {
                 CommonMessage cmMap = _session.GetMessage();
-                string url = cmMap.Message.Replace("\r\n", "");
+                string url = cmMap.RawMessage.Replace("\r\n", "");
 
                 set = GetBeatmapset(url);
 
@@ -493,7 +493,7 @@ namespace Daylily.Plugin.Osu
                                                       "（请3分钟内发送，须小于100字，多出的会被截取。）", _cm));
                 _session.Timeout = 180000;
                 CommonMessage cmMark = _session.GetMessage();
-                string mark = new string(cmMark.Message.Take(100).ToArray());
+                string mark = new string(cmMark.RawMessage.Take(100).ToArray());
                 string verify = $"地图地址：https://osu.ppy.sh/beatmapsets/{set.Id} \r\n" +
                                 $"备注：{mark}\r\n" +
                                 "确定以上信息，就这样发布吗？\r\n" +
@@ -502,7 +502,7 @@ namespace Daylily.Plugin.Osu
                 _session.Timeout = DefaultTimeout;
 
                 CommonMessage cmVerify = SessionCondition("1", "2");
-                if (cmVerify.Message == "1")
+                if (cmVerify.RawMessage == "1")
                 {
                     _myInfo.UpdateSet(set, mark);
                     SaveMatchList(); //apply 
@@ -523,7 +523,7 @@ namespace Daylily.Plugin.Osu
             _session.Timeout = 30000;
             CommonMessage cmPub = _session.GetMessage();
             int retryCount = 0;
-            while (!conditions.Contains(cmPub.Message) && retryCount < 3)
+            while (!conditions.Contains(cmPub.RawMessage) && retryCount < 3)
             {
                 SendMessage
                 (conditions.Length < 4
@@ -544,14 +544,14 @@ namespace Daylily.Plugin.Osu
             _session.Timeout = 30000;
             CommonMessage cmPub = _session.GetMessage();
             int retryCount = 0;
-            while (cmPub.Message.ToArray().Distinct().Any(c => !conditions.Contains(c)) && retryCount < 3)
+            while (cmPub.RawMessage.ToArray().Distinct().Any(c => !conditions.Contains(c)) && retryCount < 3)
             {
                 SendMessage(new CommonMessageResponse("存在无效输入，请重新选择。", _cm));
                 cmPub = _session.GetMessage();
                 retryCount++;
             }
 
-            choice = cmPub.Message.ToArray().Distinct().ToArray();
+            choice = cmPub.RawMessage.ToArray().Distinct().ToArray();
             return retryCount < 3;
         }
 

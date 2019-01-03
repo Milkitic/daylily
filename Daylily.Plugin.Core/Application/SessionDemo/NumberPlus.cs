@@ -20,7 +20,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
             new ConcurrentDictionary<Session, (string, List<string>)>();
         public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
-            if (messageObj.Message.Contains("两数相加"))
+            if (messageObj.RawMessage.Contains("两数相加"))
             {
                 if (SessionsList.Count >= 3)
                 {
@@ -41,9 +41,9 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                             {
                                 CommonMessage obj = session.GetMessage();
                                 if (dic.Keys.Contains(obj.UserId))
-                                    dic[obj.UserId] = obj.Message;
+                                    dic[obj.UserId] = obj.RawMessage;
                                 else
-                                    dic.Add(obj.UserId, obj.Message);
+                                    dic.Add(obj.UserId, obj.RawMessage);
                             }
 
                             int[] nums;
@@ -71,7 +71,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                     return new CommonMessageResponse("你已在房间中。", messageObj, true);
                 }
             }
-            else if (messageObj.Message.Contains("匹配"))
+            else if (messageObj.RawMessage.Contains("匹配"))
             {
                 var exist = SessionsList.Where(k => k.Value.Item2.Contains(messageObj.UserId)).ToArray();
                 if (exist.Length != 0)

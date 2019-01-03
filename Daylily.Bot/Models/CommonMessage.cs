@@ -8,7 +8,7 @@ namespace Daylily.Bot.Models
 {
     public class CommonMessage : ICloneable
     {
-        public string Message { get; set; }
+        public string RawMessage { get; set; }
         public string FullCommand { get; set; }
         public string Command { get; set; }
         public string ArgString { get; set; }
@@ -52,7 +52,7 @@ namespace Daylily.Bot.Models
 
         public CommonMessage(Msg msg, PermissionLevel level = PermissionLevel.Public)
         {
-            Message = msg.Message;
+            RawMessage = msg.Message;
             UserId = msg.UserId.ToString();
             MessageId = msg.MessageId;
             PermissionLevel = level;
@@ -83,7 +83,7 @@ namespace Daylily.Bot.Models
 
         public void Encode()
         {
-            Message = Message.Replace("\"", "---");
+            RawMessage = RawMessage.Replace("\"", "---");
             FullCommand = FullCommand.Replace("\"", "---");
             Command = Command.Replace("\"", "---");
             ArgString = ArgString.Replace("\"", "---");

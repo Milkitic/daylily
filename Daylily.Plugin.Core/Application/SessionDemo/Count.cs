@@ -16,7 +16,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
 
         public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
-            if (!messageObj.Message.Contains("数咩羊"))
+            if (!messageObj.RawMessage.Contains("数咩羊"))
                 return null;
 
             using (Session session = new Session(8000, messageObj.Identity, messageObj.UserId))
@@ -30,7 +30,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                     {
                         System.Threading.Thread.Sleep(1000);
 
-                        if (int.TryParse(obj.Message, out var res))
+                        if (int.TryParse(obj.RawMessage, out var res))
                         {
                             if (res == count + 1)
                             {

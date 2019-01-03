@@ -33,7 +33,7 @@ namespace Daylily.Plugin.ShaDiao.Application
         {
             // 查黄图
             if (messageObj.Group == null || messageObj.GroupId != "133605766") return null;
-            var imgList = CqCode.GetImageInfo(messageObj.Message);
+            var imgList = CqCode.GetImageInfo(messageObj.RawMessage);
             if (imgList == null)
                 return null;
             List<string> urlList = new List<string>();

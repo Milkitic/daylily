@@ -135,7 +135,7 @@ namespace Daylily.Bot
             long discussId = Convert.ToInt64(cm.DiscussId);
             var type = cm.MessageType;
 
-            string group, sender, message = cm.Message;
+            string group, sender, message = cm.RawMessage;
             if (cm.MessageType == MessageType.Private)
             {
                 group = "私聊";
@@ -159,9 +159,9 @@ namespace Daylily.Bot
             Logger.Message($"({group}) {sender}:\r\n  {CqCode.DecodeToString(message)}");
 
             await HandleMessageApp(cm);
-            if (cm.Message.Substring(0, 1) == CommandFlag)
+            if (cm.RawMessage.Substring(0, 1) == CommandFlag)
             {
-                if (cm.Message.IndexOf(CommandFlag + "root ", StringComparison.InvariantCulture) == 0)
+                if (cm.RawMessage.IndexOf(CommandFlag + "root ", StringComparison.InvariantCulture) == 0)
                 {
                     if (cm.UserId != "2241521134")
                     {
@@ -169,7 +169,7 @@ namespace Daylily.Bot
                     }
                     else
                     {
-                        cm.FullCommand = cm.Message.Substring(6, cm.Message.Length - 6);
+                        cm.FullCommand = cm.RawMessage.Substring(6, cm.RawMessage.Length - 6);
                         cm.PermissionLevel = PermissionLevel.Root;
                         cmdFlag = true;
                         HandleMessageCmd(cm);

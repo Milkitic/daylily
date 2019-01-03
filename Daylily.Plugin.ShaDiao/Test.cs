@@ -19,7 +19,7 @@ namespace Daylily.Plugin.ShaDiao
     {
         public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
-            if (!messageObj.Message.Equals("/转"))
+            if (!messageObj.RawMessage.Equals("/转"))
                 return null;
             using (Session session = new Session(1000 * 60, messageObj.Identity, messageObj.UserId))
             {
@@ -27,7 +27,7 @@ namespace Daylily.Plugin.ShaDiao
                 try
                 {
                     CommonMessage cm = session.GetMessage();
-                    var infoList = CqCode.GetImageInfo(cm.Message);
+                    var infoList = CqCode.GetImageInfo(cm.RawMessage);
                     if (infoList == null) return new CommonMessageResponse("你发送的消息没有包含图片。", cm);
                     if (infoList.Length > 5) return new CommonMessageResponse("你发送的图片过多。", cm);
 

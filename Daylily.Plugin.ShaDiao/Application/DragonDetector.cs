@@ -41,7 +41,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                     MessageObj = messageObj
                 });
 
-            var imgList = CqCode.GetImageInfo(messageObj.Message);
+            var imgList = CqCode.GetImageInfo(messageObj.RawMessage);
             if (imgList == null) return null;
 
             foreach (var item in imgList)

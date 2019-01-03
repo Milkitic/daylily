@@ -64,17 +64,17 @@ namespace Daylily.Plugin.Osu.Cabbage
                         }
 
                         ImageInfo[] imgList =
-                            CqCode.GetImageInfo(result.Message) ?? CqCode.GetImageInfo(result2?.Message);
+                            CqCode.GetImageInfo(result.RawMessage) ?? CqCode.GetImageInfo(result2?.RawMessage);
 
                         if (imgList == null)
                         {
-                            CoolQDispatcher.SendMessage(new CommonMessageResponse(result.Message, messageObj));
+                            CoolQDispatcher.SendMessage(new CommonMessageResponse(result.RawMessage, messageObj));
                             if (result2 != null)
-                                CoolQDispatcher.SendMessage(new CommonMessageResponse(result2.Message, messageObj));
+                                CoolQDispatcher.SendMessage(new CommonMessageResponse(result2.RawMessage, messageObj));
                             continue;
                         }
                         //throw new IndexOutOfRangeException("查询失败：" + result.Message);
-                        var message = CqCode.DecodeToString(result.Message);
+                        var message = CqCode.DecodeToString(result.RawMessage);
                         foreach (var item in imgList)
                         {
                             var str = new FileImage(new Uri(item.Url));

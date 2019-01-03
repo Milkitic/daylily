@@ -41,7 +41,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 Logger.Debug(groupId + " locked");
                 Logger.Success(groupId + "的" + messageObj.UserId + "触发了复读");
                 Thread.Sleep(Rnd.Next(1000, 8000));
-                return new CommonMessageResponse(messageObj.Message, messageObj);
+                return new CommonMessageResponse(messageObj.RawMessage, messageObj);
             }
 
             GroupDic[groupId].IntQueue++;

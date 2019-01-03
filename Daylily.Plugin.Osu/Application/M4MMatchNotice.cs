@@ -33,7 +33,7 @@ namespace Daylily.Plugin.Osu
         {
             if (messageObj.MessageType == MessageType.Private)
                 return null;
-            var msg = messageObj.Message.ToUpper();
+            var msg = messageObj.RawMessage.ToUpper();
 
             bool action = msg.Contains("摸图") || msg.Contains("看图") || msg.Contains("M4M");
             bool ask = msg.Contains("吗") || msg.Contains("么") || msg.Contains("?") || msg.Contains("？");

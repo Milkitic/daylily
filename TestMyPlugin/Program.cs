@@ -21,7 +21,7 @@ namespace TestMyPlugin
                 {
                     GroupId = "123456788",
                     UserId = "2241521134",
-                    Message = msg,
+                    RawMessage = msg,
                     MessageType = MessageType.Group,
                     Group = new GroupMsg(),
                 };

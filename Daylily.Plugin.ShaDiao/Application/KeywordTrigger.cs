@@ -48,7 +48,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 if (messageObj.FreeArgs.Count == 1)
                     return new CommonMessageResponse(messageObj.FreeArgs[0] + " (KeywordTrigger)", messageObj);
             }
-            string msg = messageObj.Message;
+            string msg = messageObj.RawMessage;
 
             foreach (var item in _triggerObjects)
             {

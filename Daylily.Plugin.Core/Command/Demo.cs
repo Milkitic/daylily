@@ -33,7 +33,7 @@ namespace Daylily.Plugin.Core
         public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {
             // 接收的信息
-            string message = messageObj.Message;
+            string message = messageObj.RawMessage;
             // 发送者的QQ
             string userId = messageObj.UserId;
             UserId = userId;

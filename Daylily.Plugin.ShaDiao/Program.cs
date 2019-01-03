@@ -17,7 +17,7 @@ namespace Daylily.Plugin.ShaDiao
             {
                 GroupId = "123456788",
                 UserId = "2241521134",
-                Message = "SB",
+                RawMessage = "SB",
                 MessageType = MessageType.Group,
                 Group = new GroupMsg(),
             };
