@@ -67,18 +67,6 @@ namespace Daylily.Bot
             return _frontends.FirstOrDefault(k => k.GetType() == type);
         }
 
-        private static void OnCqFrontendOnGroupRequested(object sender, RequestEventArgs e)
-        {
-        }
-
-        private static void OnCqFrontendOnFriendRequested(object sender, RequestEventArgs e)
-        {
-        }
-
-        private static void OnCqFrontendOnFriendAdded(object sender, NoticeEventArgs e)
-        {
-        }
-
         public void RaiseRawObjectEvents(object obj)
         {
             int? priority = int.MinValue;
