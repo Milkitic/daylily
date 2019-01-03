@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using Daylily.Bot.Models;
+﻿using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Daylily.Bot.PluginBase
 {
@@ -11,7 +11,10 @@ namespace Daylily.Bot.PluginBase
         public string Program { get; set; }
         public string File { get; set; }
 
-        public sealed override void OnInitialized(string[] args) { }
+        public override MiddlewareConfig MiddlewareConfig { get; } = new MiddlewareConfig
+        {
+            Priority = 0
+        };
 
         public sealed override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
         {

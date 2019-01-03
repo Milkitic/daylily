@@ -17,7 +17,9 @@ namespace Daylily.Bot.PluginBase
         {
 
         }
-        
+
+        public override MiddlewareConfig MiddlewareConfig { get; } = new MiddlewareConfig();
+
         protected CommandPlugin()
         {
             Type t = GetType();

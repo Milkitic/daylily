@@ -6,10 +6,11 @@ using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
 using System;
 using System.IO;
+using Daylily.Bot.Interface;
 
 namespace Daylily.Bot.PluginBase
 {
-    public abstract class Plugin
+    public abstract class Plugin: IMiddleware
     {
         #region public members
 
@@ -23,6 +24,7 @@ namespace Daylily.Bot.PluginBase
         public PluginVersion State { get; internal set; }
         public string[] Helps { get; internal set; }
         public PermissionLevel HelpType { get; internal set; }
+        public abstract MiddlewareConfig MiddlewareConfig { get; }
 
         public virtual void OnInitialized(string[] args)
         {
