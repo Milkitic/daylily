@@ -40,7 +40,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 GroupDic[groupId].Locked = true;
                 Logger.Debug(groupId + " locked");
                 Logger.Success(groupId + "的" + messageObj.UserId + "触发了复读");
-                Thread.Sleep(Rnd.Next(1000, 8000));
+                Thread.Sleep(StaticRandom.Next(1000, 8000));
                 return new CommonMessageResponse(messageObj.RawMessage, messageObj);
             }
 
@@ -52,7 +52,7 @@ namespace Daylily.Plugin.ShaDiao.Application
             {
                 while (true)
                 {
-                    Thread.Sleep(Rnd.Next(1000, 10000));
+                    Thread.Sleep(StaticRandom.Next(1000, 10000));
                     if (GroupDic[groupId].IntQueue <= 0)
                     {
                         if (GroupDic[groupId].Locked)
@@ -64,7 +64,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                         continue;
                     }
 
-                    if (Rnd.NextDouble() < 0.02) Thread.Sleep(Rnd.Next(30000, 45000));
+                    if (StaticRandom.NextDouble() < 0.02) Thread.Sleep(StaticRandom.Next(30000, 45000));
 
                     GroupDic[groupId].IntQueue--;
                     //Logger.Debug(groupId + " decresed to " + GroupDic[groupId].IntQueue);

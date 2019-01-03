@@ -26,12 +26,12 @@ namespace Daylily.Plugin.Kernel
             var type = cm.MessageType;
 
             string group, sender, message = cm.RawMessage;
-            if (cm.MessageType == MessageType.Private)
+            if (type == MessageType.Private)
             {
                 group = "私聊";
                 sender = CoolQDispatcher.Current.SessionInfo[cm.CqIdentity].Name;
             }
-            else if (cm.MessageType == MessageType.Discuss)
+            else if (type == MessageType.Discuss)
             {
                 group = CoolQDispatcher.Current.SessionInfo[cm.CqIdentity].Name;
                 sender = cm.UserId;

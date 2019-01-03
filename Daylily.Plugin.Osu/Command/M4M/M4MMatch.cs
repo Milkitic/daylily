@@ -63,7 +63,7 @@ namespace Daylily.Plugin.Osu
             _cm = messageObj;
             if (List)
             {
-                if (_cm.PermissionLevel == PermissionLevel.Root)
+                if (_cm.Authority == Bot.Enum.Authority.Root)
                 {
                     BllUserRole bllUserRole = new BllUserRole();
                     List<string> strs = new List<string>();
@@ -323,14 +323,14 @@ namespace Daylily.Plugin.Osu
                                             Thread.Sleep(1);
                                         }
 
-                                        matchInfo = notBestList[Rnd.Next(notBestList.Length)];
+                                        matchInfo = notBestList[StaticRandom.Next(notBestList.Length)];
                                     }
                                     else
                                         return new CommonMessageResponse("你已取消操作。请等待他人匹配或稍后重试。", _cm);
                                 }
                                 else
                                 {
-                                    matchInfo = bestList[Rnd.Next(bestList.Length)];
+                                    matchInfo = bestList[StaticRandom.Next(bestList.Length)];
                                 }
 
                                 var data1 = CqApi.GetStrangerInfo(matchInfo.Qq).Data;

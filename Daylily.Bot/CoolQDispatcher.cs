@@ -2,6 +2,7 @@
 using Daylily.Bot.Command;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Interface;
+using Daylily.Bot.Message;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common.IO;
@@ -28,14 +29,6 @@ namespace Daylily.Bot
 
         public SessionList SessionInfo { get; } = new SessionList();
         public List<GroupMemberGroupInfo> GroupMemberGroupInfo { get; set; } = new List<GroupMemberGroupInfo>();
-        public ConcurrentDictionary<long, List<string>> GroupDisabledList { get; set; } =
-            new ConcurrentDictionary<long, List<string>>();
-        public ConcurrentDictionary<long, List<string>> DiscussDisabledList { get; set; } =
-            new ConcurrentDictionary<long, List<string>>();
-        public ConcurrentDictionary<long, List<string>> PrivateDisabledList { get; set; } =
-            new ConcurrentDictionary<long, List<string>>();
-        public ConcurrentDictionary<string, int> CommandHot { get; }
-
 
         private readonly Random _rnd = new Random();
         private const int MinTime = 100; // 每条缓冲时间
@@ -44,8 +37,6 @@ namespace Daylily.Bot
         public CoolQDispatcher()
         {
             Current = this;
-            CommandHot = Settings.LoadSettings<ConcurrentDictionary<string, int>>("CommandHot") ??
-                         new ConcurrentDictionary<string, int>();
         }
 
         public bool Message_Received(object sender, MessageReceivedEventArgs args)
@@ -133,7 +124,7 @@ namespace Daylily.Bot
             var handled = await HandleMessageApp(cm);
             if (!handled)
             {
-                if (cm.RawMessage.Substring(0, 1) == Bot.Core.CurrentCore.CommandFlag)
+                if (!string.IsNullOrEmpty(cm.FullCommand))
                 {
                     HandleMessageCmd(cm);
                 }
@@ -152,6 +143,7 @@ namespace Daylily.Bot
             int? priority = int.MinValue;
             bool handled = false;
 
+            var app= PluginManager.GetPlugin<PluginSwitch>
             foreach (var appPlugin in PluginManager.ApplicationList.OrderByDescending(k => k.BackendConfig?.Priority))
             {
                 int? p = appPlugin.BackendConfig?.Priority;
@@ -184,9 +176,6 @@ namespace Daylily.Bot
 
         private void HandleMessageCmd(CommonMessage cm)
         {
-            string fullCmd = cm.FullCommand;
-            CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
-            ca.Analyze(fullCmd, cm);
             CommonMessageResponse replyObj = null;
 
             SessionReceived?.Invoke(null, new SessionReceivedEventArgs
@@ -203,33 +192,26 @@ namespace Daylily.Bot
                 return;
             }
 
-            CommandPlugin plugin = t == typeof(ExtendPlugin) ? PluginManager.CommandMapStatic[cm.Command] : GetInstance(t);
-            if (!CommandHot.Keys.Contains(cm.Command))
-            {
-                CommandHot.TryAdd(cm.Command, 1);
-            }
-            else
-            {
-                CommandHot[cm.Command]++;
-            }
-
-            Settings.SaveSettings(CommandHot, "CommandHot");
+            CommandPlugin plugin =
+                t == typeof(ExtendPlugin)
+                ? PluginManager.CommandMapStatic[cm.Command]
+                : GetInstance(t);
             Task.Run(() =>
-            {
-                try
                 {
-                    if (!TrySetValues(cm, t, plugin))
-                        return;
-                    replyObj = plugin.OnMessageReceived(cm);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Exception(ex.InnerException ?? ex, fullCmd, plugin?.Name ?? "Unknown plugin");
-                }
+                    try
+                    {
+                        if (!plugin.TryInjectParameters(cm))
+                            return;
+                        replyObj = plugin.OnMessageReceived(cm);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Exception(ex.InnerException ?? ex, cm.FullCommand, plugin?.Name ?? "Unknown plugin");
+                    }
 
-                if (replyObj == null) return;
-                SendMessage(replyObj);
-            }
+                    if (replyObj == null) return;
+                    SendMessage(replyObj);
+                }
             );
         }
 
@@ -259,177 +241,7 @@ namespace Daylily.Bot
             Logger.Message(string.Format("({0}) 我: {{status: {1}}}\r\n  {2}", info, status, CqCode.DecodeToString(msg)));
         }
 
-        private bool ValidateDisabled(CommonMessage cm, MemberInfo t)
-        {
-            switch (cm.MessageType)
-            {
-                case MessageType.Group:
-                    if (!GroupDisabledList.Keys.Contains(long.Parse(cm.GroupId)))
-                    {
-                        GroupDisabledList.TryAdd(long.Parse(cm.GroupId), new List<string>());
-                    }
-
-                    if (GroupDisabledList[long.Parse(cm.GroupId)].Contains(t.Name))
-                        return true;
-                    break;
-                case MessageType.Private:
-                    if (!PrivateDisabledList.Keys.Contains(long.Parse(cm.UserId)))
-                    {
-                        PrivateDisabledList.TryAdd(long.Parse(cm.UserId), new List<string>());
-                    }
-
-                    if (PrivateDisabledList[long.Parse(cm.UserId)].Contains(t.Name))
-                        return true;
-                    break;
-                case MessageType.Discuss:
-                    if (!DiscussDisabledList.Keys.Contains(long.Parse(cm.DiscussId)))
-                    {
-                        DiscussDisabledList.TryAdd(long.Parse(cm.DiscussId), new List<string>());
-                    }
-
-                    if (DiscussDisabledList[long.Parse(cm.DiscussId)].Contains(t.Name))
-                        return true;
-                    break;
-            }
-
-            return false;
-        }
-
-        private bool TrySetValues(CommonMessage cm, Type t, CommandPlugin plugin)
-        {
-            var props = t.GetProperties();
-            int freeIndex = 0;
-            string[] freeArray = cm.FreeArgs.ToArray();
-            int freeCount = freeArray.Length;
-            int swCount = cm.Switches.Count;
-            int argCount = cm.Args.Count;
-
-            foreach (var prop in props)
-            {
-                var infos = prop.GetCustomAttributes(false);
-                if (infos.Length == 0) continue;
-                foreach (var info in infos)
-                {
-                    switch (info)
-                    {
-                        case ArgAttribute argAttrib:
-                            if (cm.Switches.ContainsKey(argAttrib.Name))
-                            {
-                                if (argAttrib.IsSwitch)
-                                {
-                                    prop.SetValue(plugin, true);
-                                    swCount--;
-                                }
-                            }
-                            else if (cm.Args.ContainsKey(argAttrib.Name))
-                            {
-                                if (!argAttrib.IsSwitch)
-                                {
-                                    if (TryParse(prop, cm.Args[argAttrib.Name], out var parsed))
-                                    {
-                                        //dynamic obj = TryParse(prop, cm.Args[argAttrib.Name]);
-                                        prop.SetValue(plugin, parsed);
-                                        argCount--;
-                                    }
-                                    else
-                                    {
-                                        SendMessage(
-                                            new CommonMessageResponse($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。", cm));
-                                        return false;
-                                    }
-                                }
-                            }
-                            else if (argAttrib.Default != null)
-                            {
-                                prop.SetValue(plugin, argAttrib.Default); //不再转换，提升效率
-                            }
-
-                            break;
-                        case FreeArgAttribute freeArgAttrib:
-                            {
-                                if (freeIndex > freeCount - 1)
-                                {
-                                    if (freeArgAttrib.Default != null)
-                                        prop.SetValue(plugin, freeArgAttrib.Default); //不再转换，提升效率
-                                    break;
-                                }
-
-                                if (TryParse(prop, freeArray[freeIndex], out var parsed))
-                                {
-                                    prop.SetValue(plugin, parsed);
-                                    freeIndex++;
-                                    break;
-                                }
-                                else
-                                {
-                                    SendMessage(new CommonMessageResponse($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。",
-                                        cm));
-                                    return false;
-                                }
-                            }
-                    }
-                }
-
-            }
-
-            if (swCount <= 0 && argCount <= 0)
-                return true;
-            SendMessage(new CommonMessageResponse($"包含多余的参数. 发送 \"/help {cm.Command}\" 了解如何使用。", cm));
-            return false;
-        }
-
-        private static bool TryParse(PropertyInfo prop, string argStr, out dynamic parsed)
-        {
-            try
-            {
-                if (prop.PropertyType == typeof(int))
-                {
-                    parsed = Convert.ToInt32(argStr);
-                }
-                else if (prop.PropertyType == typeof(long))
-                {
-                    parsed = Convert.ToInt64(argStr);
-                }
-                else if (prop.PropertyType == typeof(short))
-                {
-                    parsed = Convert.ToInt16(argStr);
-                }
-                else if (prop.PropertyType == typeof(float))
-                {
-                    parsed = Convert.ToSingle(argStr);
-                }
-                else if (prop.PropertyType == typeof(double))
-                {
-                    parsed = Convert.ToDouble(argStr);
-                }
-                else if (prop.PropertyType == typeof(string))
-                {
-                    parsed = CqCode.Decode(argStr); // Convert.ToString(cmd);
-                }
-                else if (prop.PropertyType == typeof(bool))
-                {
-                    string tmpCmd = argStr == "" ? "true" : argStr;
-                    if (tmpCmd == "0")
-                        tmpCmd = "false";
-                    else if (tmpCmd == "1")
-                        tmpCmd = "true";
-                    parsed = Convert.ToBoolean(tmpCmd);
-                }
-                else
-                {
-                    throw new NotSupportedException("sb");
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                parsed = null;
-                return false;
-            }
-        }
-
+ 
         private static CommandPlugin GetInstance(Type type) => Activator.CreateInstance(type) as CommandPlugin;
     }
 }

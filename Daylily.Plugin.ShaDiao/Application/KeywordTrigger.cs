@@ -66,8 +66,8 @@ namespace Daylily.Plugin.ShaDiao.Application
             string msg = message.ToLower();
             if (keywords.Any(msg.Contains))
             {
-                imgP = pics[Rnd.Next(pics.Count)];
-                return Rnd.NextDouble() < chance;
+                imgP = pics[StaticRandom.Next(pics.Count)];
+                return StaticRandom.NextDouble() < chance;
             }
 
             imgP = null;

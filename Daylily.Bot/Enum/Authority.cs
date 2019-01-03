@@ -1,6 +1,6 @@
 ﻿namespace Daylily.Bot.Enum
 {
-    public enum PermissionLevel
+    public enum Authority
     {
         Public,
         Admin,

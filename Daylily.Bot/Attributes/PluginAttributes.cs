@@ -44,7 +44,7 @@ namespace Daylily.Bot.Attributes
     public class HelpAttribute : Attribute
     {
         public string[] Helps { get; }
-        public PermissionLevel HelpType { get; set; } = PermissionLevel.Public;
+        public Authority Authority { get; set; } = Authority.Public;
         public HelpAttribute(params string[] helps)
         {
             Helps = helps;

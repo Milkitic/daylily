@@ -59,12 +59,12 @@ namespace Daylily.Plugin.Core
             string argString = messageObj.ArgString;
             // 当前处于的权限状态，默认为Public（即开放权限）
             // 当用户执行 /sudo 或 /root 会分别触发 Admin（对应群的管理员）和 Root（系统管理员），以此做出对应权限所对应的功能
-            PermissionLevel level = messageObj.PermissionLevel;
-            if (level == PermissionLevel.Public)
+            Authority level = messageObj.Authority;
+            if (level == Bot.Enum.Authority.Public)
                 Logger.Info("当前所用权限：Public");
-            else if (level == PermissionLevel.Admin)
+            else if (level == Bot.Enum.Authority.Admin)
                 Logger.Info("当前所用权限：Admin");
-            else if (level == PermissionLevel.Root)
+            else if (level == Bot.Enum.Authority.Root)
                 Logger.Info("当前所用权限：Root");
 
             // 暂无实际用处，当前为框架所用，后续会有变动

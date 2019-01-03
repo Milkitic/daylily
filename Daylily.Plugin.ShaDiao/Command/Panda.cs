@@ -212,14 +212,14 @@ namespace Daylily.Plugin.ShaDiao
             string word = PandaWord;
             if (word == null || word.Replace("\n", "").Replace("\r", "").Trim() == "")
             {
-                word = _blankReply[Rnd.Next(0, _blankReply.Length)];
+                word = _blankReply[StaticRandom.Next(0, _blankReply.Length)];
                 return word;
             }
 
             word = CqCode.DecodeToString(PandaWord.Replace("！", "!").Replace("？", "?"));
             if (!IsLengthValid(word, pandaPath, font))
             {
-                word = _invalidReply[Rnd.Next(0, _invalidReply.Length)];
+                word = _invalidReply[StaticRandom.Next(0, _invalidReply.Length)];
             }
             return word;
         }
@@ -255,7 +255,7 @@ namespace Daylily.Plugin.ShaDiao
         /// <returns></returns>
         private static string GetRandPanda(IReadOnlyList<FileInfo> pandaArray)
         {
-            return pandaArray[Rnd.Next(0, pandaArray.Count)].FullName;
+            return pandaArray[StaticRandom.Next(0, pandaArray.Count)].FullName;
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace Daylily.Plugin.ShaDiao
         /// <returns></returns>
         private static FontFamily GetRandFont(IReadOnlyList<FileInfo> fontArray)
         {
-            FileInfo fontInfo = fontArray[Rnd.Next(0, fontArray.Count)];
+            FileInfo fontInfo = fontArray[StaticRandom.Next(0, fontArray.Count)];
             PrivateFontCollection pfc = new PrivateFontCollection();
             pfc.AddFontFile(fontInfo.FullName);
             FontFamily font = pfc.Families[0];

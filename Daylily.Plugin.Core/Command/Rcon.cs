@@ -11,7 +11,7 @@ namespace Daylily.Plugin.Core
     [Name("日程提醒")]
     [Author("yf_extension")]
     [Version(0, 1, 1, PluginVersion.Alpha)]
-    [Help("日程提醒管理。", HelpType = PermissionLevel.Root)]
+    [Help("日程提醒管理。", Authority = Authority.Root)]
     [Command("rcon")]
     public class Rcon : CommandPlugin
     {
@@ -45,13 +45,13 @@ namespace Daylily.Plugin.Core
         {
             string userId = messageObj.UserId;
             MessageType type = messageObj.MessageType;
-            PermissionLevel level = messageObj.PermissionLevel;
+            Authority level = messageObj.Authority;
             if (type != MessageType.Private)
             {
                 return new CommonMessageResponse(LoliReply.PrivateOnly, messageObj);
             }
 
-            if (level != PermissionLevel.Root)
+            if (level != Authority.Root)
             {
                 return new CommonMessageResponse(LoliReply.RootOnly, messageObj);
             }

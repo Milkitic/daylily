@@ -107,14 +107,14 @@ namespace Daylily.Plugin.ShaDiao.Application
 #endif
             for (int i = 0; i < gSets.PandaCount; i++)
             {
-                var perc = Rnd.NextDouble();
+                var perc = StaticRandom.NextDouble();
                 if (perc >= 0.15)
                     continue;
                 Logger.Success("[" + gSets.GroupId + "] (熊猫) 几率: " + perc);
 
                 string resPath = Path.Combine(Domain.PluginPath, "dragon", "resource_panda_send");
                 FileInfo[] files = new DirectoryInfo(resPath).GetFiles();
-                var cqImg = new FileImage(files[Rnd.Next(files.Length)].FullName).ToString();
+                var cqImg = new FileImage(files[StaticRandom.Next(files.Length)].FullName).ToString();
                 SendMessage(new CommonMessageResponse(cqImg, gSets.MessageObj));
             }
 

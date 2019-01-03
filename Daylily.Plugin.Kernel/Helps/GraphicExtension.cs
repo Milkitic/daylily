@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
-using System.Text;
 
-namespace Daylily.Plugin.Core
+namespace Daylily.Plugin.Kernel.Helps
 {
     public static class GraphicExtension
     {

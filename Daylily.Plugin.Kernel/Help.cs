@@ -11,14 +11,13 @@ using Daylily.CoolQ;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Daylily.Plugin.Kernel.Helps;
 
-namespace Daylily.Plugin.Core
+namespace Daylily.Plugin.Kernel
 {
     [Name("黄花菜帮助")]
     [Author("yf_extension")]
@@ -109,7 +108,7 @@ namespace Daylily.Plugin.Core
         {
             CommandPlugin[] plugins = PluginManager.CommandMapStatic.Values.Distinct().ToArray();
             ApplicationPlugin[] apps = PluginManager.ApplicationList.ToArray();
-            var groupCmd = plugins.Where(plugin => plugin.HelpType <= _cm.PermissionLevel)
+            var groupCmd = plugins.Where(plugin => plugin.Authority <= _cm.Authority)
                 .GroupBy(k => k.GetType().Namespace);
             Dictionary<string, Dictionary<string, string>> dicNs = new Dictionary<string, Dictionary<string, string>>();
             foreach (IGrouping<string, CommandPlugin> group in groupCmd.OrderBy(k => k.Key))
@@ -125,20 +124,21 @@ namespace Daylily.Plugin.Core
                         $"{plugin.Name}。{plugin.Helps[0]}");
                 }
             }
-            Dictionary<string, string> dicApp = apps.Where(plugin => plugin.HelpType <= _cm.PermissionLevel)
+            Dictionary<string, string> dicApp = apps.Where(plugin => plugin.Authority <= _cm.Authority)
                 .OrderBy(k => k.Name).ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]);
 
-            string[] hot = CoolQDispatcher.Current.CommandHot.OrderByDescending(k => k.Value)
-                  .Take(5)
-                  .Where(k => k.Value > 50)
-                  .Select(k => "/" + k.Key).ToArray();
+            string[] hot = PluginManager.GetPlugin<CommandCounter>()?.CommandRate
+                .OrderByDescending(k => k.Value)
+                .Take(5)
+                .Where(k => k.Value > 50)
+                .Select(k => "/" + k.Key).ToArray();
             return new FileImage(DrawList(dicNs.OrderBy(k => k.Key).ToDictionary(k => k.Key, k => k.Value), dicApp, hot), 95).ToString();
         }
 
         private string ShowDetail()
         {
             Custom custom;
-            Bot.PluginBase.Plugin plugin;
+            Bot.PluginBase.CqPlugin plugin;
             if (PluginManager.CommandMapStatic.Keys.Contains(CommandName))
             {
                 plugin = PluginManager.CommandMapStatic[CommandName];
@@ -259,7 +259,7 @@ namespace Daylily.Plugin.Core
 
             DirectoryInfo di = InitDirectory(HelpDir);
             FileInfo[] pics = di.GetFiles();
-            string picPath = pics[Rnd.Next(pics.Length)].FullName;
+            string picPath = pics[StaticRandom.Next(pics.Length)].FullName;
 
             Bitmap bitmap = new Bitmap(size.Width, size.Height);
             using (Image backImg = Image.FromFile(picPath))
@@ -418,7 +418,7 @@ namespace Daylily.Plugin.Core
 
             DirectoryInfo di = InitDirectory(HelpDir);
             FileInfo[] pics = di.GetFiles();
-            string picPath = pics[Rnd.Next(pics.Length)].FullName;
+            string picPath = pics[StaticRandom.Next(pics.Length)].FullName;
 
             bitmap = new Bitmap(size.Width, size.Height);
             g = Graphics.FromImage(bitmap);

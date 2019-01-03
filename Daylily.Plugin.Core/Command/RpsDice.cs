@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Daylily.Plugin.Core.Command
+namespace Daylily.Plugin.Core
 {
     [Name("猜拳/掷骰子")]
     [Author("yf_extension")]

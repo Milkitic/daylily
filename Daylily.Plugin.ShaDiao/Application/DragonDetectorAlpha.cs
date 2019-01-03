@@ -133,7 +133,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 CqApi.DeleteMessage(_messageId);
             if (_currentCount <= 1) return;
             Thread.Sleep(8000);
-            CqApi.SetGroupBan(_group, _user, Rnd.Next(1, 100 * _currentCount + 1) * 60);
+            CqApi.SetGroupBan(_group, _user, StaticRandom.Next(1, 100 * _currentCount + 1) * 60);
             //CqApi.SendGroupMessageAsync(group, "而且有好多张，送你" + dragonCount + "倍套餐!!");
         }
 

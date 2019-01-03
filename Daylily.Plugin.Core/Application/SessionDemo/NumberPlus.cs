@@ -80,7 +80,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                 if (list.Count == 0)
                     return new CommonMessageResponse("当前没有空闲房间。", messageObj);
 
-                int i = Rnd.Next(0, list.Count);
+                int i = StaticRandom.Next(0, list.Count);
                 var ok2 = list[i];
 
                 Session session = ok2.Key;

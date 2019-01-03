@@ -13,7 +13,7 @@ namespace Daylily.Plugin.Core
     [Name("发送自定义消息")]
     [Author("yf_extension")]
     [Version(0, 1, 0, PluginVersion.Stable)]
-    [Help("支持发送任意格式的消息（包含cq码）。", HelpType = PermissionLevel.Root)]
+    [Help("支持发送任意格式的消息（包含cq码）。", Authority = Authority.Root)]
     [Command("send")]
     public class Send : CommandPlugin
     {
@@ -42,7 +42,7 @@ namespace Daylily.Plugin.Core
         {
             string sessionId = null;
             var sessionType = MessageType.Private;
-            if (messageObj.PermissionLevel != PermissionLevel.Root)
+            if (messageObj.Authority != Authority.Root)
                 return new CommonMessageResponse(LoliReply.RootOnly, messageObj);
             if (Message == null)
                 return new CommonMessageResponse("你要说什么……", messageObj);

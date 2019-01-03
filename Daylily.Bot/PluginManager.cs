@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Daylily.Bot
@@ -31,11 +32,11 @@ namespace Daylily.Bot
 
         public static void LoadAllPlugins(StartupConfig startupConfig)
         {
-            //Logger.Info("===加载内部插件中==");
+            //Logger.Info("===加载内部插件中===");
             //LoadBuiltIn(args);
-            Logger.Info("===加载外部插件中==");
+            Logger.Info("====加载外部插件中====");
             LoadFromFile(startupConfig);
-            Logger.Info("===加载扩展插件中==");
+            Logger.Info("====加载扩展插件中====");
             LoadExtend();
         }
 
@@ -174,15 +175,32 @@ namespace Daylily.Bot
         public static void AddPlugin<T>(StartupConfig startupConfig)
         {
             Type type = typeof(T);
-            Plugin plugin = Activator.CreateInstance(type) as Plugin;
+            CqPlugin plugin = Activator.CreateInstance(type) as CqPlugin;
             InsertPlugin(plugin, startupConfig);
+        }
+
+        public static T GetPlugin<T>() where T : CqPlugin
+        {
+            if (typeof(T).IsSubclassOf(typeof(CommandPlugin)))
+            {
+                return (T)(CqPlugin)CommandMapStatic.FirstOrDefault(k => k.Value.GetType() == typeof(T)).Value;
+            }
+            else if (typeof(T).IsSubclassOf(typeof(ApplicationPlugin)))
+            {
+                return (T)(CqPlugin)ApplicationList.FirstOrDefault(k => k.GetType() == typeof(T));
+            }
+            else if (typeof(T).IsSubclassOf(typeof(ServicePlugin)))
+            {
+                return (T)(CqPlugin)ServiceList.FirstOrDefault(k => k.GetType() == typeof(T));
+            }
+            else return default;
         }
 
         private static void InsertPlugin(Type type, StartupConfig startupConfig)
         {
             try
             {
-                Plugin plugin = (Plugin)Activator.CreateInstance(type);
+                CqPlugin plugin = (CqPlugin)Activator.CreateInstance(type);
                 if (plugin.PluginType != PluginType.Command)
                 {
                     InsertPlugin(plugin, startupConfig);
@@ -190,7 +208,6 @@ namespace Daylily.Bot
                 else
                 {
                     CommandPlugin cmdPlugin = (CommandPlugin)plugin;
-                    cmdPlugin.OnInitialized(null);
                     string str = "";
                     if (cmdPlugin.Commands != null)
                     {
@@ -207,6 +224,7 @@ namespace Daylily.Bot
                     }
 
                     Logger.Origin($"命令 \"{plugin.Name}\" {str}已经加载完毕。");
+                    cmdPlugin.OnInitialized(null);
                 }
             }
             catch (Exception ex)
@@ -216,13 +234,14 @@ namespace Daylily.Bot
             }
         }
 
-        private static void InsertPlugin(Plugin plugin, StartupConfig startupConfig)
+        private static void InsertPlugin(CqPlugin plugin, StartupConfig startupConfig)
         {
             switch (plugin.PluginType)
             {
                 case PluginType.Application:
                     ApplicationList.Add((ApplicationPlugin)plugin);
                     Logger.Origin($"应用 \"{plugin.Name}\" 已经加载完毕。");
+                    ((ApplicationPlugin)plugin).OnInitialized(null);
                     break;
                 case PluginType.Service:
                 default:
@@ -230,6 +249,7 @@ namespace Daylily.Bot
                     svcPlugin.Execute(null);
                     ServiceList.Add(svcPlugin);
                     Logger.Origin($"服务 \"{svcPlugin.Name}\" 已经加载完毕。");
+                    ((ServicePlugin)plugin).OnInitialized(null);
                     break;
             }
         }

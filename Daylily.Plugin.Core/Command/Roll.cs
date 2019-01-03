@@ -46,11 +46,11 @@ namespace Daylily.Plugin.Core
             return new CommonMessageResponse(GetRandMessage(param1, param2, count), messageObj, true);
         }
 
-        private static int GetRand() => Rnd.Next(0, 101);
+        private static int GetRand() => StaticRandom.Next(0, 101);
 
-        private static int GetRand(int uBound) => Rnd.Next(0, uBound + 1);
+        private static int GetRand(int uBound) => StaticRandom.Next(0, uBound + 1);
 
-        private static int GetRand(int lBound, int uBound) => Rnd.Next(lBound, uBound + 1);
+        private static int GetRand(int lBound, int uBound) => StaticRandom.Next(lBound, uBound + 1);
 
         private string GetRandMessage(int lBound, int uBound, int count)
         {
@@ -79,7 +79,7 @@ namespace Daylily.Plugin.Core
 
             for (int i = 0; i < count; i++)
             {
-                int index = Rnd.Next(0, list.Count);
+                int index = StaticRandom.Next(0, list.Count);
                 newList.Add(list[index]);
                 list.RemoveAt(index);
             }

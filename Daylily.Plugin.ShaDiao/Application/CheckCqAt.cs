@@ -26,8 +26,8 @@ namespace Daylily.Plugin.ShaDiao.Application
 
             string[] ids = CqCode.GetAt(messageObj.RawMessage);
             if (ids == null || !ids.Contains("2181697779") && !ids.Contains("3421735167")) return null;
-            Thread.Sleep(Rnd.Next(200, 300));
-            if (Rnd.NextDouble() < 0.9)
+            Thread.Sleep(StaticRandom.Next(200, 300));
+            if (StaticRandom.NextDouble() < 0.9)
                 return new CommonMessageResponse("", messageObj, true);
             else
             {

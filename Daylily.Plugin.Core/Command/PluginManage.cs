@@ -13,7 +13,7 @@ namespace Daylily.Plugin.Core
     [Name("插件管理")]
     [Author("yf_extension")]
     [Version(0, 1, 4, PluginVersion.Alpha)]
-    [Help("动态管理插件的启用状态。", "仅限当前群生效。", HelpType = PermissionLevel.Admin)]
+    [Help("动态管理插件的启用状态。", "仅限当前群生效。", Authority = Authority.Admin)]
     [Command("plugin")]
     public class PluginManage : CommandPlugin
     {
@@ -47,7 +47,7 @@ namespace Daylily.Plugin.Core
         {
             _cm = messageObj;
 
-            if (_cm.PermissionLevel == PermissionLevel.Public && _cm.MessageType == MessageType.Group)
+            if (_cm.Authority == Bot.Enum.Authority.Public && _cm.MessageType == MessageType.Group)
                 return new CommonMessageResponse(LoliReply.AdminOnly, _cm);
             if (List)
                 return ShowPluginList();

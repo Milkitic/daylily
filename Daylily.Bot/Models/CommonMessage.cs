@@ -17,7 +17,7 @@ namespace Daylily.Bot.Models
         public List<string> FreeArgs { get; set; }
         public Dictionary<string, string> Switches { get; set; }
         public List<string> SimpleArgs { get; set; }
-        public PermissionLevel PermissionLevel { get; set; }
+        public Authority Authority { get; set; }
         public MessageType MessageType { get; set; }
 
         public CqIdentity CqIdentity
@@ -51,12 +51,12 @@ namespace Daylily.Bot.Models
 
         public CommonMessage() { }
 
-        public CommonMessage(Msg msg, PermissionLevel level = PermissionLevel.Public)
+        public CommonMessage(Msg msg, Authority level = Authority.Public)
         {
             RawMessage = msg.Message;
             UserId = msg.UserId.ToString();
             MessageId = msg.MessageId;
-            PermissionLevel = level;
+            Authority = level;
 
             switch (msg)
             {

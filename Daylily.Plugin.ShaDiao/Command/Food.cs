@@ -86,7 +86,7 @@ namespace Daylily.Plugin.ShaDiao
             string[] fullContent = ConcurrentFile.ReadAllLines(_content);
 
             if (EnabledAlbumId > 0 || DisabledAlbumId > 0)
-                return _cm.PermissionLevel == PermissionLevel.Root
+                return _cm.Authority == Bot.Enum.Authority.Root
                     ? ModuleManageAlbum(fullContent)
                     : new CommonMessageResponse(LoliReply.RootOnly, _cm);
 
@@ -132,7 +132,7 @@ namespace Daylily.Plugin.ShaDiao
             var albums = GetHotAlbumsDescending(10).Select(k => k.Key).ToArray();
             if (albums.Length < 1)
                 return new CommonMessageResponse("目前没有热门相册…", _cm);
-            string hot = albums[Rnd.Next(albums.Length)];
+            string hot = albums[StaticRandom.Next(albums.Length)];
             string hotPath = Path.Combine(_imagePath, hot);
             var hotFile = GetRandomPhoto(hotPath);
 
@@ -234,14 +234,14 @@ namespace Daylily.Plugin.ShaDiao
         private static string GetRandomPhoto(string dir)
         {
             string[] innerContent = ConcurrentFile.ReadAllLines(Path.Combine(dir, ".content"));
-            string innerChoice = innerContent[Rnd.Next(0, innerContent.Length)];
+            string innerChoice = innerContent[StaticRandom.Next(0, innerContent.Length)];
             string file = Path.Combine(dir, innerChoice);
             return file;
         }
 
         private static string GetRandomAlbum(IReadOnlyList<string> albumName)
         {
-            string choice = albumName[Rnd.Next(0, albumName.Count)];
+            string choice = albumName[StaticRandom.Next(0, albumName.Count)];
             string dir = Path.Combine(_imagePath, choice);
             return dir;
         }

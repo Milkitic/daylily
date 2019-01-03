@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Daylily.Bot.PluginBase
 {
-    public abstract class Plugin : IBackend
+    public abstract class CqPlugin : IBackend
     {
         #region public members
 
@@ -23,7 +23,7 @@ namespace Daylily.Bot.PluginBase
         public string Version => string.Concat(Major, ".", Minor, ".", Patch);
         public PluginVersion State { get; internal set; }
         public string[] Helps { get; internal set; }
-        public PermissionLevel HelpType { get; internal set; }
+        public Authority Authority { get; }
         public abstract BackendConfig BackendConfig { get; }
 
         public virtual void OnInitialized(string[] args)
@@ -45,7 +45,7 @@ namespace Daylily.Bot.PluginBase
 
         #region protected members
 
-        protected Plugin()
+        protected CqPlugin()
         {
             Type t = GetType();
             if (!t.IsDefined(typeof(NameAttribute), false)) Name = t.Name;
@@ -80,17 +80,17 @@ namespace Daylily.Bot.PluginBase
                         break;
                     case HelpAttribute help:
                         Helps = help.Helps ?? new[] { "尚无帮助信息" };
-                        HelpType = help.HelpType;
+                        Authority = help.Authority;
                         break;
                 }
             }
         }
 
-        protected PermissionLevel CurrentLevel { get; set; }
-
         protected string SettingsPath => Path.Combine(Domain.PluginPath, GetType().Name);
 
-        protected static readonly Random Rnd = new Random();
+        protected Random GlobalRandom => Core.CurrentCore.GlobalRandom;
+        protected static Random StaticRandom { get; } = new Random();
+        protected Random Random { get; } = new Random();
 
         protected static void SendMessage(CommonMessageResponse response) => CoolQDispatcher.Current.SendMessage(response);
 

@@ -145,7 +145,7 @@ namespace Daylily.Plugin.Osu
 
             if (SubscribeMapper != null)
             {
-                if (messageObj.MessageType == MessageType.Group && messageObj.PermissionLevel == PermissionLevel.Public)
+                if (messageObj.MessageType == MessageType.Group && messageObj.Authority == Bot.Enum.Authority.Public)
                     return new CommonMessageResponse(LoliReply.AdminOnly + "个人推送请私聊.", messageObj);
 
                 List<string> subedId = GetSubscribed(messageObj.MessageType, subId).ToList();
@@ -191,7 +191,7 @@ namespace Daylily.Plugin.Osu
 
             if (UnsubscribeMapper != null)
             {
-                if (messageObj.MessageType == MessageType.Group && messageObj.PermissionLevel == PermissionLevel.Public)
+                if (messageObj.MessageType == MessageType.Group && messageObj.Authority == Bot.Enum.Authority.Public)
                     return new CommonMessageResponse(LoliReply.AdminOnly + "个人推送请私聊.", messageObj);
 
                 int count = OldSiteApi.GetUser(UnsubscribeMapper, out var userObj);

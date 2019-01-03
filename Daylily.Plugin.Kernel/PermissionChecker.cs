@@ -42,7 +42,7 @@ namespace Daylily.Plugin.Kernel
                     else
                     {
                         cm.FullCommand = message.Substring(6, message.Length - 6);
-                        cm.PermissionLevel = PermissionLevel.Root;
+                        cm.Authority = Bot.Enum.Authority.Root;
                     }
 
                 }
@@ -60,16 +60,16 @@ namespace Daylily.Plugin.Kernel
                     else
                     {
                         cm.FullCommand = message.Substring(6, message.Length - 6);
-                        cm.PermissionLevel = PermissionLevel.Admin;
+                        cm.Authority = Bot.Enum.Authority.Admin;
                     }
                 }
                 else
                 {
                     // auto
                     if (CoolQDispatcher.Current.SessionInfo[cm.CqIdentity].GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
-                        cm.PermissionLevel = PermissionLevel.Admin;
+                        cm.Authority = Bot.Enum.Authority.Admin;
                     if (cm.UserId == "2241521134")
-                        cm.PermissionLevel = PermissionLevel.Root;
+                        cm.Authority = Bot.Enum.Authority.Root;
 
                     cm.FullCommand = message.Substring(1, message.Length - 1);
                 }

@@ -26,6 +26,7 @@ namespace Daylily.Bot
 
         private IDispatcher _dispatcher;
         public IDispatcher Dispatcher => _dispatcher;
+        public Random GlobalRandom { get; } = new Random();
 
         public string CommandFlag = "/";
 
