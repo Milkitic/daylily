@@ -128,7 +128,7 @@ namespace Daylily.Plugin.Core
             Dictionary<string, string> dicApp = apps.Where(plugin => plugin.HelpType <= _cm.PermissionLevel)
                 .OrderBy(k => k.Name).ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]);
 
-            string[] hot = CoolQDispatcher.CommandHot.OrderByDescending(k => k.Value)
+            string[] hot = CoolQDispatcher.Current.CommandHot.OrderByDescending(k => k.Value)
                   .Take(5)
                   .Where(k => k.Value > 50)
                   .Select(k => "/" + k.Key).ToArray();

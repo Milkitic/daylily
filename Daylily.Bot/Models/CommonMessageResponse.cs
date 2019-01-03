@@ -1,12 +1,16 @@
 ﻿using Daylily.Bot.Enum;
+using Daylily.Bot.Message;
 
 namespace Daylily.Bot.Models
 {
-    public class CommonMessageResponse
+    public class CommonMessageResponse : IResponse
     {
         public bool EnableAt { get; }
         public string Message { get; }
         public MessageType MessageType { get; }
+        public bool Cancel { get; set; } = false;
+        public bool Handled { get; set; } = false;
+        public object Tag { get; set; }
 
         public CqIdentity CqIdentity
         {
@@ -29,7 +33,10 @@ namespace Daylily.Bot.Models
         public string DiscussId { get; }
         public string GroupId { get; }
 
-        public CommonMessageResponse() { }
+        public CommonMessageResponse()
+        {
+            Cancel = true;
+        }
 
         /// <summary>
         /// 此为指定一个特定的群时再使用

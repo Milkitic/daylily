@@ -33,7 +33,7 @@ namespace Daylily.Bot.Sessions
                 throw new NotSupportedException("不支持同时两个会话操作。");
 
             Sessions.TryAdd(SessionId, new Queue<CommonMessage>());
-            CoolQDispatcher.SessionReceived += Session_Received;
+            CoolQDispatcher.Current.SessionReceived += Session_Received;
         }
 
         public void AddMember(params long[] userId)
@@ -90,7 +90,7 @@ namespace Daylily.Bot.Sessions
             }
             finally
             {
-                CoolQDispatcher.SessionReceived -= Session_Received;
+                CoolQDispatcher.Current.SessionReceived -= Session_Received;
                 Sessions.TryRemove(SessionId, out _);
             }
         }

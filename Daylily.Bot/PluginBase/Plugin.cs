@@ -92,7 +92,7 @@ namespace Daylily.Bot.PluginBase
 
         protected static readonly Random Rnd = new Random();
 
-        protected static void SendMessage(CommonMessageResponse response) => CoolQDispatcher.SendMessage(response);
+        protected static void SendMessage(CommonMessageResponse response) => CoolQDispatcher.Current.SendMessage(response);
 
         protected void SaveSettings<T>(T cls, string fileName = null, bool writeLog = false)
         {

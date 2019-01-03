@@ -65,7 +65,7 @@ namespace Daylily.Plugin.Core
             {
                 case MessageType.Private:
                     {
-                        var list = CoolQDispatcher.PrivateDisabledList[long.Parse(_cm.UserId)];
+                        var list = CoolQDispatcher.Current.PrivateDisabledList[long.Parse(_cm.UserId)];
                         foreach (var item in list)
                         {
                             if (item != DisabledPlugin) continue;
@@ -78,7 +78,7 @@ namespace Daylily.Plugin.Core
                     break;
                 case MessageType.Discuss:
                     {
-                        var list = CoolQDispatcher.DiscussDisabledList[long.Parse(_cm.DiscussId)];
+                        var list = CoolQDispatcher.Current.DiscussDisabledList[long.Parse(_cm.DiscussId)];
                         foreach (var item in list)
                         {
                             if (item != DisabledPlugin) continue;
@@ -91,7 +91,7 @@ namespace Daylily.Plugin.Core
                     break;
                 case MessageType.Group:
                     {
-                        var list = CoolQDispatcher.GroupDisabledList[long.Parse(_cm.GroupId)];
+                        var list = CoolQDispatcher.Current.GroupDisabledList[long.Parse(_cm.GroupId)];
                         foreach (var item in list)
                         {
                             if (item != DisabledPlugin) continue;
@@ -115,7 +115,7 @@ namespace Daylily.Plugin.Core
             {
                 case MessageType.Private:
                     {
-                        list = CoolQDispatcher.PrivateDisabledList[long.Parse(_cm.UserId)];
+                        list = CoolQDispatcher.Current.PrivateDisabledList[long.Parse(_cm.UserId)];
                         listCmd = PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
                         listApp = PluginManager.ApplicationList;
                         listSvc = PluginManager.ServiceList;
@@ -124,7 +124,7 @@ namespace Daylily.Plugin.Core
                     break;
                 case MessageType.Discuss:
                     {
-                        list = CoolQDispatcher.DiscussDisabledList[long.Parse(_cm.DiscussId)];
+                        list = CoolQDispatcher.Current.DiscussDisabledList[long.Parse(_cm.DiscussId)];
                         listCmd = PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
                         listApp = PluginManager.ApplicationList;
                         listSvc = PluginManager.ServiceList;
@@ -134,7 +134,7 @@ namespace Daylily.Plugin.Core
                 case MessageType.Group:
                 default:
                     {
-                        list = CoolQDispatcher.GroupDisabledList[long.Parse(_cm.GroupId)];
+                        list = CoolQDispatcher.Current.GroupDisabledList[long.Parse(_cm.GroupId)];
                         listCmd = PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
                         listApp = PluginManager.ApplicationList;
                         listSvc = PluginManager.ServiceList;
@@ -180,20 +180,20 @@ namespace Daylily.Plugin.Core
 
         private void SaveDisableSettings()
         {
-            SaveSettings(CoolQDispatcher.GroupDisabledList, "GroupDisabledList");
-            SaveSettings(CoolQDispatcher.DiscussDisabledList, "DiscussDisabledList");
-            SaveSettings(CoolQDispatcher.PrivateDisabledList, "PrivateDisabledList");
+            SaveSettings(CoolQDispatcher.Current.GroupDisabledList, "GroupDisabledList");
+            SaveSettings(CoolQDispatcher.Current.DiscussDisabledList, "DiscussDisabledList");
+            SaveSettings(CoolQDispatcher.Current.PrivateDisabledList, "PrivateDisabledList");
         }
 
         private void LoadDisableSettings()
         {
-            CoolQDispatcher.GroupDisabledList =
+            CoolQDispatcher.Current.GroupDisabledList =
                 LoadSettings<ConcurrentDictionary<long, List<string>>>("GroupDisabledList") ??
                 new ConcurrentDictionary<long, List<string>>();
-            CoolQDispatcher.DiscussDisabledList =
+            CoolQDispatcher.Current.DiscussDisabledList =
                 LoadSettings<ConcurrentDictionary<long, List<string>>>("DiscussDisabledList") ??
                 new ConcurrentDictionary<long, List<string>>();
-            CoolQDispatcher.PrivateDisabledList =
+            CoolQDispatcher.Current.PrivateDisabledList =
                 LoadSettings<ConcurrentDictionary<long, List<string>>>("PrivateDisabledList") ??
                 new ConcurrentDictionary<long, List<string>>();
         }
@@ -219,11 +219,11 @@ namespace Daylily.Plugin.Core
                 dicPlugin[appKey].Add(new PluginInfo(item.Name, item.GetType().Name));
 
             var sb = new StringBuilder();
-            sb.AppendLine(CoolQDispatcher.SessionInfo[_cm.CqIdentity].Name + " 的插件情况：");
+            sb.AppendLine(CoolQDispatcher.Current.SessionInfo[_cm.CqIdentity].Name + " 的插件情况：");
             switch (_cm.MessageType)
             {
                 case MessageType.Discuss:
-                    foreach (var item in CoolQDispatcher.DiscussDisabledList[_cm.CqIdentity.Id])
+                    foreach (var item in CoolQDispatcher.Current.DiscussDisabledList[_cm.CqIdentity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -236,7 +236,7 @@ namespace Daylily.Plugin.Core
 
                     break;
                 case MessageType.Private:
-                    foreach (var item in CoolQDispatcher.PrivateDisabledList[_cm.CqIdentity.Id])
+                    foreach (var item in CoolQDispatcher.Current.PrivateDisabledList[_cm.CqIdentity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -246,7 +246,7 @@ namespace Daylily.Plugin.Core
 
                     break;
                 case MessageType.Group:
-                    foreach (var item in CoolQDispatcher.GroupDisabledList[_cm.CqIdentity.Id])
+                    foreach (var item in CoolQDispatcher.Current.GroupDisabledList[_cm.CqIdentity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)

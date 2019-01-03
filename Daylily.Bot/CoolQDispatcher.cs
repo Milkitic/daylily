@@ -21,28 +21,29 @@ namespace Daylily.Bot
 {
     public class CoolQDispatcher : IDispatcher
     {
+        public static CoolQDispatcher Current { get; private set; }
         public MiddlewareConfig MiddlewareConfig { get; set; } = new MiddlewareConfig();
 
-        public static event SessionReceivedEventHandler SessionReceived;
+        public event SessionReceivedEventHandler SessionReceived;
 
-        public static SessionList SessionInfo { get; } = new SessionList();
-        public static List<GroupMemberGroupInfo> GroupMemberGroupInfo { get; set; } = new List<GroupMemberGroupInfo>();
-        public static ConcurrentDictionary<long, List<string>> GroupDisabledList { get; set; } =
+        public SessionList SessionInfo { get; } = new SessionList();
+        public List<GroupMemberGroupInfo> GroupMemberGroupInfo { get; set; } = new List<GroupMemberGroupInfo>();
+        public ConcurrentDictionary<long, List<string>> GroupDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
-        public static ConcurrentDictionary<long, List<string>> DiscussDisabledList { get; set; } =
+        public ConcurrentDictionary<long, List<string>> DiscussDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
-        public static ConcurrentDictionary<long, List<string>> PrivateDisabledList { get; set; } =
+        public ConcurrentDictionary<long, List<string>> PrivateDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
-        public static ConcurrentDictionary<string, int> CommandHot { get; }
+        public ConcurrentDictionary<string, int> CommandHot { get; }
 
-        public static string CommandFlag = "!";
 
-        private static readonly Random Rnd = new Random();
+        private readonly Random _rnd = new Random();
         private const int MinTime = 100; // 每条缓冲时间
         private const int MaxTime = 300; // 每条缓冲时间
 
-        static CoolQDispatcher()
+        public CoolQDispatcher()
         {
+            Current = this;
             CommandHot = Settings.LoadSettings<ConcurrentDictionary<string, int>>("CommandHot") ??
                          new ConcurrentDictionary<string, int>();
         }
@@ -86,7 +87,7 @@ namespace Daylily.Bot
             return handled;
         }
 
-        private static void DispatchMessage(Msg msg)
+        private void DispatchMessage(Msg msg)
         {
             CqIdentity cqIdentity;
             switch (msg)
@@ -127,98 +128,101 @@ namespace Daylily.Bot
             }
         }
 
-        private static async void HandleMessage(CommonMessage cm)
+        private async void HandleMessage(CommonMessage cm)
         {
-            bool cmdFlag = false;
-            long groupId = Convert.ToInt64(cm.GroupId);
-            long userId = Convert.ToInt64(cm.UserId);
-            long discussId = Convert.ToInt64(cm.DiscussId);
-            var type = cm.MessageType;
+            //bool cmdFlag = false;
+            //long groupId = Convert.ToInt64(cm.GroupId);
+            //long userId = Convert.ToInt64(cm.UserId);
+            //long discussId = Convert.ToInt64(cm.DiscussId);
+            //var type = cm.MessageType;
 
-            string group, sender, message = cm.RawMessage;
-            if (cm.MessageType == MessageType.Private)
+            //string group, sender, message = cm.RawMessage;
+            //if (cm.MessageType == MessageType.Private)
+            //{
+            //    group = "私聊";
+            //    sender = SessionInfo[cm.CqIdentity].Name;
+            //}
+            //else if (cm.MessageType == MessageType.Discuss)
+            //{
+            //    group = SessionInfo[cm.CqIdentity].Name;
+            //    sender = cm.UserId;
+            //}
+            //else
+            //{
+            //    var userInfo = SessionInfo[cm.CqIdentity]?.GroupInfo?.Members?.FirstOrDefault(i => i.UserId == userId) ??
+            //                   CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
+            //    group = SessionInfo?[cm.CqIdentity]?.Name;
+            //    sender = string.IsNullOrEmpty(userInfo.Card)
+            //        ? userInfo.Nickname
+            //        : userInfo.Card;
+            //}
+
+            //Logger.Message($"({group}) {sender}:\r\n  {CqCode.DecodeToString(message)}");
+
+            var handled = await HandleMessageApp(cm);
+            if (!handled)
             {
-                group = "私聊";
-                sender = SessionInfo[cm.CqIdentity].Name;
+                HandleMessageCmd(cm);
+                //if (cm.RawMessage.Substring(0, 1) == CommandFlag)
+                //{
+                //    if (cm.RawMessage.IndexOf(CommandFlag + "root ", StringComparison.InvariantCulture) == 0)
+                //    {
+                //        if (cm.UserId != "2241521134")
+                //        {
+                //            SendMessage(new CommonMessageResponse(LoliReply.FakeRoot, cm));
+                //        }
+                //        else
+                //        {
+                //            cm.FullCommand = cm.RawMessage.Substring(6, cm.RawMessage.Length - 6);
+                //            cm.PermissionLevel = PermissionLevel.Root;
+                //            cmdFlag = true;
+                //            HandleMessageCmd(cm);
+                //        }
+
+                //    }
+                //    else if (message.IndexOf(CommandFlag + "sudo ", StringComparison.InvariantCulture) == 0 &&
+                //             type == MessageType.Group)
+                //    {
+                //        if (SessionInfo[cm.CqIdentity].GroupInfo.Admins.Count(q => q.UserId == userId) == 0)
+                //        {
+                //            SendMessage(new CommonMessageResponse(LoliReply.FakeAdmin, cm));
+                //        }
+                //        else
+                //        {
+                //            cm.FullCommand = message.Substring(6, message.Length - 6);
+                //            cm.PermissionLevel = PermissionLevel.Admin;
+                //            cmdFlag = true;
+                //            HandleMessageCmd(cm);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        // auto
+                //        if (SessionInfo[cm.CqIdentity].GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
+                //            cm.PermissionLevel = PermissionLevel.Admin;
+                //        if (cm.UserId == "2241521134")
+                //            cm.PermissionLevel = PermissionLevel.Root;
+
+                //        cm.FullCommand = message.Substring(1, message.Length - 1);
+                //        cmdFlag = true;
+                //        HandleMessageCmd(cm);
+                //    }
+                //}
+                //if (!cmdFlag)
+                //    SessionReceived?.Invoke(null, new SessionReceivedEventArgs
+                //    {
+                //        MessageObj = cm
+                //    });
             }
-            else if (cm.MessageType == MessageType.Discuss)
-            {
-                group = SessionInfo[cm.CqIdentity].Name;
-                sender = cm.UserId;
-            }
-            else
-            {
-                var userInfo = SessionInfo[cm.CqIdentity]?.GroupInfo?.Members?.FirstOrDefault(i => i.UserId == userId) ??
-                               CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
-                group = SessionInfo?[cm.CqIdentity]?.Name;
-                sender = string.IsNullOrEmpty(userInfo.Card)
-                    ? userInfo.Nickname
-                    : userInfo.Card;
-            }
-
-            Logger.Message($"({group}) {sender}:\r\n  {CqCode.DecodeToString(message)}");
-
-            await HandleMessageApp(cm);
-            if (cm.RawMessage.Substring(0, 1) == CommandFlag)
-            {
-                if (cm.RawMessage.IndexOf(CommandFlag + "root ", StringComparison.InvariantCulture) == 0)
-                {
-                    if (cm.UserId != "2241521134")
-                    {
-                        SendMessage(new CommonMessageResponse(LoliReply.FakeRoot, cm));
-                    }
-                    else
-                    {
-                        cm.FullCommand = cm.RawMessage.Substring(6, cm.RawMessage.Length - 6);
-                        cm.PermissionLevel = PermissionLevel.Root;
-                        cmdFlag = true;
-                        HandleMessageCmd(cm);
-                    }
-
-                }
-                else if (message.IndexOf(CommandFlag + "sudo ", StringComparison.InvariantCulture) == 0 &&
-                         type == MessageType.Group)
-                {
-                    if (SessionInfo[cm.CqIdentity].GroupInfo.Admins.Count(q => q.UserId == userId) == 0)
-                    {
-                        SendMessage(new CommonMessageResponse(LoliReply.FakeAdmin, cm));
-                    }
-                    else
-                    {
-                        cm.FullCommand = message.Substring(6, message.Length - 6);
-                        cm.PermissionLevel = PermissionLevel.Admin;
-                        cmdFlag = true;
-                        HandleMessageCmd(cm);
-                    }
-                }
-                else
-                {
-                    // auto
-                    if (SessionInfo[cm.CqIdentity].GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
-                        cm.PermissionLevel = PermissionLevel.Admin;
-                    if (cm.UserId == "2241521134")
-                        cm.PermissionLevel = PermissionLevel.Root;
-
-                    cm.FullCommand = message.Substring(1, message.Length - 1);
-                    cmdFlag = true;
-                    HandleMessageCmd(cm);
-                }
-            }
-            if (!cmdFlag)
-                SessionReceived?.Invoke(null, new SessionReceivedEventArgs
-                {
-                    MessageObj = cm
-                });
-
-            Thread.Sleep(Rnd.Next(MinTime, MaxTime));
+            Thread.Sleep(_rnd.Next(MinTime, MaxTime));
         }
 
-        private static async Task HandleMessageApp(CommonMessage cm)
+        private async Task<bool> HandleMessageApp(CommonMessage cm)
         {
             int? priority = int.MinValue;
             bool handled = false;
 
-            foreach (var appPlugin in PluginManager.ApplicationList)
+            foreach (var appPlugin in PluginManager.ApplicationList.OrderByDescending(k => k.BackendConfig?.Priority))
             {
                 int? p = appPlugin.BackendConfig?.Priority;
                 if (p < priority && handled)
@@ -226,23 +230,30 @@ namespace Daylily.Bot
                     break;
                 }
 
+                Logger.Raw(appPlugin.Name);
                 priority = appPlugin.BackendConfig?.Priority;
                 Type t = appPlugin.GetType();
                 if (ValidateDisabled(cm, t))
                     continue;
 
+                CommonMessageResponse replyObj = null;
                 var task = Task.Run(() =>
                 {
-                    CommonMessageResponse replyObj = appPlugin.OnMessageReceived(cm);
-                    if (replyObj != null) SendMessage(replyObj);
+                    replyObj = appPlugin.OnMessageReceived(cm);
+                    if (replyObj != null && !replyObj.Cancel) SendMessage(replyObj);
                 });
 
                 if (!appPlugin.RunInMultiThreading)
+                {
                     await task.ConfigureAwait(false);
+                    handled = replyObj?.Handled ?? false;
+                }
             }
+
+            return handled;
         }
 
-        private static void HandleMessageCmd(CommonMessage cm)
+        private void HandleMessageCmd(CommonMessage cm)
         {
             string fullCmd = cm.FullCommand;
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
@@ -293,7 +304,7 @@ namespace Daylily.Bot
             );
         }
 
-        public static void SendMessage(CommonMessageResponse resp)
+        public void SendMessage(CommonMessageResponse resp)
         {
             var msg = (resp.EnableAt && resp.MessageType != MessageType.Private ? new At(resp.UserId) + " " : "") +
                     resp.Message;
@@ -319,7 +330,7 @@ namespace Daylily.Bot
             Logger.Message(string.Format("({0}) 我: {{status: {1}}}\r\n  {2}", info, status, CqCode.DecodeToString(msg)));
         }
 
-        private static bool ValidateDisabled(CommonMessage cm, MemberInfo t)
+        private bool ValidateDisabled(CommonMessage cm, MemberInfo t)
         {
             switch (cm.MessageType)
             {
@@ -355,7 +366,7 @@ namespace Daylily.Bot
             return false;
         }
 
-        private static bool TrySetValues(CommonMessage cm, Type t, CommandPlugin plugin)
+        private bool TrySetValues(CommonMessage cm, Type t, CommandPlugin plugin)
         {
             var props = t.GetProperties();
             int freeIndex = 0;

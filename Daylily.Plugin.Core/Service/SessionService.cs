@@ -50,7 +50,7 @@ namespace Daylily.Plugin.Core.Service
                             user = newList.FirstOrDefault(m => m.UserId == groupMember.UserId);
                             if (!user.GroupIdList.Contains(groupInfo.GroupId)) user.GroupIdList.Add(groupInfo.GroupId);
                         }
-                    CoolQDispatcher.SessionInfo.AddOrUpdateGroup(v2);
+                    CoolQDispatcher.Current.SessionInfo.AddOrUpdateGroup(v2);
                     Logger.Success($"{groupInfo.GroupName} ({groupInfo.GroupId}): 管理{v2.Admins.Count}人, 成员{v2.Members.Count}人.");
                 }
                 catch (Exception)
@@ -59,14 +59,14 @@ namespace Daylily.Plugin.Core.Service
                 }
             }
 
-            string[] oldGroups = CoolQDispatcher.SessionInfo.Sessions.Select(k => k.Value.Id).ToArray();
+            string[] oldGroups = CoolQDispatcher.Current.SessionInfo.Sessions.Select(k => k.Value.Id).ToArray();
             string[] newGroups = list.Select(k => k.GroupId.ToString()).ToArray();
             string[] noUseGroup = oldGroups.Where(k => !newGroups.Contains(k)).ToArray();
             foreach (var groupId in noUseGroup)
             {
                 try
                 {
-                    CoolQDispatcher.SessionInfo.RemoveGroup(groupId);
+                    CoolQDispatcher.Current.SessionInfo.RemoveGroup(groupId);
                 }
                 catch (Exception)
                 {
@@ -74,7 +74,7 @@ namespace Daylily.Plugin.Core.Service
                 }
             }
 
-            if (i % 6 == 0) CoolQDispatcher.GroupMemberGroupInfo = newList;
+            if (i % 6 == 0) CoolQDispatcher.Current.GroupMemberGroupInfo = newList;
         }
     }
 }

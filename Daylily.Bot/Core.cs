@@ -20,14 +20,18 @@ namespace Daylily.Bot
 {
     public class Core
     {
+        public static Core CurrentCore { get; private set; }
         private readonly List<IFrontend> _frontends = new List<IFrontend>();
         public IEnumerable<IFrontend> Frontends => _frontends;
 
         private IDispatcher _dispatcher;
         public IDispatcher Dispatcher => _dispatcher;
 
+        public string CommandFlag = "/";
+
         public Core(StartupConfig startupConfig)
         {
+            CurrentCore = this;
             Logger.Raw(@".__       . .   
 |  \ _.  .|*|  .
 |__/(_]\_||||\_|
@@ -121,7 +125,7 @@ namespace Daylily.Bot
 
             CqApi.ApiUrl = secret.BotSettings.PostUrl;
             CqCode.CqPath = secret.BotSettings.CqDir;
-            CoolQDispatcher.CommandFlag = secret.BotSettings.CommandFlag;
+            CurrentCore.CommandFlag = secret.BotSettings.CommandFlag;
         }
 
         /// <summary>

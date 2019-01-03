@@ -37,7 +37,7 @@ namespace Daylily.Plugin.Osu.Cabbage
                     BllUserRole bllUserRole = new BllUserRole();
                     List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
                     if (userInfo.Count == 0)
-                        CoolQDispatcher.SendMessage(new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true));
+                        CoolQDispatcher.Current.SendMessage(new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true));
 
                     uname = userInfo[0].CurrentUname;
                 }
@@ -46,7 +46,7 @@ namespace Daylily.Plugin.Osu.Cabbage
 
                 using (Session session = new Session(25000, new CqIdentity(cabbageId, MessageType.Private), cabbageId))
                 {
-                    CoolQDispatcher.SendMessage(
+                    CoolQDispatcher.Current.SendMessage(
                         new CommonMessageResponse($"!{cmd.Replace("my", "").Replace("me", "")} {uname}",
                             new CqIdentity(cabbageId, MessageType.Private)));
                     try
@@ -68,9 +68,9 @@ namespace Daylily.Plugin.Osu.Cabbage
 
                         if (imgList == null)
                         {
-                            CoolQDispatcher.SendMessage(new CommonMessageResponse(result.RawMessage, messageObj));
+                            CoolQDispatcher.Current.SendMessage(new CommonMessageResponse(result.RawMessage, messageObj));
                             if (result2 != null)
-                                CoolQDispatcher.SendMessage(new CommonMessageResponse(result2.RawMessage, messageObj));
+                                CoolQDispatcher.Current.SendMessage(new CommonMessageResponse(result2.RawMessage, messageObj));
                             continue;
                         }
                         //throw new IndexOutOfRangeException("查询失败：" + result.Message);
@@ -92,24 +92,24 @@ namespace Daylily.Plugin.Osu.Cabbage
                             message = str1 + str + str2;
                         }
 
-                        CoolQDispatcher.SendMessage(
+                        CoolQDispatcher.Current.SendMessage(
                             new CommonMessageResponse(message + "\r\n（查询由白菜支持）", messageObj));
                     }
                     catch (IndexOutOfRangeException e)
                     {
                         string msg = e.Message;
-                        CoolQDispatcher.SendMessage(new CommonMessageResponse(msg, messageObj, true));
+                        CoolQDispatcher.Current.SendMessage(new CommonMessageResponse(msg, messageObj, true));
                     }
                     catch (TimeoutException)
                     {
                         string msg = "查询失败，白菜没有搭理人家..";
-                        CoolQDispatcher.SendMessage(new CommonMessageResponse(msg, messageObj, true));
+                        CoolQDispatcher.Current.SendMessage(new CommonMessageResponse(msg, messageObj, true));
                     }
                     catch (Exception ex)
                     {
                         string msg = "查询失败，未知错误。";
                         Logger.Exception(ex);
-                        CoolQDispatcher.SendMessage(new CommonMessageResponse(msg, messageObj, true));
+                        CoolQDispatcher.Current.SendMessage(new CommonMessageResponse(msg, messageObj, true));
                     } // catch
                 } // using
             } // while
