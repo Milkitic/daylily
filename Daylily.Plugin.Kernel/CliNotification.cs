@@ -1,16 +1,14 @@
-﻿using Daylily.Bot;
+﻿using System;
+using System.Linq;
+using Daylily.Bot;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
 using Daylily.Bot.PluginBase;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Daylily.Plugin.Core.Application
+namespace Daylily.Plugin.Kernel
 {
     public class CliNotification : ApplicationPlugin
     {
