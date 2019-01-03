@@ -62,14 +62,14 @@ namespace Daylily.Plugin.ShaDiao.Application
                 _groupDic[groupId].LastSentIsMe = false;
                 _groupDic[groupId].TrigTime = Rnd.Next(60 * 60 * 2, 60 * 60 * 3);
 #if DEBUG
-                Logger.Debug(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
+                //Logger.Debug(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
 #endif
                 SaveSettings(_groupDic);
             }
             else
             {
 #if DEBUG
-                Logger.Debug(groupId + ". CD");
+                //Logger.Debug(groupId + ". CD");
 #endif
             }
             return null;

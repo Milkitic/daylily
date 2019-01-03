@@ -130,84 +130,14 @@ namespace Daylily.Bot
 
         private async void HandleMessage(CommonMessage cm)
         {
-            //bool cmdFlag = false;
-            //long groupId = Convert.ToInt64(cm.GroupId);
-            //long userId = Convert.ToInt64(cm.UserId);
-            //long discussId = Convert.ToInt64(cm.DiscussId);
-            //var type = cm.MessageType;
-
-            //string group, sender, message = cm.RawMessage;
-            //if (cm.MessageType == MessageType.Private)
-            //{
-            //    group = "私聊";
-            //    sender = SessionInfo[cm.CqIdentity].Name;
-            //}
-            //else if (cm.MessageType == MessageType.Discuss)
-            //{
-            //    group = SessionInfo[cm.CqIdentity].Name;
-            //    sender = cm.UserId;
-            //}
-            //else
-            //{
-            //    var userInfo = SessionInfo[cm.CqIdentity]?.GroupInfo?.Members?.FirstOrDefault(i => i.UserId == userId) ??
-            //                   CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
-            //    group = SessionInfo?[cm.CqIdentity]?.Name;
-            //    sender = string.IsNullOrEmpty(userInfo.Card)
-            //        ? userInfo.Nickname
-            //        : userInfo.Card;
-            //}
-
-            //Logger.Message($"({group}) {sender}:\r\n  {CqCode.DecodeToString(message)}");
-
             var handled = await HandleMessageApp(cm);
             if (!handled)
             {
-                HandleMessageCmd(cm);
-                //if (cm.RawMessage.Substring(0, 1) == CommandFlag)
-                //{
-                //    if (cm.RawMessage.IndexOf(CommandFlag + "root ", StringComparison.InvariantCulture) == 0)
-                //    {
-                //        if (cm.UserId != "2241521134")
-                //        {
-                //            SendMessage(new CommonMessageResponse(LoliReply.FakeRoot, cm));
-                //        }
-                //        else
-                //        {
-                //            cm.FullCommand = cm.RawMessage.Substring(6, cm.RawMessage.Length - 6);
-                //            cm.PermissionLevel = PermissionLevel.Root;
-                //            cmdFlag = true;
-                //            HandleMessageCmd(cm);
-                //        }
+                if (cm.RawMessage.Substring(0, 1) == Bot.Core.CurrentCore.CommandFlag)
+                {
+                    HandleMessageCmd(cm);
+                }
 
-                //    }
-                //    else if (message.IndexOf(CommandFlag + "sudo ", StringComparison.InvariantCulture) == 0 &&
-                //             type == MessageType.Group)
-                //    {
-                //        if (SessionInfo[cm.CqIdentity].GroupInfo.Admins.Count(q => q.UserId == userId) == 0)
-                //        {
-                //            SendMessage(new CommonMessageResponse(LoliReply.FakeAdmin, cm));
-                //        }
-                //        else
-                //        {
-                //            cm.FullCommand = message.Substring(6, message.Length - 6);
-                //            cm.PermissionLevel = PermissionLevel.Admin;
-                //            cmdFlag = true;
-                //            HandleMessageCmd(cm);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        // auto
-                //        if (SessionInfo[cm.CqIdentity].GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
-                //            cm.PermissionLevel = PermissionLevel.Admin;
-                //        if (cm.UserId == "2241521134")
-                //            cm.PermissionLevel = PermissionLevel.Root;
-
-                //        cm.FullCommand = message.Substring(1, message.Length - 1);
-                //        cmdFlag = true;
-                //        HandleMessageCmd(cm);
-                //    }
-                //}
                 //if (!cmdFlag)
                 //    SessionReceived?.Invoke(null, new SessionReceivedEventArgs
                 //    {
@@ -230,7 +160,6 @@ namespace Daylily.Bot
                     break;
                 }
 
-                Logger.Raw(appPlugin.Name);
                 priority = appPlugin.BackendConfig?.Priority;
                 Type t = appPlugin.GetType();
                 if (ValidateDisabled(cm, t))
