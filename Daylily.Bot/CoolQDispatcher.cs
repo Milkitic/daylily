@@ -215,19 +215,29 @@ namespace Daylily.Bot
 
         private static async Task HandleMessageApp(CommonMessage cm)
         {
-            foreach (var item in PluginManager.ApplicationList)
+            int? priority = int.MinValue;
+            bool handled = false;
+
+            foreach (var appPlugin in PluginManager.ApplicationList)
             {
-                Type t = item.GetType();
+                int? p = appPlugin.MiddlewareConfig?.Priority;
+                if (p < priority && handled)
+                {
+                    break;
+                }
+
+                priority = appPlugin.MiddlewareConfig?.Priority;
+                Type t = appPlugin.GetType();
                 if (ValidateDisabled(cm, t))
                     continue;
 
                 var task = Task.Run(() =>
                 {
-                    CommonMessageResponse replyObj = item.OnMessageReceived(cm);
+                    CommonMessageResponse replyObj = appPlugin.OnMessageReceived(cm);
                     if (replyObj != null) SendMessage(replyObj);
                 });
 
-                if (!item.RunInMultiThreading)
+                if (!appPlugin.RunInMultiThreading)
                     await task.ConfigureAwait(false);
             }
         }
