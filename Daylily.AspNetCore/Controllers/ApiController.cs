@@ -8,9 +8,9 @@ namespace Daylily.AspNetCore.Controllers
 {
     public class ApiController : Controller
     {
-        private readonly Core _daylily;
+        private readonly DaylilyCore _daylily;
 
-        public ApiController(Bot.Core daylily)
+        public ApiController(Bot.DaylilyCore daylily)
         {
             _daylily = daylily;
         }

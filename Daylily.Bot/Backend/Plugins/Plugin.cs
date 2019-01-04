@@ -1,4 +1,5 @@
 ﻿using Daylily.Bot.Message;
+using Daylily.Bot.Models;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
@@ -20,7 +21,7 @@ namespace Daylily.Bot.Backend.Plugins
         public PluginVersion State { get; set; }
         public string[] Helps { get; set; }
         public Authority Authority { get; set; }
-        public abstract BackendConfig BackendConfig { get; }
+        public abstract MiddlewareConfig MiddlewareConfig { get; }
         public string Version => string.Concat(Major, ".", Minor, ".", Patch);
 
         public virtual void OnInitialized(string[] args)
@@ -81,10 +82,10 @@ namespace Daylily.Bot.Backend.Plugins
 
         protected string SettingsPath => Path.Combine(Domain.PluginPath, GetType().Name);
 
-        protected Random GlobalRandom => Core.Current.GlobalRandom;
+        protected Random GlobalRandom => DaylilyCore.Current.GlobalRandom;
         protected static Random StaticRandom { get; } = new Random();
         protected Random Random { get; } = new Random();
-        protected static void SendMessage(RouteMessage routeMsg) => Core.Current.Dispatcher.SendMessage(routeMsg);
+        protected static void SendMessage(RouteMessage routeMsg) => DaylilyCore.Current.Dispatcher.SendMessage(routeMsg);
         protected void SaveSettings<T>(T cls, string fileName = null, bool writeLog = false)
         {
             Type clsT = cls.GetType();

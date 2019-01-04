@@ -5,15 +5,15 @@ using Daylily.Bot.Interface;
 using Daylily.Bot.Message;
 using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Models.CqResponse;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.CoolQ.CoolQHttp;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 
 namespace Daylily.CoolQ
 {
@@ -30,7 +30,7 @@ namespace Daylily.CoolQ
         private readonly Random _rnd = new Random();
         private const int MinTime = 100; // 每条缓冲时间
         private const int MaxTime = 300; // 每条缓冲时间
-        public PluginManager PluginManager => Core.Current.PluginManager;
+        public PluginManager PluginManager => DaylilyCore.Current.PluginManager;
 
         public CoolQDispatcher()
         {
@@ -142,15 +142,15 @@ namespace Daylily.CoolQ
             bool handled = false;
 
             //var app = PluginManager.GetPlugin < PluginSwitch >
-            foreach (var appPlugin in PluginManager.Applications.OrderByDescending(k => k.BackendConfig?.Priority))
+            foreach (var appPlugin in PluginManager.Applications.OrderByDescending(k => k.MiddlewareConfig?.Priority))
             {
-                int? p = appPlugin.BackendConfig?.Priority;
+                int? p = appPlugin.MiddlewareConfig?.Priority;
                 if (p < priority && handled)
                 {
                     break;
                 }
 
-                priority = appPlugin.BackendConfig?.Priority;
+                priority = appPlugin.MiddlewareConfig?.Priority;
                 Type t = appPlugin.GetType();
                 //if (ValidateDisabled(cm, t))
                 //    continue;
@@ -227,13 +227,13 @@ namespace Daylily.CoolQ
             switch (routeMessage.MessageType)
             {
                 case MessageType.Group:
-                    status = CqApi.SendGroupMessageAsync(routeMessage.GroupId, msg).Status;
+                    status = CoolQHttpApi.SendGroupMessageAsync(routeMessage.GroupId, msg).Status;
                     break;
                 case MessageType.Discuss:
-                    status = CqApi.SendDiscussMessageAsync(routeMessage.DiscussId, msg).Status;
+                    status = CoolQHttpApi.SendDiscussMessageAsync(routeMessage.DiscussId, msg).Status;
                     break;
                 case MessageType.Private:
-                    status = CqApi.SendPrivateMessageAsync(routeMessage.UserId, msg).Status;
+                    status = CoolQHttpApi.SendPrivateMessageAsync(routeMessage.UserId, msg).Status;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

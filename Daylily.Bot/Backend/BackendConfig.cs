@@ -1,7 +1,9 @@
-﻿namespace Daylily.Bot.Backend
+﻿using Daylily.Bot.Models;
+
+namespace Daylily.Bot.Backend
 {
-    public class BackendConfig 
+    public class BackendConfig : MiddlewareConfig
     {
-        public int Priority { get; set; } = 0;
+
     }
 }

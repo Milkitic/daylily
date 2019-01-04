@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Daylily.Bot.Models;
 
 namespace Daylily.Bot.Backend.Plugins
 {
@@ -12,7 +13,7 @@ namespace Daylily.Bot.Backend.Plugins
         public sealed override PluginType PluginType => PluginType.Command;
         public override bool RunInMultiThreading { get; } = true;
         public override bool RunInMultipleInstances { get; } = true;
-        public override BackendConfig BackendConfig { get; } = new BackendConfig();
+        public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig();
 
         public virtual void OnCommandBindingFailed(BindingFailedEventArgs args)
         {

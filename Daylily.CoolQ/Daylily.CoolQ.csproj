@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

@@ -13,7 +13,7 @@ namespace Daylily.AspNetCore
     {
         public static void AddDaylily(this IServiceCollection services, Bot.Models.StartupConfig startupConfig)
         {
-            var bot = new Core(startupConfig);
+            var bot = new DaylilyCore(startupConfig);
             bot.ConfigDispatcher(startupConfig.Dispatcher, startupConfig.GeneralDispatcherConfig);
             foreach (var frontend in startupConfig.Frontends)
             {

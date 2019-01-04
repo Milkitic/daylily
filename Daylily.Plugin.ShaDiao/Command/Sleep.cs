@@ -1,9 +1,9 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
-using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
+using Daylily.CoolQ.CoolQHttp;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -36,7 +36,7 @@ namespace Daylily.Plugin.ShaDiao
             DateTime dt = new DateTime();
             dt = dt.AddHours(sleepTime);
             int s = (int)(dt.Ticks / 10000000);
-            CqApi.SetGroupBan(routeMsg.GroupId, routeMsg.UserId, s);
+            CoolQHttpApi.SetGroupBan(routeMsg.GroupId, routeMsg.UserId, s);
             string msg = "祝你一觉睡到" + DateTime.Now.AddHours(sleepTime).ToString("HH:mm") + " :D";
 
             return routeMsg.ToSource(msg, true);

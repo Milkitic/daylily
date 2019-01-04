@@ -2,10 +2,10 @@
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Models.CqResponse;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Threading;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 
 namespace Daylily.Plugin.Core
 {

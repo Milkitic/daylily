@@ -90,7 +90,7 @@ namespace Daylily.Bot.Session
             }
             finally
             {
-                Core.Current.Dispatcher.SessionReceived -= Session_Received;
+                DaylilyCore.Current.Dispatcher.SessionReceived -= Session_Received;
                 Sessions.TryRemove(SessionId, out _);
             }
         }

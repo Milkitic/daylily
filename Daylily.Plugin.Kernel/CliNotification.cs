@@ -3,17 +3,18 @@ using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Linq;
+using Daylily.Bot.Models;
+using Daylily.CoolQ.CoolQHttp;
 
 namespace Daylily.Plugin.Kernel
 {
     public class CliNotification : CoolQApplicationPlugin
     {
-        public override BackendConfig BackendConfig { get; } = new BackendConfig
+        public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
             Priority = 99
         };
@@ -42,7 +43,7 @@ namespace Daylily.Plugin.Kernel
                 var userInfo =
                     CoolQDispatcher.Current.SessionInfo[(CqIdentity) cm.Identity]?.GroupInfo?.Members
                         ?.FirstOrDefault(i => i.UserId == userId) ??
-                    CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
+                    CoolQHttpApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
                 group = CoolQDispatcher.Current.SessionInfo?[(CqIdentity)cm.Identity]?.Name;
                 sender = string.IsNullOrEmpty(userInfo.Card)
                     ? userInfo.Nickname

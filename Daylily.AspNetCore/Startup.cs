@@ -3,7 +3,6 @@ using Daylily.Bot.Interface;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.SocketUtils;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Models.CqResponse;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 
 namespace Daylily.AspNetCore
 {
@@ -54,7 +54,7 @@ namespace Daylily.AspNetCore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Core daylily)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, DaylilyCore daylily)
         {
             foreach (var frontend in daylily.Frontends)
             {

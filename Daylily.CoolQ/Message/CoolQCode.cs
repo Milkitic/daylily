@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using Daylily.Common;
 using Daylily.Common.Utils.StringUtils;
-using Daylily.CoolQ.Models;
 using Contract = Daylily.Common.Contract;
 
 namespace Daylily.CoolQ.Message

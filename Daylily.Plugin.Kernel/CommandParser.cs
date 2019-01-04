@@ -1,6 +1,7 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Command;
+using Daylily.Bot.Models;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 
@@ -10,7 +11,7 @@ namespace Daylily.Plugin.Kernel
     {
         public override bool RunInMultiThreading => false;
 
-        public override BackendConfig BackendConfig { get; } = new BackendConfig
+        public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
             Priority = -2
         };
@@ -23,7 +24,7 @@ namespace Daylily.Plugin.Kernel
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
             ca.Analyze(fullCmd, routeMessageObj);
 
-            if (!Core.Current.PluginManager.ContainsPlugin(routeMessageObj.Command))
+            if (!DaylilyCore.Current.PluginManager.ContainsPlugin(routeMessageObj.Command))
                 return null;
 
             return null;

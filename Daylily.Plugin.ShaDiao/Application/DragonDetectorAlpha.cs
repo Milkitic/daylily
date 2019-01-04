@@ -2,13 +2,13 @@
 using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
-using Daylily.CoolQ.Interface.CqHttp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Daylily.Bot.Backend;
+using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 
@@ -127,12 +127,12 @@ namespace Daylily.Plugin.ShaDiao.Application
 
             //CqApi.SetGroupBan(group, user, rnd.Next(1, 100 * dragonCount + 1) * 60);
             if (_group != "133605766")
-                CqApi.SendGroupMessageAsync(_group, new At(_user) + " 你龙了?");
+                CoolQHttpApi.SendGroupMessageAsync(_group, new At(_user) + " 你龙了?");
             else
-                CqApi.DeleteMessage(_messageId);
+                CoolQHttpApi.DeleteMessage(_messageId);
             if (_currentCount <= 1) return;
             Thread.Sleep(8000);
-            CqApi.SetGroupBan(_group, _user, StaticRandom.Next(1, 100 * _currentCount + 1) * 60);
+            CoolQHttpApi.SetGroupBan(_group, _user, StaticRandom.Next(1, 100 * _currentCount + 1) * 60);
             //CqApi.SendGroupMessageAsync(group, "而且有好多张，送你" + dragonCount + "倍套餐!!");
         }
 

@@ -3,10 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Daylily.Bot.Message;
-using Daylily.CoolQ.Interface.CqHttp;
+using Daylily.CoolQ.CoolQHttp;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Models.CqResponse;
-using Daylily.CoolQ.Models.CqResponse.Api;
 
 namespace Daylily.CoolQ
 {
@@ -142,7 +142,7 @@ namespace Daylily.CoolQ
                 StrangerInfo obj;
                 try
                 {
-                    obj = CqApi.GetStrangerInfo(id.ToString()).Data;
+                    obj = CoolQHttpApi.GetStrangerInfo(id.ToString()).Data;
                 }
                 catch
                 {
@@ -169,7 +169,7 @@ namespace Daylily.CoolQ
                 GroupInfoV2 obj;
                 try
                 {
-                    obj = CqApi.GetGroupInfoV2(id.ToString()).Data;
+                    obj = CoolQHttpApi.GetGroupInfoV2(id.ToString()).Data;
                 }
                 catch
                 {

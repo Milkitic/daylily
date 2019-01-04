@@ -6,7 +6,6 @@ using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.Utils.StringUtils;
-using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Database.BLL;
@@ -17,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Daylily.CoolQ.CoolQHttp;
 
 namespace Daylily.Plugin.Osu
 {
@@ -130,7 +130,7 @@ namespace Daylily.Plugin.Osu
                         _myInfo = _matchList.FirstOrDefault(q => q.Qq == _routeMsg.UserId);
                         _myInfo.IsOperating = true;
                         _myInfo.LastUse = DateTime.Now;
-                        var plugin = Core.Current.PluginManager.GetPlugin<M4MMatchNotice>();
+                        var plugin = DaylilyCore.Current.PluginManager.GetPlugin<M4MMatchNotice>();
                         if (plugin != null)
                         {
                             if (M4MMatchNotice.Tipped.ContainsKey(_myInfo.Qq))
@@ -153,10 +153,10 @@ namespace Daylily.Plugin.Osu
                             oInfo.RequestBeConfirmed();
                             SaveMatchList(); //apply 
 
-                            string nick = CqApi.GetStrangerInfo(oInfo.Qq).Data?.Nickname ?? "玩家";
+                            string nick = CoolQHttpApi.GetStrangerInfo(oInfo.Qq).Data?.Nickname ?? "玩家";
                             SendMessage(_routeMsg.ToSource($"你已经确认了{nick}({oInfo.Qq})的摸，请及时完成自己的摸！"));
 
-                            string nick2 = CqApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
+                            string nick2 = CoolQHttpApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
                             SendMessage(new CoolQRouteMessage($"{nick2}({_myInfo.Qq})已经确认查收了你的摸。",
                                 new CqIdentity(oInfo.Qq, MessageType.Private)));
 
@@ -185,7 +185,7 @@ namespace Daylily.Plugin.Osu
                             _myInfo.RequestFinishMatch();
                             SaveMatchList(); //apply 
 
-                            string nick2 = CqApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
+                            string nick2 = CoolQHttpApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
                             SendMessage(new CoolQRouteMessage(
                                 $"{nick2}({_myInfo.Qq})已经摸完了你的图：\r\n" +
                                 $"{oInfo.SetUrl}\r\n" +
@@ -206,8 +206,8 @@ namespace Daylily.Plugin.Osu
                             if (DateTime.Now - oInfo.MatchTime < new TimeSpan(7, 0, 0, 0))
                                 return _routeMsg.ToSource("取消失败，仅匹配持续一周以上才可取消。");
 
-                            string nick = CqApi.GetStrangerInfo(oInfo.Qq).Data?.Nickname ?? "玩家";
-                            string nick2 = CqApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
+                            string nick = CoolQHttpApi.GetStrangerInfo(oInfo.Qq).Data?.Nickname ?? "玩家";
+                            string nick2 = CoolQHttpApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
 
                             oInfo.FinishedSet.Add(_myInfo.SetId);
                             _myInfo.FinishedSet.Add(oInfo.SetId);
@@ -232,7 +232,7 @@ namespace Daylily.Plugin.Osu
                         if (_myInfo.TargetQq != null)
                         {
                             var oInfo = _matchList.FirstOrDefault(q => q.Qq == _myInfo.TargetQq);
-                            string nick = CqApi.GetStrangerInfo(oInfo.Qq).Data?.Nickname ?? "玩家";
+                            string nick = CoolQHttpApi.GetStrangerInfo(oInfo.Qq).Data?.Nickname ?? "玩家";
                             info = $"你已经成功和{nick}({oInfo.Qq})匹配\r\n" +
                                    $"· 你的信息：\r\n" +
                                    $"    地图地址：{_myInfo.SetUrl}\r\n" +
@@ -334,8 +334,8 @@ namespace Daylily.Plugin.Osu
                                     matchInfo = bestList[StaticRandom.Next(bestList.Length)];
                                 }
 
-                                var data1 = CqApi.GetStrangerInfo(matchInfo.Qq).Data;
-                                var data2 = CqApi.GetStrangerInfo(_myInfo.Qq).Data;
+                                var data1 = CoolQHttpApi.GetStrangerInfo(matchInfo.Qq).Data;
+                                var data2 = CoolQHttpApi.GetStrangerInfo(_myInfo.Qq).Data;
                                 string sub1 = "Ta", sub2 = "Ta";
                                 string nick1 = "玩家", nick2 = "玩家";
                                 if (data1 != null)

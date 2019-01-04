@@ -17,9 +17,9 @@ namespace Daylily.Plugin.Kernel
     {
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
         {
-            var grouped = Core.Current.PluginManager.Applications
-                .OrderByDescending(k => k.BackendConfig?.Priority)
-                .GroupBy(k => k.BackendConfig?.Priority);
+            var grouped = DaylilyCore.Current.PluginManager.Applications
+                .OrderByDescending(k => k.MiddlewareConfig?.Priority)
+                .GroupBy(k => k.MiddlewareConfig?.Priority);
             StringBuilder sb = new StringBuilder();
             foreach (var plugins in grouped)
             {

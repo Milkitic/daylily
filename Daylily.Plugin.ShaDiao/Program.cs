@@ -1,8 +1,8 @@
 ﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Models.CqResponse;
 using System;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 
 namespace Daylily.Plugin.ShaDiao
 {

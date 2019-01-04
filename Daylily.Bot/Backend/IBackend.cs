@@ -1,8 +1,9 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Interface;
+using Daylily.Bot.Message;
 
 namespace Daylily.Bot.Backend
 {
-    public interface IBackend
+    public interface IBackend : IMiddleware
     {
         string Name { get; }
         string[] Author { get; }
@@ -12,7 +13,6 @@ namespace Daylily.Bot.Backend
         PluginVersion State { get; }
         string[] Helps { get; }
         Authority Authority { get; }
-        BackendConfig BackendConfig { get; }
 
         void OnInitialized(string[] args);
         void OnErrorOccured(ExceptionEventArgs args);

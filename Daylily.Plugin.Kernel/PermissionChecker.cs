@@ -8,6 +8,7 @@ using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Linq;
+using Daylily.Bot.Models;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -15,7 +16,7 @@ namespace Daylily.Plugin.Kernel
     {
         public override bool RunInMultiThreading => false;
 
-        public override BackendConfig BackendConfig { get; } = new BackendConfig
+        public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
             Priority = -1
         };
@@ -30,9 +31,9 @@ namespace Daylily.Plugin.Kernel
             string message = cm.Message.RawMessage;
             var type = cm.MessageType;
 
-            if (message.Substring(0, 1) == Bot.Core.Current.CommandFlag)
+            if (message.Substring(0, 1) == Bot.DaylilyCore.Current.CommandFlag)
             {
-                if (message.IndexOf(Bot.Core.Current.CommandFlag + "root ", StringComparison.InvariantCulture) == 0)
+                if (message.IndexOf(Bot.DaylilyCore.Current.CommandFlag + "root ", StringComparison.InvariantCulture) == 0)
                 {
                     if (cm.UserId != "2241521134")
                     {
@@ -46,7 +47,7 @@ namespace Daylily.Plugin.Kernel
                     }
 
                 }
-                else if (message.IndexOf(Bot.Core.Current.CommandFlag + "sudo ", StringComparison.InvariantCulture) == 0 &&
+                else if (message.IndexOf(Bot.DaylilyCore.Current.CommandFlag + "sudo ", StringComparison.InvariantCulture) == 0 &&
                          cm.MessageType == MessageType.Group)
                 {
                     if (CoolQDispatcher.Current.SessionInfo[(CqIdentity) cm.Identity].GroupInfo

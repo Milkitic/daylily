@@ -1,13 +1,13 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
-using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Models.CqResponse.Api;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Daylily.CoolQ.CoolQHttp;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
 
 namespace Daylily.Plugin.Core
 {
@@ -49,7 +49,7 @@ namespace Daylily.Plugin.Core
             if (UseAllGroup)
             {
                 sessionType = MessageType.Group;
-                List<GroupInfo> list = CqApi.GetGroupList().Data;
+                List<GroupInfo> list = CoolQHttpApi.GetGroupList().Data;
                 List<string> failedList = new List<string>();
                 string ok = $"◈◈ {DateTime.Now:M月d日 H:mm}公告 ◈◈{Environment.NewLine}";
                 string msg = ok + innerMessage;

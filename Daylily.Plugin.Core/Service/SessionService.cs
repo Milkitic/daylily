@@ -2,13 +2,13 @@
 using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Interface.CqHttp;
-using Daylily.CoolQ.Models.CqResponse.Api;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.CoolQ.CoolQHttp;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
 
 namespace Daylily.Plugin.Core.Service
 {
@@ -34,14 +34,14 @@ namespace Daylily.Plugin.Core.Service
 
         private static void UpdateGroupList(int i)
         {
-            List<GroupInfo> list = CqApi.GetGroupList().Data;
+            List<GroupInfo> list = CoolQHttpApi.GetGroupList().Data;
             List<GroupMemberGroupInfo> newList = new List<GroupMemberGroupInfo>();
             foreach (var groupInfo in list)
             {
                 try
                 {
-                    GroupInfoV2 v2 = CqApi.GetGroupInfoV2(groupInfo.GroupId.ToString()).Data;
-                    v2.Members = CqApi.GetGroupMemberList(v2.GroupId.ToString()).Data/*.Where(q => q.Role == "member")*/.ToList();
+                    GroupInfoV2 v2 = CoolQHttpApi.GetGroupInfoV2(groupInfo.GroupId.ToString()).Data;
+                    v2.Members = CoolQHttpApi.GetGroupMemberList(v2.GroupId.ToString()).Data/*.Where(q => q.Role == "member")*/.ToList();
                     if (i % 6 == 0)
                         foreach (var groupMember in v2.Members)
                         {

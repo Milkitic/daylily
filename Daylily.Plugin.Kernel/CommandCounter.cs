@@ -1,8 +1,8 @@
-﻿using Daylily.Bot.Message;
-using System.Collections.Concurrent;
-using Daylily.Bot.Backend;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Models;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System.Collections.Concurrent;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -10,7 +10,7 @@ namespace Daylily.Plugin.Kernel
     {
         public ConcurrentDictionary<string, int> CommandRate { get; private set; }
 
-        public override BackendConfig BackendConfig { get; } = new BackendConfig
+        public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
             Priority = -3
         };

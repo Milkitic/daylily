@@ -1,9 +1,9 @@
 ﻿using Daylily.Bot.Command;
 using Daylily.Bot.Message;
-using Daylily.CoolQ.Models.CqResponse;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 
 namespace Daylily.CoolQ.Message
 {

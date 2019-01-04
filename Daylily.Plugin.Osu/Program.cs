@@ -3,10 +3,10 @@ using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ.Models.CqResponse;
 using Daylily.Osu.Interface;
 using System;
 using System.Linq;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Osu

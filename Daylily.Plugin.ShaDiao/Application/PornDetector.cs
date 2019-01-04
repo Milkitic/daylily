@@ -2,13 +2,13 @@
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
-using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Daylily.Cos;
 using Daylily.Cos.CosResponse;
 using System.Collections.Generic;
 using System.Linq;
+using Daylily.CoolQ.CoolQHttp;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
@@ -85,7 +85,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                         continue;
                     case 1:
                     case 2:
-                        CqApi.SetGroupBan(routeMsg.GroupId, routeMsg.UserId, 24 * 60 * 60);
+                        CoolQHttpApi.SetGroupBan(routeMsg.GroupId, routeMsg.UserId, 24 * 60 * 60);
                         return routeMsg.ToSource("...");
                     default:
                         break;
@@ -121,7 +121,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 else
                 {
                     UserCount[user] = 2;
-                    CqApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
+                    CoolQHttpApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
                     return cm.ToSource("？", true);
                 }
             }

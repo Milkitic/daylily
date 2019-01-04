@@ -105,8 +105,8 @@ namespace Daylily.Plugin.Kernel
 
         private string ShowList()
         {
-            CommandPlugin[] plugins = Core.Current.PluginManager.Commands.Select(k => k.Instance).Distinct().ToArray();
-            ApplicationPlugin[] apps = Core.Current.PluginManager.Applications.ToArray();
+            CommandPlugin[] plugins = DaylilyCore.Current.PluginManager.Commands.Select(k => k.Instance).Distinct().ToArray();
+            ApplicationPlugin[] apps = DaylilyCore.Current.PluginManager.Applications.ToArray();
             var groupCmd = plugins.Where(plugin => plugin.Authority <= _cm.Authority)
                 .GroupBy(k => k.GetType().Namespace);
             Dictionary<string, Dictionary<string, string>> dicNs = new Dictionary<string, Dictionary<string, string>>();
@@ -126,7 +126,7 @@ namespace Daylily.Plugin.Kernel
             Dictionary<string, string> dicApp = apps.Where(plugin => plugin.Authority <= _cm.Authority)
                 .OrderBy(k => k.Name).ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]);
 
-            string[] hot = Core.Current.PluginManager.GetPlugin<CommandCounter>()?.CommandRate
+            string[] hot = DaylilyCore.Current.PluginManager.GetPlugin<CommandCounter>()?.CommandRate
                 .OrderByDescending(k => k.Value)
                 .Take(5)
                 .Where(k => k.Value > 50)
@@ -138,9 +138,9 @@ namespace Daylily.Plugin.Kernel
         {
             Custom custom;
             Bot.Backend.Plugins.Plugin plugin;
-            if (Core.Current.PluginManager.ContainsPlugin(CommandName))
+            if (DaylilyCore.Current.PluginManager.ContainsPlugin(CommandName))
             {
-                plugin = Core.Current.PluginManager.GetPlugin(CommandName);
+                plugin = DaylilyCore.Current.PluginManager.GetPlugin(CommandName);
                 custom = new Custom
                 {
                     Title = plugin.Name,
@@ -152,9 +152,9 @@ namespace Daylily.Plugin.Kernel
                     FreeArg = new Dictionary<string, string>()
                 };
             }
-            else if (Core.Current.PluginManager.Applications.Select(k => k.Name).Contains(CommandName))
+            else if (DaylilyCore.Current.PluginManager.Applications.Select(k => k.Name).Contains(CommandName))
             {
-                plugin = Core.Current.PluginManager.Applications.First(k => k.Name == CommandName);
+                plugin = DaylilyCore.Current.PluginManager.Applications.First(k => k.Name == CommandName);
                 custom = new Custom
                 {
                     Title = plugin.Name,

@@ -5,13 +5,13 @@ using Daylily.Bot.Session;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.StringUtils;
 using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Models;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Daylily.CoolQ;
 
 namespace Daylily.Plugin.Osu.Cabbage
 {
@@ -35,7 +35,7 @@ namespace Daylily.Plugin.Osu.Cabbage
                     BllUserRole bllUserRole = new BllUserRole();
                     List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
                     if (userInfo.Count == 0)
-                        Core.Current.Dispatcher.SendMessage(routeMsg.ToSource(LoliReply.IdNotBound, true));
+                        DaylilyCore.Current.Dispatcher.SendMessage(routeMsg.ToSource(LoliReply.IdNotBound, true));
 
                     uname = userInfo[0].CurrentUname;
                 }
@@ -44,7 +44,7 @@ namespace Daylily.Plugin.Osu.Cabbage
 
                 using (Session session = new Session(25000, new CqIdentity(cabbageId, MessageType.Private), cabbageId))
                 {
-                    Core.Current.Dispatcher.SendMessage(
+                    DaylilyCore.Current.Dispatcher.SendMessage(
                         new CoolQRouteMessage($"!{cmd.Replace("my", "").Replace("me", "")} {uname}",
                             new CqIdentity(cabbageId, MessageType.Private)));
                     try
@@ -66,9 +66,9 @@ namespace Daylily.Plugin.Osu.Cabbage
 
                         if (imgList == null)
                         {
-                            Core.Current.Dispatcher.SendMessage(routeMsg.ToSource(result.RawMessage));
+                            DaylilyCore.Current.Dispatcher.SendMessage(routeMsg.ToSource(result.RawMessage));
                             if (result2 != null)
-                                Core.Current.Dispatcher.SendMessage(routeMsg.ToSource(result2.RawMessage));
+                                DaylilyCore.Current.Dispatcher.SendMessage(routeMsg.ToSource(result2.RawMessage));
                             continue;
                         }
                         //throw new IndexOutOfRangeException("查询失败：" + result.Message);
@@ -90,24 +90,24 @@ namespace Daylily.Plugin.Osu.Cabbage
                             message = str1 + str + str2;
                         }
 
-                        Core.Current.Dispatcher.SendMessage(
+                        DaylilyCore.Current.Dispatcher.SendMessage(
                             routeMsg.ToSource(message + "\r\n（查询由白菜支持）"));
                     }
                     catch (IndexOutOfRangeException e)
                     {
                         string msg = e.Message;
-                        Core.Current.Dispatcher.SendMessage(routeMsg.ToSource(msg, true));
+                        DaylilyCore.Current.Dispatcher.SendMessage(routeMsg.ToSource(msg, true));
                     }
                     catch (TimeoutException)
                     {
                         string msg = "查询失败，白菜没有搭理人家..";
-                        Core.Current.Dispatcher.SendMessage(routeMsg.ToSource(msg, true));
+                        DaylilyCore.Current.Dispatcher.SendMessage(routeMsg.ToSource(msg, true));
                     }
                     catch (Exception ex)
                     {
                         string msg = "查询失败，未知错误。";
                         Logger.Exception(ex);
-                        Core.Current.Dispatcher.SendMessage(routeMsg.ToSource(msg, true));
+                        DaylilyCore.Current.Dispatcher.SendMessage(routeMsg.ToSource(msg, true));
                     } // catch
                 } // using
             } // while
