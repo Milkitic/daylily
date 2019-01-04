@@ -7,7 +7,6 @@ using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Linq;
-using Daylily.Bot.Models;
 using Daylily.CoolQ.CoolQHttp;
 
 namespace Daylily.Plugin.Kernel

@@ -1,5 +1,4 @@
 ﻿using Daylily.Bot.Message;
-using Daylily.Bot.Models;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;

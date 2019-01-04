@@ -1,5 +1,4 @@
 ﻿using Daylily.Bot;
-using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.Common.Utils.LoggerUtils;
@@ -35,7 +34,7 @@ namespace Daylily.Plugin.Osu.Cabbage
                     BllUserRole bllUserRole = new BllUserRole();
                     List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
                     if (userInfo.Count == 0)
-                        DaylilyCore.Current.Dispatcher.SendMessage(routeMsg.ToSource(LoliReply.IdNotBound, true));
+                        DaylilyCore.Current.Dispatcher.SendMessage(routeMsg.ToSource(DefaultReply.IdNotBound, true));
 
                     uname = userInfo[0].CurrentUname;
                 }

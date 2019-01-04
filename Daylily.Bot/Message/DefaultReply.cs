@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Daylily.Bot.Enum
+namespace Daylily.Bot
 {
-    public static class LoliReply
+    public static class DefaultReply
     {
         public const string IdNotBound = "你还没有绑定osu ID, 所以我还不知道你是哪位呢… 用setid让我康康你是谁吧。";
         public const string IdNotFound = "…根本找不到这个osu ID。要不试试用引号括起来？";

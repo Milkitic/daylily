@@ -1,10 +1,11 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Dispatcher;
-using Daylily.Bot.Interface;
 using Daylily.Bot.Message;
-using Daylily.Bot.Models;
+using Daylily.Bot.Session;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.CoolQHttp;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -12,8 +13,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.CoolQ.CoolQHttp;
-using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 
 namespace Daylily.CoolQ
 {
@@ -37,10 +36,10 @@ namespace Daylily.CoolQ
             Current = this;
         }
 
-        public bool Message_Received(object sender, MessageReceivedEventArgs args)
+        public bool Message_Received(object sender, MessageEventArgs args)
         {
             bool handled = false;
-            var originObj = (CoolQMessageApi)args.MessageObj;
+            var originObj = (CoolQMessageApi)args.ParsedObject;
             CqIdentity id;
             switch (originObj)
             {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Daylily.Bot;
-using Daylily.Bot.Interface;
-using Daylily.Bot.Models;
+using Daylily.Bot.Frontend;
+using Daylily.Bot.Message;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Newtonsoft.Json;
 

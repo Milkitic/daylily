@@ -1,11 +1,11 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot;
 
 namespace Daylily.Plugin.Core
 {
@@ -49,12 +49,12 @@ namespace Daylily.Plugin.Core
             Authority level = routeMsg.Authority;
             if (type != MessageType.Private)
             {
-                return routeMsg.ToSource(LoliReply.PrivateOnly);
+                return routeMsg.ToSource(DefaultReply.PrivateOnly);
             }
 
             if (level != Authority.Root)
             {
-                return routeMsg.ToSource(LoliReply.RootOnly);
+                return routeMsg.ToSource(DefaultReply.RootOnly);
             }
 
             bool isTaskFree = _tThread == null || _tThread.IsCanceled || _tThread.IsCompleted;
@@ -96,7 +96,7 @@ namespace Daylily.Plugin.Core
                     reply = "当前没有日程提醒。";
                 return routeMsg.ToSource(reply, true);
             }
-            else return routeMsg.ToSource(LoliReply.ParamError, true);
+            else return routeMsg.ToSource(DefaultReply.ParamError, true);
         }
     }
 }

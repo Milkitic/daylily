@@ -1,6 +1,5 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Backend.Plugins;
-using Daylily.Bot.Models;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;

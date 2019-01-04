@@ -1,6 +1,5 @@
 ﻿using Daylily.Assist.Interface;
 using Daylily.Bot.Backend;
-using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
@@ -14,6 +13,7 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Daylily.Bot;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -88,7 +88,7 @@ namespace Daylily.Plugin.ShaDiao
             if (EnabledAlbumId > 0 || DisabledAlbumId > 0)
                 return _cm.Authority == Authority.Root
                     ? ModuleManageAlbum(fullContent)
-                    : routeMsg.ToSource(LoliReply.RootOnly);
+                    : routeMsg.ToSource(DefaultReply.RootOnly);
 
             if (Like > 0)
                 return ModuleLike(fullContent);

@@ -1,4 +1,6 @@
-﻿namespace Daylily.Bot.Interface
+﻿using Daylily.Bot.Message;
+
+namespace Daylily.Bot.Frontend
 {
     public interface IFrontend : IMiddleware
     {

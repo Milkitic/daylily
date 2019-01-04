@@ -1,5 +1,4 @@
 ﻿using Bleatingsheep.Osu.ApiV2b.Models;
-using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
@@ -8,6 +7,7 @@ using Daylily.Osu.Database.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
@@ -26,7 +26,7 @@ namespace Daylily.Plugin.Osu
             BllUserRole bllUserRole = new BllUserRole();
             List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
             if (userInfo.Count == 0)
-                return routeMsg.ToSource(LoliReply.IdNotBound, true);
+                return routeMsg.ToSource(DefaultReply.IdNotBound, true);
 
             var id = userInfo[0].UserId.ToString();
 

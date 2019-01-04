@@ -1,11 +1,11 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Daylily.Bot;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
 
@@ -39,7 +39,7 @@ namespace Daylily.Plugin.Core
             string sessionId = null;
             var sessionType = MessageType.Private;
             if (routeMsg.Authority != Authority.Root)
-                return routeMsg.ToSource(LoliReply.RootOnly);
+                return routeMsg.ToSource(DefaultReply.RootOnly);
             if (Message == null)
                 return routeMsg.ToSource("你要说什么……");
             if (GroupId != null && DiscussId != null)

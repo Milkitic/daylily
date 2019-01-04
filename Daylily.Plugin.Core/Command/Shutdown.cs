@@ -1,5 +1,5 @@
-﻿using Daylily.Bot.Enum;
-using System;
+﻿using System;
+using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
@@ -17,7 +17,7 @@ namespace Daylily.Plugin.Core
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             if (routeMsg.Authority != Authority.Root)
-                return routeMsg.ToSource(LoliReply.RootOnly, true);
+                return routeMsg.ToSource(DefaultReply.RootOnly, true);
             Environment.Exit(0);
             return null;
         }

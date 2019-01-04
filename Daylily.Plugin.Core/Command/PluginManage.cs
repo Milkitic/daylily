@@ -1,6 +1,5 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Backend.Plugins;
-using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
@@ -9,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Daylily.Bot;
 
 namespace Daylily.Plugin.Core
 {
@@ -50,7 +50,7 @@ namespace Daylily.Plugin.Core
             _routeMsg = routeMsg;
 
             if (_routeMsg.Authority == Authority.Public && _routeMsg.MessageType == MessageType.Group)
-                return _routeMsg.ToSource(LoliReply.AdminOnly);
+                return _routeMsg.ToSource(DefaultReply.AdminOnly);
             if (List)
                 return ShowPluginList();
             if (DisabledPlugin != null)
@@ -58,7 +58,7 @@ namespace Daylily.Plugin.Core
             if (EnabledPlugin != null)
                 return DisablePlugin();
 
-            return _routeMsg.ToSource(LoliReply.ParamError);
+            return _routeMsg.ToSource(DefaultReply.ParamError);
         }
 
         private CoolQRouteMessage EnablePlugin()

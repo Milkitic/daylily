@@ -4,10 +4,9 @@ using System.Text;
 
 namespace Daylily.Bot.Message
 {
-    public interface IResponse
+    public interface IResponsiveMessage
     {
         bool Handled { get; set; }
-        bool Cancel { get; set; }
         object Tag { get; set; }
     }
 }

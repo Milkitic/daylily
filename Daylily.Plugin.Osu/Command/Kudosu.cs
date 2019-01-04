@@ -1,5 +1,4 @@
-﻿using Daylily.Bot.Enum;
-using Daylily.Common.Utils.LoggerUtils;
+﻿using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
@@ -11,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
+using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
@@ -38,7 +38,7 @@ namespace Daylily.Plugin.Osu
                 BllUserRole bllUserRole = new BllUserRole();
                 List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
                 if (userInfo.Count == 0)
-                    return routeMsg.ToSource(LoliReply.IdNotBound, true);
+                    return routeMsg.ToSource(DefaultReply.IdNotBound, true);
 
                 id = userInfo[0].UserId.ToString();
                 uname = userInfo[0].CurrentUname;
@@ -47,7 +47,7 @@ namespace Daylily.Plugin.Osu
             {
                 int userNum = OldSiteApi.GetUser(OsuId, out var userObj);
                 if (userNum == 0)
-                    return routeMsg.ToSource(LoliReply.IdNotFound, true);
+                    return routeMsg.ToSource(DefaultReply.IdNotFound, true);
                 if (userNum > 1)
                 {
                     // ignored

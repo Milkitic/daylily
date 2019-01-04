@@ -1,7 +1,6 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Command;
-using Daylily.Bot.Models;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 

@@ -1,6 +1,4 @@
-﻿using Daylily.Bot.Models;
-
-namespace Daylily.Bot.Interface
+﻿namespace Daylily.Bot
 {
     public interface IMiddleware
     {

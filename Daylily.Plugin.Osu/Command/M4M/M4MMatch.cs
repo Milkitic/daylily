@@ -1,7 +1,6 @@
 ﻿using Bleatingsheep.Osu.ApiV2b.Models;
 using Daylily.Bot;
 using Daylily.Bot.Backend;
-using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.Common;
@@ -92,11 +91,11 @@ namespace Daylily.Plugin.Osu
                     return _routeMsg.ToSource(string.Join("\r\n", strs));
                 }
                 else
-                    return _routeMsg.ToSource(LoliReply.RootOnly);
+                    return _routeMsg.ToSource(DefaultReply.RootOnly);
             }
 
             if (_routeMsg.MessageType != MessageType.Private)
-                return _routeMsg.ToSource(LoliReply.PrivateOnly);
+                return _routeMsg.ToSource(DefaultReply.PrivateOnly);
 
             try
             {

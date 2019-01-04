@@ -1,8 +1,8 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Models;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System.Collections.Concurrent;
+using Daylily.Bot;
 
 namespace Daylily.Plugin.Kernel
 {

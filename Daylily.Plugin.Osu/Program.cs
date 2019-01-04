@@ -1,7 +1,5 @@
 ﻿using CSharpOsu.Module;
-using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
-using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Osu.Interface;
 using System;

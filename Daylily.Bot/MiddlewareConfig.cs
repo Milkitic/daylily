@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Daylily.Bot.Models
+﻿namespace Daylily.Bot
 {
     public class MiddlewareConfig
     {

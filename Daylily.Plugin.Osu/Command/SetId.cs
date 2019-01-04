@@ -1,5 +1,5 @@
-﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Enum;
+﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
@@ -24,12 +24,12 @@ namespace Daylily.Plugin.Osu
         {
             string osuId = Decode(OsuId);
             if (string.IsNullOrEmpty(osuId))
-                return routeMsg.ToSource(LoliReply.ParamMissing);
+                return routeMsg.ToSource(DefaultReply.ParamMissing);
 
             BllUserRole bllUserRole = new BllUserRole();
             int userNum = OldSiteApi.GetUser(OsuId, out var userObj);
             if (userNum == 0)
-                return routeMsg.ToSource(LoliReply.IdNotFound, true);
+                return routeMsg.ToSource(DefaultReply.IdNotFound, true);
             if (userNum > 1)
             {
                 // ignored

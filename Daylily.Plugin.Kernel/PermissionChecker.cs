@@ -1,6 +1,5 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
-using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
@@ -8,7 +7,6 @@ using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Linq;
-using Daylily.Bot.Models;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -38,7 +36,7 @@ namespace Daylily.Plugin.Kernel
                     if (cm.UserId != "2241521134")
                     {
                         Logger.Raw("Access denied.");
-                        return routeMsg.ToSource(LoliReply.FakeRoot).Handle();
+                        return routeMsg.ToSource(DefaultReply.FakeRoot).Handle();
                     }
                     else
                     {
@@ -54,7 +52,7 @@ namespace Daylily.Plugin.Kernel
                         .Admins.Count(q => q.UserId == userId) == 0)
                     {
                         Logger.Raw("Access denied.");
-                        return routeMsg.ToSource(LoliReply.FakeAdmin).Handle();
+                        return routeMsg.ToSource(DefaultReply.FakeAdmin).Handle();
                     }
                     else
                     {

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.Versioning;
-using System.Text;
 using Daylily.Bot.Dispatcher;
-using Daylily.Bot.Interface;
+using Daylily.Bot.Frontend;
 
-namespace Daylily.Bot.Models
+namespace Daylily.Bot
 {
     public class StartupConfig
     {

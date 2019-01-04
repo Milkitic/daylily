@@ -11,7 +11,7 @@ namespace Daylily.AspNetCore
 {
     public static class ServiceCollectionExtension
     {
-        public static void AddDaylily(this IServiceCollection services, Bot.Models.StartupConfig startupConfig)
+        public static void AddDaylily(this IServiceCollection services, StartupConfig startupConfig)
         {
             var bot = new DaylilyCore(startupConfig);
             bot.ConfigDispatcher(startupConfig.Dispatcher, startupConfig.GeneralDispatcherConfig);

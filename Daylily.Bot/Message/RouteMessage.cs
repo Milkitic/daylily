@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Daylily.Bot.Session;
 
 namespace Daylily.Bot.Message
 {
     public abstract class RouteMessage : ICommand, IRouteMessage
     {
         public bool Handled { get; set; } = false;
+        public object Tag { get; set; }
         public string FullCommand { get; set; }
         public string Command { get; set; }
         public string ArgString { get; set; }

@@ -1,5 +1,4 @@
 ﻿using Daylily.Bot.Backend.Plugins;
-using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
 using System;

@@ -1,4 +1,5 @@
 ﻿using Daylily.Bot.Message;
+using Daylily.Bot.Session;
 using Newtonsoft.Json;
 
 namespace Daylily.CoolQ.Message

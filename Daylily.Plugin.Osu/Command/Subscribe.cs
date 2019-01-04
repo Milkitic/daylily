@@ -1,6 +1,5 @@
 ﻿using Bleatingsheep.Osu.ApiV2b;
 using Bleatingsheep.Osu.ApiV2b.Models;
-using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Osu.Interface;
@@ -11,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
@@ -145,7 +145,7 @@ namespace Daylily.Plugin.Osu
             if (SubscribeMapper != null)
             {
                 if (routeMsg.MessageType == MessageType.Group && routeMsg.Authority == Authority.Public)
-                    return routeMsg.ToSource(LoliReply.AdminOnly + "个人推送请私聊.");
+                    return routeMsg.ToSource(DefaultReply.AdminOnly + "个人推送请私聊.");
 
                 List<string> subedId = GetSubscribed(routeMsg.MessageType, subId).ToList();
                 subedId.Sort();
@@ -191,7 +191,7 @@ namespace Daylily.Plugin.Osu
             if (UnsubscribeMapper != null)
             {
                 if (routeMsg.MessageType == MessageType.Group && routeMsg.Authority == Authority.Public)
-                    return routeMsg.ToSource(LoliReply.AdminOnly + "个人推送请私聊.");
+                    return routeMsg.ToSource(DefaultReply.AdminOnly + "个人推送请私聊.");
 
                 int count = OldSiteApi.GetUser(UnsubscribeMapper, out var userObj);
                 if (count == 0)
@@ -221,7 +221,7 @@ namespace Daylily.Plugin.Osu
                 return routeMsg.ToSource($"订阅取消成功，今后不再{sub}推送{mapperName}的有关动态。");
             }
 
-            return routeMsg.ToSource(LoliReply.ParamMissing);
+            return routeMsg.ToSource(DefaultReply.ParamMissing);
         }
 
         private static IEnumerable<string> GetSubscribed(MessageType messageType, string subId)
