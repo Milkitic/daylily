@@ -1,12 +1,10 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.CoolQ;
+﻿using Daylily.Bot.Message;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -25,9 +23,9 @@ namespace Daylily.Plugin.ShaDiao
 
         private static readonly IReadOnlyDictionary<string, string> Websites = new ReadOnlyDictionary<string, string>(WebsiteMap);
 
-        private string GetWebsite(CommonMessage messageObj)
+        private string GetWebsite(CoolQNavigableMessage navigableMessageObj)
         {
-            var name = messageObj.Command.ToUpperInvariant();
+            var name = navigableMessageObj.Command.ToUpperInvariant();
             return Websites.GetValueOrDefault(name);
         }
 
@@ -36,18 +34,18 @@ namespace Daylily.Plugin.ShaDiao
             return;
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            var domain = GetWebsite(messageObj);
+            var domain = GetWebsite(navigableMessageObj);
             if (string.IsNullOrEmpty(domain))
             {
-                return new CommonMessageResponse("并不支持这个网站哦~~", messageObj);
+                return new CommonMessageResponse("并不支持这个网站哦~~", navigableMessageObj);
             }
 
             var k = new Api(domain);
             var result = k.PopularRecentAsync().Result;
             var post = result?.FirstOrDefault();
-            return post == null ? null : new CommonMessageResponse(new FileImage(new Uri(post.JpegUrl)).ToString(), messageObj);
+            return post == null ? null : new CommonMessageResponse(new FileImage(new Uri(post.JpegUrl)).ToString(), navigableMessageObj);
         }
     }
 }

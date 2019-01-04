@@ -1,5 +1,4 @@
-﻿using Daylily.Bot.PluginBase;
-using Daylily.Common;
+﻿using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
 using System;
 using System.Collections.Generic;

@@ -1,17 +1,15 @@
 ﻿using Bleatingsheep.Osu.ApiV2b.Models;
-using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
-using Daylily.CoolQ;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
-using Daylily.Osu.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Osu
 {
@@ -27,12 +25,12 @@ namespace Daylily.Plugin.Osu
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             BllUserRole bllUserRole = new BllUserRole();
-            List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+            List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(navigableMessageObj.UserId));
             if (userInfo.Count == 0)
-                return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
+                return new CommonMessageResponse(LoliReply.IdNotBound, navigableMessageObj, true);
 
             var id = userInfo[0].UserId.ToString();
 
@@ -56,7 +54,7 @@ namespace Daylily.Plugin.Osu
 
             if (totalList.Count == 0)
             {
-                return new CommonMessageResponse("惊了，你竟然会没坑！", messageObj, true);
+                return new CommonMessageResponse("惊了，你竟然会没坑！", navigableMessageObj, true);
             }
 
             Random rnd = new Random();
@@ -64,7 +62,7 @@ namespace Daylily.Plugin.Osu
             var cqMusic = new CustomMusic("https://osu.ppy.sh/s/" + beatmap.Id, $"https://b.ppy.sh/preview/{beatmap.Id}.mp3", beatmap.Title,
                 $"{beatmap.Artist}\r\n({beatmap.FavouriteCount} fav)", $"https://b.ppy.sh/thumb/{beatmap.Id}l.jpg");
 
-            return new CommonMessageResponse(cqMusic.ToString(), messageObj);
+            return new CommonMessageResponse(cqMusic.ToString(), navigableMessageObj);
         }
     }
 }

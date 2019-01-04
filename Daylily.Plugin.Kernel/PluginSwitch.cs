@@ -1,11 +1,8 @@
-﻿using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using System;
+﻿using Daylily.Bot.Message;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
-using Daylily.Bot.Enum;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -18,12 +15,12 @@ namespace Daylily.Plugin.Kernel
         public ConcurrentDictionary<long, List<string>> PrivateDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             return null;
         }
 
-        public bool ValidateDisabled(CommonMessage cm, MemberInfo t)
+        public bool ValidateDisabled(CoolQNavigableMessage cm, MemberInfo t)
         {
             switch (cm.MessageType)
             {

@@ -1,13 +1,9 @@
 ﻿using Daylily.Bot;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using System;
-using System.Collections.Generic;
+using Daylily.Bot.Message;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -18,7 +14,7 @@ namespace Daylily.Plugin.Kernel
     [Command("check")]
     public class PluginChecker : CommandPlugin
     {
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             var grouped = PluginManager.ApplicationList
                 .OrderByDescending(k => k.BackendConfig?.Priority)
@@ -37,7 +33,7 @@ namespace Daylily.Plugin.Kernel
                 sb.AppendLine();
             }
 
-            return new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), messageObj);
+            return new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), navigableMessageObj);
         }
     }
 }

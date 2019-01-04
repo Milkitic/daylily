@@ -1,13 +1,9 @@
 ﻿using Daylily.Bot;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Bot.Sessions;
+using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.StringUtils;
-using Daylily.CoolQ;
+using Daylily.Plugin.Kernel.Helps;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,7 +11,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Daylily.Plugin.Kernel.Helps;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Session;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -33,7 +31,7 @@ namespace Daylily.Plugin.Kernel
         public bool UseList { get; set; }
 
         private static string _versionInfo;
-        private CommonMessage _cm;
+        private CoolQNavigableMessage _cm;
         private static readonly string HelpDir = Path.Combine(Domain.ResourcePath, "help");
         private static readonly string StaticDir = Path.Combine(HelpDir, "static");
 
@@ -42,9 +40,9 @@ namespace Daylily.Plugin.Kernel
             _versionInfo = args == null ? "" : args[0];
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            _cm = messageObj;
+            _cm = navigableMessageObj;
             if (UseList)
                 return new CommonMessageResponse(ShowList(), _cm);
             if (CommandName == null)
@@ -66,7 +64,7 @@ namespace Daylily.Plugin.Kernel
                     {
                         var a = dic.Select(k => k.Key).ToArray();
 
-                        CommonMessage cm;
+                        CoolQNavigableMessage cm;
                         do
                         {
                             cm = session.GetMessage();
@@ -138,7 +136,7 @@ namespace Daylily.Plugin.Kernel
         private string ShowDetail()
         {
             Custom custom;
-            Bot.PluginBase.CqPlugin plugin;
+            CqPlugin plugin;
             if (PluginManager.CommandMapStatic.Keys.Contains(CommandName))
             {
                 plugin = PluginManager.CommandMapStatic[CommandName];

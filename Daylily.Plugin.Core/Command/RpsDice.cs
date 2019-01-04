@@ -1,10 +1,6 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Core
 {
@@ -15,18 +11,14 @@ namespace Daylily.Plugin.Core
     [Command("dice", "rps")]
     public class RpsDice : CommandPlugin
     {
-        public override void OnInitialized(string[] args)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-        }
-
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
-        {
-            switch (messageObj.Command)
+            switch (navigableMessageObj.Command)
             {
                 case "dice":
-                    return new CommonMessageResponse(new CoolQ.Dice().ToString(), messageObj);
+                    return new CommonMessageResponse(new Dice().ToString(), navigableMessageObj);
                 case "rps":
-                    return new CommonMessageResponse(new CoolQ.Rps().ToString(), messageObj);
+                    return new CommonMessageResponse(new Rps().ToString(), navigableMessageObj);
                 default:
                     return null;
             }

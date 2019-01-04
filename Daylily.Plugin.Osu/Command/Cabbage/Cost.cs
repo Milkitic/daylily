@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using Daylily.Bot.Message;
 using System.Threading.Tasks;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ;
-using Daylily.CoolQ.Models;
-using Daylily.Osu.Database.BLL;
-using Daylily.Osu.Database.Model;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Osu.Cabbage
 {
@@ -25,9 +16,9 @@ namespace Daylily.Plugin.Osu.Cabbage
         {
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            CabbageCommon.MessageQueue.Enqueue(messageObj);
+            CabbageCommon.MessageQueue.Enqueue(navigableMessageObj);
 
             bool isTaskFree = CabbageCommon.TaskQuery == null || CabbageCommon.TaskQuery.IsCanceled ||
                               CabbageCommon.TaskQuery.IsCompleted;

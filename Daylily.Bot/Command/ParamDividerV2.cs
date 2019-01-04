@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Daylily.Common.Utils.LoggerUtils;
 
 namespace Daylily.Bot.Command
 {

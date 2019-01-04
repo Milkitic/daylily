@@ -1,7 +1,8 @@
-﻿using System;
-using System.IO;
-using Daylily.Assist.Interface;
+﻿using Daylily.Assist.Interface;
 using Daylily.Common.IO;
+using Daylily.CoolQ.Message;
+using System;
+using System.IO;
 
 namespace Daylily.CoolQ.Models
 {
@@ -36,7 +37,7 @@ namespace Daylily.CoolQ.Models
             if ((index3 < index2) & (index3 != -1))
                 index2 = index3;
             string fileName = source.Substring(index, index2 - index) + ".cqimg";
-            string fullPath = Path.Combine(CqCode.CqPath, "data", "image", fileName);
+            string fullPath = Path.Combine(CoolQCode.CqPath, "data", "image", fileName);
             FileInfo = new FileInfo(fullPath);
 
             string[] settings;
@@ -81,7 +82,7 @@ namespace Daylily.CoolQ.Models
                         Addtime = new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(int.Parse(value));
                         break;
                     default:
-                       throw new ArgumentOutOfRangeException();
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }

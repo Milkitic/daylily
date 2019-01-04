@@ -1,17 +1,15 @@
-﻿using System;
+﻿using Daylily.Bot.Message;
+using Daylily.Common;
+using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ.Interface.CqHttp;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Common;
-using Daylily.Common.Utils.LoggerUtils;
-using Daylily.Common.Utils.RequestUtils;
-using Daylily.CoolQ;
-using Daylily.CoolQ.Interface.CqHttp;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
@@ -33,16 +31,16 @@ namespace Daylily.Plugin.ShaDiao.Application
         private string _user, _group;
         private long _messageId;
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            if (messageObj.Group == null) return null;
+            if (navigableMessageObj.Group == null) return null;
 
             //if (user != "2241521134") return null;
-            _user = messageObj.UserId;
-            _group = messageObj.GroupId;
-            _messageId = messageObj.MessageId;
+            _user = navigableMessageObj.UserId;
+            _group = navigableMessageObj.GroupId;
+            _messageId = navigableMessageObj.MessageId;
 
-            var imgList = CqCode.GetImageInfo(messageObj.RawMessage);
+            var imgList = CoolQCode.GetImageInfo(navigableMessageObj.Message.RawMessage);
             if (imgList == null)
                 return null;
 

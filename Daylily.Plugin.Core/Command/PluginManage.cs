@@ -1,12 +1,15 @@
 ﻿using Daylily.Bot;
-using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
+using Daylily.CoolQ.Message;
+using CommonMessageResponse = Daylily.Bot.Message.CommonMessageResponse;
+using CqIdentity = Daylily.Bot.Message.CqIdentity;
 
 namespace Daylily.Plugin.Core
 {
@@ -36,18 +39,18 @@ namespace Daylily.Plugin.Core
         [Help("禁用指定的插件。")]
         public string EnabledPlugin { get; set; }
 
-        private CommonMessage _cm;
+        private CoolQNavigableMessage _cm;
 
         public override void OnInitialized(string[] args)
         {
             LoadDisableSettings();
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            _cm = messageObj;
+            _cm = navigableMessageObj;
 
-            if (_cm.Authority == Bot.Enum.Authority.Public && _cm.MessageType == MessageType.Group)
+            if (_cm.Authority == Authority.Public && _cm.MessageType == MessageType.Group)
                 return new CommonMessageResponse(LoliReply.AdminOnly, _cm);
             if (List)
                 return ShowPluginList();

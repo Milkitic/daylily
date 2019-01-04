@@ -1,11 +1,10 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
@@ -18,11 +17,11 @@ namespace Daylily.Plugin.ShaDiao.Application
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
         private const int MaxNum = 10;
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            if (messageObj.MessageType == MessageType.Private)
+            if (navigableMessageObj.MessageType == MessageType.Private)
                 return null;
-            string groupId = messageObj.GroupId ?? messageObj.DiscussId;
+            string groupId = navigableMessageObj.GroupId ?? navigableMessageObj.DiscussId;
 
             if (!GroupDic.ContainsKey(groupId))
             {
@@ -39,9 +38,9 @@ namespace Daylily.Plugin.ShaDiao.Application
             {
                 GroupDic[groupId].Locked = true;
                 Logger.Debug(groupId + " locked");
-                Logger.Success(groupId + "的" + messageObj.UserId + "触发了复读");
+                Logger.Success(groupId + "的" + navigableMessageObj.UserId + "触发了复读");
                 Thread.Sleep(StaticRandom.Next(1000, 8000));
-                return new CommonMessageResponse(messageObj.RawMessage, messageObj);
+                return new CommonMessageResponse(navigableMessageObj.RawMessage, navigableMessageObj);
             }
 
             GroupDic[groupId].IntQueue++;

@@ -1,10 +1,10 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Enum;
+using Daylily.Bot.Message;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Core
 {
@@ -41,19 +41,19 @@ namespace Daylily.Plugin.Core
 
         public override void OnInitialized(string[] args) { }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            string userId = messageObj.UserId;
-            MessageType type = messageObj.MessageType;
-            Authority level = messageObj.Authority;
+            string userId = navigableMessageObj.UserId;
+            MessageType type = navigableMessageObj.MessageType;
+            Authority level = navigableMessageObj.Authority;
             if (type != MessageType.Private)
             {
-                return new CommonMessageResponse(LoliReply.PrivateOnly, messageObj);
+                return new CommonMessageResponse(LoliReply.PrivateOnly, navigableMessageObj);
             }
 
             if (level != Authority.Root)
             {
-                return new CommonMessageResponse(LoliReply.RootOnly, messageObj);
+                return new CommonMessageResponse(LoliReply.RootOnly, navigableMessageObj);
             }
 
             bool isTaskFree = _tThread == null || _tThread.IsCanceled || _tThread.IsCompleted;
@@ -61,7 +61,7 @@ namespace Daylily.Plugin.Core
             {
                 if (!isTaskFree)
                 {
-                    return new CommonMessageResponse($"日程提醒当前已有工作：\r\n{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。", messageObj, true);
+                    return new CommonMessageResponse($"日程提醒当前已有工作：\r\n{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。", navigableMessageObj, true);
                 }
 
                 DateTime newTime = DateTime.Now.AddMinutes(SleepMinutes);
@@ -79,7 +79,7 @@ namespace Daylily.Plugin.Core
                     SendMessage(new CommonMessageResponse(_message, new CqIdentity(userId, MessageType.Private)));
                 });
                 string reply = $"日程提醒已新建，{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。";
-                return new CommonMessageResponse(reply, messageObj, true);
+                return new CommonMessageResponse(reply, navigableMessageObj, true);
             }
             else if (Stop)
             {
@@ -93,9 +93,9 @@ namespace Daylily.Plugin.Core
                 }
                 else
                     reply = "当前没有日程提醒。";
-                return new CommonMessageResponse(reply, messageObj, true);
+                return new CommonMessageResponse(reply, navigableMessageObj, true);
             }
-            else return new CommonMessageResponse(LoliReply.ParamError, messageObj, true);
+            else return new CommonMessageResponse(LoliReply.ParamError, navigableMessageObj, true);
         }
     }
 }

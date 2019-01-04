@@ -1,7 +1,7 @@
-﻿using Daylily.Bot.Attributes;
+﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+using Daylily.Bot.Message;
+using Daylily.CoolQ.Message;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
@@ -24,35 +24,35 @@ namespace Daylily.Plugin.Osu
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             string osuId = Decode(OsuId);
             if (string.IsNullOrEmpty(osuId))
-                return new CommonMessageResponse(LoliReply.ParamMissing, messageObj);
+                return new CommonMessageResponse(LoliReply.ParamMissing, navigableMessageObj);
 
             BllUserRole bllUserRole = new BllUserRole();
             int userNum = OldSiteApi.GetUser(OsuId, out var userObj);
             if (userNum == 0)
-                return new CommonMessageResponse(LoliReply.IdNotFound, messageObj, true);
+                return new CommonMessageResponse(LoliReply.IdNotFound, navigableMessageObj, true);
             if (userNum > 1)
             {
                 // ignored
             }
 
-            var role = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+            var role = bllUserRole.GetUserRoleByQq(long.Parse(navigableMessageObj.UserId));
             if (role.Count != 0)
             {
                 if (role[0].CurrentUname == userObj.username)
-                    return new CommonMessageResponse("我早就认识你啦.", messageObj, true);
+                    return new CommonMessageResponse("我早就认识你啦.", navigableMessageObj, true);
                 string msg = role[0].CurrentUname + "，我早就认识你啦. 有什么问题请找Mother Ship（扔锅）";
-                return new CommonMessageResponse(msg, messageObj, true);
+                return new CommonMessageResponse(msg, navigableMessageObj, true);
             }
 
             var newRole = new TblUserRole
             {
                 UserId = long.Parse(userObj.user_id),
                 Role = "creep",
-                QQ = long.Parse(messageObj.UserId),
+                QQ = long.Parse(navigableMessageObj.UserId),
                 LegacyUname = "[]",
                 CurrentUname = userObj.username,
                 IsBanned = false,
@@ -62,8 +62,8 @@ namespace Daylily.Plugin.Osu
             };
             int c = bllUserRole.InsertUserRole(newRole);
             return c < 1
-                ? new CommonMessageResponse("由于各种强大的原因，绑定失败..", messageObj)
-                : new CommonMessageResponse("明白了，" + userObj.username + "，多好的名字呢.", messageObj);
+                ? new CommonMessageResponse("由于各种强大的原因，绑定失败..", navigableMessageObj)
+                : new CommonMessageResponse("明白了，" + userObj.username + "，多好的名字呢.", navigableMessageObj);
         }
 
         private static string Decode(string source) =>

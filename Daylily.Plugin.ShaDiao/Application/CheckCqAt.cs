@@ -1,13 +1,10 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common;
-using Daylily.CoolQ;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
@@ -19,20 +16,20 @@ namespace Daylily.Plugin.ShaDiao.Application
     {
         private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            if (messageObj.MessageType == MessageType.Private)
+            if (navigableMessageObj.MessageType == MessageType.Private)
                 return null;
 
-            string[] ids = CqCode.GetAt(messageObj.RawMessage);
+            string[] ids = CqCode.GetAt(navigableMessageObj.RawMessage);
             if (ids == null || !ids.Contains("2181697779") && !ids.Contains("3421735167")) return null;
             Thread.Sleep(StaticRandom.Next(200, 300));
             if (StaticRandom.NextDouble() < 0.9)
-                return new CommonMessageResponse("", messageObj, true);
+                return new CommonMessageResponse("", navigableMessageObj, true);
             else
             {
                 var cqImg = new FileImage(Path.Combine(PandaDir, "at.jpg"));
-                return new CommonMessageResponse(cqImg.ToString(), messageObj);
+                return new CommonMessageResponse(cqImg.ToString(), navigableMessageObj);
             }
         }
     }

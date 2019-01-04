@@ -22,7 +22,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
-    <ProjectReference Include="..\Daylily.CoolQ\Daylily.CoolQ.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Frontend\" />
   </ItemGroup>
 
 </Project>

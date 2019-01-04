@@ -1,8 +1,6 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Message;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Command;
 using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -12,9 +10,9 @@ namespace Daylily.Bot
 {
     public static class ParameterInject
     {
-        public static bool TryInjectParameters(this CommandPlugin plugin, ICommand command)
+        public static bool TryInjectParameters(this IInjectableBackend backend, ICommand command)
         {
-            var props = plugin.GetType().GetProperties();
+            var props = backend.GetType().GetProperties();
             int freeIndex = 0;
             string[] freeArray = command.FreeArgs.ToArray();
             int freeCount = freeArray.Length;
@@ -34,7 +32,7 @@ namespace Daylily.Bot
                             {
                                 if (argAttr.IsSwitch)
                                 {
-                                    prop.SetValue(plugin, true);
+                                    prop.SetValue(backend, true);
                                     swCount--;
                                 }
                             }
@@ -45,12 +43,12 @@ namespace Daylily.Bot
                                     if (TryParse(prop, command.Args[argAttr.Name], out var parsed))
                                     {
                                         //dynamic obj = TryParse(prop, cm.Args[argAttrib.Name]);
-                                        prop.SetValue(plugin, parsed);
+                                        prop.SetValue(backend, parsed);
                                         argCount--;
                                     }
                                     else
                                     {
-                                        plugin.OnCommandBindingFailed(new BindingFailedEventArgs(null));
+                                        backend.OnCommandBindingFailed(new BindingFailedEventArgs(null));
                                         //SendMessage(
                                         //    new CommonMessageResponse($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。", cm));
                                         return false;
@@ -59,7 +57,7 @@ namespace Daylily.Bot
                             }
                             else if (argAttr.Default != null)
                             {
-                                prop.SetValue(plugin, argAttr.Default); //不再转换，提升效率
+                                prop.SetValue(backend, argAttr.Default); //不再转换，提升效率
                             }
 
                             break;
@@ -68,13 +66,13 @@ namespace Daylily.Bot
                                 if (freeIndex > freeCount - 1)
                                 {
                                     if (freeArgAttr.Default != null)
-                                        prop.SetValue(plugin, freeArgAttr.Default); //不再转换，提升效率
+                                        prop.SetValue(backend, freeArgAttr.Default); //不再转换，提升效率
                                     break;
                                 }
 
                                 if (TryParse(prop, freeArray[freeIndex], out var parsed))
                                 {
-                                    prop.SetValue(plugin, parsed);
+                                    prop.SetValue(backend, parsed);
                                     freeIndex++;
                                     break;
                                 }
@@ -82,7 +80,7 @@ namespace Daylily.Bot
                                 {
                                     //SendMessage(new CommonMessageResponse($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。",
                                     //    cm));
-                                    plugin.OnCommandBindingFailed(new BindingFailedEventArgs(null));
+                                    backend.OnCommandBindingFailed(new BindingFailedEventArgs(null));
                                     return false;
                                 }
                             }
@@ -93,7 +91,7 @@ namespace Daylily.Bot
 
             if (swCount <= 0 && argCount <= 0)
                 return true;
-            plugin.OnCommandBindingFailed(new BindingFailedEventArgs(null));
+            backend.OnCommandBindingFailed(new BindingFailedEventArgs(null));
             //SendMessage(new CommonMessageResponse($"包含多余的参数. 发送 \"/help {cm.Command}\" 了解如何使用。", cm));
             return false;
         }

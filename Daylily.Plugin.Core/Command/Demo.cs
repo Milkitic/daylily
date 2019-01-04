@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Common;
+﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Models.CqResponse;
+using System;
+using System.Threading;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Core
 {
@@ -30,19 +28,19 @@ namespace Daylily.Plugin.Core
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             // 接收的信息
-            string message = messageObj.RawMessage;
+            string message = navigableMessageObj.RawMessage;
             // 发送者的QQ
-            string userId = messageObj.UserId;
+            string userId = navigableMessageObj.UserId;
             UserId = userId;
             // 发送者所在群ID（若是私聊或讨论组则为null）
-            string groupId = messageObj.GroupId;
+            string groupId = navigableMessageObj.GroupId;
             // 发送者所在讨论组ID（若是私聊或群则为null）
-            string discussId = messageObj.DiscussId;
+            string discussId = navigableMessageObj.DiscussId;
             // 包含消息种类，分别为Group, Discuss, Private，省去判断以上是否为null来判定消息种类
-            MessageType type = messageObj.MessageType;
+            MessageType type = navigableMessageObj.MessageType;
             if (type != MessageType.Private)
             {
                 Logger.Error("不能非私聊");
@@ -50,60 +48,60 @@ namespace Daylily.Plugin.Core
             }
 
             // 接收的信息的Id，用于撤回等操作
-            long msgId = messageObj.MessageId;
+            long msgId = navigableMessageObj.MessageId;
 
             // 若是命令，下面两个字段不为null，当接收消息是 "/demo asdf 1234" 的情况：
             // 此字段为 "demo"
-            string command = messageObj.Command;
+            string command = navigableMessageObj.Command;
             // 此字段为 "asdf 1234"
-            string argString = messageObj.ArgString;
+            string argString = navigableMessageObj.ArgString;
             // 当前处于的权限状态，默认为Public（即开放权限）
             // 当用户执行 /sudo 或 /root 会分别触发 Admin（对应群的管理员）和 Root（系统管理员），以此做出对应权限所对应的功能
-            Authority level = messageObj.Authority;
-            if (level == Bot.Enum.Authority.Public)
+            Authority level = navigableMessageObj.Authority;
+            if (level == Authority.Public)
                 Logger.Info("当前所用权限：Public");
-            else if (level == Bot.Enum.Authority.Admin)
+            else if (level == Authority.Admin)
                 Logger.Info("当前所用权限：Admin");
-            else if (level == Bot.Enum.Authority.Root)
+            else if (level == Authority.Root)
                 Logger.Info("当前所用权限：Root");
 
             // 暂无实际用处，当前为框架所用，后续会有变动
-            string fullcmd = messageObj.FullCommand;
+            string fullcmd = navigableMessageObj.FullCommand;
             // 包含json所传原生参数，通常只有少数情况会使用（获取字体，发送时间，匿名情况等）
-            PrivateMsg privateObj = messageObj.Private;
-            DiscussMsg discussObj = messageObj.Discuss;
-            GroupMsg groupObj = messageObj.Group;
+            PrivateMsg privateObj = navigableMessageObj.Private;
+            DiscussMsg discussObj = navigableMessageObj.Discuss;
+            GroupMsg groupObj = navigableMessageObj.Group;
 
             // 假设做一个定时报告程序（此仅为全局共享，对于用户用途不大）
             if (string.IsNullOrEmpty(argString))
-                return new CommonMessageResponse("请填写参数", messageObj, enableAt: true);
+                return new CommonMessageResponse("请填写参数", navigableMessageObj, enableAt: true);
             string[] param = argString.Split(" ");
             if (param.Length > 2)
-                return new CommonMessageResponse("参数不正确", messageObj, enableAt: true);
+                return new CommonMessageResponse("参数不正确", navigableMessageObj, enableAt: true);
 
             if (param[0] == "start" && int.TryParse(param[1], out int sleepTime))
             {
                 // 默认处理机制为单线程，返回一个对象主线程继续工作
                 // 若需新建线程，则手动处理：
                 if (_tThread != null && _tThread.IsAlive)
-                    return new CommonMessageResponse("计时器正在工作，请先停止", messageObj, enableAt: true);
+                    return new CommonMessageResponse("计时器正在工作，请先停止", navigableMessageObj, enableAt: true);
 
                 _tThread = new Thread(new ParameterizedThreadStart(MultiThread));
                 _tThread.Start(sleepTime);
 
                 string reply = "启动了计时器";
                 // 当所用参数为(string,CommonMessage)，则自动返回给所在群（组）的所在成员（通常不用其他重载，为框架所用）
-                return new CommonMessageResponse(reply, messageObj, enableAt: true);
+                return new CommonMessageResponse(reply, navigableMessageObj, enableAt: true);
             }
             else if (param[0] == "stop" && param.Length == 1)
             {
                 if (_tThread != null && _tThread.IsAlive)
                     _tThread.Abort();
                 string reply = "计时器已经停止";
-                return new CommonMessageResponse(reply, messageObj, enableAt: true);
+                return new CommonMessageResponse(reply, navigableMessageObj, enableAt: true);
             }
             else
-                return new CommonMessageResponse("参数不正确", messageObj, enableAt: true);
+                return new CommonMessageResponse("参数不正确", navigableMessageObj, enableAt: true);
 
             // 若需回复至别处，需以下实现
             string reply2 = "回复到了别处";

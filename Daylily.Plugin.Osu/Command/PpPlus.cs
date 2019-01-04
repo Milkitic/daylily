@@ -1,23 +1,22 @@
-﻿using System;
+﻿using Daylily.Bot.Enum;
+using Daylily.Bot.Message;
+using Daylily.Common;
+using Daylily.Common.Utils.HtmlUtils;
+using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Utils.RequestUtils;
+using Daylily.Common.Utils.StringUtils;
+using Daylily.Osu.Database.BLL;
+using Daylily.Osu.Database.Model;
+using Daylily.Osu.Interface;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Common;
-using Daylily.Common.Utils.HtmlUtils;
-using Daylily.Common.Utils.LoggerUtils;
-using Daylily.Common.Utils.RequestUtils;
-using Daylily.Common.Utils.StringUtils;
-using Daylily.CoolQ;
-using Daylily.Osu.Database.BLL;
-using Daylily.Osu.Database.Model;
-using Daylily.Osu.Interface;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Osu
 {
@@ -37,15 +36,15 @@ namespace Daylily.Plugin.Osu
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             string userName, userId;
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
-                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(navigableMessageObj.UserId));
                 if (userInfo.Count == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
+                    return new CommonMessageResponse(LoliReply.IdNotBound, navigableMessageObj, true);
                 userId = userInfo[0].UserId.ToString();
                 userName = userInfo[0].CurrentUname;
             }
@@ -53,7 +52,7 @@ namespace Daylily.Plugin.Osu
             {
                 int userNum = OldSiteApi.GetUser(OsuId, out var userObj);
                 if (userNum == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotFound, messageObj, true);
+                    return new CommonMessageResponse(LoliReply.IdNotFound, navigableMessageObj, true);
                 if (userNum > 1)
                 {
                     // ignored
@@ -65,7 +64,7 @@ namespace Daylily.Plugin.Osu
 
             var jsonString = HttpClientUtil.HttpGet("https://syrin.me/pp+/u/" + userId);
             if (jsonString == null)
-                return new CommonMessageResponse("PP+获取超时，请重试…", messageObj, true);
+                return new CommonMessageResponse("PP+获取超时，请重试…", navigableMessageObj, true);
 
             StringFinder sf = new StringFinder(jsonString);
             sf.FindNext("<div class=\"performance-table\">", false);
@@ -88,7 +87,7 @@ namespace Daylily.Plugin.Osu
             }
 
             var cqImg = new FileImage(Draw(userName, dValue)).ToString();
-            return new CommonMessageResponse(cqImg, messageObj);
+            return new CommonMessageResponse(cqImg, navigableMessageObj);
         }
 
         private static Bitmap Draw(string user, IReadOnlyDictionary<string, int> dPfmance)

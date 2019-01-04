@@ -1,12 +1,12 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Enum;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Models.CqResponse.Api;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Core
 {
@@ -32,22 +32,17 @@ namespace Daylily.Plugin.Core
         [FreeArg]
         [Help("要发送的信息。")]
         public string Message { get; set; }
-
-        public override void OnInitialized(string[] args)
-        {
-
-        }
-
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             string sessionId = null;
             var sessionType = MessageType.Private;
-            if (messageObj.Authority != Authority.Root)
-                return new CommonMessageResponse(LoliReply.RootOnly, messageObj);
+            if (navigableMessageObj.Authority != Authority.Root)
+                return new CommonMessageResponse(LoliReply.RootOnly, navigableMessageObj);
             if (Message == null)
-                return new CommonMessageResponse("你要说什么……", messageObj);
+                return new CommonMessageResponse("你要说什么……", navigableMessageObj);
             if (GroupId != null && DiscussId != null)
-                return new CommonMessageResponse("不能同时选择群和讨论组……", messageObj);
+                return new CommonMessageResponse("不能同时选择群和讨论组……", navigableMessageObj);
 
             string innerMessage = Decode(Message);
             if (UseAllGroup)
@@ -72,14 +67,14 @@ namespace Daylily.Plugin.Core
                         }
                     }
                 else
-                    return new CommonMessageResponse("无有效群。", messageObj);
+                    return new CommonMessageResponse("无有效群。", navigableMessageObj);
 
                 SaveLogs(msg, "announcement");
                 if (failedList.Count == 0)
-                    return new CommonMessageResponse("已成功发送至" + list.Count + "个群。", messageObj);
+                    return new CommonMessageResponse("已成功发送至" + list.Count + "个群。", navigableMessageObj);
                 else
                     return new CommonMessageResponse(string.Format("有以下{0}个群未成功发送: {1}{2}", failedList.Count,
-                        Environment.NewLine, string.Join(Environment.NewLine, failedList)), messageObj);
+                        Environment.NewLine, string.Join(Environment.NewLine, failedList)), navigableMessageObj);
             }
             if (DiscussId != null)
             {
@@ -95,7 +90,7 @@ namespace Daylily.Plugin.Core
                 sessionId = UserId;
 
             if (DiscussId == null && GroupId == null && UserId == null)
-                return new CommonMessageResponse(Decode(messageObj.ArgString), messageObj);
+                return new CommonMessageResponse(Decode(navigableMessageObj.ArgString), navigableMessageObj);
 
             SendMessage(new CommonMessageResponse(innerMessage, new CqIdentity(sessionId, sessionType)));
             return null;

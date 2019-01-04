@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Daylily.Bot.Message;
 using System.Collections.Generic;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Core
 {
@@ -32,18 +30,18 @@ namespace Daylily.Plugin.Core
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             bool isParam1 = int.TryParse(Param1, out int param1);
             bool isParam2 = int.TryParse(Param2, out int param2);
             bool isCNum = int.TryParse(Count, out int count);
             if (!isParam1)
-                return new CommonMessageResponse(GetRand().ToString(), messageObj, true);
+                return new CommonMessageResponse(GetRand().ToString(), navigableMessageObj, true);
             if (!isParam2)
-                return new CommonMessageResponse(GetRand(param1).ToString(), messageObj, true);
+                return new CommonMessageResponse(GetRand(param1).ToString(), navigableMessageObj, true);
             if (!isCNum)
-                return new CommonMessageResponse(GetRand(param1, param2).ToString(), messageObj, true);
-            return new CommonMessageResponse(GetRandMessage(param1, param2, count), messageObj, true);
+                return new CommonMessageResponse(GetRand(param1, param2).ToString(), navigableMessageObj, true);
+            return new CommonMessageResponse(GetRandMessage(param1, param2, count), navigableMessageObj, true);
         }
 
         private static int GetRand() => StaticRandom.Next(0, 101);

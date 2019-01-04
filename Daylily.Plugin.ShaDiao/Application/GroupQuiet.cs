@@ -1,16 +1,14 @@
-﻿using System;
+﻿using Daylily.Bot.Message;
+using Daylily.Common;
+using Daylily.Common.Utils.LoggerUtils;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Common;
-using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ;
-using Newtonsoft.Json;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
@@ -38,17 +36,17 @@ namespace Daylily.Plugin.ShaDiao.Application
             Logger.Origin("上次群发言情载入完毕，并开启了线程。");
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            if (messageObj.MessageType == MessageType.Private)
+            if (navigableMessageObj.MessageType == MessageType.Private)
                 return null;
-            string groupId = messageObj.GroupId ?? messageObj.DiscussId;
+            string groupId = navigableMessageObj.GroupId ?? navigableMessageObj.DiscussId;
 
             if (!_groupDic.ContainsKey(groupId))
             {
                 _groupDic.GetOrAdd(groupId, new GroupSettings
                 {
-                    MessageObj = messageObj,
+                    NavigableMessageObj = navigableMessageObj,
                     LastSentIsMe = false,
                     CdTime = 60 * 60 * 24,
                 });
@@ -87,7 +85,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 try
                 {
                     var cqImg = new FileImage(Path.Combine(PandaDir, "quiet.jpg")).ToString();
-                    SendMessage(new CommonMessageResponse(cqImg, _groupDic[groupId].MessageObj));
+                    SendMessage(new CommonMessageResponse(cqImg, _groupDic[groupId].NavigableMessageObj));
                     SaveSettings(_groupDic);
                 }
                 catch (Exception ex)
@@ -98,7 +96,7 @@ namespace Daylily.Plugin.ShaDiao.Application
         }
         private class GroupSettings
         {
-            public CommonMessage MessageObj { get; set; }
+            public CoolQNavigableMessage NavigableMessageObj { get; set; }
             [JsonIgnore]
             public Task Task { get; set; }
             public bool LastSentIsMe { get; set; }

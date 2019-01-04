@@ -1,15 +1,13 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Message;
 using Daylily.Common;
-using Daylily.CoolQ;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -49,7 +47,7 @@ namespace Daylily.Plugin.ShaDiao
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             FontFamily font = GetRandFont(GetFonts());
             var pandas = GetPandas();
@@ -84,14 +82,14 @@ namespace Daylily.Plugin.ShaDiao
                 }
 
                 var cqImg2 = new FileImage(bitmap, 75).ToString();
-                return new CommonMessageResponse(cqImg2, messageObj);
+                return new CommonMessageResponse(cqImg2, navigableMessageObj);
             }
             string pandaPath;
             if (PandaNum >= 1)
             {
                 int trueNum = PandaNum - 1;
                 if (PandaNum > pandas.Length)
-                    return new CommonMessageResponse($"超过了范围哦，一共有{pandas.Length}张表情", messageObj, true);
+                    return new CommonMessageResponse($"超过了范围哦，一共有{pandas.Length}张表情", navigableMessageObj, true);
                 pandaPath = pandas[trueNum].FullName;
             }
             else
@@ -99,7 +97,7 @@ namespace Daylily.Plugin.ShaDiao
 
             Bitmap bmp = GenerateOne(font, pandaPath);
             var cqImg = new FileImage(bmp, 65).ToString();
-            return new CommonMessageResponse(cqImg, messageObj);
+            return new CommonMessageResponse(cqImg, navigableMessageObj);
         }
 
         private Bitmap GenerateOne(FontFamily font, string pandaPath)

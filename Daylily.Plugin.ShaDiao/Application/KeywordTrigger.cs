@@ -1,13 +1,11 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Message;
 using Daylily.Common;
-using Daylily.CoolQ;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
@@ -41,19 +39,19 @@ namespace Daylily.Plugin.ShaDiao.Application
             SaveSettings(_triggerObjects, "UserDictionary");
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            if (messageObj.Command == "keyedit")
+            if (navigableMessageObj.Command == "keyedit")
             {
-                if (messageObj.FreeArgs.Count == 1)
-                    return new CommonMessageResponse(messageObj.FreeArgs[0] + " (KeywordTrigger)", messageObj);
+                if (navigableMessageObj.FreeArgs.Count == 1)
+                    return new CommonMessageResponse(navigableMessageObj.FreeArgs[0] + " (KeywordTrigger)", navigableMessageObj);
             }
-            string msg = messageObj.RawMessage;
+            string msg = navigableMessageObj.RawMessage;
 
             foreach (var item in _triggerObjects)
             {
                 if (Trig(msg, item.Words, item.Pictrues, out string img, item.ChancePercent))
-                    return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), messageObj);
+                    return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), navigableMessageObj);
             }
 
             return null;

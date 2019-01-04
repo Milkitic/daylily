@@ -1,10 +1,6 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Enum;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
-using Daylily.CoolQ;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
@@ -15,6 +11,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Osu
 {
@@ -34,16 +33,16 @@ namespace Daylily.Plugin.Osu
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             string id;
             string uname;
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
-                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(navigableMessageObj.UserId));
                 if (userInfo.Count == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
+                    return new CommonMessageResponse(LoliReply.IdNotBound, navigableMessageObj, true);
 
                 id = userInfo[0].UserId.ToString();
                 uname = userInfo[0].CurrentUname;
@@ -52,7 +51,7 @@ namespace Daylily.Plugin.Osu
             {
                 int userNum = OldSiteApi.GetUser(OsuId, out var userObj);
                 if (userNum == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotFound, messageObj, true);
+                    return new CommonMessageResponse(LoliReply.IdNotFound, navigableMessageObj, true);
                 if (userNum > 1)
                 {
                     // ignored
@@ -79,7 +78,7 @@ namespace Daylily.Plugin.Osu
 
                 if (totalList.Count != 0) continue;
 
-                return new CommonMessageResponse("此人一张图都没摸过……", messageObj, true);
+                return new CommonMessageResponse("此人一张图都没摸过……", navigableMessageObj, true);
             } while (tmpList.Count != 0);
 
             List<KdInfo> kdInfoList = new List<KdInfo>();
@@ -106,7 +105,7 @@ namespace Daylily.Plugin.Osu
 
             var cqImg = new FileImage(Draw(kdInfoList, uname)).ToString();
 
-            return new CommonMessageResponse(cqImg, messageObj);
+            return new CommonMessageResponse(cqImg, navigableMessageObj);
         }
 
         private static Bitmap Draw(IReadOnlyList<KdInfo> kdInfoList, string uname)

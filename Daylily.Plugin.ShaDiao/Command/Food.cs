@@ -1,11 +1,8 @@
 ﻿using Daylily.Assist.Interface;
-using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+using Daylily.Bot.Message;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,6 +11,8 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -58,7 +57,7 @@ namespace Daylily.Plugin.ShaDiao
         public static ConcurrentDictionary<string, List<string>> LikeDic { get; set; }
 
         private static string _imagePath, _content;
-        private CommonMessage _cm;
+        private CoolQNavigableMessage _cm;
 
         public override void OnInitialized(string[] args)
         {
@@ -80,13 +79,13 @@ namespace Daylily.Plugin.ShaDiao
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            _cm = messageObj;
+            _cm = navigableMessageObj;
             string[] fullContent = ConcurrentFile.ReadAllLines(_content);
 
             if (EnabledAlbumId > 0 || DisabledAlbumId > 0)
-                return _cm.Authority == Bot.Enum.Authority.Root
+                return _cm.Authority == Authority.Root
                     ? ModuleManageAlbum(fullContent)
                     : new CommonMessageResponse(LoliReply.RootOnly, _cm);
 

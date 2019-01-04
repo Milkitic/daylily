@@ -1,15 +1,13 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
-using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.Cos;
 using Daylily.Cos.CosResponse;
 using System.Collections.Generic;
 using System.Linq;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
@@ -29,11 +27,11 @@ namespace Daylily.Plugin.ShaDiao.Application
             Logger.Origin("上次用户计数载入完毕。");
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             // 查黄图
-            if (messageObj.Group == null || messageObj.GroupId != "133605766") return null;
-            var imgList = CqCode.GetImageInfo(messageObj.RawMessage);
+            if (navigableMessageObj.Group == null || navigableMessageObj.GroupId != "133605766") return null;
+            var imgList = CqCode.GetImageInfo(navigableMessageObj.RawMessage);
             if (imgList == null)
                 return null;
             List<string> urlList = new List<string>();
@@ -86,18 +84,18 @@ namespace Daylily.Plugin.ShaDiao.Application
                         continue;
                     case 1:
                     case 2:
-                        CqApi.SetGroupBan(messageObj.GroupId, messageObj.UserId, 24 * 60 * 60);
-                        return new CommonMessageResponse("...", messageObj);
+                        CqApi.SetGroupBan(navigableMessageObj.GroupId, navigableMessageObj.UserId, 24 * 60 * 60);
+                        return new CommonMessageResponse("...", navigableMessageObj);
                     default:
                         break;
                 }
 
                 if (item.data.porn_score >= item.data.hot_score && item.data.porn_score > 65)
-                    return AddCount(messageObj);
+                    return AddCount(navigableMessageObj);
 
                 if (item.data.hot_score >= item.data.porn_score && item.data.hot_score > item.data.normal_score &&
                     item.data.hot_score > 80)
-                    return AddCount(messageObj);
+                    return AddCount(navigableMessageObj);
 
                 break;
             }
@@ -107,7 +105,7 @@ namespace Daylily.Plugin.ShaDiao.Application
             //if (user != "2241521134") return null;
         }
 
-        private CommonMessageResponse AddCount(CommonMessage cm)
+        private CommonMessageResponse AddCount(CoolQNavigableMessage cm)
         {
             string user = cm.UserId, group = cm.GroupId;
 

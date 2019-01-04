@@ -1,10 +1,7 @@
 ﻿using Bleatingsheep.Osu.ApiV2b.Models;
 using Daylily.Bot;
-using Daylily.Bot.Attributes;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Bot.Sessions;
+using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Utils.StringUtils;
 using Daylily.CoolQ.Interface.CqHttp;
@@ -15,8 +12,10 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Session;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Osu
 {
@@ -30,7 +29,7 @@ namespace Daylily.Plugin.Osu
     public class M4MMatch : CommandPlugin
     {
         private static List<MatchInfo> _matchList;
-        private CommonMessage _cm;
+        private CoolQNavigableMessage _cm;
         private Session _session;
         private string _osuId;
         private MatchInfo _myInfo;
@@ -58,12 +57,12 @@ namespace Daylily.Plugin.Osu
             _matchList = LoadSettings<List<MatchInfo>>("MatchList") ?? new List<MatchInfo>();
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            _cm = messageObj;
+            _cm = navigableMessageObj;
             if (List)
             {
-                if (_cm.Authority == Bot.Enum.Authority.Root)
+                if (_cm.Authority == Authority.Root)
                 {
                     BllUserRole bllUserRole = new BllUserRole();
                     List<string> strs = new List<string>();
@@ -103,9 +102,9 @@ namespace Daylily.Plugin.Osu
                 using (_session = new Session(DefaultTimeout, _cm.CqIdentity, _cm.UserId))
                 {
                     BllUserRole bllUserRole = new BllUserRole();
-                    List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+                    List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(navigableMessageObj.UserId));
                     if (userInfo.Count == 0)
-                        return new CommonMessageResponse("这个功能是需要绑定osu id的，请使用/setid完成绑定", messageObj, true);
+                        return new CommonMessageResponse("这个功能是需要绑定osu id的，请使用/setid完成绑定", navigableMessageObj, true);
 
                     _osuId = userInfo[0].UserId.ToString();
 
@@ -255,13 +254,13 @@ namespace Daylily.Plugin.Osu
                                $">【3】开始进行m4m匹配。";
 
                         SendMessage(new CommonMessageResponse(info, _cm));
-                        CommonMessage cmMain = SessionCondition("1", "2", "3");
+                        CoolQNavigableMessage cmMain = SessionCondition("1", "2", "3");
                         switch (cmMain.RawMessage)
                         {
                             case "1":
                                 SendMessage(new CommonMessageResponse("删除现有地图，确认吗？\r\n" +
                                                                       "【1】是 【2】否", _cm));
-                                CommonMessage cmPub = SessionCondition("1", "2");
+                                CoolQNavigableMessage cmPub = SessionCondition("1", "2");
                                 if (cmPub.RawMessage == "1")
                                 {
                                     _myInfo.RemoveSet();
@@ -309,7 +308,7 @@ namespace Daylily.Plugin.Osu
                                 {
                                     SendMessage(new CommonMessageResponse("目前没有最佳的匹配，继续尝试不佳的匹配吗？\r\n" +
                                                                           "【1】是 【2】否", _cm));
-                                    CommonMessage cmContinue = SessionCondition("1", "2");
+                                    CoolQNavigableMessage cmContinue = SessionCondition("1", "2");
                                     if (cmContinue.RawMessage == "1")
                                     {
                                         MatchInfo[] notBestList = new MatchInfo[0];
@@ -383,7 +382,7 @@ namespace Daylily.Plugin.Osu
             }
             catch (NotSupportedException)
             {
-                return new CommonMessageResponse("你已在进行m4m状态中。", messageObj, true);
+                return new CommonMessageResponse("你已在进行m4m状态中。", navigableMessageObj, true);
             }
             finally
             {
@@ -401,7 +400,7 @@ namespace Daylily.Plugin.Osu
         private CommonMessageResponse SessionNoMap()
         {
             SendMessage(new CommonMessageResponse("你还没有发布任何一张图，需要现在发布吗？\r\n" + "【1】是 【2】否", _cm));
-            CommonMessage cmPub = SessionCondition("1", "2");
+            CoolQNavigableMessage cmPub = SessionCondition("1", "2");
 
             return cmPub.RawMessage == "1"
                 ? SessionAddMap()
@@ -457,7 +456,7 @@ namespace Daylily.Plugin.Osu
             int retry = 0;
             while (!valid && retry < 3)
             {
-                CommonMessage cmMap = _session.GetMessage();
+                CoolQNavigableMessage cmMap = _session.GetMessage();
                 string url = cmMap.RawMessage.Replace("\r\n", "");
 
                 set = GetBeatmapset(url);
@@ -492,7 +491,7 @@ namespace Daylily.Plugin.Osu
                                                       "当对方和你匹配成功时会附带这些备注消息。\r\n" +
                                                       "（请3分钟内发送，须小于100字，多出的会被截取。）", _cm));
                 _session.Timeout = 180000;
-                CommonMessage cmMark = _session.GetMessage();
+                CoolQNavigableMessage cmMark = _session.GetMessage();
                 string mark = new string(cmMark.RawMessage.Take(100).ToArray());
                 string verify = $"地图地址：https://osu.ppy.sh/beatmapsets/{set.Id} \r\n" +
                                 $"备注：{mark}\r\n" +
@@ -501,7 +500,7 @@ namespace Daylily.Plugin.Osu
                 SendMessage(new CommonMessageResponse(verify, _cm));
                 _session.Timeout = DefaultTimeout;
 
-                CommonMessage cmVerify = SessionCondition("1", "2");
+                CoolQNavigableMessage cmVerify = SessionCondition("1", "2");
                 if (cmVerify.RawMessage == "1")
                 {
                     _myInfo.UpdateSet(set, mark);
@@ -518,10 +517,10 @@ namespace Daylily.Plugin.Osu
         /// <summary>
         /// 单选会话
         /// </summary>
-        private CommonMessage SessionCondition(params string[] conditions)
+        private CoolQNavigableMessage SessionCondition(params string[] conditions)
         {
             _session.Timeout = 30000;
-            CommonMessage cmPub = _session.GetMessage();
+            CoolQNavigableMessage cmPub = _session.GetMessage();
             int retryCount = 0;
             while (!conditions.Contains(cmPub.RawMessage) && retryCount < 3)
             {
@@ -542,7 +541,7 @@ namespace Daylily.Plugin.Osu
         private bool SessionMultiCondition(out char[] choice, params char[] conditions)
         {
             _session.Timeout = 30000;
-            CommonMessage cmPub = _session.GetMessage();
+            CoolQNavigableMessage cmPub = _session.GetMessage();
             int retryCount = 0;
             while (cmPub.RawMessage.ToArray().Distinct().Any(c => !conditions.Contains(c)) && retryCount < 3)
             {

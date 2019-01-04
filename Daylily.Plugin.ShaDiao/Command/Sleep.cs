@@ -1,9 +1,8 @@
-﻿using System;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Message;
 using Daylily.CoolQ.Interface.CqHttp;
+using System;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -23,28 +22,28 @@ namespace Daylily.Plugin.ShaDiao
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            if (messageObj.GroupId == "133605766")
+            if (navigableMessageObj.GroupId == "133605766")
                 return null;
-            if (messageObj.GroupId == null)
+            if (navigableMessageObj.GroupId == null)
                 return null;
-            if (messageObj.ArgString.Trim() == "")
-                return new CommonMessageResponse("要睡多少小时呀??", messageObj, true);
+            if (navigableMessageObj.ArgString.Trim() == "")
+                return new CommonMessageResponse("要睡多少小时呀??", navigableMessageObj, true);
 
             double sleepTime;
             if (SleepTime > 12) sleepTime = 12;
             else if (SleepTime < 0.5) sleepTime = 0.5;
             else if (SleepTime > 0) sleepTime = SleepTime;
-            else return new CommonMessageResponse("穿越是不可以的……", messageObj, true);
+            else return new CommonMessageResponse("穿越是不可以的……", navigableMessageObj, true);
 
             DateTime dt = new DateTime();
             dt = dt.AddHours(sleepTime);
             int s = (int)(dt.Ticks / 10000000);
-            CqApi.SetGroupBan(messageObj.GroupId, messageObj.UserId, s);
+            CqApi.SetGroupBan(navigableMessageObj.GroupId, navigableMessageObj.UserId, s);
             string msg = "祝你一觉睡到" + DateTime.Now.AddHours(sleepTime).ToString("HH:mm") + " :D";
 
-            return new CommonMessageResponse(msg, messageObj, true);
+            return new CommonMessageResponse(msg, navigableMessageObj, true);
         }
     }
 }

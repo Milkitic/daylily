@@ -1,17 +1,15 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
-using Daylily.CoolQ;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
 
 //using System.Threading;
 
@@ -28,20 +26,20 @@ namespace Daylily.Plugin.ShaDiao.Application
         private static int _totalCount;
 #endif
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            if (messageObj.MessageType == MessageType.Private)
+            if (navigableMessageObj.MessageType == MessageType.Private)
                 return null;
-            var imgList = CqCode.GetImageInfo(messageObj.RawMessage);
+            var imgList = CqCode.GetImageInfo(navigableMessageObj.RawMessage);
             if (imgList == null) return null;
 
-            string groupId = messageObj.GroupId ?? messageObj.DiscussId;
+            string groupId = navigableMessageObj.GroupId ?? navigableMessageObj.DiscussId;
 
             if (!GroupDic.ContainsKey(groupId))
                 GroupDic.GetOrAdd(groupId, new GroupSettings
                 {
                     GroupId = groupId,
-                    MessageObj = messageObj
+                    NavigableMessageObj = navigableMessageObj
                 });
 
             foreach (var item in imgList)
@@ -115,7 +113,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 string resPath = Path.Combine(Domain.PluginPath, "dragon", "resource_panda_send");
                 FileInfo[] files = new DirectoryInfo(resPath).GetFiles();
                 var cqImg = new FileImage(files[StaticRandom.Next(files.Length)].FullName).ToString();
-                SendMessage(new CommonMessageResponse(cqImg, gSets.MessageObj));
+                SendMessage(new CommonMessageResponse(cqImg, gSets.NavigableMessageObj));
             }
 
             gSets.Clear();
@@ -197,7 +195,7 @@ namespace Daylily.Plugin.ShaDiao.Application
 
         private class GroupSettings
         {
-            public CommonMessage MessageObj { get; set; }
+            public CoolQNavigableMessage NavigableMessageObj { get; set; }
             public string GroupId { get; set; }
             public List<string> ReceivedString { get; } = new List<string>();
             public Queue<string> PathQueue { get; } = new Queue<string>();

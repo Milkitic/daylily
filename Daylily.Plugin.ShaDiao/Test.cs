@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Daylily.Bot.Message;
+using Daylily.Common;
+using Daylily.Common.Utils.RequestUtils;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -6,27 +9,23 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Bot.Sessions;
-using Daylily.Common;
-using Daylily.Common.Utils.RequestUtils;
-using Daylily.CoolQ;
+using Daylily.Bot.Session;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao
 {
     class Test : ApplicationPlugin
     {
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            if (!messageObj.RawMessage.Equals("/转"))
+            if (!navigableMessageObj.RawMessage.Equals("/转"))
                 return null;
-            using (Session session = new Session(1000 * 60, messageObj.CqIdentity, messageObj.UserId))
+            using (Session session = new Session(1000 * 60, navigableMessageObj.CqIdentity, navigableMessageObj.UserId))
             {
-                SendMessage(new CommonMessageResponse("请发送图片，5张以内，1分钟内有效。", messageObj, true));
+                SendMessage(new CommonMessageResponse("请发送图片，5张以内，1分钟内有效。", navigableMessageObj, true));
                 try
                 {
-                    CommonMessage cm = session.GetMessage();
+                    CoolQNavigableMessage cm = session.GetMessage();
                     var infoList = CqCode.GetImageInfo(cm.RawMessage);
                     if (infoList == null) return new CommonMessageResponse("你发送的消息没有包含图片。", cm);
                     if (infoList.Length > 5) return new CommonMessageResponse("你发送的图片过多。", cm);
@@ -36,7 +35,7 @@ namespace Daylily.Plugin.ShaDiao
 
                     var sendList = HandleImage(imgList);
 
-                    return new CommonMessageResponse(string.Join("\r\n", sendList), messageObj);
+                    return new CommonMessageResponse(string.Join("\r\n", sendList), navigableMessageObj);
                 }
                 catch (TimeoutException)
                 {

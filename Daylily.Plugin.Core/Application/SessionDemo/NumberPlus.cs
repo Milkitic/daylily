@@ -1,12 +1,11 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Bot.Sessions;
+﻿using Daylily.Bot.Message;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Session;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Core.Application.SessionDemo
 {
@@ -18,28 +17,28 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
     {
         private static readonly ConcurrentDictionary<Session, (string, List<string>)> SessionsList =
             new ConcurrentDictionary<Session, (string, List<string>)>();
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
-            if (messageObj.RawMessage.Contains("两数相加"))
+            if (navigableMessageObj.RawMessage.Contains("两数相加"))
             {
                 if (SessionsList.Count >= 3)
                 {
-                    return new CommonMessageResponse("可创建的房间已大于限制，请匹配或者等待目前的游戏结束。", messageObj);
+                    return new CommonMessageResponse("可创建的房间已大于限制，请匹配或者等待目前的游戏结束。", navigableMessageObj);
                 }
 
                 string roomNum = Guid.NewGuid().ToString().Split('-')[0];
                 try
                 {
-                    using (Session session = new Session(30000, messageObj.CqIdentity, messageObj.UserId))
+                    using (Session session = new Session(30000, navigableMessageObj.CqIdentity, navigableMessageObj.UserId))
                     {
-                        SessionsList.TryAdd(session, (roomNum, new List<string> { messageObj.UserId }));
+                        SessionsList.TryAdd(session, (roomNum, new List<string> { navigableMessageObj.UserId }));
                         try
                         {
-                            SendMessage(new CommonMessageResponse($"创建了房间，房间号：#{roomNum} 正在等待对手...", messageObj));
+                            SendMessage(new CommonMessageResponse($"创建了房间，房间号：#{roomNum} 正在等待对手...", navigableMessageObj));
                             Dictionary<string, string> dic = new Dictionary<string, string>();
                             while (dic.Count < 2)
                             {
-                                CommonMessage obj = session.GetMessage();
+                                CoolQNavigableMessage obj = session.GetMessage();
                                 if (dic.Keys.Contains(obj.UserId))
                                     dic[obj.UserId] = obj.RawMessage;
                                 else
@@ -53,32 +52,32 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                             }
                             catch (Exception)
                             {
-                                return new CommonMessageResponse("由于一方没有输入正确的数字，无结果。", messageObj);
+                                return new CommonMessageResponse("由于一方没有输入正确的数字，无结果。", navigableMessageObj);
                             }
                             string[] users = dic.Select(k => k.Key).ToArray();
 
-                            return new CommonMessageResponse($"{string.Join("与", users)}的结果：{nums.Sum()}", messageObj);
+                            return new CommonMessageResponse($"{string.Join("与", users)}的结果：{nums.Sum()}", navigableMessageObj);
                         }
                         catch (TimeoutException)
                         {
                             SessionsList.TryRemove(session, out _);
-                            return new CommonMessageResponse($"由于长时间不使用，#{roomNum} 房间已关闭", messageObj);
+                            return new CommonMessageResponse($"由于长时间不使用，#{roomNum} 房间已关闭", navigableMessageObj);
                         }
                     }
                 }
                 catch (NotSupportedException)
                 {
-                    return new CommonMessageResponse("你已在房间中。", messageObj, true);
+                    return new CommonMessageResponse("你已在房间中。", navigableMessageObj, true);
                 }
             }
-            else if (messageObj.RawMessage.Contains("匹配"))
+            else if (navigableMessageObj.RawMessage.Contains("匹配"))
             {
-                var exist = SessionsList.Where(k => k.Value.Item2.Contains(messageObj.UserId)).ToArray();
+                var exist = SessionsList.Where(k => k.Value.Item2.Contains(navigableMessageObj.UserId)).ToArray();
                 if (exist.Length != 0)
-                    return new CommonMessageResponse("你已经创建过房间 #" + exist[0].Value.Item1 + "，等待匹配。", messageObj, true);
+                    return new CommonMessageResponse("你已经创建过房间 #" + exist[0].Value.Item1 + "，等待匹配。", navigableMessageObj, true);
                 var list = SessionsList.Where(k => k.Value.Item2.Count < 2).ToList();
                 if (list.Count == 0)
-                    return new CommonMessageResponse("当前没有空闲房间。", messageObj);
+                    return new CommonMessageResponse("当前没有空闲房间。", navigableMessageObj);
 
                 int i = StaticRandom.Next(0, list.Count);
                 var ok2 = list[i];
@@ -87,10 +86,10 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                 string roomNum = ok2.Value.Item1;
                 List<string> memberList = ok2.Value.Item2;
 
-                session.AddMember(messageObj.UserId);
+                session.AddMember(navigableMessageObj.UserId);
                 return memberList.Count == 0
-                    ? new CommonMessageResponse($"加入房间，房间号：#{roomNum} 正在等待对手……", messageObj)
-                    : new CommonMessageResponse($"匹配成功，房间号：#{roomNum} 对手：{memberList[0]}", messageObj, true);
+                    ? new CommonMessageResponse($"加入房间，房间号：#{roomNum} 正在等待对手……", navigableMessageObj)
+                    : new CommonMessageResponse($"匹配成功，房间号：#{roomNum} 对手：{memberList[0]}", navigableMessageObj, true);
             }
 
             return null;

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Daylily.Bot.Message;
+using System;
 using System.Linq;
-using System.Text;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Bot.Sessions;
-using Daylily.Bot.Sessions.TreeStructure;
-using Action = Daylily.Bot.Sessions.TreeStructure.Action;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Session;
+using Daylily.Bot.Session.TreeStructure;
+using Daylily.CoolQ.Message;
+using Action = Daylily.Bot.Session.TreeStructure.Action;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -20,7 +17,7 @@ namespace Daylily.Plugin.ShaDiao
     public class Admin : CommandPlugin
     {
         private Session _session;
-        private CommonMessage _cm;
+        private CoolQNavigableMessage _cm;
 
         const string mainNode = "Main";
         const string memberMenuNode = "memberMenu";
@@ -30,10 +27,10 @@ namespace Daylily.Plugin.ShaDiao
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
 
-            _cm = messageObj;
+            _cm = navigableMessageObj;
             try
             {
                 using (_session = new Session(1000 * (60 * 2), _cm.CqIdentity, _cm.UserId))
@@ -48,7 +45,7 @@ namespace Daylily.Plugin.ShaDiao
                                                     " 1. 群员指令\r\n" +
                                                     " 2. 投票指令";
                             SendMessage(new CommonMessageResponse(mainText, _cm));
-                            CommonMessage cmMain = SessionCondition("1", "2");
+                            CoolQNavigableMessage cmMain = SessionCondition("1", "2");
                             switch (cmMain.RawMessage)
                             {
                                 case "1":
@@ -95,7 +92,7 @@ namespace Daylily.Plugin.ShaDiao
                                           " 8. 把群员变成定时炸弹\r\n" +
                                           " 9. 返回";
                 SendMessage(new CommonMessageResponse(memberText, _cm));
-                CommonMessage cmPlayer = SessionCondition("1", "2", "3", "4", "5", "6", "7", "8", "9");
+                CoolQNavigableMessage cmPlayer = SessionCondition("1", "2", "3", "4", "5", "6", "7", "8", "9");
                 switch (cmPlayer.RawMessage)
                 {
                     case "9":
@@ -112,10 +109,10 @@ namespace Daylily.Plugin.ShaDiao
         /// <summary>
         /// 单选会话
         /// </summary>
-        private CommonMessage SessionCondition(params string[] conditions)
+        private CoolQNavigableMessage SessionCondition(params string[] conditions)
         {
             _session.Timeout = 30000;
-            CommonMessage cmPub = _session.GetMessage();
+            CoolQNavigableMessage cmPub = _session.GetMessage();
             int retryCount = 0;
             while (!conditions.Contains(cmPub.RawMessage) && retryCount < 3)
             {

@@ -1,8 +1,8 @@
-﻿using System;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
+﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Models.CqResponse;
+using System;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -13,7 +13,7 @@ namespace Daylily.Plugin.ShaDiao
             // 引用添加项目Daylily.Common
             Panda newPlugin = new Panda();
             newPlugin.OnInitialized(args);
-            CommonMessage cm = new CommonMessage()
+            CoolQNavigableMessage cm = new CoolQNavigableMessage()
             {
                 GroupId = "123456788",
                 UserId = "2241521134",

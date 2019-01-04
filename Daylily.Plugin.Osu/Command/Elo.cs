@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Daylily.Bot.Attributes;
+using Daylily.Bot.Backend;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+using Daylily.Bot.Message;
+using Daylily.CoolQ.Message;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
@@ -26,16 +26,16 @@ namespace Daylily.Plugin.Osu
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CommonMessage messageObj)
+        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
         {
             string id;
             string uname;
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
-                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(navigableMessageObj.UserId));
                 if (userInfo.Count == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
+                    return new CommonMessageResponse(LoliReply.IdNotBound, navigableMessageObj, true);
 
                 id = userInfo[0].UserId.ToString();
                 uname = userInfo[0].CurrentUname;
@@ -44,7 +44,7 @@ namespace Daylily.Plugin.Osu
             {
                 int userNum = OldSiteApi.GetUser(OsuId, out var userObj);
                 if (userNum == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotFound, messageObj, true);
+                    return new CommonMessageResponse(LoliReply.IdNotFound, navigableMessageObj, true);
                 if (userNum > 1)
                 {
                     // ignored
@@ -58,13 +58,13 @@ namespace Daylily.Plugin.Osu
             switch (eloInfo.Result.ToLower())
             {
                 case "fail" when eloInfo.Message.ToLower() == "unranked":
-                    return new CommonMessageResponse(uname + "大概没有参加什么mapping赛事..所以没有数据..", messageObj,
+                    return new CommonMessageResponse(uname + "大概没有参加什么mapping赛事..所以没有数据..", navigableMessageObj,
                         true);
                 case "fail":
-                    return new CommonMessageResponse("未知错误..查询不到..", messageObj, true);
+                    return new CommonMessageResponse("未知错误..查询不到..", navigableMessageObj, true);
                 default:
                     return new CommonMessageResponse(
-                        $"{eloInfo.User.Name}，有elo点{Math.Round(eloInfo.User.Elo, 2)}，当前#{eloInfo.User.Ranking}.", messageObj, true);
+                        $"{eloInfo.User.Name}，有elo点{Math.Round(eloInfo.User.Elo, 2)}，当前#{eloInfo.User.Ranking}.", navigableMessageObj, true);
             }
         }
     }

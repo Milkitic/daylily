@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Daylily.Bot;
+﻿using Daylily.Bot;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.Sessions;
+using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.StringUtils;
-using Daylily.CoolQ;
-using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Models;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Daylily.Bot.Session;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Osu.Cabbage
 {
     internal static class CabbageCommon
     {
-        public static readonly ConcurrentQueue<CommonMessage> MessageQueue = new ConcurrentQueue<CommonMessage>();
+        public static readonly ConcurrentQueue<CoolQNavigableMessage> MessageQueue = new ConcurrentQueue<CoolQNavigableMessage>();
         public static Task TaskQuery;
 
         public static void Query()
@@ -51,9 +49,9 @@ namespace Daylily.Plugin.Osu.Cabbage
                             new CqIdentity(cabbageId, MessageType.Private)));
                     try
                     {
-                        CommonMessage result = session.GetMessage();
+                        CoolQNavigableMessage result = session.GetMessage();
                         session.Timeout = 600;
-                        CommonMessage result2 = null;
+                        CoolQNavigableMessage result2 = null;
                         try
                         {
                             result2 = session.GetMessage();
@@ -64,7 +62,7 @@ namespace Daylily.Plugin.Osu.Cabbage
                         }
 
                         ImageInfo[] imgList =
-                            CqCode.GetImageInfo(result.RawMessage) ?? CqCode.GetImageInfo(result2?.RawMessage);
+                            CoolQCode.GetImageInfo(result. RawMessage) ?? CoolQCode.GetImageInfo(result2?.RawMessage);
 
                         if (imgList == null)
                         {

@@ -1,11 +1,13 @@
-﻿using System;
-using System.Linq;
-using CSharpOsu.Module;
+﻿using CSharpOsu.Module;
 using Daylily.Bot.Enum;
+using Daylily.Bot.Message;
 using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Models.CqResponse;
 using Daylily.Osu.Interface;
+using System;
+using System.Linq;
+using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Osu
 {
@@ -23,7 +25,7 @@ namespace Daylily.Plugin.Osu
                 //List = true
             };
             newPlugin.OnInitialized(args);
-            CommonMessage cm = new CommonMessage
+            CoolQNavigableMessage cm = new CoolQNavigableMessage
             {
                 GroupId = "123456788",
                 UserId = "2241521134",
