@@ -122,7 +122,7 @@ namespace Daylily.Bot
                 }
                 else if (prop.PropertyType == typeof(string))
                 {
-                    parsed = CoolQCode.Decode(argStr); // Convert.ToString(cmd);
+                    parsed = argStr; // Convert.ToString(cmd);
                 }
                 else if (prop.PropertyType == typeof(bool))
                 {
