@@ -221,11 +221,11 @@ namespace Daylily.Plugin.Core
                 dicPlugin[appKey].Add(new PluginInfo(item.Name, item.GetType().Name));
 
             var sb = new StringBuilder();
-            sb.AppendLine(CoolQDispatcher.Current.SessionInfo[_routeMsg.CqIdentity].Name + " 的插件情况：");
+            sb.AppendLine(CoolQDispatcher.Current.SessionInfo[(CqIdentity)_routeMsg.Identity].Name + " 的插件情况：");
             switch (_routeMsg.MessageType)
             {
                 case MessageType.Discuss:
-                    foreach (var item in CoolQDispatcher.Current.DiscussDisabledList[_routeMsg.CqIdentity.Id])
+                    foreach (var item in CoolQDispatcher.Current.DiscussDisabledList[((CqIdentity)_routeMsg.Identity).Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -238,7 +238,7 @@ namespace Daylily.Plugin.Core
 
                     break;
                 case MessageType.Private:
-                    foreach (var item in CoolQDispatcher.Current.PrivateDisabledList[_routeMsg.CqIdentity.Id])
+                    foreach (var item in CoolQDispatcher.Current.PrivateDisabledList[((CqIdentity)_routeMsg.Identity).Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -248,7 +248,7 @@ namespace Daylily.Plugin.Core
 
                     break;
                 case MessageType.Group:
-                    foreach (var item in CoolQDispatcher.Current.GroupDisabledList[_routeMsg.CqIdentity.Id])
+                    foreach (var item in CoolQDispatcher.Current.GroupDisabledList[((CqIdentity)_routeMsg.Identity).Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
