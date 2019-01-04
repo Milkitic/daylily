@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 //using System.Threading;
 
@@ -17,29 +18,30 @@ namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("熊猫斗图")]
     [Author("yf_extension", "sahuang")]
-    [Version(0, 0, 1, PluginVersion.Beta)]
+    [Version(2, 0, 1, PluginVersion.Beta)]
     [Help("发现熊猫图时有几率返回一张熊猫图。")]
-    class PandaDetector : ApplicationPlugin
+    class PandaDetector : CoolQApplicationPlugin
     {
-        private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
+        private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic =
+            new ConcurrentDictionary<string, GroupSettings>();
 #if DEBUG
         private static int _totalCount;
 #endif
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            if (navigableMessageObj.MessageType == MessageType.Private)
+            if (routeMsg.MessageType == MessageType.Private)
                 return null;
-            var imgList = CqCode.GetImageInfo(navigableMessageObj.RawMessage);
+            var imgList = CoolQCode.GetImageInfo(routeMsg.RawMessage);
             if (imgList == null) return null;
 
-            string groupId = navigableMessageObj.GroupId ?? navigableMessageObj.DiscussId;
+            string groupId = routeMsg.GroupId ?? routeMsg.DiscussId;
 
             if (!GroupDic.ContainsKey(groupId))
                 GroupDic.GetOrAdd(groupId, new GroupSettings
                 {
                     GroupId = groupId,
-                    NavigableMessageObj = navigableMessageObj
+                    routeMsg = routeMsg
                 });
 
             foreach (var item in imgList)
@@ -113,7 +115,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 string resPath = Path.Combine(Domain.PluginPath, "dragon", "resource_panda_send");
                 FileInfo[] files = new DirectoryInfo(resPath).GetFiles();
                 var cqImg = new FileImage(files[StaticRandom.Next(files.Length)].FullName).ToString();
-                SendMessage(new CommonMessageResponse(cqImg, gSets.NavigableMessageObj));
+                SendMessage(gSets.routeMsg.ToSource(cqImg));
             }
 
             gSets.Clear();
@@ -195,7 +197,7 @@ namespace Daylily.Plugin.ShaDiao.Application
 
         private class GroupSettings
         {
-            public CoolQNavigableMessage NavigableMessageObj { get; set; }
+            public CoolQRouteMessage routeMsg { get; set; }
             public string GroupId { get; set; }
             public List<string> ReceivedString { get; } = new List<string>();
             public Queue<string> PathQueue { get; } = new Queue<string>();

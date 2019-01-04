@@ -1,8 +1,8 @@
 ﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Models.CqResponse;
 using System;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -13,13 +13,16 @@ namespace Daylily.Plugin.ShaDiao
             // 引用添加项目Daylily.Common
             Panda newPlugin = new Panda();
             newPlugin.OnInitialized(args);
-            CoolQNavigableMessage cm = new CoolQNavigableMessage()
+            CoolQRouteMessage cm = new CoolQRouteMessage()
             {
                 GroupId = "123456788",
                 UserId = "2241521134",
-                RawMessage = "SB",
+                Message = new CoolQMessage()
+                {
+                    RawMessage = "SB"
+                },
                 MessageType = MessageType.Group,
-                Group = new GroupMsg(),
+                Group = new CoolQGroupMessageApi(),
             };
 
             Logger.Success("收到：" + newPlugin.OnMessageReceived(cm).Message);

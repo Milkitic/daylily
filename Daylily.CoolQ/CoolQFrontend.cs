@@ -1,5 +1,7 @@
 ﻿using System;
 using Daylily.Bot;
+using Daylily.Bot.Interface;
+using Daylily.Bot.Models;
 using Daylily.CoolQ.Models.CqResponse;
 using Newtonsoft.Json;
 
@@ -37,21 +39,21 @@ namespace Daylily.CoolQ
                 {
                     if (obj.message_type == "private") // 私聊
                     {
-                        PrivateMsg parsedObj = JsonConvert.DeserializeObject<PrivateMsg>(rawJson);
+                        CoolQPrivateMessageApi parsedObj = JsonConvert.DeserializeObject<CoolQPrivateMessageApi>(rawJson);
                         var arg = new MessageEventArgs(parsedObj);
                         PrivateMessageReceived?.Invoke(this, arg);
                         MessageReceived?.Invoke(this, arg);
                     }
                     else if (obj.message_type == "group") // 群聊
                     {
-                        GroupMsg parsedObj = JsonConvert.DeserializeObject<GroupMsg>(rawJson);
+                        CoolQGroupMessageApi parsedObj = JsonConvert.DeserializeObject<CoolQGroupMessageApi>(rawJson);
                         var arg = new MessageEventArgs(parsedObj);
                         DiscussMessageReceived?.Invoke(this, arg);
                         MessageReceived?.Invoke(this, arg);
                     }
                     else if (obj.message_type == "discuss") // 讨论组
                     {
-                        DiscussMsg parsedObj = JsonConvert.DeserializeObject<DiscussMsg>(rawJson);
+                        CoolQDiscussMessageApi parsedObj = JsonConvert.DeserializeObject<CoolQDiscussMessageApi>(rawJson);
                         var arg = new MessageEventArgs(parsedObj);
                         GroupMessageReceived?.Invoke(this, arg);
                         MessageReceived?.Invoke(this, arg);

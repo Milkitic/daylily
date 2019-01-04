@@ -3,10 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Kernel
 {
-    public class PluginSwitch : ApplicationPlugin
+    public class PluginSwitch : CoolQApplicationPlugin
     {
         public ConcurrentDictionary<long, List<string>> GroupDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
@@ -15,12 +16,12 @@ namespace Daylily.Plugin.Kernel
         public ConcurrentDictionary<long, List<string>> PrivateDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
         {
             return null;
         }
 
-        public bool ValidateDisabled(CoolQNavigableMessage cm, MemberInfo t)
+        public bool ValidateDisabled(CoolQRouteMessage cm, MemberInfo t)
         {
             switch (cm.MessageType)
             {

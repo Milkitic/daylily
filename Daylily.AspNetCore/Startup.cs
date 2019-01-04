@@ -1,8 +1,9 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Interface;
-using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.SocketUtils;
+using Daylily.CoolQ;
+using Daylily.CoolQ.Models.CqResponse;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -73,7 +74,7 @@ namespace Daylily.AspNetCore
                 {
                     dispatcher.Message_Received(sender, new MessageReceivedEventArgs
                     {
-                        MessageObj = (CoolQ.Models.CqResponse.Msg)e.ParsedObject
+                        MessageObj = (CoolQMessageApi)e.ParsedObject
                     });
                 };
                 frontend.ErrorOccured += (sender, e) => { };

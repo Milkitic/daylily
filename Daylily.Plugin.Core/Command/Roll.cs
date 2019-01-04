@@ -1,16 +1,17 @@
-﻿using Daylily.Bot.Message;
-using System.Collections.Generic;
-using Daylily.Bot.Backend;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
+using System.Collections.Generic;
 
 namespace Daylily.Plugin.Core
 {
     [Name("获取随机数")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Stable)]
+    [Version(2, 0, 0, PluginVersion.Stable)]
     [Help("获取一个或多个随机数。")]
     [Command("roll")]
-    public class Roll : CommandPlugin
+    public class Roll : CoolQCommandPlugin
     {
         [Arg("r", IsSwitch = true, Default = false)]
         [Help("若启用，则使抽取含重复结果。否则结果不包含重复结果。")]
@@ -30,18 +31,18 @@ namespace Daylily.Plugin.Core
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             bool isParam1 = int.TryParse(Param1, out int param1);
             bool isParam2 = int.TryParse(Param2, out int param2);
             bool isCNum = int.TryParse(Count, out int count);
             if (!isParam1)
-                return new CommonMessageResponse(GetRand().ToString(), navigableMessageObj, true);
+                return routeMsg.ToSource(GetRand().ToString(), true);
             if (!isParam2)
-                return new CommonMessageResponse(GetRand(param1).ToString(), navigableMessageObj, true);
+                return routeMsg.ToSource(GetRand(param1).ToString(), true);
             if (!isCNum)
-                return new CommonMessageResponse(GetRand(param1, param2).ToString(), navigableMessageObj, true);
-            return new CommonMessageResponse(GetRandMessage(param1, param2, count), navigableMessageObj, true);
+                return routeMsg.ToSource(GetRand(param1, param2).ToString(), true);
+            return routeMsg.ToSource(GetRandMessage(param1, param2, count), true);
         }
 
         private static int GetRand() => StaticRandom.Next(0, 101);

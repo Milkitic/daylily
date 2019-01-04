@@ -18,9 +18,9 @@ namespace Daylily.Plugin.Osu.Cabbage
         {
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            CabbageCommon.MessageQueue.Enqueue(navigableMessageObj);
+            CabbageCommon.MessageQueue.Enqueue(routeMsg);
 
             bool isTaskFree = CabbageCommon.TaskQuery == null || CabbageCommon.TaskQuery.IsCanceled ||
                               CabbageCommon.TaskQuery.IsCompleted;

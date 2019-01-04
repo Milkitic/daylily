@@ -4,6 +4,7 @@ using Daylily.Bot.Backend;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
@@ -12,10 +13,10 @@ namespace Daylily.Plugin.Osu
 {
     [Name("ELO查询")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Stable)]
+    [Version(2, 0, 0, PluginVersion.Stable)]
     [Help("获取玩家的ELO信息。", "Mapping ELO Project 是以 ELO 等级分制度 来对选手在作图竞赛中的表现进行量化衡量以及排名的一个项目。", "详情：t/728158")]
     [Command("elo")]
-    public class Elo : CommandPlugin
+    public class Elo : CoolQCommandPlugin
     {
         [FreeArg]
         [Help("查询指定的osu用户名。若带空格，请使用引号。")]
@@ -26,16 +27,16 @@ namespace Daylily.Plugin.Osu
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             string id;
             string uname;
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
-                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(navigableMessageObj.UserId));
+                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
                 if (userInfo.Count == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotBound, navigableMessageObj, true);
+                    return routeMsg.ToSource(LoliReply.IdNotBound, true);
 
                 id = userInfo[0].UserId.ToString();
                 uname = userInfo[0].CurrentUname;
@@ -44,7 +45,7 @@ namespace Daylily.Plugin.Osu
             {
                 int userNum = OldSiteApi.GetUser(OsuId, out var userObj);
                 if (userNum == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotFound, navigableMessageObj, true);
+                    return routeMsg.ToSource(LoliReply.IdNotFound, true);
                 if (userNum > 1)
                 {
                     // ignored
@@ -58,13 +59,13 @@ namespace Daylily.Plugin.Osu
             switch (eloInfo.Result.ToLower())
             {
                 case "fail" when eloInfo.Message.ToLower() == "unranked":
-                    return new CommonMessageResponse(uname + "大概没有参加什么mapping赛事..所以没有数据..", navigableMessageObj,
+                    return routeMsg.ToSource(uname + "大概没有参加什么mapping赛事..所以没有数据..",
                         true);
                 case "fail":
-                    return new CommonMessageResponse("未知错误..查询不到..", navigableMessageObj, true);
+                    return routeMsg.ToSource("未知错误..查询不到..", true);
                 default:
-                    return new CommonMessageResponse(
-                        $"{eloInfo.User.Name}，有elo点{Math.Round(eloInfo.User.Elo, 2)}，当前#{eloInfo.User.Ranking}.", navigableMessageObj, true);
+                    return routeMsg.ToSource(
+                        $"{eloInfo.User.Name}，有elo点{Math.Round(eloInfo.User.Elo, 2)}，当前#{eloInfo.User.Ranking}.", true);
             }
         }
     }

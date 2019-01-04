@@ -10,27 +10,23 @@ using System;
 using System.Collections.Generic;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Osu
 {
     [Name("随机挖坑")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Beta)]
+    [Version(2, 0, 0, PluginVersion.Beta)]
     [Help("从发送者的Graveyard Beatmaps中随机挖一张图。")]
     [Command("挖坑")]
-    public class MyGraveyard : CommandPlugin
+    public class MyGraveyard : CoolQCommandPlugin
     {
-        public override void OnInitialized(string[] args)
-        {
-
-        }
-
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             BllUserRole bllUserRole = new BllUserRole();
-            List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(navigableMessageObj.UserId));
+            List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
             if (userInfo.Count == 0)
-                return new CommonMessageResponse(LoliReply.IdNotBound, navigableMessageObj, true);
+                return routeMsg.ToSource(LoliReply.IdNotBound, true);
 
             var id = userInfo[0].UserId.ToString();
 
@@ -54,7 +50,7 @@ namespace Daylily.Plugin.Osu
 
             if (totalList.Count == 0)
             {
-                return new CommonMessageResponse("惊了，你竟然会没坑！", navigableMessageObj, true);
+                return routeMsg.ToSource("惊了，你竟然会没坑！", true);
             }
 
             Random rnd = new Random();
@@ -62,7 +58,7 @@ namespace Daylily.Plugin.Osu
             var cqMusic = new CustomMusic("https://osu.ppy.sh/s/" + beatmap.Id, $"https://b.ppy.sh/preview/{beatmap.Id}.mp3", beatmap.Title,
                 $"{beatmap.Artist}\r\n({beatmap.FavouriteCount} fav)", $"https://b.ppy.sh/thumb/{beatmap.Id}l.jpg");
 
-            return new CommonMessageResponse(cqMusic.ToString(), navigableMessageObj);
+            return routeMsg.ToSource(cqMusic.ToString());
         }
     }
 }

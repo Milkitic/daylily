@@ -21,7 +21,7 @@ namespace Daylily.Plugin.Osu
 {
     [Name("m4m匹配")]
     [Author("yf_extension")]
-    [Version(0, 2, 0, PluginVersion.Alpha)]
+    [Version(2, 0, 0, PluginVersion.Alpha)]
     [Help("这是一个利用平台进行自动化管理的M4M机制，无须自己各处求摸。",
         "将你自己的图上传，我会地合理地挑选与你和另一人互相推荐，以达成互相摸图的目的。",
         "每个人同时只限一张图，第二张图会覆盖第一张图。")]
@@ -29,7 +29,7 @@ namespace Daylily.Plugin.Osu
     public class M4MMatch : CommandPlugin
     {
         private static List<MatchInfo> _matchList;
-        private CoolQNavigableMessage _cm;
+        private CoolQRouteMessage _cm;
         private Session _session;
         private string _osuId;
         private MatchInfo _myInfo;
@@ -57,9 +57,9 @@ namespace Daylily.Plugin.Osu
             _matchList = LoadSettings<List<MatchInfo>>("MatchList") ?? new List<MatchInfo>();
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            _cm = navigableMessageObj;
+            _cm = routeMsg;
             if (List)
             {
                 if (_cm.Authority == Authority.Root)
@@ -88,23 +88,23 @@ namespace Daylily.Plugin.Osu
                             strs.Add($"{osuName}  地图号: s/{id} {status}");
                     }
 
-                    return new CommonMessageResponse(string.Join("\r\n", strs), _cm);
+                    return routeMsg.ToSource(string.Join("\r\n", strs), _cm);
                 }
                 else
-                    return new CommonMessageResponse(LoliReply.RootOnly, _cm);
+                    return routeMsg.ToSource(LoliReply.RootOnly, _cm);
             }
 
             if (_cm.MessageType != MessageType.Private)
-                return new CommonMessageResponse(LoliReply.PrivateOnly, _cm);
+                return routeMsg.ToSource(LoliReply.PrivateOnly, _cm);
 
             try
             {
                 using (_session = new Session(DefaultTimeout, _cm.CqIdentity, _cm.UserId))
                 {
                     BllUserRole bllUserRole = new BllUserRole();
-                    List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(navigableMessageObj.UserId));
+                    List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
                     if (userInfo.Count == 0)
-                        return new CommonMessageResponse("这个功能是需要绑定osu id的，请使用/setid完成绑定", navigableMessageObj, true);
+                        return routeMsg.ToSource("这个功能是需要绑定osu id的，请使用/setid完成绑定", true);
 
                     _osuId = userInfo[0].UserId.ToString();
 
@@ -117,7 +117,7 @@ namespace Daylily.Plugin.Osu
 我会地合理地从库中挑选，并与你和另一人互相推荐，以达成自动匹配M4M的目的。
 每个人只能给我一张图，第二张图会覆盖第一张图，所以有什么图需摸要记得更新哦！
 最重要的一点：这仅仅是一个平台，真正的交流还需面对面进行。";
-                            SendMessage(new CommonMessageResponse(intro, _cm));
+                            SendMessage(routeMsg.ToSource(intro, _cm));
 
                             _matchList.Add(new MatchInfo(_cm.UserId));
                             SaveMatchList(); //apply
@@ -142,20 +142,20 @@ namespace Daylily.Plugin.Osu
                         {
                             if (_myInfo.TargetQq == null)
                             {
-                                return new CommonMessageResponse("你尚且还没有正在进行的匹配。", _cm);
+                                return routeMsg.ToSource("你尚且还没有正在进行的匹配。", _cm);
                             }
 
                             var oInfo = _matchList.FirstOrDefault(q => q.Qq == _myInfo.TargetQq);
                             if (DateTime.Now - oInfo.LastConfirmedTime < new TimeSpan(3, 0, 0))
-                                return new CommonMessageResponse("你已在三小时之内发出过核对确认，请稍后再试。", _cm);
+                                return routeMsg.ToSource("你已在三小时之内发出过核对确认，请稍后再试。", _cm);
                             oInfo.RequestBeConfirmed();
                             SaveMatchList(); //apply 
 
                             string nick = CqApi.GetStrangerInfo(oInfo.Qq).Data?.Nickname ?? "玩家";
-                            SendMessage(new CommonMessageResponse($"你已经确认了{nick}({oInfo.Qq})的摸，请及时完成自己的摸！", _cm));
+                            SendMessage(routeMsg.ToSource($"你已经确认了{nick}({oInfo.Qq})的摸，请及时完成自己的摸！", _cm));
 
                             string nick2 = CqApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
-                            SendMessage(new CommonMessageResponse($"{nick2}({_myInfo.Qq})已经确认查收了你的摸。",
+                            SendMessage(routeMsg.ToSource($"{nick2}({_myInfo.Qq})已经确认查收了你的摸。",
                                 new CqIdentity(oInfo.Qq, MessageType.Private)));
 
                             if (oInfo.LastConfirmedTime == null || _myInfo.LastConfirmedTime == null)
@@ -165,10 +165,10 @@ namespace Daylily.Plugin.Osu
                             _myInfo.FinishedSet.Add(oInfo.SetId);
                             oInfo.Finish();
                             _myInfo.Finish();
-                            SendMessage(new CommonMessageResponse(
+                            SendMessage(routeMsg.ToSource(
                                 $"你与{nick}({oInfo.Qq})的M4M ({oInfo.SetUrl}) 已完成，合作愉快！",
                                 new CqIdentity(_myInfo.Qq, MessageType.Private)));
-                            SendMessage(new CommonMessageResponse(
+                            SendMessage(routeMsg.ToSource(
                                 $"你与{nick2}({_myInfo.Qq})的M4M ({_myInfo.SetUrl}) 已完成，合作愉快！",
                                 new CqIdentity(oInfo.Qq, MessageType.Private)));
                             SaveMatchList(); //apply 
@@ -179,19 +179,19 @@ namespace Daylily.Plugin.Osu
                         {
                             var oInfo = _matchList.FirstOrDefault(q => q.Qq == _myInfo.TargetQq);
                             if (DateTime.Now - _myInfo.LastNoticeTime < new TimeSpan(3, 0, 0))
-                                return new CommonMessageResponse("你已在三小时之内发出过完成提醒，请稍后再试。", _cm);
+                                return routeMsg.ToSource("你已在三小时之内发出过完成提醒，请稍后再试。", _cm);
                             _myInfo.RequestFinishMatch();
                             SaveMatchList(); //apply 
 
                             string nick2 = CqApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
-                            SendMessage(new CommonMessageResponse(
+                            SendMessage(routeMsg.ToSource(
                                 $"{nick2}({_myInfo.Qq})已经摸完了你的图：\r\n" +
                                 $"{oInfo.SetUrl}\r\n" +
                                 $"正在等待你的摸。\r\n" +
                                 $"请检查他的modding情况，回复 \"/m4m -确认\" 查收。\r\n" +
                                 $"若对方没有摸完，请不要查收。若有疑问请相互交流。",
                                 new CqIdentity(oInfo.Qq, MessageType.Private)));
-                            return new CommonMessageResponse("已发送完成请求。", _cm);
+                            return routeMsg.ToSource("已发送完成请求。", _cm);
                         }
                         // Cancel
                         else if (Cancel)
@@ -202,7 +202,7 @@ namespace Daylily.Plugin.Osu
                                 oInfo.MatchTime = DateTime.Now; // 临时补救
 
                             if (DateTime.Now - oInfo.MatchTime < new TimeSpan(7, 0, 0, 0))
-                                return new CommonMessageResponse("取消失败，仅匹配持续一周以上才可取消。", _cm);
+                                return routeMsg.ToSource("取消失败，仅匹配持续一周以上才可取消。", _cm);
 
                             string nick = CqApi.GetStrangerInfo(oInfo.Qq).Data?.Nickname ?? "玩家";
                             string nick2 = CqApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
@@ -211,10 +211,10 @@ namespace Daylily.Plugin.Osu
                             _myInfo.FinishedSet.Add(oInfo.SetId);
                             oInfo.Finish();
                             _myInfo.Finish();
-                            SendMessage(new CommonMessageResponse(
+                            SendMessage(routeMsg.ToSource(
                                 $"你与{nick}({oInfo.Qq})的M4M ({oInfo.SetUrl}) 已强制取消。",
                                 new CqIdentity(_myInfo.Qq, MessageType.Private)));
-                            SendMessage(new CommonMessageResponse(
+                            SendMessage(routeMsg.ToSource(
                                 $"你与{nick2}({_myInfo.Qq})的M4M ({_myInfo.SetUrl}) 已强制取消。",
                                 new CqIdentity(oInfo.Qq, MessageType.Private)));
                             SaveMatchList(); //apply 
@@ -241,7 +241,7 @@ namespace Daylily.Plugin.Osu
                                    $"当你摸图完成时，请使用 \"/m4m -完成\" 提醒对方审阅。\r\n" +
                                    $"当对方向你提出审阅请求后，请使用 \"/m4m -确认\" 完成审阅。\r\n" +
                                    $"若匹配持续超过一周，可使用  \"/m4m -取消\" 强制取消，且下次不会匹配到此图。";
-                            return new CommonMessageResponse(info, _cm);
+                            return routeMsg.ToSource(info, _cm);
                         }
 
                         // Main
@@ -253,22 +253,22 @@ namespace Daylily.Plugin.Osu
                                $">【2】管理摸图偏好（当前：{_myInfo.GetPreferenceString()}）。\r\n" +
                                $">【3】开始进行m4m匹配。";
 
-                        SendMessage(new CommonMessageResponse(info, _cm));
-                        CoolQNavigableMessage cmMain = SessionCondition("1", "2", "3");
+                        SendMessage(routeMsg.ToSource(info, _cm));
+                        CoolQRouteMessage cmMain = SessionCondition("1", "2", "3");
                         switch (cmMain.RawMessage)
                         {
                             case "1":
-                                SendMessage(new CommonMessageResponse("删除现有地图，确认吗？\r\n" +
+                                SendMessage(routeMsg.ToSource("删除现有地图，确认吗？\r\n" +
                                                                       "【1】是 【2】否", _cm));
-                                CoolQNavigableMessage cmPub = SessionCondition("1", "2");
+                                CoolQRouteMessage cmPub = SessionCondition("1", "2");
                                 if (cmPub.RawMessage == "1")
                                 {
                                     _myInfo.RemoveSet();
                                     SaveMatchList(); //apply 
-                                    return new CommonMessageResponse("删除成功。使用/m4m重新发布地图。", _cm);
+                                    return routeMsg.ToSource("删除成功。使用/m4m重新发布地图。", _cm);
                                 }
                                 else
-                                    return new CommonMessageResponse("你已取消操作。", _cm);
+                                    return routeMsg.ToSource("你已取消操作。", _cm);
                             case "2":
                                 if (SessionMode(out var sessionNoMap)) return sessionNoMap;
                                 return null;
@@ -278,7 +278,7 @@ namespace Daylily.Plugin.Osu
                                     DateTime.Now - i.LastUse < new TimeSpan(7, 0, 0, 0)).ToArray();
                                 if (fullList.Length == 0)
                                 {
-                                    return new CommonMessageResponse("目前没有可匹配的用户，也有可能是可匹配的用户同时在浏览m4m菜单。请等待他人匹配或稍后重试。", _cm);
+                                    return routeMsg.ToSource("目前没有可匹配的用户，也有可能是可匹配的用户同时在浏览m4m菜单。请等待他人匹配或稍后重试。", _cm);
                                 }
 
                                 MatchInfo[] canModList = fullList.Where(i =>
@@ -288,7 +288,7 @@ namespace Daylily.Plugin.Osu
                                     !_myInfo.FinishedSet.Contains(i.SetId)).ToArray();
                                 if (canModList.Length == 0)
                                 {
-                                    return new CommonMessageResponse("目前没有与你情况相符合的用户，请等待他人匹配或稍后重试。", _cm);
+                                    return routeMsg.ToSource("目前没有与你情况相符合的用户，请等待他人匹配或稍后重试。", _cm);
                                 }
 
                                 MatchInfo[] bestList = new MatchInfo[0];
@@ -306,9 +306,9 @@ namespace Daylily.Plugin.Osu
 
                                 if (bestList.Length < 1)
                                 {
-                                    SendMessage(new CommonMessageResponse("目前没有最佳的匹配，继续尝试不佳的匹配吗？\r\n" +
+                                    SendMessage(routeMsg.ToSource("目前没有最佳的匹配，继续尝试不佳的匹配吗？\r\n" +
                                                                           "【1】是 【2】否", _cm));
-                                    CoolQNavigableMessage cmContinue = SessionCondition("1", "2");
+                                    CoolQRouteMessage cmContinue = SessionCondition("1", "2");
                                     if (cmContinue.RawMessage == "1")
                                     {
                                         MatchInfo[] notBestList = new MatchInfo[0];
@@ -325,7 +325,7 @@ namespace Daylily.Plugin.Osu
                                         matchInfo = notBestList[StaticRandom.Next(notBestList.Length)];
                                     }
                                     else
-                                        return new CommonMessageResponse("你已取消操作。请等待他人匹配或稍后重试。", _cm);
+                                        return routeMsg.ToSource("你已取消操作。请等待他人匹配或稍后重试。", _cm);
                                 }
                                 else
                                 {
@@ -362,27 +362,27 @@ namespace Daylily.Plugin.Osu
                                                    "当双方互批完成时，M4M成功结束！\r\n" +
                                                    "若有疑问，请与对方互相协商。详细情况请使用 \"/m4m\"。";
 
-                                SendMessage(new CommonMessageResponse($"{nick2}({_myInfo.Qq}) 与你成功匹配\r\n" +
+                                SendMessage(routeMsg.ToSource($"{nick2}({_myInfo.Qq}) 与你成功匹配\r\n" +
                                                                       $"{sub2}的地图：{_myInfo.SetUrl}\r\n" +
                                                                       $"{sub2}的备注：{_myInfo.Mark}\r\n" + tip,
                                     new CqIdentity(matchInfo.Qq, MessageType.Private)));
 
-                                return new CommonMessageResponse($"你与{nick1}({matchInfo.Qq}) 成功匹配\r\n" +
+                                return routeMsg.ToSource($"你与{nick1}({matchInfo.Qq}) 成功匹配\r\n" +
                                                                  $"{sub1}的地图：{matchInfo.SetUrl}\r\n" +
                                                                  $"{sub1}的备注：{matchInfo.Mark}\r\n" + tip, _cm);
                             default:
-                                return new CommonMessageResponse("你开始了？走了.jpg", _cm);
+                                return routeMsg.ToSource("你开始了？走了.jpg", _cm);
                         }
                     }
                     catch (TimeoutException)
                     {
-                        return new CommonMessageResponse("由于长时间未操作，已经自动取消m4m状态。", _cm);
+                        return routeMsg.ToSource("由于长时间未操作，已经自动取消m4m状态。", _cm);
                     }
                 }
             }
             catch (NotSupportedException)
             {
-                return new CommonMessageResponse("你已在进行m4m状态中。", navigableMessageObj, true);
+                return routeMsg.ToSource("你已在进行m4m状态中。", true);
             }
             finally
             {
@@ -397,22 +397,22 @@ namespace Daylily.Plugin.Osu
         /// <summary>
         /// 没有地图会话
         /// </summary>
-        private CommonMessageResponse SessionNoMap()
+        private CoolQRouteMessage SessionNoMap()
         {
-            SendMessage(new CommonMessageResponse("你还没有发布任何一张图，需要现在发布吗？\r\n" + "【1】是 【2】否", _cm));
-            CoolQNavigableMessage cmPub = SessionCondition("1", "2");
+            SendMessage(routeMsg.ToSource("你还没有发布任何一张图，需要现在发布吗？\r\n" + "【1】是 【2】否", _cm));
+            CoolQRouteMessage cmPub = SessionCondition("1", "2");
 
             return cmPub.RawMessage == "1"
                 ? SessionAddMap()
-                : new CommonMessageResponse("由于你没有发布地图，已退出m4m模式。", _cm);
+                : routeMsg.ToSource("由于你没有发布地图，已退出m4m模式。", _cm);
         }
 
         /// <summary>
         /// 更改摸图偏好会话
         /// </summary>
-        private bool SessionMode(out CommonMessageResponse sessionNoMap)
+        private bool SessionMode(out CoolQRouteMessage sessionNoMap)
         {
-            SendMessage(new CommonMessageResponse("请告诉我你的摸图偏好，可多选。\r\n" +
+            SendMessage(routeMsg.ToSource("请告诉我你的摸图偏好，可多选。\r\n" +
                                                   "如发送 \"013\" 即指接受std、taiko、mania的地图\r\n" +
                                                   "【0】osu!standard\r\n" +
                                                   "【1】osu!taiko\r\n" +
@@ -430,11 +430,11 @@ namespace Daylily.Plugin.Osu
                 }
 
                 SaveMatchList(); //apply 
-                SendMessage(new CommonMessageResponse($"你的摸图偏好已更新为：{_myInfo.GetPreferenceString()}", _cm));
+                SendMessage(routeMsg.ToSource($"你的摸图偏好已更新为：{_myInfo.GetPreferenceString()}", _cm));
             }
             else
             {
-                sessionNoMap = new CommonMessageResponse("你已取消操作，操作未保存。", _cm);
+                sessionNoMap = routeMsg.ToSource("你已取消操作，操作未保存。", _cm);
                 return true;
             }
 
@@ -445,18 +445,18 @@ namespace Daylily.Plugin.Osu
         /// <summary>
         /// 添加地图会话
         /// </summary>
-        private CommonMessageResponse SessionAddMap()
+        private CoolQRouteMessage SessionAddMap()
         {
             if (SessionMode(out var sessionNoMap)) return sessionNoMap;
             Thread.Sleep(2000);
-            SendMessage(new CommonMessageResponse("请将你的地图链接发送给我 :)", _cm));
+            SendMessage(routeMsg.ToSource("请将你的地图链接发送给我 :)", _cm));
             _session.Timeout = 120000;
             Beatmapset set = null;
             bool valid = false;
             int retry = 0;
             while (!valid && retry < 3)
             {
-                CoolQNavigableMessage cmMap = _session.GetMessage();
+                CoolQRouteMessage cmMap = _session.GetMessage();
                 string url = cmMap.RawMessage.Replace("\r\n", "");
 
                 set = GetBeatmapset(url);
@@ -465,17 +465,17 @@ namespace Daylily.Plugin.Osu
                 {
                     if (OldSiteApi.GetUidByUsername(set.Creator) != _osuId)
                     {
-                        SendMessage(new CommonMessageResponse("这个不是你的地图哦！必须是要你自己上传的地图。再发一个新的地址给我吧？", _cm));
+                        SendMessage(routeMsg.ToSource("这个不是你的地图哦！必须是要你自己上传的地图。再发一个新的地址给我吧？", _cm));
                     }
                     else if (set.RankedDate != null)
                     {
-                        SendMessage(new CommonMessageResponse("这张图已经rank咯！必须是非rank图。再发一个新的地址给我吧？", _cm));
+                        SendMessage(routeMsg.ToSource("这张图已经rank咯！必须是非rank图。再发一个新的地址给我吧？", _cm));
                     }
                     else
                         valid = true;
                 }
                 else
-                    SendMessage(new CommonMessageResponse("这个地址……好像不对吧？请重新发送一个正确的地图地址。", _cm));
+                    SendMessage(routeMsg.ToSource("这个地址……好像不对吧？请重新发送一个正确的地图地址。", _cm));
 
                 retry++;
             }
@@ -483,33 +483,33 @@ namespace Daylily.Plugin.Osu
             if (!valid)
             {
                 Thread.Sleep(2000);
-                return new CommonMessageResponse("由于发送的地址多次无效，操作失败，已退出m4m模式。", _cm);
+                return routeMsg.ToSource("由于发送的地址多次无效，操作失败，已退出m4m模式。", _cm);
             }
             else
             {
-                SendMessage(new CommonMessageResponse("OK，已就绪！最后再进行一些备注描述吧，" +
+                SendMessage(routeMsg.ToSource("OK，已就绪！最后再进行一些备注描述吧，" +
                                                       "当对方和你匹配成功时会附带这些备注消息。\r\n" +
                                                       "（请3分钟内发送，须小于100字，多出的会被截取。）", _cm));
                 _session.Timeout = 180000;
-                CoolQNavigableMessage cmMark = _session.GetMessage();
+                CoolQRouteMessage cmMark = _session.GetMessage();
                 string mark = new string(cmMark.RawMessage.Take(100).ToArray());
                 string verify = $"地图地址：https://osu.ppy.sh/beatmapsets/{set.Id} \r\n" +
                                 $"备注：{mark}\r\n" +
                                 "确定以上信息，就这样发布吗？\r\n" +
                                 "【1】是 【2】否";
-                SendMessage(new CommonMessageResponse(verify, _cm));
+                SendMessage(routeMsg.ToSource(verify, _cm));
                 _session.Timeout = DefaultTimeout;
 
-                CoolQNavigableMessage cmVerify = SessionCondition("1", "2");
+                CoolQRouteMessage cmVerify = SessionCondition("1", "2");
                 if (cmVerify.RawMessage == "1")
                 {
                     _myInfo.UpdateSet(set, mark);
                     SaveMatchList(); //apply 
-                    return new CommonMessageResponse("操作已成功，已经收录了你的地图！请等待他人匹配或立刻使用 \"/m4m\" 主动匹配。", _cm);
+                    return routeMsg.ToSource("操作已成功，已经收录了你的地图！请等待他人匹配或立刻使用 \"/m4m\" 主动匹配。", _cm);
                 }
                 else
                 {
-                    return new CommonMessageResponse("操作失败，用户已取消。", _cm);
+                    return routeMsg.ToSource("操作失败，用户已取消。", _cm);
                 }
             }
         }
@@ -517,17 +517,17 @@ namespace Daylily.Plugin.Osu
         /// <summary>
         /// 单选会话
         /// </summary>
-        private CoolQNavigableMessage SessionCondition(params string[] conditions)
+        private CoolQRouteMessage SessionCondition(params string[] conditions)
         {
             _session.Timeout = 30000;
-            CoolQNavigableMessage cmPub = _session.GetMessage();
+            CoolQRouteMessage cmPub = _session.GetMessage();
             int retryCount = 0;
             while (!conditions.Contains(cmPub.RawMessage) && retryCount < 3)
             {
                 SendMessage
                 (conditions.Length < 4
-                    ? new CommonMessageResponse($"请回复 \"{string.Join("\", \"", conditions)}\" 其中一个。", _cm)
-                    : new CommonMessageResponse($"请回复形如 \"{conditions[0]}\" 的选项。", _cm));
+                    ? routeMsg.ToSource($"请回复 \"{string.Join("\", \"", conditions)}\" 其中一个。", _cm)
+                    : routeMsg.ToSource($"请回复形如 \"{conditions[0]}\" 的选项。", _cm));
                 cmPub = _session.GetMessage();
                 retryCount++;
             }
@@ -541,11 +541,11 @@ namespace Daylily.Plugin.Osu
         private bool SessionMultiCondition(out char[] choice, params char[] conditions)
         {
             _session.Timeout = 30000;
-            CoolQNavigableMessage cmPub = _session.GetMessage();
+            CoolQRouteMessage cmPub = _session.GetMessage();
             int retryCount = 0;
             while (cmPub.RawMessage.ToArray().Distinct().Any(c => !conditions.Contains(c)) && retryCount < 3)
             {
-                SendMessage(new CommonMessageResponse("存在无效输入，请重新选择。", _cm));
+                SendMessage(routeMsg.ToSource("存在无效输入，请重新选择。", _cm));
                 cmPub = _session.GetMessage();
                 retryCount++;
             }
@@ -559,7 +559,7 @@ namespace Daylily.Plugin.Osu
             StringFinder sf = new StringFinder(url);
             if (url.Length > 8 && sf.FindNext("ppy.sh/b/", false) != 8)
             {
-                SendMessage(new CommonMessageResponse("请稍后，核对中……", _cm));
+                SendMessage(routeMsg.ToSource("请稍后，核对中……", _cm));
                 sf.FindToLast();
                 string cut = sf.Cut();
                 string bId = cut.Split('?')[0];
@@ -568,7 +568,7 @@ namespace Daylily.Plugin.Osu
 
             if (url.Length > 8 && sf.FindNext("ppy.sh/s/", false) != 8)
             {
-                SendMessage(new CommonMessageResponse("请稍后，核对中……", _cm));
+                SendMessage(routeMsg.ToSource("请稍后，核对中……", _cm));
                 sf.FindToLast();
                 string cut = sf.Cut();
                 string sId = cut.Split('?')[0];
@@ -577,7 +577,7 @@ namespace Daylily.Plugin.Osu
 
             if (url.Length > 18 && sf.FindNext("ppy.sh/beatmapsets/", false) != 18)
             {
-                SendMessage(new CommonMessageResponse("请稍后，核对中……", _cm));
+                SendMessage(routeMsg.ToSource("请稍后，核对中……", _cm));
                 sf.FindToLast();
                 string cut = sf.Cut();
                 string sId = cut.Split('#')[0].Split('?')[0];

@@ -1,6 +1,9 @@
 ﻿using Daylily.Bot.Message;
+using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,33 +12,31 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using Daylily.Bot.Session;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao
 {
-    class Test : ApplicationPlugin
+    class Test : CoolQApplicationPlugin
     {
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            if (!navigableMessageObj.RawMessage.Equals("/转"))
+            if (!routeMsg.RawMessage.Equals("/转"))
                 return null;
-            using (Session session = new Session(1000 * 60, navigableMessageObj.CqIdentity, navigableMessageObj.UserId))
+            using (Session session = new Session(1000 * 60, routeMsg.Identity, routeMsg.UserId))
             {
-                SendMessage(new CommonMessageResponse("请发送图片，5张以内，1分钟内有效。", navigableMessageObj, true));
+                SendMessage(routeMsg.ToSource("请发送图片，5张以内，1分钟内有效。", true));
                 try
                 {
-                    CoolQNavigableMessage cm = session.GetMessage();
-                    var infoList = CqCode.GetImageInfo(cm.RawMessage);
-                    if (infoList == null) return new CommonMessageResponse("你发送的消息没有包含图片。", cm);
-                    if (infoList.Length > 5) return new CommonMessageResponse("你发送的图片过多。", cm);
+                    CoolQRouteMessage routeMessage = (CoolQRouteMessage)session.GetMessage();
+                    var infoList = CoolQCode.GetImageInfo(routeMessage.RawMessage);
+                    if (infoList == null) return routeMessage.ToSource("你发送的消息没有包含图片。");
+                    if (infoList.Length > 5) return routeMessage.ToSource("你发送的图片过多。");
 
                     List<Image> imgList = infoList.Select(imgInfo => HttpClientUtil.GetImageFromUrl(imgInfo.Url))
                         .ToList();
 
                     var sendList = HandleImage(imgList);
 
-                    return new CommonMessageResponse(string.Join("\r\n", sendList), navigableMessageObj);
+                    return routeMessage.ToSource(string.Join("\r\n", sendList));
                 }
                 catch (TimeoutException)
                 {

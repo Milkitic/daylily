@@ -5,7 +5,7 @@ namespace Daylily.CoolQ.Models.CqResponse
     /// <summary>
     /// 私聊消息。
     /// </summary>
-    public abstract class Msg : Base
+    public abstract class CoolQMessageApi : Base
     {
         /// <summary>
         /// 消息类型。

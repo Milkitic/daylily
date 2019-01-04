@@ -1,4 +1,5 @@
-﻿using Daylily.Bot.Dispatcher;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Dispatcher;
 using Daylily.Bot.Interface;
 using Daylily.Bot.Models;
 using Daylily.Common;
@@ -15,19 +16,22 @@ namespace Daylily.Bot
 {
     public class Core
     {
-        public static Core CurrentCore { get; private set; }
+        public static Core Current { get; private set; }
         private readonly List<IFrontend> _frontends = new List<IFrontend>();
         public IEnumerable<IFrontend> Frontends => _frontends;
 
         private IDispatcher _dispatcher;
         public IDispatcher Dispatcher => _dispatcher;
+
+        public PluginManager PluginManager { get; set; } = new PluginManager();
+
         public Random GlobalRandom { get; } = new Random();
 
         public string CommandFlag = "/";
 
         public Core(StartupConfig startupConfig)
         {
-            CurrentCore = this;
+            Current = this;
             Logger.Raw(@".__       . .   
 |  \ _.  .|*|  .
 |__/(_]\_||||\_|
@@ -42,7 +46,7 @@ namespace Daylily.Bot
             CreateDirectories(); // 创建目录
             LoadSecret(); // 加载配置
 
-            PluginManager.LoadAllPlugins(startupConfig);
+            PluginManager.LoadPlugins(startupConfig);
         }
 
         public IDispatcher ConfigDispatcher(IDispatcher dispatcher, Action<IDispatcher> config = null)
@@ -120,8 +124,8 @@ namespace Daylily.Bot
             Signature.BucketName = secret.CosSettings.BucketName;
 
             CqApi.ApiUrl = secret.BotSettings.PostUrl;
-            CqCode.CqPath = secret.BotSettings.CqDir;
-            CurrentCore.CommandFlag = secret.BotSettings.CommandFlag;
+            CoolQCode.CqPath = secret.BotSettings.CqDir;
+            Current.CommandFlag = secret.BotSettings.CommandFlag;
         }
 
         /// <summary>

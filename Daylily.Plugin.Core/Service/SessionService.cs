@@ -1,9 +1,9 @@
-﻿using Daylily.Bot;
+﻿using Daylily.Bot.Backend.Plugins;
 using Daylily.Bot.Models;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
 using Daylily.CoolQ.Models.CqResponse.Api;
-using Daylily.CoolQ.Models.CqResponse.Api.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +14,10 @@ namespace Daylily.Plugin.Core.Service
 {
     class SessionService : ServicePlugin
     {
-        public override void Execute(string[] args)
+        public override void OnInitialized(string[] args)
         {
+            base.OnInitialized(args);
+
             int i = 0;
             //UpdateGroupList(i);
 

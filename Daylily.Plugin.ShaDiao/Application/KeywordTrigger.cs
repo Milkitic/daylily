@@ -6,14 +6,15 @@ using System.IO;
 using System.Linq;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("关键词触发")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Alpha)]
+    [Version(2, 0, 1, PluginVersion.Alpha)]
     [Help("收到已给的关键词时，根据已给几率返回一张熊猫图。")]
-    public class KeywordTrigger : ApplicationPlugin
+    public class KeywordTrigger : CoolQApplicationPlugin
     {
         private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
         private static List<TriggerObject> _triggerObjects;
@@ -39,19 +40,19 @@ namespace Daylily.Plugin.ShaDiao.Application
             SaveSettings(_triggerObjects, "UserDictionary");
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            if (navigableMessageObj.Command == "keyedit")
+            if (routeMsg.Command == "keyedit")
             {
-                if (navigableMessageObj.FreeArgs.Count == 1)
-                    return new CommonMessageResponse(navigableMessageObj.FreeArgs[0] + " (KeywordTrigger)", navigableMessageObj);
+                if (routeMsg.FreeArgs.Count == 1)
+                    return routeMsg.ToSource(routeMsg.FreeArgs[0] + " (KeywordTrigger)");
             }
-            string msg = navigableMessageObj.RawMessage;
+            string msg = routeMsg.RawMessage;
 
             foreach (var item in _triggerObjects)
             {
                 if (Trig(msg, item.Words, item.Pictrues, out string img, item.ChancePercent))
-                    return new CommonMessageResponse(new FileImage(Path.Combine(PandaDir, img)).ToString(), navigableMessageObj);
+                    return routeMsg.ToSource(new FileImage(Path.Combine(PandaDir, img)).ToString());
             }
 
             return null;

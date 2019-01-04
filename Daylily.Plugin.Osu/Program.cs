@@ -25,7 +25,7 @@ namespace Daylily.Plugin.Osu
                 //List = true
             };
             newPlugin.OnInitialized(args);
-            CoolQNavigableMessage cm = new CoolQNavigableMessage
+            CoolQRouteMessage cm = new CoolQRouteMessage
             {
                 GroupId = "123456788",
                 UserId = "2241521134",

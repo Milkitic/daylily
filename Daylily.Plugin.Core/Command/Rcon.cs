@@ -1,19 +1,20 @@
-﻿using Daylily.Bot.Enum;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Core
 {
     [Name("日程提醒")]
     [Author("yf_extension")]
-    [Version(0, 1, 1, PluginVersion.Alpha)]
+    [Version(2, 0, 1, PluginVersion.Alpha)]
     [Help("日程提醒管理。", Authority = Authority.Root)]
     [Command("rcon")]
-    public class Rcon : CommandPlugin
+    public class Rcon : CoolQCommandPlugin
     {
         // ReSharper disable once MemberCanBePrivate.Global
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -41,19 +42,19 @@ namespace Daylily.Plugin.Core
 
         public override void OnInitialized(string[] args) { }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            string userId = navigableMessageObj.UserId;
-            MessageType type = navigableMessageObj.MessageType;
-            Authority level = navigableMessageObj.Authority;
+            string userId = routeMsg.UserId;
+            MessageType type = routeMsg.MessageType;
+            Authority level = routeMsg.Authority;
             if (type != MessageType.Private)
             {
-                return new CommonMessageResponse(LoliReply.PrivateOnly, navigableMessageObj);
+                return routeMsg.ToSource(LoliReply.PrivateOnly);
             }
 
             if (level != Authority.Root)
             {
-                return new CommonMessageResponse(LoliReply.RootOnly, navigableMessageObj);
+                return routeMsg.ToSource(LoliReply.RootOnly);
             }
 
             bool isTaskFree = _tThread == null || _tThread.IsCanceled || _tThread.IsCompleted;
@@ -61,7 +62,7 @@ namespace Daylily.Plugin.Core
             {
                 if (!isTaskFree)
                 {
-                    return new CommonMessageResponse($"日程提醒当前已有工作：\r\n{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。", navigableMessageObj, true);
+                    return routeMsg.ToSource($"日程提醒当前已有工作：\r\n{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。", true);
                 }
 
                 DateTime newTime = DateTime.Now.AddMinutes(SleepMinutes);
@@ -76,10 +77,10 @@ namespace Daylily.Plugin.Core
                         Ct.ThrowIfCancellationRequested();
                     }
 
-                    SendMessage(new CommonMessageResponse(_message, new CqIdentity(userId, MessageType.Private)));
+                    SendMessage(new CoolQRouteMessage(_message, new CqIdentity(userId, MessageType.Private)));
                 });
                 string reply = $"日程提醒已新建，{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。";
-                return new CommonMessageResponse(reply, navigableMessageObj, true);
+                return routeMsg.ToSource(reply, true);
             }
             else if (Stop)
             {
@@ -93,9 +94,9 @@ namespace Daylily.Plugin.Core
                 }
                 else
                     reply = "当前没有日程提醒。";
-                return new CommonMessageResponse(reply, navigableMessageObj, true);
+                return routeMsg.ToSource(reply, true);
             }
-            else return new CommonMessageResponse(LoliReply.ParamError, navigableMessageObj, true);
+            else return routeMsg.ToSource(LoliReply.ParamError, true);
         }
     }
 }

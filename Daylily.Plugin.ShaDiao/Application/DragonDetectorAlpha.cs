@@ -10,14 +10,15 @@ using System.IO;
 using System.Threading;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("嗅探龙图")]
     [Author("yf_extension", "sahuang")]
-    [Version(0, 0, 1, PluginVersion.Alpha)]
+    [Version(2, 0, 1, PluginVersion.Alpha)]
     [Help("发现龙图时作出回应。")]
-    class DragonDetectorAlpha : ApplicationPlugin
+    class DragonDetectorAlpha : CoolQApplicationPlugin
     {
         private readonly List<string> _pathList = new List<string>();
         private readonly List<string> _receivedString = new List<string>();
@@ -31,16 +32,16 @@ namespace Daylily.Plugin.ShaDiao.Application
         private string _user, _group;
         private long _messageId;
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            if (navigableMessageObj.Group == null) return null;
+            if (routeMsg.Group == null) return null;
 
             //if (user != "2241521134") return null;
-            _user = navigableMessageObj.UserId;
-            _group = navigableMessageObj.GroupId;
-            _messageId = navigableMessageObj.MessageId;
+            _user = routeMsg.UserId;
+            _group = routeMsg.GroupId;
+            _messageId = routeMsg.MessageId;
 
-            var imgList = CoolQCode.GetImageInfo(navigableMessageObj.Message.RawMessage);
+            var imgList = CoolQCode.GetImageInfo(routeMsg.Message.RawMessage);
             if (imgList == null)
                 return null;
 

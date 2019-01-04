@@ -1,24 +1,23 @@
-﻿using Daylily.Bot;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Backend.Plugins;
 using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
+using Daylily.Bot.Message;
+using Daylily.CoolQ;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
-using Daylily.CoolQ.Message;
-using CommonMessageResponse = Daylily.Bot.Message.CommonMessageResponse;
-using CqIdentity = Daylily.Bot.Message.CqIdentity;
 
 namespace Daylily.Plugin.Core
 {
     [Name("插件管理")]
     [Author("yf_extension")]
-    [Version(0, 1, 4, PluginVersion.Alpha)]
+    [Version(2, 0, 1, PluginVersion.Alpha)]
     [Help("动态管理插件的启用状态。", "仅限当前群生效。", Authority = Authority.Admin)]
     [Command("plugin")]
-    public class PluginManage : CommandPlugin
+    public class PluginManage : CoolQCommandPlugin
     {
         [Arg("list", IsSwitch = true)]
         [Help("若启用，显示插件列表。")]
@@ -39,19 +38,19 @@ namespace Daylily.Plugin.Core
         [Help("禁用指定的插件。")]
         public string EnabledPlugin { get; set; }
 
-        private CoolQNavigableMessage _cm;
+        private CoolQRouteMessage _routeMsg;
 
         public override void OnInitialized(string[] args)
         {
             LoadDisableSettings();
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            _cm = navigableMessageObj;
+            _routeMsg = routeMsg;
 
-            if (_cm.Authority == Authority.Public && _cm.MessageType == MessageType.Group)
-                return new CommonMessageResponse(LoliReply.AdminOnly, _cm);
+            if (_routeMsg.Authority == Authority.Public && _routeMsg.MessageType == MessageType.Group)
+                return _routeMsg.ToSource(LoliReply.AdminOnly);
             if (List)
                 return ShowPluginList();
             if (DisabledPlugin != null)
@@ -59,66 +58,66 @@ namespace Daylily.Plugin.Core
             if (EnabledPlugin != null)
                 return DisablePlugin();
 
-            return new CommonMessageResponse(LoliReply.ParamError, _cm);
+            return _routeMsg.ToSource(LoliReply.ParamError);
         }
 
-        private CommonMessageResponse EnablePlugin()
+        private CoolQRouteMessage EnablePlugin()
         {
-            switch (_cm.MessageType)
+            switch (_routeMsg.MessageType)
             {
                 case MessageType.Private:
                     {
-                        var list = CoolQDispatcher.Current.PrivateDisabledList[long.Parse(_cm.UserId)];
+                        var list = CoolQDispatcher.Current.PrivateDisabledList[long.Parse(_routeMsg.UserId)];
                         foreach (var item in list)
                         {
                             if (item != DisabledPlugin) continue;
                             list.Remove(item);
                             SaveDisableSettings();
-                            return new CommonMessageResponse($"已经启用插件 \"{item}\"", _cm);
+                            return _routeMsg.ToSource($"已经启用插件 \"{item}\"");
                         }
                     }
 
                     break;
                 case MessageType.Discuss:
                     {
-                        var list = CoolQDispatcher.Current.DiscussDisabledList[long.Parse(_cm.DiscussId)];
+                        var list = CoolQDispatcher.Current.DiscussDisabledList[long.Parse(_routeMsg.DiscussId)];
                         foreach (var item in list)
                         {
                             if (item != DisabledPlugin) continue;
                             list.Remove(item);
                             SaveDisableSettings();
-                            return new CommonMessageResponse($"已经启用插件 \"{item}\"", _cm);
+                            return _routeMsg.ToSource($"已经启用插件 \"{item}\"");
                         }
                     }
 
                     break;
                 case MessageType.Group:
                     {
-                        var list = CoolQDispatcher.Current.GroupDisabledList[long.Parse(_cm.GroupId)];
+                        var list = CoolQDispatcher.Current.GroupDisabledList[long.Parse(_routeMsg.GroupId)];
                         foreach (var item in list)
                         {
                             if (item != DisabledPlugin) continue;
                             list.Remove(item);
                             SaveDisableSettings();
-                            return new CommonMessageResponse($"已经启用用插件 \"{item}\"", _cm);
+                            return _routeMsg.ToSource($"已经启用用插件 \"{item}\"");
                         }
                     }
 
                     break;
             }
-            return new CommonMessageResponse($"找不到指定插件 \"{DisabledPlugin}\"...", _cm);
+            return _routeMsg.ToSource($"找不到指定插件 \"{DisabledPlugin}\"...");
         }
 
-        private CommonMessageResponse DisablePlugin()
+        private CoolQRouteMessage DisablePlugin()
         {
             List<string> list, listCmd;
             List<ApplicationPlugin> listApp;
             List<ServicePlugin> listSvc;
-            switch (_cm.MessageType)
+            switch (_routeMsg.MessageType)
             {
                 case MessageType.Private:
                     {
-                        list = CoolQDispatcher.Current.PrivateDisabledList[long.Parse(_cm.UserId)];
+                        list = CoolQDispatcher.Current.PrivateDisabledList[long.Parse(_routeMsg.UserId)];
                         listCmd = PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
                         listApp = PluginManager.ApplicationList;
                         listSvc = PluginManager.ServiceList;
@@ -127,7 +126,7 @@ namespace Daylily.Plugin.Core
                     break;
                 case MessageType.Discuss:
                     {
-                        list = CoolQDispatcher.Current.DiscussDisabledList[long.Parse(_cm.DiscussId)];
+                        list = CoolQDispatcher.Current.DiscussDisabledList[long.Parse(_routeMsg.DiscussId)];
                         listCmd = PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
                         listApp = PluginManager.ApplicationList;
                         listSvc = PluginManager.ServiceList;
@@ -137,7 +136,7 @@ namespace Daylily.Plugin.Core
                 case MessageType.Group:
                 default:
                     {
-                        list = CoolQDispatcher.Current.GroupDisabledList[long.Parse(_cm.GroupId)];
+                        list = CoolQDispatcher.Current.GroupDisabledList[long.Parse(_routeMsg.GroupId)];
                         listCmd = PluginManager.CommandMap.Values.Distinct().Select(item => item.Name).ToList();
                         listApp = PluginManager.ApplicationList;
                         listSvc = PluginManager.ServiceList;
@@ -150,10 +149,10 @@ namespace Daylily.Plugin.Core
             {
                 if (item != EnabledPlugin) continue;
                 if (list.Contains(item))
-                    return new CommonMessageResponse("此插件已被禁用过了…", _cm);
+                    return _routeMsg.ToSource("此插件已被禁用过了…");
                 list.Add(item);
                 SaveDisableSettings();
-                return new CommonMessageResponse($"已经禁用插件 \"{item}\"", _cm);
+                return _routeMsg.ToSource($"已经禁用插件 \"{item}\"");
             }
 
             foreach (var item in listApp)
@@ -161,10 +160,10 @@ namespace Daylily.Plugin.Core
                 var t = item.GetType();
                 if (t.Name != EnabledPlugin) continue;
                 if (list.Contains(t.Name))
-                    return new CommonMessageResponse("此插件已被禁用过了…", _cm);
+                    return _routeMsg.ToSource("此插件已被禁用过了…");
                 list.Add(t.Name);
                 SaveDisableSettings();
-                return new CommonMessageResponse($"已经禁用插件 \"{t.Name}\"", _cm);
+                return _routeMsg.ToSource($"已经禁用插件 \"{t.Name}\"");
             }
 
             foreach (var item in listSvc)
@@ -172,13 +171,13 @@ namespace Daylily.Plugin.Core
                 var t = item.GetType();
                 if (t.Name != EnabledPlugin) continue;
                 if (list.Contains(t.Name))
-                    return new CommonMessageResponse("此插件已被禁用过了…", _cm);
+                    return _routeMsg.ToSource("此插件已被禁用过了…");
                 list.Add(t.Name);
                 SaveDisableSettings();
-                return new CommonMessageResponse($"已经禁用插件 \"{t.Name}\"", _cm);
+                return _routeMsg.ToSource($"已经禁用插件 \"{t.Name}\"");
             }
 
-            return new CommonMessageResponse($"找不到指定插件 \"{DisabledPlugin}\"...", _cm);
+            return _routeMsg.ToSource($"找不到指定插件 \"{DisabledPlugin}\"...");
         }
 
         private void SaveDisableSettings()
@@ -201,7 +200,7 @@ namespace Daylily.Plugin.Core
                 new ConcurrentDictionary<long, List<string>>();
         }
 
-        private CommonMessageResponse ShowPluginList()
+        private CoolQRouteMessage ShowPluginList()
         {
             var dicPlugin = new Dictionary<string, List<PluginInfo>>();
             const string cmdKey = "命令插件", svcKey = "服务插件", appKey = "应用插件";
@@ -222,11 +221,11 @@ namespace Daylily.Plugin.Core
                 dicPlugin[appKey].Add(new PluginInfo(item.Name, item.GetType().Name));
 
             var sb = new StringBuilder();
-            sb.AppendLine(CoolQDispatcher.Current.SessionInfo[_cm.CqIdentity].Name + " 的插件情况：");
-            switch (_cm.MessageType)
+            sb.AppendLine(CoolQDispatcher.Current.SessionInfo[_routeMsg.CqIdentity].Name + " 的插件情况：");
+            switch (_routeMsg.MessageType)
             {
                 case MessageType.Discuss:
-                    foreach (var item in CoolQDispatcher.Current.DiscussDisabledList[_cm.CqIdentity.Id])
+                    foreach (var item in CoolQDispatcher.Current.DiscussDisabledList[_routeMsg.CqIdentity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -239,7 +238,7 @@ namespace Daylily.Plugin.Core
 
                     break;
                 case MessageType.Private:
-                    foreach (var item in CoolQDispatcher.Current.PrivateDisabledList[_cm.CqIdentity.Id])
+                    foreach (var item in CoolQDispatcher.Current.PrivateDisabledList[_routeMsg.CqIdentity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -249,7 +248,7 @@ namespace Daylily.Plugin.Core
 
                     break;
                 case MessageType.Group:
-                    foreach (var item in CoolQDispatcher.Current.GroupDisabledList[_cm.CqIdentity.Id])
+                    foreach (var item in CoolQDispatcher.Current.GroupDisabledList[_routeMsg.CqIdentity.Id])
                     {
                         var pluginInfos = dicPlugin[cmdKey].Concat(dicPlugin[svcKey]).Concat(dicPlugin[appKey]);
                         foreach (var i in pluginInfos)
@@ -283,7 +282,7 @@ namespace Daylily.Plugin.Core
             }
 
             sb.Append("（为避免消息过长，本条消息为私聊发送）");
-            SendMessage(new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), new CqIdentity(_cm.UserId, MessageType.Private)));
+            SendMessage(new CoolQRouteMessage(sb.ToString().Trim('\n').Trim('\r'), new CqIdentity(_routeMsg.UserId, MessageType.Private)));
             return null;
         }
 

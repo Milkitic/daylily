@@ -8,7 +8,7 @@ namespace Daylily.Bot
 
     public class SessionReceivedEventArgs : EventArgs
     {
-        public INavigableMessage NavigableMessageObj { get; set; }
+        public RouteMessage RouteMessageObj { get; set; }
     }
 
     public delegate void MessageEventHandler(object sender, MessageEventArgs args);

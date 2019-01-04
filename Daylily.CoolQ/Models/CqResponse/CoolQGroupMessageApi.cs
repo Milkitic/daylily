@@ -5,7 +5,7 @@ namespace Daylily.CoolQ.Models.CqResponse
     /// <summary>
     /// 群消息。
     /// </summary>
-    public class GroupMsg : Msg
+    public class CoolQGroupMessageApi : CoolQMessageApi
     {
         /// <summary>
         /// 群号。

@@ -33,11 +33,11 @@ namespace Daylily.CoolQ
                 Sessions.TryRemove(item, out _);
         }
 
-        public void TryAdd(Msg message)
+        public void TryAdd(CoolQMessageApi message)
         {
             switch (message)
             {
-                case PrivateMsg privateMsg:
+                case CoolQPrivateMessageApi privateMsg:
                     {
                         var item = new CqIdentity(privateMsg.UserId, MessageType.Private);
                         if (Sessions.Keys.Contains(item))
@@ -45,7 +45,7 @@ namespace Daylily.CoolQ
                         Sessions.TryAdd(item, new SessionSettings(privateMsg));
                         break;
                     }
-                case DiscussMsg discussMsg:
+                case CoolQDiscussMessageApi discussMsg:
                     {
                         var item = new CqIdentity(discussMsg.DiscussId, MessageType.Discuss);
                         if (Sessions.Keys.Contains(item))
@@ -53,7 +53,7 @@ namespace Daylily.CoolQ
                         Sessions.TryAdd(item, new SessionSettings(discussMsg));
                         break;
                     }
-                case GroupMsg groupMsg:
+                case CoolQGroupMessageApi groupMsg:
                     {
                         var item = new CqIdentity(groupMsg.GroupId, MessageType.Group);
                         if (Sessions.Keys.Contains(item))
@@ -75,24 +75,24 @@ namespace Daylily.CoolQ
             public StrangerInfo PrivateInfo { get; private set; }
             public ConcurrentQueue<object> MsgQueue { get; } = new ConcurrentQueue<object>();
 
-            public SessionSettings(Msg message)
+            public SessionSettings(CoolQMessageApi message)
             {
                 switch (message)
                 {
-                    case PrivateMsg privateMsg:
+                    case CoolQPrivateMessageApi privateMsg:
                         Id = privateMsg.UserId.ToString();
                         MessageType = MessageType.Private;
                         MsgLimit = 4;
                         PrivateInfo = UpdatePrivateInfo(privateMsg.UserId);
                         Name = PrivateInfo.Nickname;
                         break;
-                    case DiscussMsg discussMsg:
+                    case CoolQDiscussMessageApi discussMsg:
                         Id = discussMsg.DiscussId.ToString();
                         MessageType = MessageType.Discuss;
                         MsgLimit = 10;
                         Name = "组" + Id; // todo
                         break;
-                    case GroupMsg groupMsg:
+                    case CoolQGroupMessageApi groupMsg:
                         Id = groupMsg.GroupId.ToString();
                         MessageType = MessageType.Group;
                         MsgLimit = 10;

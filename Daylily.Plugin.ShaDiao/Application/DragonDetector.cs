@@ -1,42 +1,43 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
-using Daylily.Bot.Backend;
+﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("龙图检测")]
     [Author("yf_extension", "sahuang")]
-    [Version(0, 1, 0, PluginVersion.Alpha)]
+    [Version(2, 0, 0, PluginVersion.Alpha)]
     [Help("发现龙图时作出回应。", "仅供娱乐。")]
-    class DragonDetector : ApplicationPlugin
+    class DragonDetector : CoolQApplicationPlugin
     {
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
 
         private static int _totalCount;
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            if (navigableMessageObj.MessageType == MessageType.Private)
+            if (routeMsg.MessageType == MessageType.Private)
                 return null;
-            string groupId = navigableMessageObj.GroupId ?? navigableMessageObj.DiscussId;
+            string groupId = routeMsg.GroupId ?? routeMsg.DiscussId;
 
             if (!GroupDic.ContainsKey(groupId))
                 GroupDic.GetOrAdd(groupId, new GroupSettings
                 {
                     GroupId = groupId,
-                    NavigableMessageObj = navigableMessageObj
+                    routeMsg = routeMsg
                 });
 
-            var imgList = CoolQCode.GetImageInfo(navigableMessageObj.RawMessage);
+            var imgList = CoolQCode.GetImageInfo(routeMsg.RawMessage);
             if (imgList == null) return null;
 
             foreach (var item in imgList)
@@ -91,7 +92,7 @@ namespace Daylily.Plugin.ShaDiao.Application
 
             if (gSets.DragonCount < 1) return;
             Logger.Info("[" + gSets.GroupId + "] (龙图) " + gSets.DragonCount);
-            SendMessage(new CommonMessageResponse("你龙了?", gSets.NavigableMessageObj));
+            SendMessage(gSets.routeMsg.ToSource("你龙了?"));
             gSets.Clear();
         }
 
@@ -168,7 +169,7 @@ namespace Daylily.Plugin.ShaDiao.Application
 
         private class GroupSettings
         {
-            public CoolQNavigableMessage NavigableMessageObj { get; set; }
+            public CoolQRouteMessage routeMsg { get; set; }
             public string GroupId { get; set; }
             public List<string> ReceivedString { get; } = new List<string>();
             public Queue<string> PathQueue { get; } = new Queue<string>();

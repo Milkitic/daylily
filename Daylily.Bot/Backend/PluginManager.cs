@@ -11,48 +11,66 @@ using System.Text;
 
 namespace Daylily.Bot.Backend
 {
-    public abstract class PluginManager
+    public class PluginManager
     {
-        public struct TaggedPlugin
+        public struct TaggedClass<T>
         {
-            public TaggedPlugin(string tag, Plugin plugin) : this()
+            public TaggedClass(string tag, T instance) : this()
             {
                 Tag = tag;
-                Plugin = plugin;
+                Instance = instance;
             }
 
             public string Tag { get; set; }
-            public Plugin Plugin { get; set; }
+            public T Instance { get; set; }
         }
 
-        public struct TaggedAssembly
-        {
-            public TaggedAssembly(string tag, Assembly assembly) : this()
-            {
-                Tag = tag;
-                Assembly = assembly;
-            }
+        public IEnumerable<TaggedClass<CommandPlugin>> Commands => TaggedPlugins
+            .Where(k => k.Instance.PluginType == PluginType.Command)
+            .Select(k => new TaggedClass<CommandPlugin>(k.Tag, (CommandPlugin)k.Instance));
 
-            public string Tag { get; set; }
-            public Assembly Assembly { get; set; }
-        }
+        public IEnumerable<ApplicationPlugin> Applications => TaggedPlugins
+            .Where(k => k.Instance.PluginType == PluginType.Application)
+            .Select(k => (ApplicationPlugin)k.Instance);
 
-        public IEnumerable<TaggedPlugin> Commands =>
-            TaggedPlugins.Where(k => k.Plugin.PluginType == PluginType.Command);
-        public IEnumerable<Plugin> Applications =>
-            TaggedPlugins.Where(k => k.Plugin.PluginType == PluginType.Application).Select(k => k.Plugin);
-        public IEnumerable<Plugin> Services =>
-            TaggedPlugins.Where(k => k.Plugin.PluginType == PluginType.Service).Select(k => k.Plugin);
+        public IEnumerable<ServicePlugin> Services => TaggedPlugins
+            .Where(k => k.Instance.PluginType == PluginType.Service)
+            .Select(k => (ServicePlugin)k.Instance);
 
-        protected List<TaggedPlugin> TaggedPlugins { get; set; }
-        protected List<TaggedAssembly> Assemblies { get; set; }
+        protected List<TaggedClass<Type>> CachedCommands { get; set; }
+        protected List<TaggedClass<Plugin>> TaggedPlugins { get; set; }
+        protected List<TaggedClass<Assembly>> Assemblies { get; set; }
 
         protected static readonly string BackendDirectory = Domain.PluginPath;
         protected static readonly string ExtendedDirectory = Domain.ExtendedPluginPath;
 
+        public bool ContainsPlugin(string command)
+        {
+            return Commands.Any(k => k.Tag == command);
+        }
+
+        public CommandPlugin GetPlugin(string command)
+        {
+            return Commands.FirstOrDefault(k => k.Tag == command).Instance;
+        }
+
+        public T GetNewInstance<T>() where T : Plugin
+        {
+            return Activator.CreateInstance(typeof(T)) as T;
+        }
+        public T GetNewInstance<T>(Type pluginType) where T : Plugin
+        {
+            return Activator.CreateInstance(pluginType) as T;
+        }
+
+        public Type GetPluginType(string command)
+        {
+            return CachedCommands.FirstOrDefault(k => k.Tag == command).Instance;
+        }
+
         public T GetPlugin<T>() where T : Plugin
         {
-            return (T)TaggedPlugins.FirstOrDefault(k => k.Plugin.GetType() == typeof(T)).Plugin;
+            return (T)TaggedPlugins.FirstOrDefault(k => k.Instance.GetType() == typeof(T)).Instance;
         }
 
         public void AddPlugin<T>(StartupConfig startupConfig)
@@ -65,7 +83,7 @@ namespace Daylily.Bot.Backend
         {
             foreach (var item in TaggedPlugins)
             {
-                if (typeof(T) != item.Plugin.GetType()) continue;
+                if (typeof(T) != item.Instance.GetType()) continue;
                 TaggedPlugins.Remove(item);
             }
         }
@@ -113,7 +131,7 @@ namespace Daylily.Bot.Backend
                     }
 
                     if (isValid)
-                        Assemblies.Add(new TaggedAssembly(fi.Name, asm));
+                        Assemblies.Add(new TaggedClass<Assembly>(fi.Name, asm));
                 }
                 catch (Exception ex)
                 {
@@ -136,12 +154,12 @@ namespace Daylily.Bot.Backend
                     case PluginType.Command:
                         pluginType = "命令";
                         CommandPlugin cmdPlugin = (CommandPlugin)plugin;
-                        CachedCommands.Add(type);
                         if (cmdPlugin.Commands != null && cmdPlugin.Commands.Length > 0)
                         {
                             foreach (var cmd in cmdPlugin.Commands)
                             {
-                                TaggedPlugins.Add(new TaggedPlugin(cmd, cmdPlugin));
+                                TaggedPlugins.Add(new TaggedClass<Plugin>(cmd, cmdPlugin));
+                                CachedCommands.Add(new TaggedClass<Type>(cmd, type));
                             }
 
                             commands = $"({string.Join(",", cmdPlugin.Commands)}) ";
@@ -158,7 +176,7 @@ namespace Daylily.Bot.Backend
                     case PluginType.Service:
                     default:
                         pluginType = plugin.PluginType == PluginType.Application ? "应用" : "服务";
-                        TaggedPlugins.Add(new TaggedPlugin(null, plugin));
+                        TaggedPlugins.Add(new TaggedClass<Plugin>(null, plugin));
                         break;
                 }
 
@@ -171,8 +189,6 @@ namespace Daylily.Bot.Backend
                 Logger.Error($"加载插件{type.Name}失败。");
             }
         }
-
-        public List<Type> CachedCommands { get; set; }
     }
 
 }

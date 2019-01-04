@@ -6,11 +6,11 @@ namespace Daylily.CoolQ.Plugins
 {
     public abstract class CoolQApplicationPlugin : ApplicationPlugin
     {
-        public abstract CoolQNavigableMessage OnMessageReceived(CoolQNavigableMessage navigableMessageObj);
+        public abstract CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg);
 
-        public override NavigableMessage OnMessageReceived(NavigableMessage navigableMessage)
+        public override RouteMessage OnMessageReceived(RouteMessage routeMsg)
         {
-            return OnMessageReceived((CoolQNavigableMessage)navigableMessage);
+            return OnMessageReceived((CoolQRouteMessage)routeMsg);
         }
     }
 }

@@ -15,22 +15,22 @@ namespace Daylily.CoolQ.Message
             set => throw new NotImplementedException();
         }
 
-        private readonly CoolQCode _assembledCqCodes;
+        private readonly CoolQCode _assembledCoolQCodes;
 
-        public CoolQMessage(params CoolQCode[] cqCodes)
+        public CoolQMessage(params CoolQCode[] CoolQCodes)
         {
-            var cqCodeList = new List<CoolQCode>(cqCodes.Length);
-            cqCodeList.AddRange(cqCodes);
-            _assembledCqCodes = new Assemblage(cqCodeList);
+            var CoolQCodeList = new List<CoolQCode>(CoolQCodes.Length);
+            CoolQCodeList.AddRange(CoolQCodes);
+            _assembledCoolQCodes = new Assemblage(CoolQCodeList);
         }
 
-        public string Compose() => InnerCompose(_assembledCqCodes);
+        public string Compose() => InnerCompose(_assembledCoolQCodes);
 
-        public static string Compose(CoolQCode cqCode) => InnerCompose(cqCode);
+        public static string Compose(CoolQCode CoolQCode) => InnerCompose(CoolQCode);
 
-        private static string InnerCompose(CoolQCode cqCode)
+        private static string InnerCompose(CoolQCode CoolQCode)
         {
-            switch (cqCode)
+            switch (CoolQCode)
             {
                 case Text text:
                     return text.Content;

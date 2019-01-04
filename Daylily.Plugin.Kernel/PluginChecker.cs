@@ -1,22 +1,23 @@
 ﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System.Linq;
 using System.Text;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Kernel
 {
     [Name("插件检查")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Stable)]
+    [Version(2, 0, 1, PluginVersion.Stable)]
     [Help("检查插件的情况。", Authority = Authority.Root)]
     [Command("check")]
-    public class PluginChecker : CommandPlugin
+    public class PluginChecker : CoolQCommandPlugin
     {
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
         {
-            var grouped = PluginManager.ApplicationList
+            var grouped = Core.Current.PluginManager.Applications
                 .OrderByDescending(k => k.BackendConfig?.Priority)
                 .GroupBy(k => k.BackendConfig?.Priority);
             StringBuilder sb = new StringBuilder();
@@ -33,7 +34,7 @@ namespace Daylily.Plugin.Kernel
                 sb.AppendLine();
             }
 
-            return new CommonMessageResponse(sb.ToString().Trim('\n').Trim('\r'), navigableMessageObj);
+            return routeMessageObj.ToSource(sb.ToString().Trim('\n').Trim('\r'));
         }
     }
 }

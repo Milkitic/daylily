@@ -3,25 +3,21 @@ using System;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Core
 {
     [Name("强制停止")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Stable)]
+    [Version(2, 0, 0, PluginVersion.Stable)]
     [Help("此命令会立刻结束程序进程。", Authority = Authority.Root)]
     [Command("sdown")]
-    public class Shutdown : CommandPlugin
+    public class Shutdown : CoolQCommandPlugin
     {
-        public override void OnInitialized(string[] args)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-
-        }
-
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
-        {
-            if (navigableMessageObj.Authority != Authority.Root)
-                return new CommonMessageResponse(LoliReply.RootOnly, navigableMessageObj, true);
+            if (routeMsg.Authority != Authority.Root)
+                return routeMsg.ToSource(LoliReply.RootOnly, true);
             Environment.Exit(0);
             return null;
         }

@@ -1,8 +1,6 @@
 ﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ.Models.CqResponse;
 using System;
-using Daylily.CoolQ.Message;
 
 namespace TestMyPlugin
 {
@@ -15,7 +13,7 @@ namespace TestMyPlugin
             while (true)
             {
                 var msg = Console.ReadLine();
-                CoolQNavigableMessage cm = new CoolQNavigableMessage()
+                CoolQRouteMessage cm = new CoolQRouteMessage()
                 {
                     GroupId = "123456788",
                     UserId = "2241521134",

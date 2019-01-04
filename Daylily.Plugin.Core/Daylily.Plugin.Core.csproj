@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Daylily.Bot\Daylily.Bot.csproj" />
     <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
+    <ProjectReference Include="..\Daylily.CoolQ\Daylily.CoolQ.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

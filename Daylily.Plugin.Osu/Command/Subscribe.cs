@@ -13,15 +13,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Osu
 {
     [Name("Mapper订阅")]
     [Author("yf_extension")]
-    [Version(0, 1, 2, PluginVersion.Alpha)]
+    [Version(2, 0, 2, PluginVersion.Alpha)]
     [Help("订阅某个mapper的qua、rank、love、传图提醒。", "限制为群内推送10个名额，个人推送5个名额。")]
     [Command("sub")]
-    public class Subscribe : CommandPlugin
+    public class Subscribe : CoolQCommandPlugin
     {
         [Arg("u")]
         [Help("需要取消订阅的mapper用户名。")]
@@ -111,117 +112,116 @@ namespace Daylily.Plugin.Osu
             });
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             string subId;
-            switch (navigableMessageObj.MessageType)
+            switch (routeMsg.MessageType)
             {
                 case MessageType.Private:
-                    subId = navigableMessageObj.UserId;
+                    subId = routeMsg.UserId;
                     break;
                 case MessageType.Discuss:
-                    subId = navigableMessageObj.DiscussId;
+                    subId = routeMsg.DiscussId;
                     break;
                 case MessageType.Group:
                 default:
-                    subId = navigableMessageObj.GroupId;
+                    subId = routeMsg.GroupId;
                     break;
             }
 
             if (List)
             {
-                List<string> subedId = GetSubscribed(navigableMessageObj.MessageType, subId).ToList();
+                List<string> subedId = GetSubscribed(routeMsg.MessageType, subId).ToList();
                 subedId.Sort();
                 int subedCount = subedId.Count;
-                string subject = navigableMessageObj.MessageType == MessageType.Private ? "你" : "本群";
+                string subject = routeMsg.MessageType == MessageType.Private ? "你" : "本群";
                 return subedCount == 0
-                    ? new CommonMessageResponse($"{subject}没有订阅任何mapper。", navigableMessageObj)
-                    : new CommonMessageResponse(
+                    ? routeMsg.ToSource($"{subject}没有订阅任何mapper。")
+                    : routeMsg.ToSource(
                         string.Format("以下是{0}的订阅名单，共计{1}个：\r\n{2}", subject, subedCount,
-                            string.Join("\r\n", OldSiteApi.GetUsernameByUid(subedId))),
-                        navigableMessageObj);
+                            string.Join("\r\n", OldSiteApi.GetUsernameByUid(subedId))));
             }
 
             if (SubscribeMapper != null)
             {
-                if (navigableMessageObj.MessageType == MessageType.Group && navigableMessageObj.Authority == Authority.Public)
-                    return new CommonMessageResponse(LoliReply.AdminOnly + "个人推送请私聊.", navigableMessageObj);
+                if (routeMsg.MessageType == MessageType.Group && routeMsg.Authority == Authority.Public)
+                    return routeMsg.ToSource(LoliReply.AdminOnly + "个人推送请私聊.");
 
-                List<string> subedId = GetSubscribed(navigableMessageObj.MessageType, subId).ToList();
+                List<string> subedId = GetSubscribed(routeMsg.MessageType, subId).ToList();
                 subedId.Sort();
                 int subedCount = subedId.Count;
-                if (navigableMessageObj.MessageType == MessageType.Private && subedCount >= PrivateMax)
+                if (routeMsg.MessageType == MessageType.Private && subedCount >= PrivateMax)
                 {
-                    return new CommonMessageResponse(
+                    return routeMsg.ToSource(
                         string.Format("你已经订阅了{0}个mapper啦，人家已经装不下的说：{1}", subedCount,
-                            string.Join(", ", OldSiteApi.GetUsernameByUid(subedId))), navigableMessageObj);
+                            string.Join(", ", OldSiteApi.GetUsernameByUid(subedId))));
                 }
 
-                if (navigableMessageObj.MessageType != MessageType.Private && subedCount >= GroupMax)
+                if (routeMsg.MessageType != MessageType.Private && subedCount >= GroupMax)
                 {
-                    return new CommonMessageResponse(
+                    return routeMsg.ToSource(
                         string.Format("这个群已经订阅了{0}个mapper啦，人家已经装不下的说：{1}", subedCount,
-                            string.Join(", ", OldSiteApi.GetUsernameByUid(subedId))), navigableMessageObj);
+                            string.Join(", ", OldSiteApi.GetUsernameByUid(subedId))));
                 }
 
                 int count = OldSiteApi.GetUser(SubscribeMapper, out var userObj);
                 if (count == 0)
-                    return new CommonMessageResponse("找不到指定mapper..", navigableMessageObj);
+                    return routeMsg.ToSource("找不到指定mapper..");
 
                 if (count > 1)
-                    return new CommonMessageResponse($"找到{count}个mapper..", navigableMessageObj);
+                    return routeMsg.ToSource($"找到{count}个mapper..");
 
                 string mapperId = userObj.user_id;
                 string mapperName = userObj.username;
 
                 if (!_userDic.ContainsKey(mapperId))
                     _userDic.TryAdd(mapperId, new List<UserInfo>());
-                if (_userDic[mapperId].Contains(new UserInfo(subId, navigableMessageObj.MessageType)))
+                if (_userDic[mapperId].Contains(new UserInfo(subId, routeMsg.MessageType)))
                 {
-                    string subject = navigableMessageObj.MessageType == MessageType.Private ? "你" : "本群";
-                    return new CommonMessageResponse($"{subject}已经订阅过{mapperName}啦..", navigableMessageObj);
+                    string subject = routeMsg.MessageType == MessageType.Private ? "你" : "本群";
+                    return routeMsg.ToSource($"{subject}已经订阅过{mapperName}啦..");
                 }
 
-                _userDic[mapperId].Add(new UserInfo(subId, navigableMessageObj.MessageType));
+                _userDic[mapperId].Add(new UserInfo(subId, routeMsg.MessageType));
                 SaveSettings(_userDic, "userDictionary");
-                string sub = navigableMessageObj.MessageType == MessageType.Private ? "私聊提醒你" : "在本群提醒";
-                return new CommonMessageResponse($"{mapperName}订阅成功啦！今后他qualified、rank或love或上传图后会主动{sub}。", navigableMessageObj);
+                string sub = routeMsg.MessageType == MessageType.Private ? "私聊提醒你" : "在本群提醒";
+                return routeMsg.ToSource($"{mapperName}订阅成功啦！今后他qualified、rank或love或上传图后会主动{sub}。");
             }
 
             if (UnsubscribeMapper != null)
             {
-                if (navigableMessageObj.MessageType == MessageType.Group && navigableMessageObj.Authority == Authority.Public)
-                    return new CommonMessageResponse(LoliReply.AdminOnly + "个人推送请私聊.", navigableMessageObj);
+                if (routeMsg.MessageType == MessageType.Group && routeMsg.Authority == Authority.Public)
+                    return routeMsg.ToSource(LoliReply.AdminOnly + "个人推送请私聊.");
 
                 int count = OldSiteApi.GetUser(UnsubscribeMapper, out var userObj);
                 if (count == 0)
                 {
-                    return new CommonMessageResponse("找不到指定mapper..", navigableMessageObj);
+                    return routeMsg.ToSource("找不到指定mapper..");
                 }
 
                 if (count > 1)
                 {
-                    return new CommonMessageResponse($"找到{count}个mapper..", navigableMessageObj);
+                    return routeMsg.ToSource($"找到{count}个mapper..");
                 }
 
                 string mapperId = userObj.user_id;
                 string mapperName = userObj.username;
-                if (!_userDic.ContainsKey(mapperId) || !_userDic[mapperId].Contains(new UserInfo(subId, navigableMessageObj.MessageType)))
+                if (!_userDic.ContainsKey(mapperId) || !_userDic[mapperId].Contains(new UserInfo(subId, routeMsg.MessageType)))
                 {
-                    string subject = navigableMessageObj.MessageType == MessageType.Private ? "你" : "本群";
-                    return new CommonMessageResponse($"目前这个mapper没有被{subject}订阅..", navigableMessageObj);
+                    string subject = routeMsg.MessageType == MessageType.Private ? "你" : "本群";
+                    return routeMsg.ToSource($"目前这个mapper没有被{subject}订阅..");
                 }
 
-                _userDic[mapperId].Remove(new UserInfo(subId, navigableMessageObj.MessageType));
+                _userDic[mapperId].Remove(new UserInfo(subId, routeMsg.MessageType));
                 if (_userDic[mapperId].Count == 0)
                     _userDic.Remove(mapperId, out _);
 
                 SaveSettings(_userDic, "userDictionary");
-                string sub = navigableMessageObj.MessageType == MessageType.Private ? "为你" : "在本群";
-                return new CommonMessageResponse($"订阅取消成功，今后不再{sub}推送{mapperName}的有关动态。", navigableMessageObj);
+                string sub = routeMsg.MessageType == MessageType.Private ? "为你" : "在本群";
+                return routeMsg.ToSource($"订阅取消成功，今后不再{sub}推送{mapperName}的有关动态。");
             }
 
-            return new CommonMessageResponse(LoliReply.ParamMissing, navigableMessageObj);
+            return routeMsg.ToSource(LoliReply.ParamMissing);
         }
 
         private static IEnumerable<string> GetSubscribed(MessageType messageType, string subId)
@@ -251,7 +251,7 @@ namespace Daylily.Plugin.Osu
 
 #else
                 SaveLogs(str, "pushes");
-                SendMessage(new CommonMessageResponse(str, new Identity(session, sessionType)));
+                SendMessage(routeMsg.ToSource(str, new Identity(session, sessionType)));
                 Thread.Sleep(3000);
 #endif
 

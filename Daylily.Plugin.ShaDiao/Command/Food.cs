@@ -1,8 +1,11 @@
 ﻿using Daylily.Assist.Interface;
+using Daylily.Bot.Backend;
 using Daylily.Bot.Enum;
 using Daylily.Bot.Message;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,17 +14,15 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao
 {
     [Name("深夜美食")]
     [Author("yf_extension")]
-    [Version(0, 1, 3, PluginVersion.Beta)]
+    [Version(2, 0, 3, PluginVersion.Beta)]
     [Help("查询深夜美食，若参数为空，则返回随机")]
     [Command("food")]
-    public class Food : CommandPlugin
+    public class Food : CoolQCommandPlugin
     {
         [Help("禁用指定相册。")]
         [Arg("disable", Default = 0)]
@@ -57,7 +58,7 @@ namespace Daylily.Plugin.ShaDiao
         public static ConcurrentDictionary<string, List<string>> LikeDic { get; set; }
 
         private static string _imagePath, _content;
-        private CoolQNavigableMessage _cm;
+        private CoolQRouteMessage _cm;
 
         public override void OnInitialized(string[] args)
         {
@@ -79,15 +80,15 @@ namespace Daylily.Plugin.ShaDiao
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            _cm = navigableMessageObj;
+            _cm = routeMsg;
             string[] fullContent = ConcurrentFile.ReadAllLines(_content);
 
             if (EnabledAlbumId > 0 || DisabledAlbumId > 0)
                 return _cm.Authority == Authority.Root
                     ? ModuleManageAlbum(fullContent)
-                    : new CommonMessageResponse(LoliReply.RootOnly, _cm);
+                    : routeMsg.ToSource(LoliReply.RootOnly);
 
             if (Like > 0)
                 return ModuleLike(fullContent);
@@ -101,49 +102,48 @@ namespace Daylily.Plugin.ShaDiao
             if (ClearCache)
             {
                 ClearContent();
-                return new CommonMessageResponse("已重新建立缓存", _cm);
+                return _cm.ToSource("已重新建立缓存");
             }
 
             return ModuleSearch(fullContent);
         }
 
-        private CommonMessageResponse ModuleSearch(IEnumerable<string> fullContent)
+        private CoolQRouteMessage ModuleSearch(IEnumerable<string> fullContent)
         {
             string[] choices = int.TryParse(FoodName, out _)
                 ? EnumerateAlbumByNum(int.Parse(FoodName), fullContent).ToArray()
                 : EnumerateAlbumBySearch(FoodName, fullContent).ToArray();
 
             if (choices.Length == 0 && FoodName != null)
-                return new CommonMessageResponse(
-                    string.Format("没有找到 \"{0}\"", FoodName.Length > 30 ? FoodName.Substring(0, 27) + "…" : FoodName),
-                    _cm);
+                return _cm.ToSource(
+                    string.Format("没有找到 \"{0}\"", FoodName.Length > 30 ? FoodName.Substring(0, 27) + "…" : FoodName));
 
             var dir = GetRandomAlbum(choices);
 
             var file = GetRandomPhoto(dir);
 
             Bitmap bitmap = DrawWatermark(file);
-            return new CommonMessageResponse(new FileImage(bitmap, 85).ToString(), _cm);
+            return _cm.ToSource(new FileImage(bitmap, 85).ToString());
         }
 
-        private CommonMessageResponse ModuleHot()
+        private CoolQRouteMessage ModuleHot()
         {
             var albums = GetHotAlbumsDescending(10).Select(k => k.Key).ToArray();
             if (albums.Length < 1)
-                return new CommonMessageResponse("目前没有热门相册…", _cm);
+                return _cm.ToSource("目前没有热门相册…");
             string hot = albums[StaticRandom.Next(albums.Length)];
             string hotPath = Path.Combine(_imagePath, hot);
             var hotFile = GetRandomPhoto(hotPath);
 
             Bitmap hotBitmap = DrawWatermark(hotFile);
-            return new CommonMessageResponse(new FileImage(hotBitmap, 85).ToString(), _cm);
+            return _cm.ToSource(new FileImage(hotBitmap, 85).ToString());
         }
 
-        private CommonMessageResponse ModuleTop()
+        private CoolQRouteMessage ModuleTop()
         {
             Dictionary<string, int> albums = GetHotAlbumsDescending(TopNum == 0 ? 10 : TopNum);
             if (albums.Count < 1)
-                return new CommonMessageResponse("目前没有热门相册…", _cm);
+                return _cm.ToSource("目前没有热门相册…");
             StringBuilder sb = new StringBuilder();
             int i = 1;
             foreach (var item in albums)
@@ -152,10 +152,10 @@ namespace Daylily.Plugin.ShaDiao
                 i++;
             }
 
-            return new CommonMessageResponse(sb.ToString().TrimEnd('\n').TrimEnd('\r'), _cm);
+            return _cm.ToSource(sb.ToString().TrimEnd('\n').TrimEnd('\r'));
         }
 
-        private CommonMessageResponse ModuleLike(IEnumerable<string> fullContent)
+        private CoolQRouteMessage ModuleLike(IEnumerable<string> fullContent)
         {
             string[] album = EnumerateAlbumByNum(Like, fullContent).ToArray();
 
@@ -166,14 +166,14 @@ namespace Daylily.Plugin.ShaDiao
                 LikeDic.TryAdd(_cm.UserId, new List<string>());
 
             if (LikeDic[_cm.UserId].Contains(album[0]))
-                return new CommonMessageResponse("你点过赞啦", _cm, true);
+                return _cm.ToSource("你点过赞啦", true);
 
             LikeDic[_cm.UserId].Add(album[0]);
             SaveSettings(LikeDic);
-            return new CommonMessageResponse($"已点赞 \"{Like}\"", _cm);
+            return _cm.ToSource($"已点赞 \"{Like}\"");
         }
 
-        private CommonMessageResponse ModuleManageAlbum(IEnumerable<string> content)
+        private CoolQRouteMessage ModuleManageAlbum(IEnumerable<string> content)
         {
             string disabledPath = Path.Combine(_imagePath, ".disabled");
             if (!Directory.Exists(disabledPath))
@@ -208,7 +208,7 @@ namespace Daylily.Plugin.ShaDiao
 
             Directory.Move(sourcePath, Path.Combine(targetPath, name));
             ClearContent();
-            return new CommonMessageResponse(message, _cm);
+            return _cm.ToSource(message);
         }
 
         private static Dictionary<string, int> GetHotAlbumsDescending(int count)
@@ -275,17 +275,17 @@ namespace Daylily.Plugin.ShaDiao
                     k.Substring(0, k.IndexOf(' ')) == strNum);
         }
 
-        private bool ValidateCount(string[] album, out CommonMessageResponse response)
+        private bool ValidateCount(string[] album, out CoolQRouteMessage response)
         {
             if (album.Length > 1)
             {
-                response = new CommonMessageResponse($"包含多个相册：\"{string.Join(',', album)}\"", _cm);
+                response = _cm.ToSource($"包含多个相册：\"{string.Join(',', album)}\"");
                 return true;
             }
 
             if (album.Length == 0)
             {
-                response = new CommonMessageResponse($"没有找到相册 \"{EnabledAlbumId}\"", _cm);
+                response = _cm.ToSource($"没有找到相册 \"{EnabledAlbumId}\"");
                 return true;
             }
 

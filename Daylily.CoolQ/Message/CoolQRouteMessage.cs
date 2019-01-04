@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Daylily.CoolQ.Message
 {
-    public class CoolQNavigableMessage : NavigableMessage, ICloneable
+    public sealed class CoolQRouteMessage : RouteMessage, ICloneable
     {
         public Authority Authority { get; set; }
         public MessageType MessageType { get; set; }
@@ -28,44 +28,98 @@ namespace Daylily.CoolQ.Message
                 }
             }
         }
-        
+
         public string DiscussId { get; set; }
         public string GroupId { get; set; }
         public long MessageId { get; set; }
 
-        [JsonIgnore]
-        public PrivateMsg Private { get; set; }
-        [JsonIgnore]
-        public DiscussMsg Discuss { get; set; }
-        [JsonIgnore]
-        public GroupMsg Group { get; set; }
+        public bool EnableAt { get; set; }
 
-        public CoolQNavigableMessage() { }
+        [JsonIgnore]
+        public CoolQPrivateMessageApi Private { get; set; }
+        [JsonIgnore]
+        public CoolQDiscussMessageApi Discuss { get; set; }
+        [JsonIgnore]
+        public CoolQGroupMessageApi Group { get; set; }
 
-        public static CoolQNavigableMessage Parse(Msg msg, Authority level = Authority.Public)
+        public CoolQRouteMessage() { }
+
+        public CoolQRouteMessage(string message, CqIdentity cqIdentity, string atId = null) :
+            this(new CoolQMessage(new Text(message)), cqIdentity, atId)
         {
-            var coolQMessage = new CoolQNavigableMessage
+        }
+
+        public CoolQRouteMessage(CoolQMessage message, CqIdentity cqIdentity, string atId = null)
+        {
+            Message = message;
+            switch (cqIdentity.Type)
+            {
+                case MessageType.Private:
+                    MessageType = MessageType.Private;
+                    UserId = cqIdentity.Id.ToString();
+                    break;
+                case MessageType.Discuss:
+                    MessageType = MessageType.Discuss;
+                    DiscussId = cqIdentity.Id.ToString();
+                    break;
+                case MessageType.Group:
+                    MessageType = MessageType.Group;
+                    GroupId = cqIdentity.Id.ToString();
+                    break;
+            }
+
+            if (atId == null) return;
+            EnableAt = true;
+            UserId = atId;
+        }
+
+        public CoolQRouteMessage ToSource(string message, bool enableAt = false)
+        {
+            return ToSource(new Text(message), enableAt);
+        }
+        public CoolQRouteMessage ToSource(CoolQCode message, bool enableAt = false)
+        {
+            return ToSource(new CoolQMessage(message), enableAt);
+        }
+
+        public CoolQRouteMessage ToSource(CoolQMessage message, bool enableAt = false)
+        {
+            return new CoolQRouteMessage
+            {
+                UserId = UserId,
+                DiscussId = DiscussId,
+                GroupId = GroupId,
+                MessageType = MessageType,
+                Message = message,
+                EnableAt = enableAt,
+                Handled = Handled
+            };
+        }
+
+        public static CoolQRouteMessage Parse(CoolQMessageApi coolQMessageApi, Authority level = Authority.Public)
+        {
+            var coolQMessage = new CoolQRouteMessage
             {
                 Message = new CoolQMessage
                 {
-                    RawMessage = msg.Message
+                    RawMessage = coolQMessageApi.Message
                 },
-                UserId = msg.UserId.ToString(),
-                MessageId = msg.MessageId,
+                UserId = coolQMessageApi.UserId.ToString(),
+                MessageId = coolQMessageApi.MessageId,
                 Authority = level
             };
-            switch (msg)
+            switch (coolQMessageApi)
             {
-                case PrivateMsg privateMsg:
+                case CoolQPrivateMessageApi privateMsg:
                     coolQMessage.MessageType = MessageType.Private;
                     coolQMessage.Private = privateMsg;
                     break;
-                case DiscussMsg discussMsg:
+                case CoolQDiscussMessageApi discussMsg:
                     coolQMessage.MessageType = MessageType.Discuss;
                     coolQMessage.Discuss = discussMsg;
                     coolQMessage.DiscussId = discussMsg.DiscussId.ToString();
                     break;
-                case GroupMsg groupMsg:
+                case CoolQGroupMessageApi groupMsg:
                     coolQMessage.MessageType = MessageType.Group;
                     coolQMessage.Group = groupMsg;
                     coolQMessage.GroupId = groupMsg.GroupId.ToString();
@@ -73,6 +127,12 @@ namespace Daylily.CoolQ.Message
             }
 
             return coolQMessage;
+        }
+
+        public CoolQRouteMessage Handle()
+        {
+            Handled = true;
+            return this;
         }
 
         public object Clone()

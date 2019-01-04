@@ -11,6 +11,6 @@ namespace Daylily.Bot.Backend.Plugins
         public abstract bool RunInMultiThreading { get; }
         public abstract bool RunInMultipleInstances { get; }
 
-        public abstract NavigableMessage OnMessageReceived(NavigableMessage navigableMessage);
+        public abstract RouteMessage OnMessageReceived(RouteMessage routeMsg);
     }
 }

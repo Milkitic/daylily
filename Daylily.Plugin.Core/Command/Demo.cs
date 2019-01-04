@@ -1,10 +1,11 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Models.CqResponse;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Threading;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Core
 {
@@ -18,7 +19,7 @@ namespace Daylily.Plugin.Core
     [Version(0, 1, 0, PluginVersion.Stable)]
     // 插件说明，用于help查询
     [Help("用于对于插件开发进行Demo演示")]
-    class Demo : CommandPlugin // 继承此类做为命令，此外还有其他两种类型
+    class Demo : CoolQCommandPlugin // 继承此类做为命令，此外还有其他两种类型
     {
         private static Thread _tThread;
         private static string UserId { get; set; }
@@ -28,19 +29,19 @@ namespace Daylily.Plugin.Core
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             // 接收的信息
-            string message = navigableMessageObj.RawMessage;
+            string message = routeMsg.RawMessage;
             // 发送者的QQ
-            string userId = navigableMessageObj.UserId;
+            string userId = routeMsg.UserId;
             UserId = userId;
             // 发送者所在群ID（若是私聊或讨论组则为null）
-            string groupId = navigableMessageObj.GroupId;
+            string groupId = routeMsg.GroupId;
             // 发送者所在讨论组ID（若是私聊或群则为null）
-            string discussId = navigableMessageObj.DiscussId;
+            string discussId = routeMsg.DiscussId;
             // 包含消息种类，分别为Group, Discuss, Private，省去判断以上是否为null来判定消息种类
-            MessageType type = navigableMessageObj.MessageType;
+            MessageType type = routeMsg.MessageType;
             if (type != MessageType.Private)
             {
                 Logger.Error("不能非私聊");
@@ -48,16 +49,16 @@ namespace Daylily.Plugin.Core
             }
 
             // 接收的信息的Id，用于撤回等操作
-            long msgId = navigableMessageObj.MessageId;
+            long msgId = routeMsg.MessageId;
 
             // 若是命令，下面两个字段不为null，当接收消息是 "/demo asdf 1234" 的情况：
             // 此字段为 "demo"
-            string command = navigableMessageObj.Command;
+            string command = routeMsg.Command;
             // 此字段为 "asdf 1234"
-            string argString = navigableMessageObj.ArgString;
+            string argString = routeMsg.ArgString;
             // 当前处于的权限状态，默认为Public（即开放权限）
             // 当用户执行 /sudo 或 /root 会分别触发 Admin（对应群的管理员）和 Root（系统管理员），以此做出对应权限所对应的功能
-            Authority level = navigableMessageObj.Authority;
+            Authority level = routeMsg.Authority;
             if (level == Authority.Public)
                 Logger.Info("当前所用权限：Public");
             else if (level == Authority.Admin)
@@ -66,48 +67,48 @@ namespace Daylily.Plugin.Core
                 Logger.Info("当前所用权限：Root");
 
             // 暂无实际用处，当前为框架所用，后续会有变动
-            string fullcmd = navigableMessageObj.FullCommand;
+            string fullcmd = routeMsg.FullCommand;
             // 包含json所传原生参数，通常只有少数情况会使用（获取字体，发送时间，匿名情况等）
-            PrivateMsg privateObj = navigableMessageObj.Private;
-            DiscussMsg discussObj = navigableMessageObj.Discuss;
-            GroupMsg groupObj = navigableMessageObj.Group;
+            CoolQPrivateMessageApi privateObj = routeMsg.Private;
+            CoolQDiscussMessageApi discussObj = routeMsg.Discuss;
+            CoolQGroupMessageApi groupObj = routeMsg.Group;
 
             // 假设做一个定时报告程序（此仅为全局共享，对于用户用途不大）
             if (string.IsNullOrEmpty(argString))
-                return new CommonMessageResponse("请填写参数", navigableMessageObj, enableAt: true);
+                return routeMsg.ToSource("请填写参数", enableAt: true);
             string[] param = argString.Split(" ");
             if (param.Length > 2)
-                return new CommonMessageResponse("参数不正确", navigableMessageObj, enableAt: true);
+                return routeMsg.ToSource("参数不正确", enableAt: true);
 
             if (param[0] == "start" && int.TryParse(param[1], out int sleepTime))
             {
                 // 默认处理机制为单线程，返回一个对象主线程继续工作
                 // 若需新建线程，则手动处理：
                 if (_tThread != null && _tThread.IsAlive)
-                    return new CommonMessageResponse("计时器正在工作，请先停止", navigableMessageObj, enableAt: true);
+                    return routeMsg.ToSource("计时器正在工作，请先停止", enableAt: true);
 
                 _tThread = new Thread(new ParameterizedThreadStart(MultiThread));
                 _tThread.Start(sleepTime);
 
                 string reply = "启动了计时器";
                 // 当所用参数为(string,CommonMessage)，则自动返回给所在群（组）的所在成员（通常不用其他重载，为框架所用）
-                return new CommonMessageResponse(reply, navigableMessageObj, enableAt: true);
+                return routeMsg.ToSource(reply, enableAt: true);
             }
             else if (param[0] == "stop" && param.Length == 1)
             {
                 if (_tThread != null && _tThread.IsAlive)
                     _tThread.Abort();
                 string reply = "计时器已经停止";
-                return new CommonMessageResponse(reply, navigableMessageObj, enableAt: true);
+                return routeMsg.ToSource(reply, enableAt: true);
             }
             else
-                return new CommonMessageResponse("参数不正确", navigableMessageObj, enableAt: true);
+                return routeMsg.ToSource("参数不正确", enableAt: true);
 
             // 若需回复至别处，需以下实现
             string reply2 = "回复到了别处";
             string userId2 = "xxxxxxx";
             long groupId2 = 123456;
-            SendMessage(new CommonMessageResponse(reply2, new CqIdentity(groupId2, MessageType.Group), userId2));
+            SendMessage(new CoolQRouteMessage(reply2, new CqIdentity(groupId2, MessageType.Group), userId2));
             return null;
         }
 
@@ -126,7 +127,7 @@ namespace Daylily.Plugin.Core
                 {
                     // 这里可以做大量其他操作，更新数据库等，不阻塞主线程
                     string message = "Pong!";
-                    SendMessage(new CommonMessageResponse(message, new CqIdentity(UserId, MessageType.Private)));
+                    SendMessage(new CoolQRouteMessage(message, new CqIdentity(UserId, MessageType.Private)));
                 }
                 catch (Exception ex)
                 {

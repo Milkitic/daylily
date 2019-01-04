@@ -1,22 +1,23 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("死群熊猫")]
     [Author("yf_extension")]
-    [Version(0, 0, 2, PluginVersion.Stable)]
+    [Version(2, 0, 2, PluginVersion.Stable)]
     [Help("群内长时间无人发言发一张相关的熊猫。")]
-    public class GroupQuiet : ApplicationPlugin
+    public class GroupQuiet : CoolQApplicationPlugin
     {
         private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
         private static ConcurrentDictionary<string, GroupSettings> _groupDic;
@@ -36,17 +37,17 @@ namespace Daylily.Plugin.ShaDiao.Application
             Logger.Origin("上次群发言情载入完毕，并开启了线程。");
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            if (navigableMessageObj.MessageType == MessageType.Private)
+            if (routeMsg.MessageType == MessageType.Private)
                 return null;
-            string groupId = navigableMessageObj.GroupId ?? navigableMessageObj.DiscussId;
+            string groupId = routeMsg.GroupId ?? routeMsg.DiscussId;
 
             if (!_groupDic.ContainsKey(groupId))
             {
                 _groupDic.GetOrAdd(groupId, new GroupSettings
                 {
-                    NavigableMessageObj = navigableMessageObj,
+                    routeMsg = routeMsg,
                     LastSentIsMe = false,
                     CdTime = 60 * 60 * 24,
                 });
@@ -85,7 +86,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 try
                 {
                     var cqImg = new FileImage(Path.Combine(PandaDir, "quiet.jpg")).ToString();
-                    SendMessage(new CommonMessageResponse(cqImg, _groupDic[groupId].NavigableMessageObj));
+                    SendMessage(_groupDic[groupId].routeMsg.ToSource(cqImg));
                     SaveSettings(_groupDic);
                 }
                 catch (Exception ex)
@@ -96,7 +97,7 @@ namespace Daylily.Plugin.ShaDiao.Application
         }
         private class GroupSettings
         {
-            public CoolQNavigableMessage NavigableMessageObj { get; set; }
+            public CoolQRouteMessage routeMsg { get; set; }
             [JsonIgnore]
             public Task Task { get; set; }
             public bool LastSentIsMe { get; set; }

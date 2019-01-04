@@ -17,16 +17,16 @@
 //            Priority = 0
 //        };
 
-//        public sealed override Message.CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+//        public sealed override Message.CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
 //        {
-//            return CreateProc(navigableMessageObj);
+//            return CreateProc(routeMsg);
 //        }
 
-//        private Message.CommonMessageResponse CreateProc(CoolQNavigableMessage navigableMessageObj)
+//        private Message.CoolQRouteMessage CreateProc(CoolQRouteMessage routeMsg)
 //        {
 //            List<string> receivedString = new List<string>();
-//            navigableMessageObj.Encode();
-//            string arg = JsonConvert.SerializeObject(navigableMessageObj).Replace("\"", "\\\"").Replace(" ", "+++").Insert(0, "\"");
+//            routeMsg.Encode();
+//            string arg = JsonConvert.SerializeObject(routeMsg).Replace("\"", "\\\"").Replace(" ", "+++").Insert(0, "\"");
 //            arg = arg + "\"";
 //            Logger.Debug(arg);
 //            var proc = new Process
@@ -62,14 +62,14 @@
 //            proc.WaitForExit();
 //            return ProcExited();
 
-//            Message.CommonMessageResponse ProcExited()
+//            Message.CoolQRouteMessage ProcExited()
 //            {
 //                if (receivedString.Count == 0)
 //                    return null;
 //                string last = receivedString[receivedString.Count - 1];
 //                try
 //                {
-//                    return JsonConvert.DeserializeObject<Message.CommonMessageResponse>(last);
+//                    return JsonConvert.DeserializeObject<Message.CoolQRouteMessage>(last);
 //                }
 //                catch (JsonReaderException)
 //                {

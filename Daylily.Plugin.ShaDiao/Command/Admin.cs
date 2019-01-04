@@ -1,23 +1,24 @@
-﻿using Daylily.Bot.Message;
-using System;
-using System.Linq;
-using Daylily.Bot.Backend;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.Bot.Session.TreeStructure;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
+using System;
+using System.Linq;
 using Action = Daylily.Bot.Session.TreeStructure.Action;
 
 namespace Daylily.Plugin.ShaDiao
 {
     [Name("管理员菜单")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Beta)]
+    [Version(2, 0, 0, PluginVersion.Beta)]
     [Help("咕4鸽2菜单。")]
     [Command("admin")]
-    public class Admin : CommandPlugin
+    public class Admin : CoolQCommandPlugin
     {
         private Session _session;
-        private CoolQNavigableMessage _cm;
+        private CoolQRouteMessage _routeMsg;
 
         const string mainNode = "Main";
         const string memberMenuNode = "memberMenu";
@@ -27,13 +28,13 @@ namespace Daylily.Plugin.ShaDiao
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
 
-            _cm = navigableMessageObj;
+            _routeMsg = routeMsg;
             try
             {
-                using (_session = new Session(1000 * (60 * 2), _cm.CqIdentity, _cm.UserId))
+                using (_session = new Session(1000 * (60 * 2), _routeMsg.Identity, _routeMsg.UserId))
                 {
                     try
                     {
@@ -44,8 +45,8 @@ namespace Daylily.Plugin.ShaDiao
                             const string mainText = "· 管理员菜单：\r\n" +
                                                     " 1. 群员指令\r\n" +
                                                     " 2. 投票指令";
-                            SendMessage(new CommonMessageResponse(mainText, _cm));
-                            CoolQNavigableMessage cmMain = SessionCondition("1", "2");
+                            SendMessage(routeMsg.ToSource(mainText));
+                            CoolQRouteMessage cmMain = SessionCondition("1", "2");
                             switch (cmMain.RawMessage)
                             {
                                 case "1":
@@ -91,8 +92,8 @@ namespace Daylily.Plugin.ShaDiao
                                           " 7. 群员更名\r\n" +
                                           " 8. 把群员变成定时炸弹\r\n" +
                                           " 9. 返回";
-                SendMessage(new CommonMessageResponse(memberText, _cm));
-                CoolQNavigableMessage cmPlayer = SessionCondition("1", "2", "3", "4", "5", "6", "7", "8", "9");
+                SendMessage(_routeMsg.ToSource(memberText));
+                CoolQRouteMessage cmPlayer = SessionCondition("1", "2", "3", "4", "5", "6", "7", "8", "9");
                 switch (cmPlayer.RawMessage)
                 {
                     case "9":
@@ -109,15 +110,15 @@ namespace Daylily.Plugin.ShaDiao
         /// <summary>
         /// 单选会话
         /// </summary>
-        private CoolQNavigableMessage SessionCondition(params string[] conditions)
+        private CoolQRouteMessage SessionCondition(params string[] conditions)
         {
             _session.Timeout = 30000;
-            CoolQNavigableMessage cmPub = _session.GetMessage();
+            CoolQRouteMessage cmPub = (CoolQRouteMessage)_session.GetMessage();
             int retryCount = 0;
             while (!conditions.Contains(cmPub.RawMessage) && retryCount < 3)
             {
                 retryCount++;
-                cmPub = _session.GetMessage();
+                cmPub = (CoolQRouteMessage)_session.GetMessage();
             }
 
             return cmPub;

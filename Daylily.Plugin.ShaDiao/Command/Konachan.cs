@@ -5,15 +5,16 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.ShaDiao
 {
     [Name("konachan")]
     [Author("bleatingsheep")]
-    [Version(0, 0, 23, PluginVersion.Stable)]
+    [Version(2, 0, 23, PluginVersion.Stable)]
     [Help("设了")]
     [Command("konachan", "yandere", "safebooru")]
-    public class Konachan : CommandPlugin
+    public class Konachan : CoolQCommandPlugin
     {
         private static IDictionary<string, string> WebsiteMap => new Dictionary<string, string>
         {
@@ -23,9 +24,9 @@ namespace Daylily.Plugin.ShaDiao
 
         private static readonly IReadOnlyDictionary<string, string> Websites = new ReadOnlyDictionary<string, string>(WebsiteMap);
 
-        private string GetWebsite(CoolQNavigableMessage navigableMessageObj)
+        private string GetWebsite(CoolQRouteMessage routeMsg)
         {
-            var name = navigableMessageObj.Command.ToUpperInvariant();
+            var name = routeMsg.Command.ToUpperInvariant();
             return Websites.GetValueOrDefault(name);
         }
 
@@ -34,18 +35,18 @@ namespace Daylily.Plugin.ShaDiao
             return;
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            var domain = GetWebsite(navigableMessageObj);
+            var domain = GetWebsite(routeMsg);
             if (string.IsNullOrEmpty(domain))
             {
-                return new CommonMessageResponse("并不支持这个网站哦~~", navigableMessageObj);
+                return routeMsg.ToSource("并不支持这个网站哦~~");
             }
 
             var k = new Api(domain);
             var result = k.PopularRecentAsync().Result;
             var post = result?.FirstOrDefault();
-            return post == null ? null : new CommonMessageResponse(new FileImage(new Uri(post.JpegUrl)).ToString(), navigableMessageObj);
+            return post == null ? null : routeMsg.ToSource(new FileImage(new Uri(post.JpegUrl)).ToString());
         }
     }
 }

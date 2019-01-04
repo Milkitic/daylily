@@ -13,18 +13,18 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
     internal class Count : ApplicationPlugin
     {
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            if (!navigableMessageObj.RawMessage.Contains("数咩羊"))
+            if (!routeMsg.RawMessage.Contains("数咩羊"))
                 return null;
 
-            using (Session session = new Session(8000, navigableMessageObj.CqIdentity, navigableMessageObj.UserId))
+            using (Session session = new Session(8000.CqIdentity.UserId))
             {
-                SendMessage(new CommonMessageResponse("睡不着那就一起数咩羊吧。来，我先开始，1！", navigableMessageObj));
+                SendMessage(routeMsg.ToSource("睡不着那就一起数咩羊吧。来，我先开始，1！"));
                 int count = 1;
                 try
                 {
-                    CoolQNavigableMessage obj = session.GetMessage();
+                    CoolQRouteMessage obj = session.GetMessage();
                     do
                     {
                         System.Threading.Thread.Sleep(1000);
@@ -34,21 +34,21 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                             if (res == count + 1)
                             {
                                 count += 2;
-                                SendMessage(new CommonMessageResponse(count.ToString(), navigableMessageObj));
+                                SendMessage(routeMsg.ToSource(count.ToString()));
                             }
                             else
                             {
-                                SendMessage(new CommonMessageResponse($"你数错啦，是不是困了？现在是{count}，到你了", navigableMessageObj));
+                                SendMessage(routeMsg.ToSource($"你数错啦，是不是困了？现在是{count}，到你了"));
                             }
                         }
                         else
-                            SendMessage(new CommonMessageResponse($"不对！要好好数数哦！现在是{count}，到你了", navigableMessageObj));
+                            SendMessage(routeMsg.ToSource($"不对！要好好数数哦！现在是{count}，到你了"));
 
                         System.Threading.Thread.Sleep(1000);
 
                         if (count > 15)
                         {
-                            SendMessage(new CommonMessageResponse("不数羊了，人家都困了，聊点别的吧！", navigableMessageObj));
+                            SendMessage(routeMsg.ToSource("不数羊了，人家都困了，聊点别的吧！"));
                             break;
                         }
                         obj = session.GetMessage();
@@ -56,7 +56,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                 }
                 catch (TimeoutException)
                 {
-                    SendMessage(new CommonMessageResponse("数不动了吗，那就好好睡觉咯，晚安！", navigableMessageObj));
+                    SendMessage(routeMsg.ToSource("数不动了吗，那就好好睡觉咯，晚安！"));
                 }
 
             }

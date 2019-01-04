@@ -1,21 +1,22 @@
-﻿using Daylily.Bot.Enum;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Enum;
+using Daylily.Bot.Message;
 using Daylily.CoolQ.Interface.CqHttp;
+using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Models.CqResponse.Api;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Core
 {
     [Name("发送自定义消息")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Stable)]
+    [Version(2, 0, 0, PluginVersion.Stable)]
     [Help("支持发送任意格式的消息（包含cq码）。", Authority = Authority.Root)]
     [Command("send")]
-    public class Send : CommandPlugin
+    public class Send : CoolQCommandPlugin
     {
         [Arg("g")]
         [Help("要发送的群号。")]
@@ -32,17 +33,17 @@ namespace Daylily.Plugin.Core
         [FreeArg]
         [Help("要发送的信息。")]
         public string Message { get; set; }
-        
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             string sessionId = null;
             var sessionType = MessageType.Private;
-            if (navigableMessageObj.Authority != Authority.Root)
-                return new CommonMessageResponse(LoliReply.RootOnly, navigableMessageObj);
+            if (routeMsg.Authority != Authority.Root)
+                return routeMsg.ToSource(LoliReply.RootOnly);
             if (Message == null)
-                return new CommonMessageResponse("你要说什么……", navigableMessageObj);
+                return routeMsg.ToSource("你要说什么……");
             if (GroupId != null && DiscussId != null)
-                return new CommonMessageResponse("不能同时选择群和讨论组……", navigableMessageObj);
+                return routeMsg.ToSource("不能同时选择群和讨论组……");
 
             string innerMessage = Decode(Message);
             if (UseAllGroup)
@@ -58,7 +59,7 @@ namespace Daylily.Plugin.Core
                         try
                         {
                             sessionId = groupInfo.GroupId.ToString();
-                            SendMessage(new CommonMessageResponse(msg, new CqIdentity(sessionId, sessionType)));
+                            SendMessage(new CoolQRouteMessage(msg, new CqIdentity(sessionId, sessionType)));
                             Thread.Sleep(3000);
                         }
                         catch
@@ -67,14 +68,14 @@ namespace Daylily.Plugin.Core
                         }
                     }
                 else
-                    return new CommonMessageResponse("无有效群。", navigableMessageObj);
+                    return routeMsg.ToSource("无有效群。");
 
                 SaveLogs(msg, "announcement");
                 if (failedList.Count == 0)
-                    return new CommonMessageResponse("已成功发送至" + list.Count + "个群。", navigableMessageObj);
+                    return routeMsg.ToSource("已成功发送至" + list.Count + "个群。");
                 else
-                    return new CommonMessageResponse(string.Format("有以下{0}个群未成功发送: {1}{2}", failedList.Count,
-                        Environment.NewLine, string.Join(Environment.NewLine, failedList)), navigableMessageObj);
+                    return routeMsg.ToSource(string.Format("有以下{0}个群未成功发送: {1}{2}", failedList.Count,
+                        Environment.NewLine, string.Join(Environment.NewLine, failedList)));
             }
             if (DiscussId != null)
             {
@@ -90,9 +91,9 @@ namespace Daylily.Plugin.Core
                 sessionId = UserId;
 
             if (DiscussId == null && GroupId == null && UserId == null)
-                return new CommonMessageResponse(Decode(navigableMessageObj.ArgString), navigableMessageObj);
+                return routeMsg.ToSource(Decode(routeMsg.ArgString));
 
-            SendMessage(new CommonMessageResponse(innerMessage, new CqIdentity(sessionId, sessionType)));
+            SendMessage(new CoolQRouteMessage(innerMessage, new CqIdentity(sessionId, sessionType)));
             return null;
         }
 

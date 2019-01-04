@@ -1,21 +1,22 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
 using Daylily.CoolQ.Interface.CqHttp;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using Daylily.Cos;
 using Daylily.Cos.CosResponse;
 using System.Collections.Generic;
 using System.Linq;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("黄图检测")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Beta)]
+    [Version(2, 0, 1, PluginVersion.Beta)]
     [Help("发现福利图和黄图时进行提醒和禁言（仅新人mapper群）。")]
-    class PornDetector : ApplicationPlugin
+    class PornDetector : CoolQApplicationPlugin
     {
         private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> Md5List { get; } = new Dictionary<string, CosObject>();
@@ -27,11 +28,11 @@ namespace Daylily.Plugin.ShaDiao.Application
             Logger.Origin("上次用户计数载入完毕。");
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             // 查黄图
-            if (navigableMessageObj.Group == null || navigableMessageObj.GroupId != "133605766") return null;
-            var imgList = CqCode.GetImageInfo(navigableMessageObj.RawMessage);
+            if (routeMsg.Group == null || routeMsg.GroupId != "133605766") return null;
+            var imgList = CoolQCode.GetImageInfo(routeMsg.RawMessage);
             if (imgList == null)
                 return null;
             List<string> urlList = new List<string>();
@@ -84,18 +85,18 @@ namespace Daylily.Plugin.ShaDiao.Application
                         continue;
                     case 1:
                     case 2:
-                        CqApi.SetGroupBan(navigableMessageObj.GroupId, navigableMessageObj.UserId, 24 * 60 * 60);
-                        return new CommonMessageResponse("...", navigableMessageObj);
+                        CqApi.SetGroupBan(routeMsg.GroupId, routeMsg.UserId, 24 * 60 * 60);
+                        return routeMsg.ToSource("...");
                     default:
                         break;
                 }
 
                 if (item.data.porn_score >= item.data.hot_score && item.data.porn_score > 65)
-                    return AddCount(navigableMessageObj);
+                    return AddCount(routeMsg);
 
                 if (item.data.hot_score >= item.data.porn_score && item.data.hot_score > item.data.normal_score &&
                     item.data.hot_score > 80)
-                    return AddCount(navigableMessageObj);
+                    return AddCount(routeMsg);
 
                 break;
             }
@@ -105,7 +106,7 @@ namespace Daylily.Plugin.ShaDiao.Application
             //if (user != "2241521134") return null;
         }
 
-        private CommonMessageResponse AddCount(CoolQNavigableMessage cm)
+        private CoolQRouteMessage AddCount(CoolQRouteMessage cm)
         {
             string user = cm.UserId, group = cm.GroupId;
 
@@ -116,12 +117,12 @@ namespace Daylily.Plugin.ShaDiao.Application
                     UserCount.Add(user, 2);
                 UserCount[user]--;
                 if (UserCount[user] != 0)
-                    return new CommonMessageResponse("？", cm, true);
+                    return cm.ToSource("？", true);
                 else
                 {
                     UserCount[user] = 2;
                     CqApi.SetGroupBan(group, user, (int)(0.5 * 60 * 60));
-                    return new CommonMessageResponse("？", cm, true);
+                    return cm.ToSource("？", true);
                 }
             }
             finally

@@ -1,24 +1,26 @@
 ﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Interface.CqHttp;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Linq;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Kernel
 {
-    public class CliNotification : ApplicationPlugin
+    public class CliNotification : CoolQApplicationPlugin
     {
         public override BackendConfig BackendConfig { get; } = new BackendConfig
         {
             Priority = 99
         };
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
         {
-            var cm = navigableMessageObj;
+            var cm = routeMessageObj;
             long groupId = Convert.ToInt64(cm.GroupId);
             long userId = Convert.ToInt64(cm.UserId);
             long discussId = Convert.ToInt64(cm.DiscussId);
@@ -28,20 +30,20 @@ namespace Daylily.Plugin.Kernel
             if (type == MessageType.Private)
             {
                 group = "私聊";
-                sender = CoolQDispatcher.Current.SessionInfo[cm.CqIdentity].Name;
+                sender = CoolQDispatcher.Current.SessionInfo[(CqIdentity)cm.Identity].Name;
             }
             else if (type == MessageType.Discuss)
             {
-                group = CoolQDispatcher.Current.SessionInfo[cm.CqIdentity].Name;
+                group = CoolQDispatcher.Current.SessionInfo[(CqIdentity)cm.Identity].Name;
                 sender = cm.UserId;
             }
             else
             {
                 var userInfo =
-                    CoolQDispatcher.Current.SessionInfo[cm.CqIdentity]?.GroupInfo?.Members
+                    CoolQDispatcher.Current.SessionInfo[(CqIdentity)cm.Identity]?.GroupInfo?.Members
                         ?.FirstOrDefault(i => i.UserId == userId) ??
                     CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
-                group = CoolQDispatcher.Current.SessionInfo?[cm.CqIdentity]?.Name;
+                group = CoolQDispatcher.Current.SessionInfo?[(CqIdentity)cm.Identity]?.Name;
                 sender = string.IsNullOrEmpty(userInfo.Card)
                     ? userInfo.Nickname
                     : userInfo.Card;

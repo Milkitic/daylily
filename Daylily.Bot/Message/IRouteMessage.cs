@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Daylily.Bot.Message
 {
-    public interface INavigableMessage
+    public interface IRouteMessage
     {
         IMessage Message { get; set; }
         ISessionIdentity Identity { get; }

@@ -50,7 +50,7 @@ namespace Daylily.Bot
                                     {
                                         backend.OnCommandBindingFailed(new BindingFailedEventArgs(null));
                                         //SendMessage(
-                                        //    new CommonMessageResponse($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。", cm));
+                                        //    routeMsg.ToSource($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。", cm));
                                         return false;
                                     }
                                 }
@@ -78,7 +78,7 @@ namespace Daylily.Bot
                                 }
                                 else
                                 {
-                                    //SendMessage(new CommonMessageResponse($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。",
+                                    //SendMessage(routeMsg.ToSource($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。",
                                     //    cm));
                                     backend.OnCommandBindingFailed(new BindingFailedEventArgs(null));
                                     return false;
@@ -92,7 +92,7 @@ namespace Daylily.Bot
             if (swCount <= 0 && argCount <= 0)
                 return true;
             backend.OnCommandBindingFailed(new BindingFailedEventArgs(null));
-            //SendMessage(new CommonMessageResponse($"包含多余的参数. 发送 \"/help {cm.Command}\" 了解如何使用。", cm));
+            //SendMessage(routeMsg.ToSource($"包含多余的参数. 发送 \"/help {cm.Command}\" 了解如何使用。", cm));
             return false;
         }
 
@@ -122,7 +122,7 @@ namespace Daylily.Bot
                 }
                 else if (prop.PropertyType == typeof(string))
                 {
-                    parsed = CqCode.Decode(argStr); // Convert.ToString(cmd);
+                    parsed = CoolQCode.Decode(argStr); // Convert.ToString(cmd);
                 }
                 else if (prop.PropertyType == typeof(bool))
                 {

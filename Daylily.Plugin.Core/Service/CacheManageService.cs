@@ -1,4 +1,5 @@
-﻿using Daylily.Common;
+﻿using Daylily.Bot.Backend.Plugins;
+using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,10 @@ namespace Daylily.Plugin.Core.Service
 {
     public class CacheManageService : ServicePlugin
     {
-        public override void Execute(string[] args)
+        public override void OnInitialized(string[] args)
         {
+            base.OnInitialized(args);
+
             Task.Run(() =>
             {
                 while (true)

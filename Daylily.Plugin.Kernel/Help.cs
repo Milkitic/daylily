@@ -1,8 +1,13 @@
 ﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Backend.Plugins;
 using Daylily.Bot.Message;
+using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.StringUtils;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using Daylily.Plugin.Kernel.Helps;
 using System;
 using System.Collections.Generic;
@@ -11,18 +16,15 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Daylily.Bot.Backend;
-using Daylily.Bot.Session;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Kernel
 {
     [Name("黄花菜帮助")]
     [Author("yf_extension")]
-    [Version(0, 1, 2, PluginVersion.Beta)]
+    [Version(2, 0, 2, PluginVersion.Beta)]
     [Help("查看此帮助信息。")]
     [Command("help")]
-    public class Help : CommandPlugin
+    public class Help : CoolQCommandPlugin
     {
         [FreeArg]
         public string CommandName { get; set; }
@@ -31,7 +33,7 @@ namespace Daylily.Plugin.Kernel
         public bool UseList { get; set; }
 
         private static string _versionInfo;
-        private CoolQNavigableMessage _cm;
+        private CoolQRouteMessage _cm;
         private static readonly string HelpDir = Path.Combine(Domain.ResourcePath, "help");
         private static readonly string StaticDir = Path.Combine(HelpDir, "static");
 
@@ -40,14 +42,14 @@ namespace Daylily.Plugin.Kernel
             _versionInfo = args == null ? "" : args[0];
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            _cm = navigableMessageObj;
+            _cm = routeMsg;
             if (UseList)
-                return new CommonMessageResponse(ShowList(), _cm);
+                return routeMsg.ToSource(ShowList());
             if (CommandName == null)
             {
-                using (Session session = new Session(20000, _cm.CqIdentity, _cm.UserId))
+                using (Session session = new Session(20000, _cm.Identity, _cm.UserId))
                 {
                     Dictionary<string, string> dic = new Dictionary<string, string>
                     {
@@ -59,53 +61,52 @@ namespace Daylily.Plugin.Kernel
                     string[] sb = dic.Select(k => $"【{k.Key}】 {k.Value}").ToArray();
 
                     string msg = "被召唤啦！请选择你要查看的帮助类型：\r\n" + string.Join("\r\n", sb);
-                    SendMessage(new CommonMessageResponse(msg, _cm));
+                    SendMessage(routeMsg.ToSource(msg));
                     try
                     {
                         var a = dic.Select(k => k.Key).ToArray();
 
-                        CoolQNavigableMessage cm;
+                        CoolQRouteMessage cm;
                         do
                         {
-                            cm = session.GetMessage();
+                            cm = (CoolQRouteMessage)session.GetMessage();
                             if (cm.RawMessage.Contains("你是谁"))
-                                return new CommonMessageResponse(
-                                    new FileImage(Path.Combine(StaticDir, "help.jpg")).ToString(), _cm);
-                            if (cm.RawMessage.Contains("基础帮助"))
+                                return routeMsg.ToSource(new FileImage(Path.Combine(StaticDir, "help.jpg")).ToString());
+                            if (cm.Message.RawMessage.Contains("基础帮助"))
                             {
                                 if (cm.MessageType == MessageType.Private)
-                                    return new CommonMessageResponse(
-                                        ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt")), _cm);
-                                SendMessage(new CommonMessageResponse("已发送至私聊，请查看。", _cm, true));
-                                SendMessage(new CommonMessageResponse(
-                                    ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt")),
-                                    new CqIdentity(_cm.UserId, MessageType.Private)));
+                                    return routeMsg.ToSource(ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt")));
+
+                                SendMessage(routeMsg.ToSource("已发送至私聊，请查看。", true));
+                                var helpStr = ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt"));
+                                SendMessage(new CoolQRouteMessage(helpStr, new CqIdentity(_cm.UserId, MessageType.Private)));
                                 return null;
                             }
 
                             if (cm.RawMessage.Contains("查列表"))
-                                return new CommonMessageResponse(ShowList(), _cm);
-                            SendMessage(new CommonMessageResponse("请回复大括号内的文字。", _cm));
+                                return routeMsg.ToSource(ShowList());
+
+                            SendMessage(routeMsg.ToSource("请回复大括号内的文字。"));
 
                         } while (!a.Contains(cm.RawMessage));
 
-                        return new CommonMessageResponse(ShowList(), _cm);
+                        return routeMsg.ToSource(ShowList());
                     }
                     catch (TimeoutException)
                     {
-                        return new CommonMessageResponse("没人鸟我，走了.jpg", _cm);
+                        return routeMsg.ToSource("没人鸟我，走了.jpg");
                     }
 
                 }
             }
             else
-                return new CommonMessageResponse(ShowDetail().Trim('\n').Trim('\r'), _cm);
+                return routeMsg.ToSource(ShowDetail().Trim('\n').Trim('\r'));
         }
 
         private string ShowList()
         {
-            CommandPlugin[] plugins = PluginManager.CommandMapStatic.Values.Distinct().ToArray();
-            ApplicationPlugin[] apps = PluginManager.ApplicationList.ToArray();
+            CommandPlugin[] plugins = Core.Current.PluginManager.Commands.Select(k => k.Instance).Distinct().ToArray();
+            ApplicationPlugin[] apps = Core.Current.PluginManager.Applications.ToArray();
             var groupCmd = plugins.Where(plugin => plugin.Authority <= _cm.Authority)
                 .GroupBy(k => k.GetType().Namespace);
             Dictionary<string, Dictionary<string, string>> dicNs = new Dictionary<string, Dictionary<string, string>>();
@@ -125,7 +126,7 @@ namespace Daylily.Plugin.Kernel
             Dictionary<string, string> dicApp = apps.Where(plugin => plugin.Authority <= _cm.Authority)
                 .OrderBy(k => k.Name).ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]);
 
-            string[] hot = PluginManager.GetPlugin<CommandCounter>()?.CommandRate
+            string[] hot = Core.Current.PluginManager.GetPlugin<CommandCounter>()?.CommandRate
                 .OrderByDescending(k => k.Value)
                 .Take(5)
                 .Where(k => k.Value > 50)
@@ -136,10 +137,10 @@ namespace Daylily.Plugin.Kernel
         private string ShowDetail()
         {
             Custom custom;
-            CqPlugin plugin;
-            if (PluginManager.CommandMapStatic.Keys.Contains(CommandName))
+            Bot.Backend.Plugins.Plugin plugin;
+            if (Core.Current.PluginManager.ContainsPlugin(CommandName))
             {
-                plugin = PluginManager.CommandMapStatic[CommandName];
+                plugin = Core.Current.PluginManager.GetPlugin(CommandName);
                 custom = new Custom
                 {
                     Title = plugin.Name,
@@ -151,9 +152,9 @@ namespace Daylily.Plugin.Kernel
                     FreeArg = new Dictionary<string, string>()
                 };
             }
-            else if (PluginManager.ApplicationList.Select(k => k.Name).Contains(CommandName))
+            else if (Core.Current.PluginManager.Applications.Select(k => k.Name).Contains(CommandName))
             {
-                plugin = PluginManager.ApplicationList.First(k => k.Name == CommandName);
+                plugin = Core.Current.PluginManager.Applications.First(k => k.Name == CommandName);
                 custom = new Custom
                 {
                     Title = plugin.Name,

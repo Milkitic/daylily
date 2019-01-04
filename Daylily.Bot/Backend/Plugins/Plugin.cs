@@ -81,10 +81,10 @@ namespace Daylily.Bot.Backend.Plugins
 
         protected string SettingsPath => Path.Combine(Domain.PluginPath, GetType().Name);
 
-        protected Random GlobalRandom => Core.CurrentCore.GlobalRandom;
+        protected Random GlobalRandom => Core.Current.GlobalRandom;
         protected static Random StaticRandom { get; } = new Random();
         protected Random Random { get; } = new Random();
-
+        protected static void SendMessage(RouteMessage routeMsg) => Core.Current.Dispatcher.SendMessage(routeMsg);
         protected void SaveSettings<T>(T cls, string fileName = null, bool writeLog = false)
         {
             Type clsT = cls.GetType();

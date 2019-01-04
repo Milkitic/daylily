@@ -1,12 +1,12 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Command;
-using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Kernel
 {
-    public class CommandParser : ApplicationPlugin
+    public class CommandParser : CoolQApplicationPlugin
     {
         public override bool RunInMultiThreading => false;
 
@@ -15,15 +15,15 @@ namespace Daylily.Plugin.Kernel
             Priority = -2
         };
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
         {
-            if (string.IsNullOrEmpty(navigableMessageObj.FullCommand))
+            if (string.IsNullOrEmpty(routeMessageObj.FullCommand))
                 return null;
-            string fullCmd = navigableMessageObj.FullCommand;
+            string fullCmd = routeMessageObj.FullCommand;
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
-            ca.Analyze(fullCmd, navigableMessageObj);
+            ca.Analyze(fullCmd, routeMessageObj);
 
-            if (!PluginManager.CommandMap.ContainsKey(navigableMessageObj.Command))
+            if (!Core.Current.PluginManager.ContainsPlugin(routeMessageObj.Command))
                 return null;
 
             return null;

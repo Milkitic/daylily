@@ -8,15 +8,16 @@ using System.IO;
 using System.Linq;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.ShaDiao
 {
     [Name("熊猫生成器")]
     [Author("yf_extension")]
-    [Version(0, 1, 4, PluginVersion.Beta)]
+    [Version(2, 0, 4, PluginVersion.Beta)]
     [Help("生成可自定义文字的熊猫图（表情可选）。")]
     [Command("panda")]
-    public class Panda : CommandPlugin
+    public class Panda : CoolQCommandPlugin
     {
         [FreeArg]
         [Help("需要生成的配套文字。以逗号分隔作为行数。若带空格，请使用引号。")]
@@ -47,7 +48,7 @@ namespace Daylily.Plugin.ShaDiao
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             FontFamily font = GetRandFont(GetFonts());
             var pandas = GetPandas();
@@ -82,14 +83,14 @@ namespace Daylily.Plugin.ShaDiao
                 }
 
                 var cqImg2 = new FileImage(bitmap, 75).ToString();
-                return new CommonMessageResponse(cqImg2, navigableMessageObj);
+                return routeMsg.ToSource(cqImg2);
             }
             string pandaPath;
             if (PandaNum >= 1)
             {
                 int trueNum = PandaNum - 1;
                 if (PandaNum > pandas.Length)
-                    return new CommonMessageResponse($"超过了范围哦，一共有{pandas.Length}张表情", navigableMessageObj, true);
+                    return routeMsg.ToSource($"超过了范围哦，一共有{pandas.Length}张表情", true);
                 pandaPath = pandas[trueNum].FullName;
             }
             else
@@ -97,7 +98,7 @@ namespace Daylily.Plugin.ShaDiao
 
             Bitmap bmp = GenerateOne(font, pandaPath);
             var cqImg = new FileImage(bmp, 65).ToString();
-            return new CommonMessageResponse(cqImg, navigableMessageObj);
+            return routeMsg.ToSource(cqImg);
         }
 
         private Bitmap GenerateOne(FontFamily font, string pandaPath)
@@ -214,7 +215,7 @@ namespace Daylily.Plugin.ShaDiao
                 return word;
             }
 
-            word = CqCode.DecodeToString(PandaWord.Replace("！", "!").Replace("？", "?"));
+            word = CoolQCode.DecodeToString(PandaWord.Replace("！", "!").Replace("？", "?"));
             if (!IsLengthValid(word, pandaPath, font))
             {
                 word = _invalidReply[StaticRandom.Next(0, _invalidReply.Length)];

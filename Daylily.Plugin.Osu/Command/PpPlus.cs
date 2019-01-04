@@ -17,15 +17,16 @@ using System.Drawing.Text;
 using System.IO;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Osu
 {
     [Name("PP+查询")]
     [Author("yf_extension")]
-    [Version(0, 1, 3, PluginVersion.Stable)]
+    [Version(2, 0, 3, PluginVersion.Stable)]
     [Help("获取发送者的PP+信息，并生成相应六维图。")]
     [Command("pp")]
-    public class PpPlus : CommandPlugin
+    public class PpPlus : CoolQCommandPlugin
     {
         [FreeArg]
         [Help("查询指定的osu用户名。若带空格，请使用引号。")]
@@ -36,15 +37,15 @@ namespace Daylily.Plugin.Osu
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             string userName, userId;
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
-                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(navigableMessageObj.UserId));
+                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
                 if (userInfo.Count == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotBound, navigableMessageObj, true);
+                    return routeMsg.ToSource(LoliReply.IdNotBound, true);
                 userId = userInfo[0].UserId.ToString();
                 userName = userInfo[0].CurrentUname;
             }
@@ -52,7 +53,7 @@ namespace Daylily.Plugin.Osu
             {
                 int userNum = OldSiteApi.GetUser(OsuId, out var userObj);
                 if (userNum == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotFound, navigableMessageObj, true);
+                    return routeMsg.ToSource(LoliReply.IdNotFound, true);
                 if (userNum > 1)
                 {
                     // ignored
@@ -64,7 +65,7 @@ namespace Daylily.Plugin.Osu
 
             var jsonString = HttpClientUtil.HttpGet("https://syrin.me/pp+/u/" + userId);
             if (jsonString == null)
-                return new CommonMessageResponse("PP+获取超时，请重试…", navigableMessageObj, true);
+                return routeMsg.ToSource("PP+获取超时，请重试…", true);
 
             StringFinder sf = new StringFinder(jsonString);
             sf.FindNext("<div class=\"performance-table\">", false);
@@ -87,7 +88,7 @@ namespace Daylily.Plugin.Osu
             }
 
             var cqImg = new FileImage(Draw(userName, dValue)).ToString();
-            return new CommonMessageResponse(cqImg, navigableMessageObj);
+            return routeMsg.ToSource(cqImg);
         }
 
         private static Bitmap Draw(string user, IReadOnlyDictionary<string, int> dPfmance)

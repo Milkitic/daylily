@@ -10,8 +10,8 @@ namespace Daylily.Bot.Session
 {
     public class Session : IDisposable
     {
-        private static readonly ConcurrentDictionary<SessionId, Queue<INavigableMessage>> Sessions =
-            new ConcurrentDictionary<SessionId, Queue<INavigableMessage>>();
+        private static readonly ConcurrentDictionary<SessionId, Queue<RouteMessage>> Sessions =
+            new ConcurrentDictionary<SessionId, Queue<RouteMessage>>();
 
         private static readonly object LockObj = new object(); // static: for safe
 
@@ -32,7 +32,7 @@ namespace Daylily.Bot.Session
             if (Sessions.Keys.Any(item => item.Contains(SessionId)))
                 throw new NotSupportedException("不支持同时两个会话操作。");
 
-            Sessions.TryAdd(SessionId, new Queue<INavigableMessage>());
+            Sessions.TryAdd(SessionId, new Queue<RouteMessage>());
             CoolQDispatcher.Current.SessionReceived += Session_Received;
         }
 
@@ -51,16 +51,16 @@ namespace Daylily.Bot.Session
             AddMember(userId.Select(long.Parse).ToArray());
         }
 
-        public INavigableMessage GetMessage()
+        public RouteMessage GetMessage()
         {
             TryGetMessage(out var messageObj);
             return messageObj ?? throw new TimeoutException($"Timed out. ({Timeout})");
         }
 
-        public bool TryGetMessage(out INavigableMessage navigableMessageObj)
+        public bool TryGetMessage(out RouteMessage routeMessageObj)
         {
             CancellationTokenSource cts = new CancellationTokenSource(Timeout);
-            navigableMessageObj = Task.Run(() =>
+            routeMessageObj = Task.Run(() =>
             {
                 int count;
                 lock (LockObj)
@@ -79,7 +79,7 @@ namespace Daylily.Bot.Session
                     return Sessions[SessionId].Dequeue();
             }, cts.Token).Result;
 
-            return navigableMessageObj != null;
+            return routeMessageObj != null;
         }
 
         public void Dispose()
@@ -90,7 +90,7 @@ namespace Daylily.Bot.Session
             }
             finally
             {
-                CoolQDispatcher.Current.SessionReceived -= Session_Received;
+                Core.Current.Dispatcher.SessionReceived -= Session_Received;
                 Sessions.TryRemove(SessionId, out _);
             }
         }
@@ -98,9 +98,9 @@ namespace Daylily.Bot.Session
         private void Session_Received(object sender, SessionReceivedEventArgs args)
         {
             lock (LockObj)
-                if (SessionId.CqIdentity == args.NavigableMessageObj.Identity &&
-                    SessionId.UserId.Contains(long.Parse(args.NavigableMessageObj.UserId)))
-                    Sessions[SessionId].Enqueue(args.NavigableMessageObj);
+                if (SessionId.CqIdentity == args.RouteMessageObj.Identity &&
+                    SessionId.UserId.Contains(long.Parse(args.RouteMessageObj.UserId)))
+                    Sessions[SessionId].Enqueue(args.RouteMessageObj);
         }
     }
 

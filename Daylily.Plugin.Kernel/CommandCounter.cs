@@ -2,10 +2,11 @@
 using System.Collections.Concurrent;
 using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Kernel
 {
-    public class CommandCounter : ApplicationPlugin
+    public class CommandCounter : CoolQApplicationPlugin
     {
         public ConcurrentDictionary<string, int> CommandRate { get; private set; }
 
@@ -22,17 +23,17 @@ namespace Daylily.Plugin.Kernel
 
         }
 
-        public override CommonMessageResponse OnMessageReceived(CoolQNavigableMessage navigableMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
         {
-            if (string.IsNullOrEmpty(navigableMessageObj.FullCommand))
+            if (string.IsNullOrEmpty(routeMessageObj.FullCommand))
                 return null;
-            if (!CommandRate.Keys.Contains(navigableMessageObj.Command))
+            if (!CommandRate.Keys.Contains(routeMessageObj.Command))
             {
-                CommandRate.TryAdd(navigableMessageObj.Command, 1);
+                CommandRate.TryAdd(routeMessageObj.Command, 1);
             }
             else
             {
-                CommandRate[navigableMessageObj.Command]++;
+                CommandRate[routeMessageObj.Command]++;
             }
 
             SaveSettings(CommandRate, "CommandRate");
