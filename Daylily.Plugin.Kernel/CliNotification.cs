@@ -40,7 +40,7 @@ namespace Daylily.Plugin.Kernel
             else
             {
                 var userInfo =
-                    CoolQDispatcher.Current.SessionInfo[(CqIdentity)cm.Identity]?.GroupInfo?.Members
+                    CoolQDispatcher.Current.SessionInfo[(CqIdentity) cm.Identity]?.GroupInfo?.Members
                         ?.FirstOrDefault(i => i.UserId == userId) ??
                     CqApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
                 group = CoolQDispatcher.Current.SessionInfo?[(CqIdentity)cm.Identity]?.Name;

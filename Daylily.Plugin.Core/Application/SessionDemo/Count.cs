@@ -1,16 +1,17 @@
-﻿using Daylily.Bot.Message;
-using System;
-using Daylily.Bot.Backend;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
+using System;
 
 namespace Daylily.Plugin.Core.Application.SessionDemo
 {
     [Name("数羊")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Version(2, 0, 1, PluginVersion.Stable)]
     [Help("数羊测试。Session应用的demo。")]
-    internal class Count : ApplicationPlugin
+    internal class Count : CoolQApplicationPlugin
     {
 
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
@@ -18,13 +19,13 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
             if (!routeMsg.RawMessage.Contains("数咩羊"))
                 return null;
 
-            using (Session session = new Session(8000.CqIdentity.UserId))
+            using (Session session = new Session(8000, routeMsg.Identity, routeMsg.UserId))
             {
                 SendMessage(routeMsg.ToSource("睡不着那就一起数咩羊吧。来，我先开始，1！"));
                 int count = 1;
                 try
                 {
-                    CoolQRouteMessage obj = session.GetMessage();
+                    CoolQRouteMessage obj = (CoolQRouteMessage)session.GetMessage();
                     do
                     {
                         System.Threading.Thread.Sleep(1000);
@@ -51,7 +52,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                             SendMessage(routeMsg.ToSource("不数羊了，人家都困了，聊点别的吧！"));
                             break;
                         }
-                        obj = session.GetMessage();
+                        obj = (CoolQRouteMessage)session.GetMessage();
                     } while (obj != null);
                 }
                 catch (TimeoutException)

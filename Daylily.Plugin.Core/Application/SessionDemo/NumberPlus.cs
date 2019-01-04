@@ -1,19 +1,20 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
+using Daylily.Bot.Session;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Daylily.Bot.Backend;
-using Daylily.Bot.Session;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Core.Application.SessionDemo
 {
     [Name("两数相加")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Stable)]
+    [Version(2, 0, 1, PluginVersion.Stable)]
     [Help("两数相加测试。Session应用的demo。")]
-    internal class NumberPlus : ApplicationPlugin
+    internal class NumberPlus : CoolQApplicationPlugin
     {
         private static readonly ConcurrentDictionary<Session, (string, List<string>)> SessionsList =
             new ConcurrentDictionary<Session, (string, List<string>)>();
@@ -29,7 +30,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                 string roomNum = Guid.NewGuid().ToString().Split('-')[0];
                 try
                 {
-                    using (Session session = new Session(30000.CqIdentity.UserId))
+                    using (Session session = new Session(30000, routeMsg.Identity, routeMsg.UserId))
                     {
                         SessionsList.TryAdd(session, (roomNum, new List<string> { routeMsg.UserId }));
                         try
@@ -38,7 +39,7 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
                             Dictionary<string, string> dic = new Dictionary<string, string>();
                             while (dic.Count < 2)
                             {
-                                CoolQRouteMessage obj = session.GetMessage();
+                                CoolQRouteMessage obj = (CoolQRouteMessage)session.GetMessage();
                                 if (dic.Keys.Contains(obj.UserId))
                                     dic[obj.UserId] = obj.RawMessage;
                                 else

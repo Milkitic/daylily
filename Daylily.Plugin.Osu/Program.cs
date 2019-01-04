@@ -29,11 +29,14 @@ namespace Daylily.Plugin.Osu
             {
                 GroupId = "123456788",
                 UserId = "2241521134",
-                RawMessage = "SB",
+                Message = new CoolQMessage
+                {
+                    RawMessage= "SB"
+                },
                 MessageType = MessageType.Private,
-                Group = new GroupMsg(),
-                Discuss = new DiscussMsg(),
-                Private = new PrivateMsg(),
+                Group = new CoolQGroupMessageApi(),
+                Discuss = new CoolQDiscussMessageApi(),
+                Private = new CoolQPrivateMessageApi(),
             };
 
             Logger.Success("收到：" + newPlugin.OnMessageReceived(cm).Message);

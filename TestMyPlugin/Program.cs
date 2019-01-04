@@ -1,5 +1,8 @@
 ﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Models.CqResponse;
+using Daylily.Plugin.Core;
 using System;
 
 namespace TestMyPlugin
@@ -8,8 +11,8 @@ namespace TestMyPlugin
     {
         static void Main(string[] args)
         {
-            RepeatPlugin newPlugin = new RepeatPlugin();
-            newPlugin.Initialize(args);
+            Roll newPlugin = new Roll();
+            newPlugin.OnInitialized(args);
             while (true)
             {
                 var msg = Console.ReadLine();
@@ -17,12 +20,15 @@ namespace TestMyPlugin
                 {
                     GroupId = "123456788",
                     UserId = "2241521134",
-                    RawMessage = msg,
+                    Message = new CoolQMessage
+                    {
+                        RawMessage = msg
+                    },
                     MessageType = MessageType.Group,
-                    Group = new GroupMsg(),
+                    Group = new CoolQGroupMessageApi(),
                 };
 
-                Logger.Raw("回复：" + newPlugin.Message_Received(cm).Message);
+                Logger.Raw("回复：" + newPlugin.OnMessageReceived(cm).RawMessage);
             }
         }
     }

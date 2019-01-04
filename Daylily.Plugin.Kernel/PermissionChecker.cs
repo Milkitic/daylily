@@ -49,7 +49,8 @@ namespace Daylily.Plugin.Kernel
                 else if (message.IndexOf(Bot.Core.Current.CommandFlag + "sudo ", StringComparison.InvariantCulture) == 0 &&
                          cm.MessageType == MessageType.Group)
                 {
-                    if (CoolQDispatcher.Current.SessionInfo[(CqIdentity)cm.Identity].GroupInfo.Admins.Count(q => q.UserId == userId) == 0)
+                    if (CoolQDispatcher.Current.SessionInfo[(CqIdentity) cm.Identity].GroupInfo
+                        .Admins.Count(q => q.UserId == userId) == 0)
                     {
                         Logger.Raw("Access denied.");
                         return routeMsg.ToSource(LoliReply.FakeAdmin).Handle();
@@ -63,7 +64,8 @@ namespace Daylily.Plugin.Kernel
                 else
                 {
                     // auto
-                    if (CoolQDispatcher.Current.SessionInfo[(CqIdentity)cm.Identity].GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
+                    if (CoolQDispatcher.Current.SessionInfo[(CqIdentity) cm.Identity].GroupInfo
+                        ?.Admins.Count(q => q.UserId == userId) != 0)
                         cm.Authority = Authority.Admin;
                     if (cm.UserId == "2241521134")
                         cm.Authority = Authority.Root;

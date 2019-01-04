@@ -2,22 +2,17 @@
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Osu.Cabbage
 {
     [Name("Bp查询（白菜）")]
     [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Alpha)]
+    [Version(2, 0, 1, PluginVersion.Alpha)]
     [Help("详情问白菜。")]
     [Command("bpme", "bp")]
-    public class Bp : CommandPlugin
+    public class Bp : CoolQCommandPlugin
     {
-
-
-        public override void OnInitialized(string[] args)
-        {
-        }
-
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             CabbageCommon.MessageQueue.Enqueue(routeMsg);
