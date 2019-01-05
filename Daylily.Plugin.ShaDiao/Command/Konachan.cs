@@ -47,7 +47,7 @@ namespace Daylily.Plugin.ShaDiao
             var k = new Api(domain);
             var result = k.PopularRecentAsync().Result;
             var post = result?.FirstOrDefault();
-            return post == null ? null : routeMsg.ToSource(new FileImage(new Uri(post.JpegUrl)).ToString());
+            return post == null ? null : routeMsg.ToSource(new FileImage(new Uri(post.JpegUrl)));
         }
     }
 }
