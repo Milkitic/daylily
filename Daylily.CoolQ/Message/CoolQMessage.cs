@@ -1,27 +1,21 @@
-﻿using System;
+﻿using Daylily.Bot.Message;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
-using Daylily.Bot.Message;
 
 namespace Daylily.CoolQ.Message
 {
     public class CoolQMessage : IMessage
     {
-        public string RawMessage
-        {
-            get => Compose();
-            set => throw new NotImplementedException();
-        }
+        public string RawMessage => Compose();
 
         private readonly CoolQCode _assembledCoolQCodes;
 
-        public CoolQMessage(params CoolQCode[] CoolQCodes)
+        public CoolQMessage(params CoolQCode[] coolQCodes)
         {
-            var CoolQCodeList = new List<CoolQCode>(CoolQCodes.Length);
-            CoolQCodeList.AddRange(CoolQCodes);
-            _assembledCoolQCodes = new Assemblage(CoolQCodeList);
+            _assembledCoolQCodes = new Assemblage(coolQCodes);
         }
 
         public string Compose() => InnerCompose(_assembledCoolQCodes);
@@ -101,6 +95,11 @@ namespace Daylily.CoolQ.Message
                 fileStream.Read(bt, 0, bt.Length);
                 return Convert.ToBase64String(bt);
             }
+        }
+
+        public static CoolQMessage Parse(string message)
+        {
+            return new CoolQMessage(new Text(message));
         }
 
     }

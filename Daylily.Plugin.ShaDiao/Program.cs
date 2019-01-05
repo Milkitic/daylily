@@ -17,10 +17,7 @@ namespace Daylily.Plugin.ShaDiao
             {
                 GroupId = "123456788",
                 UserId = "2241521134",
-                Message = new CoolQMessage()
-                {
-                    RawMessage = "SB"
-                },
+                Message = CoolQMessage.Parse("SB"),
                 MessageType = MessageType.Group,
                 Group = new CoolQGroupMessageApi(),
             };

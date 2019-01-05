@@ -583,8 +583,7 @@ namespace Daylily.CoolQ.Message
     {
         public CoolQCode[] CoolQCodes { get; }
 
-        public Assemblage(CoolQCode[] CoolQCodes) => CoolQCodes = CoolQCodes;
-
-        public Assemblage(IEnumerable<CoolQCode> CoolQCodes) => CoolQCodes = CoolQCodes.ToArray();
+        public Assemblage(CoolQCode[] coolQCodes) => CoolQCodes = coolQCodes;
+        
     }
 }

@@ -1,11 +1,11 @@
 ﻿using CSharpOsu.Module;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
+using Daylily.CoolQ.Message;
 using Daylily.Osu.Interface;
 using System;
 using System.Linq;
-using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
-using Daylily.CoolQ.Message;
 
 namespace Daylily.Plugin.Osu
 {
@@ -27,10 +27,7 @@ namespace Daylily.Plugin.Osu
             {
                 GroupId = "123456788",
                 UserId = "2241521134",
-                Message = new CoolQMessage
-                {
-                    RawMessage= "SB"
-                },
+                Message = CoolQMessage.Parse("SB"),
                 MessageType = MessageType.Private,
                 Group = new CoolQGroupMessageApi(),
                 Discuss = new CoolQDiscussMessageApi(),

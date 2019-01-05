@@ -1,9 +1,9 @@
 ﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ.Message;
-using System;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
+using Daylily.CoolQ.Message;
 using Daylily.Plugin.Basic;
+using System;
 
 namespace TestMyPlugin
 {
@@ -20,10 +20,7 @@ namespace TestMyPlugin
                 {
                     GroupId = "123456788",
                     UserId = "2241521134",
-                    Message = new CoolQMessage
-                    {
-                        RawMessage = msg
-                    },
+                    Message = CoolQMessage.Parse(msg),
                     MessageType = MessageType.Group,
                     Group = new CoolQGroupMessageApi(),
                 };
