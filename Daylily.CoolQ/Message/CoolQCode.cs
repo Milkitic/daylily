@@ -513,7 +513,7 @@ namespace Daylily.CoolQ.Message
         /// 发送网络中的图片。
         /// </summary>
         /// <param name="uri">网络地址</param>
-        public FileImage(Uri uri) : base(uri.AbsolutePath) { }
+        public FileImage(Uri uri) : base(uri.AbsoluteUri) { }
 
         /// <summary>
         /// 发送Image对象中的图片。
