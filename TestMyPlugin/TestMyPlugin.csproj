@@ -9,7 +9,7 @@
     <ProjectReference Include="..\Daylily.Bot\Daylily.Bot.csproj" />
     <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
     <ProjectReference Include="..\Daylily.CoolQ\Daylily.CoolQ.csproj" />
-    <ProjectReference Include="..\Daylily.Plugin.Core\Daylily.Plugin.Basic.csproj" />
+    <ProjectReference Include="..\Daylily.Plugin.Basic\Daylily.Plugin.Basic.csproj" />
   </ItemGroup>
 
 </Project>

@@ -174,7 +174,7 @@ namespace Daylily.CoolQ
         {
             CoolQRouteMessage replyObj = null;
 
-            
+
             if (!PluginManager.ContainsPlugin(cm.Command)) return;
 
             Type t = PluginManager.GetPluginType(cm.Command);
@@ -221,7 +221,7 @@ namespace Daylily.CoolQ
             var routeMessage = (CoolQRouteMessage)message;
             var msg = (routeMessage.EnableAt && routeMessage.MessageType != MessageType.Private
                           ? new At(routeMessage.UserId) + " "
-                          : "") + routeMessage.Message;
+                          : "") + ((CoolQMessage)routeMessage.Message).Compose();
             var info = SessionInfo[(CoolQIdentity)routeMessage.Identity] == null
                 ? $"{((CoolQIdentity)routeMessage.Identity).Type}{((CoolQIdentity)routeMessage.Identity).Id}"
                 : SessionInfo[(CoolQIdentity)routeMessage.Identity].Name;
