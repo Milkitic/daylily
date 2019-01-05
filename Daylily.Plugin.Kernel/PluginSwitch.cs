@@ -1,14 +1,17 @@
 ﻿using Daylily.Bot.Message;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Kernel
 {
     public class PluginSwitch : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("20e7a3e1-fdc3-4b3a-bff1-ecf396a63311");
+
         public ConcurrentDictionary<long, List<string>> GroupDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
         public ConcurrentDictionary<long, List<string>> DiscussDisabledList { get; set; } =

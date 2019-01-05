@@ -2,13 +2,14 @@
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Daylily.Cos;
 using Daylily.Cos.CosResponse;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Daylily.CoolQ.CoolQHttp;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
@@ -18,6 +19,8 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Help("发现福利图和黄图时进行提醒和禁言（仅新人mapper群）。")]
     class PornDetector : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("a59184aa-f689-4826-aa4d-c7b5124984b0");
+
         private static Dictionary<string, int> UserCount { get; set; } = new Dictionary<string, int>();
         private static Dictionary<string, CosObject> Md5List { get; } = new Dictionary<string, CosObject>();
 

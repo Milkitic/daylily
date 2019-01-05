@@ -5,6 +5,7 @@
         Command,
         Application,
         Service,
+        Event,
         Unknown
     }
 }

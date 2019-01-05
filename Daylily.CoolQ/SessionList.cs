@@ -12,15 +12,15 @@ namespace Daylily.CoolQ
 {
     public class SessionList
     {
-        public ConcurrentDictionary<CqIdentity, SessionSettings> Sessions { get; } =
-            new ConcurrentDictionary<CqIdentity, SessionSettings>();
+        public ConcurrentDictionary<CoolQIdentity, SessionSettings> Sessions { get; } =
+            new ConcurrentDictionary<CoolQIdentity, SessionSettings>();
 
-        public SessionSettings this[CqIdentity cqIdentity] =>
+        public SessionSettings this[CoolQIdentity cqIdentity] =>
             Sessions.ContainsKey(cqIdentity) ? Sessions[cqIdentity] : null;
 
         public void AddOrUpdateGroup(GroupInfoV2 info)
         {
-            var item = new CqIdentity(info.GroupId, MessageType.Group);
+            var item = new CoolQIdentity(info.GroupId, MessageType.Group);
             if (Sessions.Keys.Contains(item))
                 Sessions[item].Update(info);
             Sessions.TryAdd(item, new SessionSettings(info));
@@ -28,7 +28,7 @@ namespace Daylily.CoolQ
 
         public void RemoveGroup(string groupId)
         {
-            var item = new CqIdentity(groupId, MessageType.Group);
+            var item = new CoolQIdentity(groupId, MessageType.Group);
             if (Sessions.Keys.Contains(item))
                 Sessions.TryRemove(item, out _);
         }
@@ -39,7 +39,7 @@ namespace Daylily.CoolQ
             {
                 case CoolQPrivateMessageApi privateMsg:
                     {
-                        var item = new CqIdentity(privateMsg.UserId, MessageType.Private);
+                        var item = new CoolQIdentity(privateMsg.UserId, MessageType.Private);
                         if (Sessions.Keys.Contains(item))
                             return;
                         Sessions.TryAdd(item, new SessionSettings(privateMsg));
@@ -47,7 +47,7 @@ namespace Daylily.CoolQ
                     }
                 case CoolQDiscussMessageApi discussMsg:
                     {
-                        var item = new CqIdentity(discussMsg.DiscussId, MessageType.Discuss);
+                        var item = new CoolQIdentity(discussMsg.DiscussId, MessageType.Discuss);
                         if (Sessions.Keys.Contains(item))
                             return;
                         Sessions.TryAdd(item, new SessionSettings(discussMsg));
@@ -55,7 +55,7 @@ namespace Daylily.CoolQ
                     }
                 case CoolQGroupMessageApi groupMsg:
                     {
-                        var item = new CqIdentity(groupMsg.GroupId, MessageType.Group);
+                        var item = new CoolQIdentity(groupMsg.GroupId, MessageType.Group);
                         if (Sessions.Keys.Contains(item))
                             return;
                         Sessions.TryAdd(item, new SessionSettings(groupMsg));

@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
-using Daylily.Bot.Backend;
+﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
+using System.Threading.Tasks;
 
 namespace Daylily.Plugin.Osu.Cabbage
 {
@@ -13,6 +14,8 @@ namespace Daylily.Plugin.Osu.Cabbage
     [Command("statme", "stat")]
     public class Stat : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("21d73cbc-782d-4ba7-8bf9-86ee7d5cc6bc");
+
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             CabbageCommon.MessageQueue.Enqueue(routeMsg);

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Daylily.Bot;
+﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
@@ -8,6 +6,8 @@ using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
+using System;
+using System.Collections.Generic;
 
 namespace Daylily.Plugin.Osu
 {
@@ -18,6 +18,8 @@ namespace Daylily.Plugin.Osu
     [Command("elo")]
     public class Elo : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("774c4420-5a5c-4240-a742-9b030a1e989e");
+
         [FreeArg]
         [Help("查询指定的osu用户名。若带空格，请使用引号。")]
         public string OsuId { get; set; }

@@ -1,9 +1,13 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Utils.HtmlUtils;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
 using Daylily.Common.Utils.StringUtils;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
@@ -14,10 +18,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
-using Daylily.Bot;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Osu
 {
@@ -28,6 +28,8 @@ namespace Daylily.Plugin.Osu
     [Command("pp")]
     public class PpPlus : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("b75c8d34-121f-47cc-9d9e-bc5a0e258bba");
+
         [FreeArg]
         [Help("查询指定的osu用户名。若带空格，请使用引号。")]
         public string OsuId { get; set; }

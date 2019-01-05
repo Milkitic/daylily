@@ -1,8 +1,9 @@
-﻿using Daylily.Bot.Message;
-using System.Threading.Tasks;
+﻿using System;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System.Threading.Tasks;
 
 namespace Daylily.Plugin.Osu.Cabbage
 {
@@ -13,6 +14,8 @@ namespace Daylily.Plugin.Osu.Cabbage
     [Command("costme", "cost")]
     public class Cost : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("acb26399-f29d-40f2-aeea-9f95259516ff");
+
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             CabbageCommon.MessageQueue.Enqueue(routeMsg);

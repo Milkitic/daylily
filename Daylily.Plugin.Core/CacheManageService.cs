@@ -1,17 +1,17 @@
-﻿using Daylily.Bot.Backend.Plugins;
-using Daylily.Common;
-using Daylily.Common.Utils.LoggerUtils;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot.Backend.Plugins;
+using Daylily.Common;
+using Daylily.Common.Utils.LoggerUtils;
 
-namespace Daylily.Plugin.Core.Service
+namespace Daylily.Plugin.Basic
 {
     public class CacheManageService : ServicePlugin
     {
+        public override Guid Guid => new Guid("0e4d58ea-4e4f-41ae-a377-47b2c56b2e10");
+
         public override void OnInitialized(string[] args)
         {
             base.OnInitialized(args);

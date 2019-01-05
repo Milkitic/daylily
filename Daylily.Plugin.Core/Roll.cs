@@ -1,10 +1,10 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
 using System.Collections.Generic;
 
-namespace Daylily.Plugin.Core
+namespace Daylily.Plugin.Basic
 {
     [Name("获取随机数")]
     [Author("yf_extension")]
@@ -13,6 +13,8 @@ namespace Daylily.Plugin.Core
     [Command("roll")]
     public class Roll : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("bbcfc459-20b2-483b-89be-d7fe3289010d");
+
         [Arg("r", IsSwitch = true, Default = false)]
         [Help("若启用，则使抽取含重复结果。否则结果不包含重复结果。")]
         public bool Repeat { get; set; }

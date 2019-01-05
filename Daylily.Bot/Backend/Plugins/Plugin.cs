@@ -22,6 +22,9 @@ namespace Daylily.Bot.Backend.Plugins
         public Authority Authority { get; set; }
         public abstract MiddlewareConfig MiddlewareConfig { get; }
         public string Version => string.Concat(Major, ".", Minor, ".", Patch);
+        public abstract Guid Guid { get; }
+
+        public event ExceptionEventHandler ErrorOccured;
 
         public virtual void OnInitialized(string[] args)
         {
@@ -84,7 +87,7 @@ namespace Daylily.Bot.Backend.Plugins
         protected Random GlobalRandom => DaylilyCore.Current.GlobalRandom;
         protected static Random StaticRandom { get; } = new Random();
         protected Random Random { get; } = new Random();
-        protected static void SendMessage(RouteMessage routeMsg) => DaylilyCore.Current.Dispatcher.SendMessage(routeMsg);
+        protected static void SendMessage(RouteMessage routeMsg) => DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg);
         protected void SaveSettings<T>(T cls, string fileName = null, bool writeLog = false)
         {
             Type clsT = cls.GetType();

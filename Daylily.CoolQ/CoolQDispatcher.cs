@@ -16,12 +16,10 @@ using System.Threading.Tasks;
 
 namespace Daylily.CoolQ
 {
-    public class CoolQDispatcher : IDispatcher
+    public class CoolQDispatcher : CompoundDispatcher
     {
         public static CoolQDispatcher Current { get; private set; }
-        public MiddlewareConfig MiddlewareConfig { get; set; } = new MiddlewareConfig();
-
-        public event SessionReceivedEventHandler SessionReceived;
+        public override MiddlewareConfig MiddlewareConfig { get; } = new MiddlewareConfig();
 
         public SessionList SessionInfo { get; } = new SessionList();
         public List<GroupMemberGroupInfo> GroupMemberGroupInfo { get; set; } = new List<GroupMemberGroupInfo>();
@@ -36,21 +34,21 @@ namespace Daylily.CoolQ
             Current = this;
         }
 
-        public bool Message_Received(object sender, MessageEventArgs args)
+        public override bool Message_Received(object sender, MessageEventArgs args)
         {
             bool handled = false;
             var originObj = (CoolQMessageApi)args.ParsedObject;
-            CqIdentity id;
+            CoolQIdentity id;
             switch (originObj)
             {
                 case CoolQPrivateMessageApi privateMsg:
-                    id = new CqIdentity(privateMsg.UserId, MessageType.Private);
+                    id = new CoolQIdentity(privateMsg.UserId, MessageType.Private);
                     break;
                 case CoolQDiscussMessageApi discussMsg:
-                    id = new CqIdentity(discussMsg.DiscussId, MessageType.Discuss);
+                    id = new CoolQIdentity(discussMsg.DiscussId, MessageType.Discuss);
                     break;
                 case CoolQGroupMessageApi groupMsg:
-                    id = new CqIdentity(groupMsg.GroupId, MessageType.Group);
+                    id = new CoolQIdentity(groupMsg.GroupId, MessageType.Group);
                     break;
                 default:
                     throw new ArgumentException();
@@ -77,19 +75,19 @@ namespace Daylily.CoolQ
 
         private void DispatchMessage(CoolQMessageApi coolQMessageApi)
         {
-            CqIdentity cqIdentity;
+            CoolQIdentity cqIdentity;
             switch (coolQMessageApi)
             {
                 case CoolQPrivateMessageApi privateMsg:
-                    cqIdentity = new CqIdentity(privateMsg.UserId, MessageType.Private);
+                    cqIdentity = new CoolQIdentity(privateMsg.UserId, MessageType.Private);
                     RunNext<CoolQPrivateMessageApi>(cqIdentity);
                     break;
                 case CoolQDiscussMessageApi discussMsg:
-                    cqIdentity = new CqIdentity(discussMsg.DiscussId, MessageType.Discuss);
+                    cqIdentity = new CoolQIdentity(discussMsg.DiscussId, MessageType.Discuss);
                     RunNext<CoolQDiscussMessageApi>(cqIdentity);
                     break;
                 case CoolQGroupMessageApi groupMsg:
-                    cqIdentity = new CqIdentity(groupMsg.GroupId, MessageType.Group);
+                    cqIdentity = new CoolQIdentity(groupMsg.GroupId, MessageType.Group);
                     RunNext<CoolQGroupMessageApi>(cqIdentity);
                     break;
                 default:
@@ -98,7 +96,7 @@ namespace Daylily.CoolQ
 
             SessionInfo[cqIdentity].LockMsg = false;
 
-            void RunNext<T>(CqIdentity id) where T : CoolQMessageApi
+            void RunNext<T>(CoolQIdentity id) where T : CoolQMessageApi
             {
                 while (SessionInfo[id].MsgQueue.TryDequeue(out object current))
                 {
@@ -118,6 +116,7 @@ namespace Daylily.CoolQ
 
         private async void HandleMessage(CoolQRouteMessage cm)
         {
+            RaiseSessionEvent(cm);
             var handled = await HandleApplication(cm);
             if (!handled)
             {
@@ -141,7 +140,7 @@ namespace Daylily.CoolQ
             bool handled = false;
 
             //var app = PluginManager.GetPlugin < PluginSwitch >
-            foreach (var appPlugin in PluginManager.Applications.OrderByDescending(k => k.MiddlewareConfig?.Priority))
+            foreach (var appPlugin in PluginManager.ApplicationInstances.OrderByDescending(k => k.MiddlewareConfig?.Priority))
             {
                 int? p = appPlugin.MiddlewareConfig?.Priority;
                 if (p < priority && handled)
@@ -175,11 +174,7 @@ namespace Daylily.CoolQ
         {
             CoolQRouteMessage replyObj = null;
 
-            SessionReceived?.Invoke(null, new SessionReceivedEventArgs
-            {
-                RouteMessageObj = cm
-            });
-
+            
             if (!PluginManager.ContainsPlugin(cm.Command)) return;
 
             Type t = PluginManager.GetPluginType(cm.Command);
@@ -194,34 +189,42 @@ namespace Daylily.CoolQ
             //    ? CoolQPluginManager.CommandMapStatic[cm.Command]
             //    : GetInstance(t);
             CoolQCommandPlugin plugin = PluginManager.GetNewInstance<CoolQCommandPlugin>(t);
-            Task.Run(() =>
-                {
-                    try
+            if (plugin != null)
+            {
+                Task.Run(() =>
                     {
-                        if (!plugin.TryInjectParameters(cm))
-                            return;
-                        replyObj = plugin.OnMessageReceived(cm);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Exception(ex.InnerException ?? ex, cm.FullCommand, plugin?.Name ?? "Unknown plugin");
-                    }
+                        try
+                        {
+                            if (!plugin.TryInjectParameters(cm))
+                                return;
+                            replyObj = plugin.OnMessageReceived(cm);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Exception(ex.InnerException ?? ex, cm.FullCommand, plugin.Name);
+                        }
 
-                    if (replyObj == null) return;
-                    SendMessage(replyObj);
-                }
-            );
+                        if (replyObj == null) return;
+                        SendMessage(replyObj);
+                    }
+                );
+            }
+            else
+            {
+                Logger.Error($"Cannot find plugin: {t.FullName}.");
+            }
+
         }
 
-        public void SendMessage(RouteMessage message)
+        public override void SendMessage(RouteMessage message)
         {
             var routeMessage = (CoolQRouteMessage)message;
             var msg = (routeMessage.EnableAt && routeMessage.MessageType != MessageType.Private
                           ? new At(routeMessage.UserId) + " "
                           : "") + routeMessage.Message;
-            var info = SessionInfo[(CqIdentity)routeMessage.Identity] == null
-                ? $"{((CqIdentity)routeMessage.Identity).Type}{((CqIdentity)routeMessage.Identity).Id}"
-                : SessionInfo[(CqIdentity)routeMessage.Identity].Name;
+            var info = SessionInfo[(CoolQIdentity)routeMessage.Identity] == null
+                ? $"{((CoolQIdentity)routeMessage.Identity).Type}{((CoolQIdentity)routeMessage.Identity).Id}"
+                : SessionInfo[(CoolQIdentity)routeMessage.Identity].Name;
             string status;
             switch (routeMessage.MessageType)
             {
@@ -239,6 +242,11 @@ namespace Daylily.CoolQ
             }
 
             Logger.Message(string.Format("({0}) 我: {{status: {1}}}\r\n  {2}", info, status, CoolQCode.DecodeToString(msg)));
+        }
+
+        public override bool Event_Received(object sender, EventEventArgs args)
+        {
+            throw new NotImplementedException();
         }
     }
 }

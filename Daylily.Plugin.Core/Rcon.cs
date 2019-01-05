@@ -1,13 +1,13 @@
-﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Daylily.Bot;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
-namespace Daylily.Plugin.Core
+namespace Daylily.Plugin.Basic
 {
     [Name("日程提醒")]
     [Author("yf_extension")]
@@ -16,6 +16,8 @@ namespace Daylily.Plugin.Core
     [Command("rcon")]
     public class Rcon : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("d765e508-37bc-46f9-be94-e96819c250b6");
+
         // ReSharper disable once MemberCanBePrivate.Global
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         [Arg("stop", IsSwitch = true)]
@@ -77,7 +79,7 @@ namespace Daylily.Plugin.Core
                         Ct.ThrowIfCancellationRequested();
                     }
 
-                    SendMessage(new CoolQRouteMessage(_message, new CqIdentity(userId, MessageType.Private)));
+                    SendMessage(new CoolQRouteMessage(_message, new CoolQIdentity(userId, MessageType.Private)));
                 });
                 string reply = $"日程提醒已新建，{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。";
                 return routeMsg.ToSource(reply, true);

@@ -1,16 +1,16 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 //using System.Threading;
 
@@ -22,6 +22,8 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Help("发现熊猫图时有几率返回一张熊猫图。")]
     class PandaDetector : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("6dbf918c-0ee4-49c3-abbf-982b8358db31");
+
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic =
             new ConcurrentDictionary<string, GroupSettings>();
 #if DEBUG

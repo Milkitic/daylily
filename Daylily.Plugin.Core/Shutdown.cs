@@ -5,7 +5,7 @@ using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 
-namespace Daylily.Plugin.Core
+namespace Daylily.Plugin.Basic
 {
     [Name("强制停止")]
     [Author("yf_extension")]
@@ -14,6 +14,8 @@ namespace Daylily.Plugin.Core
     [Command("sdown")]
     public class Shutdown : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("ee3fc222-b05d-403b-b8c2-542a61b72a4d");
+
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             if (routeMsg.Authority != Authority.Root)

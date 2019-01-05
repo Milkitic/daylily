@@ -20,12 +20,12 @@ namespace Daylily.CoolQ.Message
                 switch (MessageType)
                 {
                     case MessageType.Private:
-                        return new CqIdentity(Convert.ToInt64(UserId), MessageType.Private);
+                        return new CoolQIdentity(Convert.ToInt64(UserId), MessageType.Private);
                     case MessageType.Discuss:
-                        return new CqIdentity(Convert.ToInt64(DiscussId), MessageType.Discuss);
+                        return new CoolQIdentity(Convert.ToInt64(DiscussId), MessageType.Discuss);
                     case MessageType.Group:
                     default:
-                        return new CqIdentity(Convert.ToInt64(GroupId), MessageType.Group);
+                        return new CoolQIdentity(Convert.ToInt64(GroupId), MessageType.Group);
                 }
             }
         }
@@ -45,12 +45,12 @@ namespace Daylily.CoolQ.Message
 
         public CoolQRouteMessage() { }
 
-        public CoolQRouteMessage(string message, CqIdentity cqIdentity, string atId = null) :
+        public CoolQRouteMessage(string message, CoolQIdentity cqIdentity, string atId = null) :
             this(new CoolQMessage(new Text(message)), cqIdentity, atId)
         {
         }
 
-        public CoolQRouteMessage(CoolQMessage message, CqIdentity cqIdentity, string atId = null)
+        public CoolQRouteMessage(CoolQMessage message, CoolQIdentity cqIdentity, string atId = null)
         {
             Message = message;
             switch (cqIdentity.Type)

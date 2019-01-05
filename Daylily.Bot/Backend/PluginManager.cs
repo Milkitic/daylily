@@ -12,29 +12,37 @@ namespace Daylily.Bot.Backend
 {
     public class PluginManager
     {
-        public struct TaggedClass<T>
-        {
-            public TaggedClass(string tag, T instance) : this()
-            {
-                Tag = tag;
-                Instance = instance;
-            }
+        public static PluginManager Current { get; private set; }
 
-            public string Tag { get; set; }
-            public T Instance { get; set; }
+        public PluginManager()
+        {
+            Current = this;
         }
 
-        public IEnumerable<TaggedClass<CommandPlugin>> Commands => TaggedPlugins
-            .Where(k => k.Instance.PluginType == PluginType.Command)
-            .Select(k => new TaggedClass<CommandPlugin>(k.Tag, (CommandPlugin)k.Instance));
+        public IEnumerable<TaggedClass<CommandPlugin>> Commands =>
+            TaggedPlugins
+                .Where(k => k.Instance.PluginType == PluginType.Command)
+                .Select(k => new TaggedClass<CommandPlugin>(k.Tag, (CommandPlugin)k.Instance));
 
-        public IEnumerable<ApplicationPlugin> Applications => TaggedPlugins
-            .Where(k => k.Instance.PluginType == PluginType.Application)
-            .Select(k => (ApplicationPlugin)k.Instance);
+        public IEnumerable<CommandPlugin> CommandInstances =>
+            Commands
+                .Select(k => k.Instance)
+                .Distinct();
 
-        public IEnumerable<ServicePlugin> Services => TaggedPlugins
-            .Where(k => k.Instance.PluginType == PluginType.Service)
-            .Select(k => (ServicePlugin)k.Instance);
+        public IEnumerable<ApplicationPlugin> ApplicationInstances =>
+            TaggedPlugins
+                  .Where(k => k.Instance.PluginType == PluginType.Application)
+                  .Select(k => (ApplicationPlugin)k.Instance);
+
+        public IEnumerable<ServicePlugin> ServiceInstances =>
+            TaggedPlugins
+                .Where(k => k.Instance.PluginType == PluginType.Service)
+                .Select(k => (ServicePlugin)k.Instance);
+
+        public IEnumerable<Plugin> Plugins =>
+            TaggedPlugins
+                .Select(k => k.Instance)
+                .Distinct();
 
         protected List<TaggedClass<Type>> CachedCommands { get; set; }
         protected List<TaggedClass<Plugin>> TaggedPlugins { get; set; }

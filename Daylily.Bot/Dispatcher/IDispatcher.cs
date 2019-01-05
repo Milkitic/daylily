@@ -1,10 +1,10 @@
-﻿using Daylily.Bot.Message;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Daylily.Bot.Dispatcher
 {
     public interface IDispatcher : IMiddleware
     {
-        bool Message_Received(object sender, MessageEventArgs args);
-        void SendMessage(RouteMessage message);
     }
 }

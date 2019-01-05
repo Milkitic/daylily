@@ -1,9 +1,9 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
 
-namespace Daylily.Plugin.Core
+namespace Daylily.Plugin.Basic
 {
     [Name("猜拳/掷骰子")]
     [Author("yf_extension")]
@@ -12,6 +12,8 @@ namespace Daylily.Plugin.Core
     [Command("dice", "rps")]
     public class RpsDice : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("d6ba1003-4c02-46d6-94c5-52b737f7b967");
+
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             switch (routeMsg.Command)

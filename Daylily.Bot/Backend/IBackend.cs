@@ -1,4 +1,5 @@
-﻿using Daylily.Bot.Message;
+﻿using System;
+using Daylily.Bot.Message;
 
 namespace Daylily.Bot.Backend
 {
@@ -12,6 +13,7 @@ namespace Daylily.Bot.Backend
         PluginVersion State { get; }
         string[] Helps { get; }
         Authority Authority { get; }
+        Guid Guid { get; }
 
         void OnInitialized(string[] args);
         void OnErrorOccured(ExceptionEventArgs args);

@@ -14,6 +14,8 @@ namespace Daylily.Plugin.Osu
     [Help("用于提醒群友使用m4m插件。")]
     public class M4MMatchNotice : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("8f8cb4ce-379f-4a0a-9dcc-d1a1fb8bdd9c");
+
         internal static ConcurrentDictionary<string, DateTime> Tipped;
 
         public M4MMatchNotice()

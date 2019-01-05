@@ -3,6 +3,7 @@ using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Help("按一定条件触发复读。")]
     public class Repeat : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("c96921e9-7f05-4c15-ba92-e0cc3932d2e3");
+
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
         private const int MaxNum = 10;
 

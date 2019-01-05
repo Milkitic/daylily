@@ -12,6 +12,8 @@ namespace Daylily.Plugin.Kernel
 {
     public class PermissionChecker : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("9a4e9dba-f96b-4846-988d-55d2650a6f2b");
+
         public override bool RunInMultiThreading => false;
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
@@ -48,7 +50,7 @@ namespace Daylily.Plugin.Kernel
                 else if (message.IndexOf(Bot.DaylilyCore.Current.CommandFlag + "sudo ", StringComparison.InvariantCulture) == 0 &&
                          cm.MessageType == MessageType.Group)
                 {
-                    if (CoolQDispatcher.Current.SessionInfo[(CqIdentity) cm.Identity].GroupInfo
+                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) cm.Identity].GroupInfo
                         .Admins.Count(q => q.UserId == userId) == 0)
                     {
                         Logger.Raw("Access denied.");
@@ -63,7 +65,7 @@ namespace Daylily.Plugin.Kernel
                 else
                 {
                     // auto
-                    if (CoolQDispatcher.Current.SessionInfo[(CqIdentity) cm.Identity].GroupInfo
+                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) cm.Identity].GroupInfo
                         ?.Admins.Count(q => q.UserId == userId) != 0)
                         cm.Authority = Authority.Admin;
                     if (cm.UserId == "2241521134")

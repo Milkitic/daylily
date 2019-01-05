@@ -1,16 +1,15 @@
 ﻿using Bleatingsheep.Osu.ApiV2b.Models;
-using Daylily.Bot.Message;
+using Daylily.Bot;
+using Daylily.Bot.Backend;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using Daylily.Bot;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Osu
 {
@@ -21,6 +20,8 @@ namespace Daylily.Plugin.Osu
     [Command("挖坑")]
     public class MyGraveyard : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("cbfe5649-6898-4182-aad3-7121f786b4cd");
+
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             BllUserRole bllUserRole = new BllUserRole();

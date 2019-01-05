@@ -17,6 +17,8 @@ namespace Daylily.Plugin.ShaDiao
 {
     class Test : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("cb6a36b8-7437-4545-80bd-8b54ade7f35c");
+
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             if (!routeMsg.RawMessage.Equals("/转"))

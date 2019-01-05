@@ -1,10 +1,12 @@
 ﻿using Daylily.Assist.Interface;
+using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,7 +15,6 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Daylily.Bot;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -24,6 +25,8 @@ namespace Daylily.Plugin.ShaDiao
     [Command("food")]
     public class Food : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("b1fb310c-3c91-4743-98c0-dd8ec592beea");
+
         [Help("禁用指定相册。")]
         [Arg("disable", Default = 0)]
         public int EnabledAlbumId { get; set; }

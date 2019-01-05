@@ -1,11 +1,10 @@
-﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
+﻿using System;
+using Daylily.Bot.Backend;
 using Daylily.Bot.Session;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
-using System;
 
-namespace Daylily.Plugin.Core.Application.SessionDemo
+namespace Daylily.Plugin.Basic.Application.SessionDemo
 {
     [Name("数羊")]
     [Author("yf_extension")]
@@ -13,6 +12,8 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
     [Help("数羊测试。Session应用的demo。")]
     internal class Count : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("6b840ae4-d35e-40e8-9db0-40122a567ae8");
+
 
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {

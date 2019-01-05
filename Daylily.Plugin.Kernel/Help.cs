@@ -26,6 +26,8 @@ namespace Daylily.Plugin.Kernel
     [Command("help")]
     public class Help : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("fecccbed-b645-43e9-a256-e9eb74660ed6");
+
         [FreeArg]
         public string CommandName { get; set; }
 
@@ -79,7 +81,7 @@ namespace Daylily.Plugin.Kernel
 
                                 SendMessage(routeMsg.ToSource("已发送至私聊，请查看。", true));
                                 var helpStr = ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt"));
-                                SendMessage(new CoolQRouteMessage(helpStr, new CqIdentity(_cm.UserId, MessageType.Private)));
+                                SendMessage(new CoolQRouteMessage(helpStr, new CoolQIdentity(_cm.UserId, MessageType.Private)));
                                 return null;
                             }
 
@@ -106,7 +108,7 @@ namespace Daylily.Plugin.Kernel
         private string ShowList()
         {
             CommandPlugin[] plugins = DaylilyCore.Current.PluginManager.Commands.Select(k => k.Instance).Distinct().ToArray();
-            ApplicationPlugin[] apps = DaylilyCore.Current.PluginManager.Applications.ToArray();
+            ApplicationPlugin[] apps = DaylilyCore.Current.PluginManager.ApplicationInstances.ToArray();
             var groupCmd = plugins.Where(plugin => plugin.Authority <= _cm.Authority)
                 .GroupBy(k => k.GetType().Namespace);
             Dictionary<string, Dictionary<string, string>> dicNs = new Dictionary<string, Dictionary<string, string>>();
@@ -152,9 +154,9 @@ namespace Daylily.Plugin.Kernel
                     FreeArg = new Dictionary<string, string>()
                 };
             }
-            else if (DaylilyCore.Current.PluginManager.Applications.Select(k => k.Name).Contains(CommandName))
+            else if (DaylilyCore.Current.PluginManager.ApplicationInstances.Select(k => k.Name).Contains(CommandName))
             {
-                plugin = DaylilyCore.Current.PluginManager.Applications.First(k => k.Name == CommandName);
+                plugin = DaylilyCore.Current.PluginManager.ApplicationInstances.First(k => k.Name == CommandName);
                 custom = new Custom
                 {
                     Title = plugin.Name,

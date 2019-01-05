@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Daylily.Bot.Backend.Plugins
 {
-    public abstract class CommandPlugin : ResponsivePlugin, IInjectableBackend
+    public abstract class CommandPlugin : MessagePlugin, IInjectableBackend
     {
         public sealed override PluginType PluginType => PluginType.Command;
         public override bool RunInMultiThreading { get; } = true;

@@ -1,13 +1,16 @@
-﻿using Daylily.Bot.Backend;
+﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
 using System.Collections.Concurrent;
-using Daylily.Bot;
 
 namespace Daylily.Plugin.Kernel
 {
     public class CommandCounter : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("fe577f01-b63f-45e2-88bd-3236224b93b9");
+
         public ConcurrentDictionary<string, int> CommandRate { get; private set; }
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig

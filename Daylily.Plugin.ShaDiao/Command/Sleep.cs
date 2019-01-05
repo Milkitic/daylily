@@ -1,9 +1,8 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
+using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
-using Daylily.CoolQ.CoolQHttp;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -14,6 +13,8 @@ namespace Daylily.Plugin.ShaDiao
     [Command("sleep")]
     public class Sleep : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("cb6a36b8-7437-4545-80bd-8b54ade7f35c");
+
         [FreeArg(Default = -1)]
         [Help("要禁言的时长，小时为单位，支持小数")]
         public double SleepTime { get; set; }

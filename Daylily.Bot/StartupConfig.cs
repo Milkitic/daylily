@@ -7,19 +7,19 @@ namespace Daylily.Bot
 {
     public class StartupConfig
     {
-        public StartupConfig(IDispatcher dispatcher, IFrontend[] frontends, Metadata metadata,
+        public StartupConfig(IDispatcher messageDispatcher, IFrontend[] frontends, Metadata metadata,
             Action<IDispatcher> generalDispatcherConfig = null, Action<IFrontend> generalFrontendsConfig = null)
         {
             ApplicationMetadata = metadata;
             GeneralDispatcherConfig = generalDispatcherConfig;
             GeneralFrontendsConfig = generalFrontendsConfig;
-            Dispatcher = dispatcher;
+            MessageDispatcher = messageDispatcher;
             Frontends = frontends;
         }
 
         public Metadata ApplicationMetadata { get; }
 
-        public IDispatcher Dispatcher { get; }
+        public IDispatcher MessageDispatcher { get; }
 
         public IFrontend[] Frontends { get; }
 

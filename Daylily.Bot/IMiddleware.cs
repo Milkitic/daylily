@@ -2,6 +2,7 @@
 {
     public interface IMiddleware
     {
+        event ExceptionEventHandler ErrorOccured;
         MiddlewareConfig MiddlewareConfig { get; }
     }
 }

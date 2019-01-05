@@ -1,5 +1,6 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Dispatcher;
+using Daylily.Bot.Frontend;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
@@ -8,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Daylily.Bot.Frontend;
 using SysConsole = System.Console;
 
 namespace Daylily.Bot
@@ -21,6 +21,38 @@ namespace Daylily.Bot
 
         private IDispatcher _dispatcher;
         public IDispatcher Dispatcher => _dispatcher;
+        public IMessageDispatcher MessageDispatcher
+        {
+            get
+            {
+                var dispatcher = _dispatcher as IMessageDispatcher;
+                if (dispatcher == null)
+                    Logger.Warn($"No implement class of {nameof(IMessageDispatcher)}.");
+                return dispatcher;
+            }
+        }
+
+        public IEventDispatcher EventDispatcher
+        {
+            get
+            {
+                var dispatcher = _dispatcher as IEventDispatcher;
+                if (dispatcher == null)
+                    Logger.Warn($"No implement class of {nameof(IEventDispatcher)}.");
+                return dispatcher;
+            }
+        }
+
+        public ISessionDispatcher SessionDispatcher
+        {
+            get
+            {
+                var dispatcher = _dispatcher as ISessionDispatcher;
+                if (dispatcher == null)
+                    Logger.Warn($"No implement class of {nameof(ISessionDispatcher)}.");
+                return dispatcher;
+            }
+        }
 
         public PluginManager PluginManager { get; set; } = new PluginManager();
 
@@ -28,7 +60,7 @@ namespace Daylily.Bot
 
         public string CommandFlag = "/";
 
-        public DaylilyCore(StartupConfig startupConfig)
+        public DaylilyCore(StartupConfig startupConfig, Action configCallback)
         {
             Current = this;
             Logger.Raw(@".__       . .   
@@ -43,15 +75,15 @@ namespace Daylily.Bot
             Logger.Raw(str);
 
             CreateDirectories(); // 创建目录
-            LoadSecret(); // 加载配置
+            configCallback?.Invoke();
 
             PluginManager.LoadPlugins(startupConfig);
         }
 
-        public IDispatcher ConfigDispatcher(IDispatcher dispatcher, Action<IDispatcher> config = null)
+        public IDispatcher ConfigDispatcher(IDispatcher messageDispatcher, Action<IDispatcher> config = null)
         {
-            _dispatcher = dispatcher.Config(config);
-            return dispatcher;
+            _dispatcher = messageDispatcher.Config(config);
+            return messageDispatcher;
         }
 
         public IFrontend AddFrontend(IFrontend frontend, Action<IFrontend> config = null)
@@ -88,46 +120,6 @@ namespace Daylily.Bot
         }
 
         /// <summary>
-        /// 加载配置
-        /// </summary>
-        private static void LoadSecret()
-        {
-            var file = new FileInfo(Path.Combine(Domain.SecretPath, "secret.json"));
-            string json;
-            Secret secret;
-            if (!file.Exists)
-            {
-                secret = new Secret();
-                json = Newtonsoft.Json.JsonConvert.SerializeObject(secret);
-                ConcurrentFile.WriteAllText(file.FullName, json.ToJsonFormat());
-
-                Logger.Error("请完善secret配置。");
-                SysConsole.ReadKey();
-                Environment.Exit(0);
-            }
-
-            json = ConcurrentFile.ReadAllText(file.FullName);
-            secret = Newtonsoft.Json.JsonConvert.DeserializeObject<Secret>(json);
-
-            // 读设置
-            DbHelper.ConnectionString.Add("cabbage", secret.ConnectionStrings.DefaultConnection);
-            DbHelper.ConnectionString.Add("daylily", secret.ConnectionStrings.MyConnection);
-
-            OsuApiKey.ApiKey = secret.OsuSettings.ApiKey;
-            OsuApiKey.UserName = secret.OsuSettings.UserName;
-            OsuApiKey.Password = secret.OsuSettings.Password;
-
-            Signature.AppId = secret.CosSettings.AppId;
-            Signature.SecretId = secret.CosSettings.SecretId;
-            Signature.SecretKey = secret.CosSettings.SecretKey;
-            Signature.BucketName = secret.CosSettings.BucketName;
-
-            CqApi.ApiUrl = secret.BotSettings.PostUrl;
-            CoolQCode.CqPath = secret.BotSettings.CqDir;
-            Current.CommandFlag = secret.BotSettings.CommandFlag;
-        }
-
-        /// <summary>
         /// 创建目录
         /// </summary>
         private static void CreateDirectories()
@@ -138,14 +130,14 @@ namespace Daylily.Bot
             {
                 try
                 {
-                    SysConsole.WriteLine(item.Name);
+                    //SysConsole.WriteLine(item.Name);
                     string path = item.GetValue(null, null) as string;
                     if (!Directory.Exists(path))
                         Directory.CreateDirectory(path);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    Logger.Error("未创建" + item.Name);
+                    Logger.Error($"Cannot create {item.Name}: {ex.Message}");
                 }
             }
         }

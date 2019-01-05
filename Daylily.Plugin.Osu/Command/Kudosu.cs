@@ -1,5 +1,9 @@
-﻿using Daylily.Common.Utils.LoggerUtils;
+﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
+using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
 using Daylily.Osu.Interface;
@@ -10,11 +14,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
-using Daylily.Bot;
-using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Osu
 {
@@ -25,10 +24,12 @@ namespace Daylily.Plugin.Osu
     [Command("kd")]
     public class Kudosu : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("46e46ca7-728d-494b-b201-84ca6b76891a");
+
         [Help("查询指定的osu用户名。若带空格，请使用引号。")]
         [FreeArg]
         public string OsuId { get; set; }
-        
+
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
             string id;

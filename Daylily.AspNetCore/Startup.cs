@@ -1,7 +1,15 @@
 ﻿using Daylily.Bot;
+using Daylily.Bot.Dispatcher;
+using Daylily.Bot.Frontend;
+using Daylily.Bot.Message;
+using Daylily.Common;
+using Daylily.Common.IO;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.SocketUtils;
+using Daylily.Common.Utils.StringUtils;
 using Daylily.CoolQ;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
+using Daylily.CoolQ.Message;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,10 +17,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using System.Threading.Tasks;
-using Daylily.Bot.Frontend;
-using Daylily.Bot.Message;
-using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 
 namespace Daylily.AspNetCore
 {
@@ -50,7 +56,7 @@ namespace Daylily.AspNetCore
                         ApplicationName = metadata.ApplicationName,
                         FrameworkName = metadata.RuntimeFramework
                     }
-                )
+                ), Load.LoadSecret
             );
         }
 
@@ -59,21 +65,24 @@ namespace Daylily.AspNetCore
         {
             foreach (var frontend in daylily.Frontends)
             {
-                var dispatcher = daylily.Dispatcher;
-                if (frontend is CoolQFrontend cqFrontend && dispatcher is CoolQDispatcher cqDispatcher)
+                if (frontend is CoolQFrontend cqFrontend && daylily.Dispatcher is CoolQDispatcher cqDispatcher)
                 {
                     //cqFrontend.PrivateMessageReceived += (sender, e) => { };
                     //cqFrontend.DiscussMessageReceived+= (sender, e) => { };
                     //cqFrontend.GroupMessageReceived += (sender, e) => { };
-                    cqFrontend.FriendAdded += (sender, e) => { };
-                    cqFrontend.FriendRequested += (sender, e) => { };
-                    cqFrontend.GroupRequested += (sender, e) => { };
-                    cqFrontend.GroupAdminChanged += (sender, e) => { };
+                    cqFrontend.Requested += (sender, e) =>
+                    {
+                        daylily.EventDispatcher?.Event_Received(sender, new EventEventArgs(e.ParsedObject));
+                    };
+                    cqFrontend.Noticed += (sender, e) =>
+                    {
+                        daylily.EventDispatcher?.Event_Received(sender, new EventEventArgs(e.ParsedObject));
+                    };
                 }
 
                 frontend.MessageReceived += (sender, e) =>
                 {
-                    dispatcher.Message_Received(sender, new MessageEventArgs(e.ParsedObject));
+                    daylily.MessageDispatcher?.Message_Received(sender, new MessageEventArgs(e.ParsedObject));
                 };
                 frontend.ErrorOccured += (sender, e) => { };
             }

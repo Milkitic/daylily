@@ -3,6 +3,7 @@ using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -15,6 +16,8 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Help("当自己被at时回击at对方")]
     public class CheckCqAt : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("e6d765b3-a015-4192-9cc1-0cfa5c13ec55");
+
         private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
 
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)

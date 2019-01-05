@@ -1,9 +1,9 @@
 ﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ.Message;
-using Daylily.Plugin.Core;
 using System;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
+using Daylily.Plugin.Basic;
 
 namespace TestMyPlugin
 {

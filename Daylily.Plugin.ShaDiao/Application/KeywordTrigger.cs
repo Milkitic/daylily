@@ -1,12 +1,12 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
@@ -16,6 +16,8 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Help("收到已给的关键词时，根据已给几率返回一张熊猫图。")]
     public class KeywordTrigger : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("1abf7c43-bafb-4536-a2be-e9aff8a2fc51");
+
         private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
         private static List<TriggerObject> _triggerObjects;
         public KeywordTrigger()

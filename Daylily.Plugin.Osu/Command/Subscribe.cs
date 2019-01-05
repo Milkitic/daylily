@@ -1,7 +1,11 @@
 ﻿using Bleatingsheep.Osu.ApiV2b;
 using Bleatingsheep.Osu.ApiV2b.Models;
+using Daylily.Bot;
+using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Interface;
 using System;
 using System.Collections.Concurrent;
@@ -10,10 +14,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Osu
 {
@@ -24,6 +24,8 @@ namespace Daylily.Plugin.Osu
     [Command("sub")]
     public class Subscribe : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("2690bff7-1e5c-4069-98b8-d0fdfc612a02");
+
         [Arg("u")]
         [Help("需要取消订阅的mapper用户名。")]
         public string UnsubscribeMapper { get; set; }

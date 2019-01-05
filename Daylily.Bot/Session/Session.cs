@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Daylily.Bot.Message;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot.Message;
 
 namespace Daylily.Bot.Session
 {
@@ -33,7 +33,10 @@ namespace Daylily.Bot.Session
                 throw new NotSupportedException("不支持同时两个会话操作。");
 
             Sessions.TryAdd(SessionId, new Queue<RouteMessage>());
-            CoolQDispatcher.Current.SessionReceived += Session_Received;
+            if (DaylilyCore.Current.SessionDispatcher != null)
+            {
+                DaylilyCore.Current.SessionDispatcher.SessionReceived += Session_Received;
+            }
         }
 
         public void AddMember(params long[] userId)
@@ -90,7 +93,10 @@ namespace Daylily.Bot.Session
             }
             finally
             {
-                DaylilyCore.Current.Dispatcher.SessionReceived -= Session_Received;
+                if (DaylilyCore.Current.SessionDispatcher != null)
+                {
+                    DaylilyCore.Current.SessionDispatcher.SessionReceived -= Session_Received;
+                }
                 Sessions.TryRemove(SessionId, out _);
             }
         }

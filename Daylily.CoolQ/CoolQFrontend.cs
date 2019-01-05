@@ -1,9 +1,10 @@
-﻿using System;
-using Daylily.Bot;
+﻿using Daylily.Bot;
+using Daylily.Bot.Dispatcher;
 using Daylily.Bot.Frontend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Newtonsoft.Json;
+using System;
 
 namespace Daylily.CoolQ
 {
@@ -16,11 +17,13 @@ namespace Daylily.CoolQ
         public event MessageEventHandler GroupMessageReceived;
         public event MessageEventHandler DiscussMessageReceived;
 
+        public event NoticeEventHandler Noticed;
         public event NoticeEventHandler GroupFileUploaded;
         public event NoticeEventHandler GroupAdminChanged;
         public event NoticeEventHandler GroupMemberChanged;
         public event NoticeEventHandler FriendAdded;
 
+        public event RequestEventHandler Requested;
         public event RequestEventHandler FriendRequested;
         public event RequestEventHandler GroupRequested;
 
@@ -66,17 +69,20 @@ namespace Daylily.CoolQ
                         GroupFileUpload parsedObj = JsonConvert.DeserializeObject<GroupFileUpload>(rawJson);
                         var arg = new NoticeEventArgs(parsedObj);
                         GroupFileUploaded?.Invoke(this, arg);
-                    }
+                        Noticed?.Invoke(this, arg);
+                  }
                     else if (obj.notice_type == "group_admin") // 群管理员变动
                     {
                         GroupAdminChange parsedObj = JsonConvert.DeserializeObject<GroupAdminChange>(rawJson);
                         var arg = new NoticeEventArgs(parsedObj);
                         GroupAdminChanged?.Invoke(this, arg);
+                        Noticed?.Invoke(this, arg);
                     }
                     else if (obj.notice_type == "group_decrease" || obj.notice_type == "group_increase") // 群成员增加/减少
                     {
                         GroupMemberChange parsedObj = JsonConvert.DeserializeObject<GroupMemberChange>(rawJson);
                         var arg = new NoticeEventArgs(parsedObj);
+                        Noticed?.Invoke(this, arg);
                         GroupMemberChanged?.Invoke(this, arg);
                     }
                     else if (obj.notice_type == "friend_add") // 好友添加
@@ -84,6 +90,7 @@ namespace Daylily.CoolQ
                         FriendAdd parsedObj = JsonConvert.DeserializeObject<FriendAdd>(rawJson);
                         var arg = new NoticeEventArgs(parsedObj);
                         FriendAdded?.Invoke(this, arg);
+                        Noticed?.Invoke(this, arg);
                     }
                 }
                 else if (obj.post_type == "request")
@@ -93,6 +100,7 @@ namespace Daylily.CoolQ
                         FriendRequest parsedObj = JsonConvert.DeserializeObject<FriendRequest>(rawJson);
                         var arg = new RequestEventArgs(parsedObj);
                         FriendRequested?.Invoke(this, arg);
+                        Requested?.Invoke(this, arg);
 
                         //// TODO，临时
                         //CqApi.SendPrivateMessage("2241521134",
@@ -104,6 +112,7 @@ namespace Daylily.CoolQ
                         GroupInvite parsedObj = JsonConvert.DeserializeObject<GroupInvite>(rawJson);
                         var arg = new RequestEventArgs(parsedObj);
                         GroupRequested?.Invoke(this, arg);
+                        Requested?.Invoke(this, arg);
 
                         //// TODO，临时
                         //if (parsedObj.SubType == "invite")

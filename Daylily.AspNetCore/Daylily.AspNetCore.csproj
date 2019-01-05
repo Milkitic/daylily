@@ -35,6 +35,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Daylily.Bot\Daylily.Bot.csproj" />
     <ProjectReference Include="..\Daylily.CoolQ\Daylily.CoolQ.csproj" />
+    <ProjectReference Include="..\Daylily.Cos\Daylily.Cos.csproj" />
+    <ProjectReference Include="..\Daylily.Osu\Daylily.Osu.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>

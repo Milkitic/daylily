@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Daylily.Bot.Message
+namespace Daylily.Bot.Dispatcher
 {
-    public class MessageEventArgs : EventArgs
+    public class EventEventArgs : EventArgs
     {
-        public MessageEventArgs(object parsedObject)
+        public EventEventArgs(object parsedObject)
         {
             ParsedObject = parsedObject;
         }

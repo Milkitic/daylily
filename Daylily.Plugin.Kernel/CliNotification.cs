@@ -13,6 +13,8 @@ namespace Daylily.Plugin.Kernel
 {
     public class CliNotification : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("9a71f0a2-fd2e-4d7e-abd8-681d14d0d83e");
+
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
             Priority = 99
@@ -30,20 +32,20 @@ namespace Daylily.Plugin.Kernel
             if (type == MessageType.Private)
             {
                 group = "私聊";
-                sender = CoolQDispatcher.Current.SessionInfo[(CqIdentity)cm.Identity].Name;
+                sender = CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)cm.Identity].Name;
             }
             else if (type == MessageType.Discuss)
             {
-                group = CoolQDispatcher.Current.SessionInfo[(CqIdentity)cm.Identity].Name;
+                group = CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)cm.Identity].Name;
                 sender = cm.UserId;
             }
             else
             {
                 var userInfo =
-                    CoolQDispatcher.Current.SessionInfo[(CqIdentity) cm.Identity]?.GroupInfo?.Members
+                    CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) cm.Identity]?.GroupInfo?.Members
                         ?.FirstOrDefault(i => i.UserId == userId) ??
                     CoolQHttpApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
-                group = CoolQDispatcher.Current.SessionInfo?[(CqIdentity)cm.Identity]?.Name;
+                group = CoolQDispatcher.Current.SessionInfo?[(CoolQIdentity)cm.Identity]?.Name;
                 sender = string.IsNullOrEmpty(userInfo.Card)
                     ? userInfo.Nickname
                     : userInfo.Card;

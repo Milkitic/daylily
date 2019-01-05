@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Core", "Daylily.Plugin.Core\Daylily.Plugin.Core.csproj", "{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Basic", "Daylily.Plugin.Core\Daylily.Plugin.Basic.csproj", "{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Assist", "Daylily.Assist\Daylily.Assist.csproj", "{1E7A1900-414F-4424-B7E1-13B3A1297DB7}"
 EndProject

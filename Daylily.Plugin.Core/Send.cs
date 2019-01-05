@@ -1,15 +1,15 @@
-﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using Daylily.Bot;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
-namespace Daylily.Plugin.Core
+namespace Daylily.Plugin.Basic
 {
     [Name("发送自定义消息")]
     [Author("yf_extension")]
@@ -18,6 +18,8 @@ namespace Daylily.Plugin.Core
     [Command("send")]
     public class Send : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("09983821-0238-4b0d-b1c1-2921eb7e52d1");
+
         [Arg("g")]
         [Help("要发送的群号。")]
         public string GroupId { get; set; }
@@ -59,7 +61,7 @@ namespace Daylily.Plugin.Core
                         try
                         {
                             sessionId = groupInfo.GroupId.ToString();
-                            SendMessage(new CoolQRouteMessage(msg, new CqIdentity(sessionId, sessionType)));
+                            SendMessage(new CoolQRouteMessage(msg, new CoolQIdentity(sessionId, sessionType)));
                             Thread.Sleep(3000);
                         }
                         catch
@@ -93,7 +95,7 @@ namespace Daylily.Plugin.Core
             if (DiscussId == null && GroupId == null && UserId == null)
                 return routeMsg.ToSource(Decode(routeMsg.ArgString));
 
-            SendMessage(new CoolQRouteMessage(innerMessage, new CqIdentity(sessionId, sessionType)));
+            SendMessage(new CoolQRouteMessage(innerMessage, new CoolQIdentity(sessionId, sessionType)));
             return null;
         }
 

@@ -1,13 +1,13 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Threading;
-using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 
-namespace Daylily.Plugin.Core
+namespace Daylily.Plugin.Basic
 {
     // 激活插件的命令，支持多字符串
     [Command("demo1")]
@@ -21,6 +21,8 @@ namespace Daylily.Plugin.Core
     [Help("用于对于插件开发进行Demo演示")]
     class Demo : CoolQCommandPlugin // 继承此类做为命令，此外还有其他两种类型
     {
+        public override Guid Guid => new Guid("b5c867e1-0d3d-4efb-ad76-91c3a76100f8");
+
         private static Thread _tThread;
         private static string UserId { get; set; }
 
@@ -108,7 +110,7 @@ namespace Daylily.Plugin.Core
             string reply2 = "回复到了别处";
             string userId2 = "xxxxxxx";
             long groupId2 = 123456;
-            SendMessage(new CoolQRouteMessage(reply2, new CqIdentity(groupId2, MessageType.Group), userId2));
+            SendMessage(new CoolQRouteMessage(reply2, new CoolQIdentity(groupId2, MessageType.Group), userId2));
             return null;
         }
 
@@ -127,7 +129,7 @@ namespace Daylily.Plugin.Core
                 {
                     // 这里可以做大量其他操作，更新数据库等，不阻塞主线程
                     string message = "Pong!";
-                    SendMessage(new CoolQRouteMessage(message, new CqIdentity(UserId, MessageType.Private)));
+                    SendMessage(new CoolQRouteMessage(message, new CoolQIdentity(UserId, MessageType.Private)));
                 }
                 catch (Exception ex)
                 {

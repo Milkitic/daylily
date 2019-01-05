@@ -20,6 +20,8 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Help("发现龙图时作出回应。", "仅供娱乐。")]
     class DragonDetector : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("b4372d2f-cc37-43b6-b1e0-b2a2f2088867");
+
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
 
         private static int _totalCount;

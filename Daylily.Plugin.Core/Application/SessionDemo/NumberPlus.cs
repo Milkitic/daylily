@@ -1,14 +1,13 @@
-﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
-using Daylily.Bot.Session;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Session;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 
-namespace Daylily.Plugin.Core.Application.SessionDemo
+namespace Daylily.Plugin.Basic.Application.SessionDemo
 {
     [Name("两数相加")]
     [Author("yf_extension")]
@@ -16,6 +15,8 @@ namespace Daylily.Plugin.Core.Application.SessionDemo
     [Help("两数相加测试。Session应用的demo。")]
     internal class NumberPlus : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("44ca2fd0-a6dc-48aa-a41b-7b6abfd6e2d4");
+
         private static readonly ConcurrentDictionary<Session, (string, List<string>)> SessionsList =
             new ConcurrentDictionary<Session, (string, List<string>)>();
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)

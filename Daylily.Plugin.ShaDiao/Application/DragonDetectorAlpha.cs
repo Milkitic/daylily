@@ -1,16 +1,16 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ.CoolQHttp;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.CoolQHttp;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.ShaDiao.Application
 {
@@ -20,6 +20,8 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Help("发现龙图时作出回应。")]
     class DragonDetectorAlpha : CoolQApplicationPlugin
     {
+        public override Guid Guid => new Guid("44ec1c54-8a34-4e8d-82b8-cf3c5babf88e");
+
         private readonly List<string> _pathList = new List<string>();
         private readonly List<string> _receivedString = new List<string>();
 

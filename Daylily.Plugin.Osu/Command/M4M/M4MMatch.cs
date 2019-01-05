@@ -5,6 +5,7 @@ using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.Utils.StringUtils;
+using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Database.BLL;
@@ -15,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Daylily.CoolQ.CoolQHttp;
 
 namespace Daylily.Plugin.Osu
 {
@@ -28,6 +28,8 @@ namespace Daylily.Plugin.Osu
     [Command("m4m")]
     public class M4MMatch : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("161f465e-5889-4b5b-bb99-693ae6eb87fa");
+
         private static List<MatchInfo> _matchList;
         private CoolQRouteMessage _routeMsg;
         private Session _session;
@@ -157,7 +159,7 @@ namespace Daylily.Plugin.Osu
 
                             string nick2 = CoolQHttpApi.GetStrangerInfo(_myInfo.Qq).Data?.Nickname ?? "玩家";
                             SendMessage(new CoolQRouteMessage($"{nick2}({_myInfo.Qq})已经确认查收了你的摸。",
-                                new CqIdentity(oInfo.Qq, MessageType.Private)));
+                                new CoolQIdentity(oInfo.Qq, MessageType.Private)));
 
                             if (oInfo.LastConfirmedTime == null || _myInfo.LastConfirmedTime == null)
                                 return null;
@@ -168,10 +170,10 @@ namespace Daylily.Plugin.Osu
                             _myInfo.Finish();
                             SendMessage(new CoolQRouteMessage(
                                 $"你与{nick}({oInfo.Qq})的M4M ({oInfo.SetUrl}) 已完成，合作愉快！",
-                                new CqIdentity(_myInfo.Qq, MessageType.Private)));
+                                new CoolQIdentity(_myInfo.Qq, MessageType.Private)));
                             SendMessage(new CoolQRouteMessage(
                                 $"你与{nick2}({_myInfo.Qq})的M4M ({_myInfo.SetUrl}) 已完成，合作愉快！",
-                                new CqIdentity(oInfo.Qq, MessageType.Private)));
+                                new CoolQIdentity(oInfo.Qq, MessageType.Private)));
                             SaveMatchList(); //apply 
                             return null;
                         }
@@ -191,7 +193,7 @@ namespace Daylily.Plugin.Osu
                                 $"正在等待你的摸。\r\n" +
                                 $"请检查他的modding情况，回复 \"/m4m -确认\" 查收。\r\n" +
                                 $"若对方没有摸完，请不要查收。若有疑问请相互交流。",
-                                new CqIdentity(oInfo.Qq, MessageType.Private)));
+                                new CoolQIdentity(oInfo.Qq, MessageType.Private)));
                             return _routeMsg.ToSource("已发送完成请求。");
                         }
                         // Cancel
@@ -214,10 +216,10 @@ namespace Daylily.Plugin.Osu
                             _myInfo.Finish();
                             SendMessage(new CoolQRouteMessage(
                                 $"你与{nick}({oInfo.Qq})的M4M ({oInfo.SetUrl}) 已强制取消。",
-                                new CqIdentity(_myInfo.Qq, MessageType.Private)));
+                                new CoolQIdentity(_myInfo.Qq, MessageType.Private)));
                             SendMessage(new CoolQRouteMessage(
                                 $"你与{nick2}({_myInfo.Qq})的M4M ({_myInfo.SetUrl}) 已强制取消。",
-                                new CqIdentity(oInfo.Qq, MessageType.Private)));
+                                new CoolQIdentity(oInfo.Qq, MessageType.Private)));
                             SaveMatchList(); //apply 
                             return null;
                         }
@@ -366,7 +368,7 @@ namespace Daylily.Plugin.Osu
                                 SendMessage(new CoolQRouteMessage($"{nick2}({_myInfo.Qq}) 与你成功匹配\r\n" +
                                                                       $"{sub2}的地图：{_myInfo.SetUrl}\r\n" +
                                                                       $"{sub2}的备注：{_myInfo.Mark}\r\n" + tip,
-                                    new CqIdentity(matchInfo.Qq, MessageType.Private)));
+                                    new CoolQIdentity(matchInfo.Qq, MessageType.Private)));
 
                                 return _routeMsg.ToSource($"你与{nick1}({matchInfo.Qq}) 成功匹配\r\n" +
                                                                  $"{sub1}的地图：{matchInfo.SetUrl}\r\n" +

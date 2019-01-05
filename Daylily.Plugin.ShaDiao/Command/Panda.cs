@@ -1,14 +1,15 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -19,6 +20,8 @@ namespace Daylily.Plugin.ShaDiao
     [Command("panda")]
     public class Panda : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("cb6a36b8-7437-4545-80bd-8b54ade7f35c");
+
         [FreeArg]
         [Help("需要生成的配套文字。以逗号分隔作为行数。若带空格，请使用引号。")]
         public string PandaWord { get; set; }

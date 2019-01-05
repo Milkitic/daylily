@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Daylily.CoolQ.Message
 {
-    public struct CqIdentity : ISessionIdentity
+    public struct CoolQIdentity : ISessionIdentity
     {
         [JsonProperty("id")]
         public long Id
@@ -25,21 +25,21 @@ namespace Daylily.CoolQ.Message
         [JsonIgnore]
         public string SessionType { get; set; }
 
-        public CqIdentity(long id, MessageType type) : this()
+        public CoolQIdentity(long id, MessageType type) : this()
         {
             Id = id;
             Type = type;
         }
 
-        public CqIdentity(string id, MessageType type) : this()
+        public CoolQIdentity(string id, MessageType type) : this()
         {
             Id = long.Parse(id);
             Type = type;
         }
 
-        public bool Equals(CqIdentity other) => Id == other.Id && Type == other.Type;
+        public bool Equals(CoolQIdentity other) => Id == other.Id && Type == other.Type;
 
-        public override bool Equals(object obj) => !(obj is null) && obj is CqIdentity identity && Equals(identity);
+        public override bool Equals(object obj) => !(obj is null) && obj is CoolQIdentity identity && Equals(identity);
 
         public override int GetHashCode()
         {
@@ -49,8 +49,8 @@ namespace Daylily.CoolQ.Message
             }
         }
 
-        public static bool operator !=(CqIdentity i1, CqIdentity i2) => !i1.Equals(i2);
+        public static bool operator !=(CoolQIdentity i1, CoolQIdentity i2) => !i1.Equals(i2);
 
-        public static bool operator ==(CqIdentity i1, CqIdentity i2) => i1.Equals(i2);
+        public static bool operator ==(CoolQIdentity i1, CoolQIdentity i2) => i1.Equals(i2);
     }
 }

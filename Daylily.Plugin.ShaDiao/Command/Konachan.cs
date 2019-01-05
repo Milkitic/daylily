@@ -1,11 +1,10 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Backend;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -16,6 +15,8 @@ namespace Daylily.Plugin.ShaDiao
     [Command("konachan", "yandere", "safebooru")]
     public class Konachan : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("a6cbd411-499f-4dde-bdb0-fc17431cb6c9");
+
         private static IDictionary<string, string> WebsiteMap => new Dictionary<string, string>
         {
             { "konachan".ToUpperInvariant(), "https://konachan.net" },

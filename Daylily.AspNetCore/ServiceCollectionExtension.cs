@@ -1,20 +1,20 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Daylily.Bot;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot;
-using Microsoft.Extensions.Hosting;
 
 namespace Daylily.AspNetCore
 {
     public static class ServiceCollectionExtension
     {
-        public static void AddDaylily(this IServiceCollection services, StartupConfig startupConfig)
+        public static void AddDaylily(this IServiceCollection services, StartupConfig startupConfig, Action configCallback = null)
         {
-            var bot = new DaylilyCore(startupConfig);
-            bot.ConfigDispatcher(startupConfig.Dispatcher, startupConfig.GeneralDispatcherConfig);
+            var bot = new DaylilyCore(startupConfig, configCallback);
+            bot.ConfigDispatcher(startupConfig.MessageDispatcher, startupConfig.GeneralDispatcherConfig);
             foreach (var frontend in startupConfig.Frontends)
             {
                 bot.AddFrontend(frontend, startupConfig.GeneralFrontendsConfig);
