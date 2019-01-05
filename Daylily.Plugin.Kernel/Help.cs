@@ -21,7 +21,7 @@ namespace Daylily.Plugin.Kernel
 {
     [Name("黄花菜帮助")]
     [Author("yf_extension")]
-    [Version(2, 0, 2, PluginVersion.Beta)]
+    [Version(2, 0, 3, PluginVersion.Beta)]
     [Help("查看此帮助信息。")]
     [Command("help")]
     public class Help : CoolQCommandPlugin
@@ -102,10 +102,10 @@ namespace Daylily.Plugin.Kernel
                 }
             }
             else
-                return routeMsg.ToSource(ShowDetail().Trim('\n').Trim('\r'));
+                return routeMsg.ToSource(ShowDetail());
         }
 
-        private string ShowList()
+        private CoolQCode ShowList()
         {
             CommandPlugin[] plugins = DaylilyCore.Current.PluginManager.Commands.Select(k => k.Instance).Distinct().ToArray();
             ApplicationPlugin[] apps = DaylilyCore.Current.PluginManager.ApplicationInstances.ToArray();
@@ -133,10 +133,10 @@ namespace Daylily.Plugin.Kernel
                 .Take(5)
                 .Where(k => k.Value > 50)
                 .Select(k => "/" + k.Key).ToArray();
-            return new FileImage(DrawList(dicNs.OrderBy(k => k.Key).ToDictionary(k => k.Key, k => k.Value), dicApp, hot), 95).ToString();
+            return new FileImage(DrawList(dicNs.OrderBy(k => k.Key).ToDictionary(k => k.Key, k => k.Value), dicApp, hot), 95);
         }
 
-        private string ShowDetail()
+        private CoolQCode ShowDetail()
         {
             Custom custom;
             Bot.Backend.Plugins.Plugin plugin;
@@ -233,7 +233,7 @@ namespace Daylily.Plugin.Kernel
             }
 
             custom.Usage = plugin is ApplicationPlugin ? "自动触发。" : $"/{CommandName}{sbArg}{sbFree}{sbSw}";
-            return new FileImage(DrawDetail(custom)).ToString();
+            return new FileImage(DrawDetail(custom));
         }
 
         private Bitmap DrawList(Dictionary<string, Dictionary<string, string>> dicNs, Dictionary<string, string> dicApp, string[] hot)
