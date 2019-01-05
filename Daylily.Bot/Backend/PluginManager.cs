@@ -44,9 +44,9 @@ namespace Daylily.Bot.Backend
                 .Select(k => k.Instance)
                 .Distinct();
 
-        protected List<TaggedClass<Type>> CachedCommands { get; set; }
-        protected List<TaggedClass<Plugin>> TaggedPlugins { get; set; }
-        protected List<TaggedClass<Assembly>> Assemblies { get; set; }
+        protected List<TaggedClass<Type>> CachedCommands { get; } = new List<TaggedClass<Type>>();
+        protected List<TaggedClass<Plugin>> TaggedPlugins { get; } = new List<TaggedClass<Plugin>>();
+        protected List<TaggedClass<Assembly>> Assemblies { get; } = new List<TaggedClass<Assembly>>();
 
         protected static readonly string BackendDirectory = Domain.PluginPath;
         protected static readonly string ExtendedDirectory = Domain.ExtendedPluginPath;
