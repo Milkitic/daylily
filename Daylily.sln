@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.CoolQ", "Daylily.Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Cos", "Daylily.Cos\Daylily.Cos.csproj", "{F639D3EC-B942-465C-8AD5-CD1E5510E50F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.ShaDiao", "Daylily.Plugin.ShaDiao\Daylily.Plugin.ShaDiao.csproj", "{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Fun", "Daylily.Plugin.Fun\Daylily.Plugin.Fun.csproj", "{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestMyPlugin", "TestMyPlugin\TestMyPlugin.csproj", "{E8689307-9A94-4809-8F08-EA04E8400969}"
 EndProject
