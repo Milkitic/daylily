@@ -104,28 +104,30 @@ namespace Daylily.Bot.Session
         private void Session_Received(object sender, SessionReceivedEventArgs args)
         {
             lock (LockObj)
-                if (SessionId.CqIdentity == args.RouteMessageObj.Identity &&
+            {
+                if (SessionId.Identity.Equals(args.RouteMessageObj.Identity) &&
                     SessionId.UserId.Contains(long.Parse(args.RouteMessageObj.UserId)))
                     Sessions[SessionId].Enqueue(args.RouteMessageObj);
+            }
         }
     }
 
     public struct SessionId
     {
-        public ISessionIdentity CqIdentity { get; }
+        public ISessionIdentity Identity { get; }
 
         public long[] UserId { get; set; }
 
-        public SessionId(ISessionIdentity cqIdentity, long[] userId)
+        public SessionId(ISessionIdentity identity, long[] userId)
         {
-            CqIdentity = cqIdentity;
+            Identity = identity;
             UserId = userId;
         }
 
         /// <summary>
         /// 单用户会话
         /// </summary>
-        public bool Equals(SessionId obj) => CqIdentity == obj.CqIdentity && UserId.SequenceEqual(obj.UserId);
+        public bool Equals(SessionId obj) => Identity.Equals(obj.Identity) && UserId.SequenceEqual(obj.UserId);
 
         /// <summary>
         /// 要求更为严格的会话
@@ -133,12 +135,12 @@ namespace Daylily.Bot.Session
         public bool Contains(SessionId obj)
         {
             long[] userId = UserId;
-            return CqIdentity.Equals(obj.CqIdentity) && obj.UserId.Any(k => userId.Contains(k));
+            return Identity.Equals(obj.Identity) && obj.UserId.Any(k => userId.Contains(k));
         }
 
         public override bool Equals(object obj) => !(obj is null) && obj is SessionId id && Equals(id);
 
-        public override int GetHashCode() => HashCode.Combine(CqIdentity, UserId);
+        public override int GetHashCode() => HashCode.Combine(Identity.GetHashCode(), UserId.GetHashCode());
 
         public static bool operator !=(SessionId s1, SessionId s2) => !s1.Equals(s2);
 
