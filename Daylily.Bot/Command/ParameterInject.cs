@@ -1,12 +1,9 @@
-﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Command;
-using Daylily.Common.Utils.LoggerUtils;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Reflection;
-using System.Text;
+using Daylily.Bot.Backend;
+using Daylily.Common.Utils.LoggerUtils;
 
-namespace Daylily.Bot
+namespace Daylily.Bot.Command
 {
     public static class ParameterInject
     {
