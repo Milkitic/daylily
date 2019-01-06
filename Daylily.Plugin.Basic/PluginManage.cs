@@ -51,10 +51,9 @@ namespace Daylily.Plugin.Basic
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
-            Priority = int.MaxValue
+            Priority = int.MaxValue,
+            CanDisabled = false
         };
-
-        public override bool CanDisabled => false;
 
         public override void OnInitialized(string[] args)
         {
@@ -66,13 +65,14 @@ namespace Daylily.Plugin.Basic
             _routeMsg = routeMsg;
             _identity = (CoolQIdentity)_routeMsg.Identity;
             _plugins = PluginManager.Current.Plugins.OfType<MessagePlugin>()
-                .Where(k => k.CanDisabled);
+                .Where(k => (k.MiddlewareConfig as BackendConfig)?.CanDisabled == true)
+                .Where(k => k.TargetAuthority != Authority.Root);
             if (!DisabledList.ContainsKey(_identity))
                 DisabledList.TryAdd(_identity, new List<Guid>());
 
             _disabled = DisabledList[_identity];
 
-            if (_routeMsg.Authority == Authority.Public && _routeMsg.MessageType == MessageType.Group)
+            if (_routeMsg.CurrentAuthority == Authority.Public && _routeMsg.MessageType == MessageType.Group)
                 return _routeMsg.ToSource(DefaultReply.AdminOnly);
             if (List)
                 return ShowPluginList();

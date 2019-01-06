@@ -12,7 +12,7 @@ namespace Daylily.Bot.Backend
         int Patch { get; }
         PluginVersion State { get; }
         string[] Helps { get; }
-        Authority Authority { get; }
+        Authority TargetAuthority { get; }
         Guid Guid { get; }
 
         void OnInitialized(string[] args);

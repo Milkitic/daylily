@@ -17,7 +17,8 @@ namespace Daylily.Plugin.Kernel
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
-            Priority = 99
+            Priority = 99,
+            CanDisabled = false
         };
 
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)

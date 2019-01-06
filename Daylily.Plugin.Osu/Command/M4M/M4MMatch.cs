@@ -64,7 +64,7 @@ namespace Daylily.Plugin.Osu
             _routeMsg = routeMsg;
             if (List)
             {
-                if (_routeMsg.Authority == Authority.Root)
+                if (_routeMsg.CurrentAuthority == Authority.Root)
                 {
                     BllUserRole bllUserRole = new BllUserRole();
                     List<string> strs = new List<string>();

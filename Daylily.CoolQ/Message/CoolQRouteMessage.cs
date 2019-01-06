@@ -10,7 +10,7 @@ namespace Daylily.CoolQ.Message
 {
     public sealed class CoolQRouteMessage : RouteMessage, ICloneable
     {
-        public Authority Authority { get; set; }
+        public Authority CurrentAuthority { get; set; }
         public MessageType MessageType { get; set; }
 
         public override ISessionIdentity Identity
@@ -104,7 +104,7 @@ namespace Daylily.CoolQ.Message
                 Message = CoolQMessage.Parse(coolQMessageApi.Message),
                 UserId = coolQMessageApi.UserId.ToString(),
                 MessageId = coolQMessageApi.MessageId,
-                Authority = level
+                CurrentAuthority = level
             };
             switch (coolQMessageApi)
             {

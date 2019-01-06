@@ -28,6 +28,11 @@ namespace Daylily.Plugin.Kernel
     {
         public override Guid Guid => new Guid("fecccbed-b645-43e9-a256-e9eb74660ed6");
 
+        public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
+        {
+            CanDisabled = false
+        };
+
         [FreeArg]
         public string CommandName { get; set; }
 
@@ -109,7 +114,7 @@ namespace Daylily.Plugin.Kernel
         {
             CommandPlugin[] plugins = DaylilyCore.Current.PluginManager.Commands.Select(k => k.Instance).Distinct().ToArray();
             ApplicationPlugin[] apps = DaylilyCore.Current.PluginManager.ApplicationInstances.ToArray();
-            var groupCmd = plugins.Where(plugin => plugin.Authority <= _cm.Authority)
+            var groupCmd = plugins.Where(plugin => plugin.TargetAuthority <= _cm.CurrentAuthority)
                 .GroupBy(k => k.GetType().Namespace);
             Dictionary<string, Dictionary<string, string>> dicNs = new Dictionary<string, Dictionary<string, string>>();
             foreach (IGrouping<string, CommandPlugin> group in groupCmd.OrderBy(k => k.Key))
@@ -125,7 +130,7 @@ namespace Daylily.Plugin.Kernel
                         $"{plugin.Name}。{plugin.Helps[0]}");
                 }
             }
-            Dictionary<string, string> dicApp = apps.Where(plugin => plugin.Authority <= _cm.Authority)
+            Dictionary<string, string> dicApp = apps.Where(plugin => plugin.TargetAuthority <= _cm.CurrentAuthority)
                 .OrderBy(k => k.Name).ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]);
 
             string[] hot = DaylilyCore.Current.PluginManager.GetPlugin<CommandCounter>()?.CommandRate

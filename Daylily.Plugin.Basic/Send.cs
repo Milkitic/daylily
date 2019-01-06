@@ -40,7 +40,7 @@ namespace Daylily.Plugin.Basic
         {
             string sessionId = null;
             var sessionType = MessageType.Private;
-            if (routeMsg.Authority != Authority.Root)
+            if (routeMsg.CurrentAuthority != Authority.Root)
                 return routeMsg.ToSource(DefaultReply.RootOnly);
             if (Message == null)
                 return routeMsg.ToSource("你要说什么……");

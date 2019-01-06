@@ -18,7 +18,8 @@ namespace Daylily.Plugin.Kernel
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
-            Priority = -1
+            Priority = -1,
+            CanDisabled = false
         };
 
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
@@ -43,7 +44,7 @@ namespace Daylily.Plugin.Kernel
                     else
                     {
                         cm.FullCommand = message.Substring(6, message.Length - 6);
-                        cm.Authority = Authority.Root;
+                        cm.CurrentAuthority = Authority.Root;
                     }
 
                 }
@@ -59,7 +60,7 @@ namespace Daylily.Plugin.Kernel
                     else
                     {
                         cm.FullCommand = message.Substring(6, message.Length - 6);
-                        cm.Authority = Authority.Admin;
+                        cm.CurrentAuthority = Authority.Admin;
                     }
                 }
                 else
@@ -67,9 +68,9 @@ namespace Daylily.Plugin.Kernel
                     // auto
                     if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) cm.Identity].GroupInfo
                         ?.Admins.Count(q => q.UserId == userId) != 0)
-                        cm.Authority = Authority.Admin;
+                        cm.CurrentAuthority = Authority.Admin;
                     if (cm.UserId == "2241521134")
-                        cm.Authority = Authority.Root;
+                        cm.CurrentAuthority = Authority.Root;
 
                     cm.FullCommand = message.Substring(1, message.Length - 1);
                 }

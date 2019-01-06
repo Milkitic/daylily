@@ -48,7 +48,7 @@ namespace Daylily.Plugin.Basic
         {
             string userId = routeMsg.UserId;
             MessageType type = routeMsg.MessageType;
-            Authority level = routeMsg.Authority;
+            Authority level = routeMsg.CurrentAuthority;
             if (type != MessageType.Private)
             {
                 return routeMsg.ToSource(DefaultReply.PrivateOnly);

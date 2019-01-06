@@ -60,7 +60,7 @@ namespace Daylily.Plugin.Basic
             string argString = routeMsg.ArgString;
             // 当前处于的权限状态，默认为Public（即开放权限）
             // 当用户执行 /sudo 或 /root 会分别触发 Admin（对应群的管理员）和 Root（系统管理员），以此做出对应权限所对应的功能
-            Authority level = routeMsg.Authority;
+            Authority level = routeMsg.CurrentAuthority;
             if (level == Authority.Public)
                 Logger.Info("当前所用权限：Public");
             else if (level == Authority.Admin)

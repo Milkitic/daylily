@@ -5,6 +5,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
+using Daylily.Bot;
+using Daylily.Bot.Backend;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -18,6 +20,11 @@ namespace Daylily.Plugin.Kernel
             new ConcurrentDictionary<long, List<string>>();
         public ConcurrentDictionary<long, List<string>> PrivateDisabledList { get; set; } =
             new ConcurrentDictionary<long, List<string>>();
+
+        public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
+        {
+            CanDisabled = false
+        };
 
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
         {

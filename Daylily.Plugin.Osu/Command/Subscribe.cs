@@ -146,7 +146,7 @@ namespace Daylily.Plugin.Osu
 
             if (SubscribeMapper != null)
             {
-                if (routeMsg.MessageType == MessageType.Group && routeMsg.Authority == Authority.Public)
+                if (routeMsg.MessageType == MessageType.Group && routeMsg.CurrentAuthority == Authority.Public)
                     return routeMsg.ToSource(DefaultReply.AdminOnly + "个人推送请私聊.");
 
                 List<string> subedId = GetSubscribed(routeMsg.MessageType, subId).ToList();
@@ -192,7 +192,7 @@ namespace Daylily.Plugin.Osu
 
             if (UnsubscribeMapper != null)
             {
-                if (routeMsg.MessageType == MessageType.Group && routeMsg.Authority == Authority.Public)
+                if (routeMsg.MessageType == MessageType.Group && routeMsg.CurrentAuthority == Authority.Public)
                     return routeMsg.ToSource(DefaultReply.AdminOnly + "个人推送请私聊.");
 
                 int count = OldSiteApi.GetUser(UnsubscribeMapper, out var userObj);

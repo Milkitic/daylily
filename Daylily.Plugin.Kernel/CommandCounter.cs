@@ -15,7 +15,8 @@ namespace Daylily.Plugin.Kernel
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
-            Priority = -3
+            Priority = -3,
+            CanDisabled = false
         };
 
         public override void OnInitialized(string[] args)
@@ -23,7 +24,6 @@ namespace Daylily.Plugin.Kernel
             base.OnInitialized(args);
             CommandRate = LoadSettings<ConcurrentDictionary<string, int>>("CommandRate") ??
                          new ConcurrentDictionary<string, int>();
-
         }
 
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)

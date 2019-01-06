@@ -18,7 +18,7 @@ namespace Daylily.Plugin.Basic
 
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            if (routeMsg.Authority != Authority.Root)
+            if (routeMsg.CurrentAuthority != Authority.Root)
                 return routeMsg.ToSource(DefaultReply.RootOnly, true);
             Environment.Exit(0);
             return null;

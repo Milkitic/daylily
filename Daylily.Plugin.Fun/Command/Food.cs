@@ -89,7 +89,7 @@ namespace Daylily.Plugin.ShaDiao
             string[] fullContent = ConcurrentFile.ReadAllLines(_content);
 
             if (EnabledAlbumId > 0 || DisabledAlbumId > 0)
-                return _cm.Authority == Authority.Root
+                return _cm.CurrentAuthority == Authority.Root
                     ? ModuleManageAlbum(fullContent)
                     : routeMsg.ToSource(DefaultReply.RootOnly);
 

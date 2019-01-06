@@ -20,22 +20,42 @@ namespace Daylily.Plugin.Kernel
 
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
         {
-            var grouped = DaylilyCore.Current.PluginManager.ApplicationInstances
-                .OrderByDescending(k => k.MiddlewareConfig?.Priority)
-                .GroupBy(k => k.MiddlewareConfig?.Priority);
+            var plugins = DaylilyCore.Current.PluginManager.ApplicationInstances
+                .OrderByDescending(k => k.MiddlewareConfig?.Priority);
             StringBuilder sb = new StringBuilder();
-            foreach (var plugins in grouped)
-            {
-                sb.Append(plugins.Key + ": ");
-                foreach (var plugin in plugins)
-                {
-                    sb.Append(plugin.Name + (plugin.RunInMultiThreading ? "" : " (BLOCK)") + " → ");
-                }
 
-                sb.Remove(sb.Length - 3, 3);
-                sb.Append(" ↓");
-                sb.AppendLine();
+            sb.AppendLine("Application plugins:");
+
+            string prefix = "";
+            int prevPrior = int.MinValue;
+            foreach (var plugin in plugins)
+            {
+                string prior = "";
+                if (prevPrior != plugin.MiddlewareConfig.Priority)
+                {
+                    prevPrior = plugin.MiddlewareConfig.Priority;
+                    prior = $" ({prevPrior})";
+                }
+                sb.Append(prefix + plugin.Name + prior + " ➡️ ");
+                if (plugin.RunInMultiThreading)
+                {
+
+                }
+                else
+                {
+                    sb.Remove(sb.Length - 3, 3);
+                    sb.Append(" ↩️");
+                    sb.AppendLine();
+                    prefix += "    ";
+                }
             }
+
+            sb.Remove(sb.Length - 3, 3);
+            sb.Append(" ↩️");
+            sb.AppendLine();
+
+
+            sb.AppendLine("Command plugins");
 
             return routeMessageObj.ToSource(sb.ToString().Trim('\n').Trim('\r'));
         }

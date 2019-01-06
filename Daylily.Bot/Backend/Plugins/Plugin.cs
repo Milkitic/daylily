@@ -19,7 +19,7 @@ namespace Daylily.Bot.Backend.Plugins
         public int Patch { get; set; }
         public PluginVersion State { get; set; }
         public string[] Helps { get; set; }
-        public Authority Authority { get; set; }
+        public Authority TargetAuthority { get; set; }
         public abstract MiddlewareConfig MiddlewareConfig { get; }
         public string Version => string.Concat(Major, ".", Minor, ".", Patch);
         public abstract Guid Guid { get; }
@@ -76,7 +76,7 @@ namespace Daylily.Bot.Backend.Plugins
                         break;
                     case HelpAttribute help:
                         Helps = help.Helps ?? new[] { "尚无帮助信息" };
-                        Authority = help.Authority;
+                        TargetAuthority = help.Authority;
                         break;
                 }
             }
