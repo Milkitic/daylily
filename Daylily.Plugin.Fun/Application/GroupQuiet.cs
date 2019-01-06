@@ -18,7 +18,7 @@ namespace Daylily.Plugin.ShaDiao.Application
     [Author("yf_extension")]
     [Version(2, 0, 2, PluginVersion.Stable)]
     [Help("群内长时间无人发言发一张相关的熊猫。")]
-    public class GroupQuiet : CoolQApplicationPlugin
+    public sealed class GroupQuiet : CoolQApplicationPlugin
     {
         public override Guid Guid => new Guid("5f60b007-7984-4eae-98e5-bdfb4cfc9df9");
 
@@ -51,7 +51,7 @@ namespace Daylily.Plugin.ShaDiao.Application
             {
                 _groupDic.GetOrAdd(groupId, new GroupSettings
                 {
-                    routeMsg = routeMsg,
+                    Identity = (CoolQIdentity)routeMsg.Identity,
                     LastSentIsMe = false,
                     CdTime = 60 * 60 * 24,
                 });
@@ -90,7 +90,7 @@ namespace Daylily.Plugin.ShaDiao.Application
                 try
                 {
                     var cqImg = new FileImage(Path.Combine(PandaDir, "quiet.jpg")).ToString();
-                    SendMessage(_groupDic[groupId].routeMsg.ToSource(cqImg));
+                    SendMessage(new CoolQRouteMessage(cqImg, _groupDic[groupId].Identity));
                     SaveSettings(_groupDic);
                 }
                 catch (Exception ex)
@@ -101,7 +101,7 @@ namespace Daylily.Plugin.ShaDiao.Application
         }
         private class GroupSettings
         {
-            public CoolQRouteMessage routeMsg { get; set; }
+            public CoolQIdentity Identity { get; set; }
             [JsonIgnore]
             public Task Task { get; set; }
             public bool LastSentIsMe { get; set; }
