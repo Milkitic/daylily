@@ -61,11 +61,12 @@ namespace Daylily.Bot.Backend
             return Commands.FirstOrDefault(k => k.Tag == command).Instance;
         }
 
-        public T GetNewInstance<T>() where T : Plugin
+        public T CreateInstance<T>() where T : Plugin
         {
             return Activator.CreateInstance(typeof(T)) as T;
         }
-        public static T GetNewInstance<T>(Type pluginType) where T : Plugin
+
+        public static T CreateInstance<T>(Type pluginType) where T : Plugin
         {
             return Activator.CreateInstance(pluginType) as T;
         }

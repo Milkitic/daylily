@@ -91,7 +91,7 @@ namespace Daylily.Bot.Backend.Plugins
         protected static Random StaticRandom { get; } = new Random();
         protected Random Random { get; } = new Random();
         protected static void SendMessage(RouteMessage routeMsg) => DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg);
-        protected void SaveSettings<T>(T cls, string fileName = null, bool writeLog = false)
+        protected virtual void SaveSettings<T>(T cls, string fileName = null, bool writeLog = false)
         {
             Type clsT = cls.GetType();
 
@@ -100,7 +100,8 @@ namespace Daylily.Bot.Backend.Plugins
             if (!Directory.Exists(SettingsPath))
                 Directory.CreateDirectory(SettingsPath);
 
-            ConcurrentFile.WriteAllText(saveName, Newtonsoft.Json.JsonConvert.SerializeObject(cls));
+            ConcurrentFile.WriteAllText(saveName,
+                Newtonsoft.Json.JsonConvert.SerializeObject(cls, Newtonsoft.Json.Formatting.Indented));
             if (writeLog)
             {
                 var fileInfo = new FileInfo(saveName);
@@ -108,7 +109,7 @@ namespace Daylily.Bot.Backend.Plugins
             }
         }
 
-        protected T LoadSettings<T>(string fileName = null, bool writeLog = false)
+        protected virtual T LoadSettings<T>(string fileName = null, bool writeLog = false)
         {
             try
             {

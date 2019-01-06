@@ -19,6 +19,11 @@ namespace Daylily.Plugin.Kernel
     {
         public override Guid Guid => new Guid("14f02b6a-44d3-4064-9e9d-c04796793ec7");
 
+        public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
+        {
+            CanDisabled = false
+        };
+
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;
@@ -32,13 +37,17 @@ namespace Daylily.Plugin.Kernel
             int prevPrior = int.MinValue;
             foreach (var plugin in plugins)
             {
-                string prior = "";
+                string prior = "", tag = "";
                 if (prevPrior != plugin.MiddlewareConfig.Priority)
                 {
                     prevPrior = plugin.MiddlewareConfig.Priority;
                     prior = $" ({prevPrior})";
                 }
-                sb.Append(plugin.Name + prior + " ➡️ ");
+
+                if (scope.DisabledApplications.Contains(plugin))
+                    tag = " (已禁用)";
+                sb.Append(plugin.Name + prior + tag + " ➡️ ");
+
                 if (plugin.RunInMultiThreading)
                 {
 

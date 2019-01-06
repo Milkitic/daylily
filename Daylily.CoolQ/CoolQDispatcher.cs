@@ -105,8 +105,7 @@ namespace Daylily.CoolQ
                         CoolQRouteMessage coolQRouteMessage = CoolQRouteMessage.Parse(currentMsg);
                         HandleMessage(new CoolQScopeEventArgs
                         {
-                            ApplicationPlugins = PluginManager.ApplicationInstances
-                                .OrderByDescending(k => k.MiddlewareConfig?.Priority).ToList(),
+                            DisabledApplications = new List<Bot.Backend.Plugins.ApplicationPlugin>(),
                             RouteMessage = coolQRouteMessage
                         });
                     }
@@ -134,8 +133,8 @@ namespace Daylily.CoolQ
         {
             int? priority = int.MinValue;
             bool handled = false;
-            //var app = PluginManager.GetPlugin < PluginSwitch >
-            foreach (var appPlugin in scope.ApplicationPlugins)
+            foreach (var appPlugin in PluginManager.ApplicationInstances.OrderByDescending(k =>
+                k.MiddlewareConfig?.Priority))
             {
                 int? p = appPlugin.MiddlewareConfig?.Priority;
                 if (p < priority && handled)
@@ -144,9 +143,9 @@ namespace Daylily.CoolQ
                 }
 
                 priority = appPlugin.MiddlewareConfig?.Priority;
-                Type t = appPlugin.GetType();
-                //if (ValidateDisabled(cm, t))
-                //    continue;
+
+                if (scope.DisabledApplications.Contains(appPlugin))
+                    continue;
 
                 CoolQRouteMessage replyObj = null;
                 var task = Task.Run(() =>
@@ -171,8 +170,8 @@ namespace Daylily.CoolQ
             if (!PluginManager.ContainsPlugin(scope.RouteMessage.Command)) return;
 
             Type t = PluginManager.GetPluginType(scope.RouteMessage.Command);
-            
-            CoolQCommandPlugin plugin = PluginManager.GetNewInstance<CoolQCommandPlugin>(t);
+
+            CoolQCommandPlugin plugin = PluginManager.CreateInstance<CoolQCommandPlugin>(t);
             if (plugin != null)
             {
                 Task.Run(() =>

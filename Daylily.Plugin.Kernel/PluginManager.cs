@@ -5,6 +5,7 @@ using Daylily.Bot.Message;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -46,8 +47,8 @@ namespace Daylily.Plugin.Kernel
         private IEnumerable<MessagePlugin> _plugins;
         private List<Guid> _disabled;
 
-        public static ConcurrentDictionary<CoolQIdentity, List<Guid>> DisabledList { get; set; } =
-            new ConcurrentDictionary<CoolQIdentity, List<Guid>>();
+        public static CoolQIdentityDictionary<List<Guid>> DisabledList { get; set; } =
+            new CoolQIdentityDictionary<List<Guid>>();
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
@@ -69,7 +70,7 @@ namespace Daylily.Plugin.Kernel
                 .Where(k => (k.MiddlewareConfig as BackendConfig)?.CanDisabled == true)
                 .Where(k => k.TargetAuthority != Authority.Root);
             if (!DisabledList.ContainsKey(_identity))
-                DisabledList.TryAdd(_identity, new List<Guid>());
+                DisabledList.Add(_identity, new List<Guid>());
 
             _disabled = DisabledList[_identity];
 
@@ -129,8 +130,8 @@ namespace Daylily.Plugin.Kernel
         private void LoadDisableSettings()
         {
             DisabledList =
-                LoadSettings<ConcurrentDictionary<CoolQIdentity, List<Guid>>>("DisabledList") ??
-                new ConcurrentDictionary<CoolQIdentity, List<Guid>>();
+                LoadSettings<CoolQIdentityDictionary<List<Guid>>>("DisabledList") ??
+                new CoolQIdentityDictionary<List<Guid>>();
 
         }
 

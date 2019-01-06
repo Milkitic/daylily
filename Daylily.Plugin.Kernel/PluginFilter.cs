@@ -8,6 +8,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
+using Daylily.Bot.Backend.Plugins;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -15,7 +16,7 @@ namespace Daylily.Plugin.Kernel
     {
         public override Guid Guid => new Guid("20e7a3e1-fdc3-4b3a-bff1-ecf396a63311");
 
-        private static ConcurrentDictionary<CoolQIdentity, List<Guid>> DisabledList => PluginManager.
+        private static CoolQIdentityDictionary<List<Guid>> DisabledList => PluginManager.
             DisabledList;
 
         public override bool RunInMultiThreading => false;
@@ -34,26 +35,20 @@ namespace Daylily.Plugin.Kernel
                 var guidList = DisabledList[(CoolQIdentity)routeMsg.Identity];
                 PermissionChecker.GetAuthority(routeMsg.RawMessage, out var fullCommand);
                 var cmdName = fullCommand?.Split(' ')[0];
-                if (cmdName != null)
+                foreach (var plugin in Bot.Backend.PluginManager.Current.ApplicationInstances)
                 {
-                    Guid? pluginGuid = Bot.Backend.PluginManager.Current.GetPlugin(cmdName)?.Guid;
-                    if (pluginGuid == null) return null;
-                    if (guidList.Contains(pluginGuid.Value))
-                    {
-                        return routeMsg.MessageType == MessageType.Private
-                            ? routeMsg.ToSource("你已禁用此命令.").Handle()
-                            : routeMsg.ToSource("本群已禁用此命令.").Handle();
-                    }
+                    if (!guidList.Contains(plugin.Guid)) continue;
+                    scope.DisabledApplications.Add(plugin);
                 }
-                else
+
+                if (cmdName == null) return null;
+                Guid? pluginGuid = Bot.Backend.PluginManager.Current.GetPlugin(cmdName)?.Guid;
+                if (pluginGuid == null) return null;
+                if (guidList.Contains(pluginGuid.Value))
                 {
-                    for (int i = 0; i < scope.ApplicationPlugins.Count; i++)
-                    {
-                        var plugin = scope.ApplicationPlugins[i];
-                        if (!guidList.Contains(plugin.Guid)) continue;
-                        scope.ApplicationPlugins.Remove(plugin);
-                        i--;
-                    }
+                    return routeMsg.MessageType == MessageType.Private
+                        ? routeMsg.ToSource("你已禁用此命令.").Handle()
+                        : routeMsg.ToSource("本群已禁用此命令.").Handle();
                 }
             }
 
