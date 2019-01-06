@@ -103,7 +103,7 @@ namespace Daylily.CoolQ
                     try
                     {
                         CoolQRouteMessage coolQRouteMessage = CoolQRouteMessage.Parse(currentMsg);
-                        HandleMessage(new CoolQScopeObject
+                        HandleMessage(new ScopeEventArgs
                         {
                             ApplicationPlugins = PluginManager.ApplicationInstances
                                 .OrderByDescending(k => k.MiddlewareConfig?.Priority).ToList(),
@@ -118,7 +118,7 @@ namespace Daylily.CoolQ
             }
         }
 
-        private async void HandleMessage(CoolQScopeObject scope)
+        private async void HandleMessage(ScopeEventArgs scope)
         {
             if (RaiseSessionEvent(scope.RouteMessage)) return;
 
@@ -126,11 +126,11 @@ namespace Daylily.CoolQ
             if (handled) return;
             if (!string.IsNullOrEmpty(scope.RouteMessage.FullCommand))
             {
-                HandleCommand(scope.RouteMessage);
+                HandleCommand(scope);
             }
         }
 
-        private async Task<bool> HandleApplication(CoolQScopeObject scope)
+        private async Task<bool> HandleApplication(ScopeEventArgs scope)
         {
             int? priority = int.MinValue;
             bool handled = false;
@@ -151,7 +151,7 @@ namespace Daylily.CoolQ
                 CoolQRouteMessage replyObj = null;
                 var task = Task.Run(() =>
                 {
-                    replyObj = ((CoolQApplicationPlugin)appPlugin).OnMessageReceived(scope.RouteMessage);
+                    replyObj = ((CoolQApplicationPlugin)appPlugin).OnMessageReceived(scope);
                     if (replyObj != null && !replyObj.Canceled) SendMessage(replyObj);
                 });
 
@@ -165,12 +165,12 @@ namespace Daylily.CoolQ
             return handled;
         }
 
-        private void HandleCommand(CoolQRouteMessage cm)
+        private void HandleCommand(ScopeEventArgs scope)
         {
             CoolQRouteMessage replyObj = null;
-            if (!PluginManager.ContainsPlugin(cm.Command)) return;
+            if (!PluginManager.ContainsPlugin(scope.RouteMessage.Command)) return;
 
-            Type t = PluginManager.GetPluginType(cm.Command);
+            Type t = PluginManager.GetPluginType(scope.RouteMessage.Command);
             
             CoolQCommandPlugin plugin = PluginManager.GetNewInstance<CoolQCommandPlugin>(t);
             if (plugin != null)
@@ -179,13 +179,13 @@ namespace Daylily.CoolQ
                     {
                         try
                         {
-                            if (!plugin.TryInjectParameters(cm))
+                            if (!plugin.TryInjectParameters(scope.RouteMessage))
                                 return;
-                            replyObj = plugin.OnMessageReceived(cm);
+                            replyObj = plugin.OnMessageReceived(scope.RouteMessage);
                         }
                         catch (Exception ex)
                         {
-                            Logger.Exception(ex.InnerException ?? ex, cm.FullCommand, plugin.Name);
+                            Logger.Exception(ex.InnerException ?? ex, scope.RouteMessage.FullCommand, plugin.Name);
                         }
 
                         if (replyObj == null) return;
