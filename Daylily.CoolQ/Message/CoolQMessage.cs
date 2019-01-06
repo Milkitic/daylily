@@ -59,7 +59,12 @@ namespace Daylily.CoolQ.Message
                             // ReSharper disable once RedundantCaseLabel
                             case FileCoolQCode.FileTypeEnum.Url:
                             default:
-                                return $"[CQ:image,file=http://{image.Url.Replace("http://", "").Replace("https://", "")}]";
+                                if (!image.Url.StartsWith("http://") && !image.Url.StartsWith("https://"))
+                                {
+                                    return $"[CQ:image,file=http://{image.Url}]";
+                                }
+
+                                return $"[CQ:image,file={image.Url}]";
                         }
                     }
                 case FileRecord record:
