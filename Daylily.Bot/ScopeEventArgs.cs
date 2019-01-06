@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Daylily.Bot.Message;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Daylily.CoolQ
+namespace Daylily.Bot
 {
     public class ScopeEventArgs : EventArgs
     {
-        public Message.CoolQRouteMessage RouteMessage { get; set; }
+        public RouteMessage RouteMessage { get; set; }
         public List<Bot.Backend.Plugins.ApplicationPlugin> ApplicationPlugins { get; set; }
     }
 }
