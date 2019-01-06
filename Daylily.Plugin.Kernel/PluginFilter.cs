@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace Daylily.Plugin.Kernel
 {
-    public class PluginSwitch : CoolQApplicationPlugin
+    public class PluginFilter : CoolQApplicationPlugin
     {
         public override Guid Guid => new Guid("20e7a3e1-fdc3-4b3a-bff1-ecf396a63311");
 
