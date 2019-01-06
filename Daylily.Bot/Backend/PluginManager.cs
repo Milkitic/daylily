@@ -65,7 +65,7 @@ namespace Daylily.Bot.Backend
         {
             return Activator.CreateInstance(typeof(T)) as T;
         }
-        public T GetNewInstance<T>(Type pluginType) where T : Plugin
+        public static T GetNewInstance<T>(Type pluginType) where T : Plugin
         {
             return Activator.CreateInstance(pluginType) as T;
         }
