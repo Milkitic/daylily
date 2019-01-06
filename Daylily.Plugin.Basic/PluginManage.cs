@@ -63,10 +63,13 @@ namespace Daylily.Plugin.Basic
 
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            _identity = (CoolQIdentity)_routeMsg.Identity;
             _routeMsg = routeMsg;
-            _plugins = ((IEnumerable<MessagePlugin>)PluginManager.Current.Plugins.Where(k => k is MessagePlugin))
+            _identity = (CoolQIdentity)_routeMsg.Identity;
+            _plugins = PluginManager.Current.Plugins.OfType<MessagePlugin>()
                 .Where(k => k.CanDisabled);
+            if (!DisabledList.ContainsKey(_identity))
+                DisabledList.TryAdd(_identity, new List<Guid>());
+
             _disabled = DisabledList[_identity];
 
             if (_routeMsg.Authority == Authority.Public && _routeMsg.MessageType == MessageType.Group)
