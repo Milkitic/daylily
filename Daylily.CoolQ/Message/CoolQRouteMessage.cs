@@ -95,7 +95,8 @@ namespace Daylily.CoolQ.Message
                 MessageType = MessageType,
                 Message = message,
                 EnableAt = enableAt,
-                Handled = Handled
+                Handled = Handled,
+                Canceled = false
             };
         }
 

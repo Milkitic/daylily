@@ -37,20 +37,23 @@ namespace Daylily.Plugin.Kernel
                 if (cmdName != null)
                 {
                     Guid? pluginGuid = Bot.Backend.PluginManager.Current.GetPlugin(cmdName)?.Guid;
-                    if (pluginGuid != null)
+                    if (pluginGuid == null) return null;
+                    if (guidList.Contains(pluginGuid.Value))
                     {
-                        if (guidList.Contains(pluginGuid.Value))
-                            return routeMsg.ToSource("本群已禁用此命令.").Handle();
+                        return routeMsg.MessageType == MessageType.Private
+                            ? routeMsg.ToSource("你已禁用此命令.").Handle()
+                            : routeMsg.ToSource("本群已禁用此命令.").Handle();
                     }
                 }
                 else
                 {
-                    throw new NotImplementedException();
-                    //Guid? pluginGuid = null;
-                    //if (pluginGuid != null)
-                    //{
-                    //    return new CoolQRouteMessage().Handle();
-                    //}
+                    for (int i = 0; i < scope.ApplicationPlugins.Count; i++)
+                    {
+                        var plugin = scope.ApplicationPlugins[i];
+                        if (!guidList.Contains(plugin.Guid)) continue;
+                        scope.ApplicationPlugins.Remove(plugin);
+                        i--;
+                    }
                 }
             }
 

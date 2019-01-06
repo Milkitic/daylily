@@ -9,7 +9,7 @@ namespace Daylily.Bot.Message
     public abstract class RouteMessage : ICommand, IRouteMessage
     {
         public bool Handled { get; set; } = false;
-        public bool Canceled { get; set; }
+        public bool Canceled { get; set; } = false;
         public object Tag { get; set; }
         public string FullCommand { get; set; }
         public string Command { get; set; }
