@@ -22,7 +22,7 @@ namespace Daylily.Plugin.Kernel
 {
     [Name("黄花菜帮助")]
     [Author("yf_extension")]
-    [Version(2, 0, 3, PluginVersion.Beta)]
+    [Version(2, 0, 4, PluginVersion.Beta)]
     [Help("查看此帮助信息。")]
     [Command("help")]
     public class Help : CoolQCommandPlugin
@@ -63,8 +63,8 @@ namespace Daylily.Plugin.Kernel
                     Dictionary<string, string> dic = new Dictionary<string, string>
                     {
                         {"你是谁", "你是谁。"},
-                        {"基础帮助", "查看通用的基础使用方法。(/help -list)"},
-                        {"查列表", "查看所有可用的命令和应用列表。"}
+                        {"基础帮助", "查看通用的基础使用方法。"},
+                        {"查列表", "查看所有可用的命令和应用列表。(/help -list)"}
                     };
 
                     string[] sb = dic.Select(k => $"【{k.Key}】 {k.Value}").ToArray();
