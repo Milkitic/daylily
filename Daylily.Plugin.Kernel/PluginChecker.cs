@@ -38,21 +38,22 @@ namespace Daylily.Plugin.Kernel
                     prevPrior = plugin.MiddlewareConfig.Priority;
                     prior = $" ({prevPrior})";
                 }
-                sb.Append(prefix + plugin.Name + prior + " ➡️ ");
+                sb.Append(plugin.Name + prior + " ➡️ ");
                 if (plugin.RunInMultiThreading)
                 {
 
                 }
                 else
                 {
-                    sb.Remove(sb.Length - 3, 3);
+                    sb.Remove(sb.Length - 4, 4);
                     sb.Append(" ↩️");
                     sb.AppendLine();
                     prefix += "    ";
+                    sb.Append(prefix);
                 }
             }
 
-            sb.Remove(sb.Length - 3, 3);
+            sb.Remove(sb.Length - 4, 4);
             sb.Append(" ↩️");
             sb.AppendLine();
 
