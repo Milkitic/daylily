@@ -5,9 +5,7 @@ using Daylily.Bot.Message;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +14,7 @@ namespace Daylily.Plugin.Kernel
 {
     [Name("插件管理")]
     [Author("yf_extension")]
-    [Version(2, 1, 1, PluginVersion.Alpha)]
+    [Version(2, 1, 2, PluginVersion.Alpha)]
     [Help("动态管理插件的启用状态。", "仅限当前群生效。", Authority = Authority.Admin)]
     [Command("plugin")]
     public class PluginSwitcher : CoolQCommandPlugin

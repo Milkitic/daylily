@@ -16,27 +16,24 @@ namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("死群熊猫")]
     [Author("yf_extension")]
-    [Version(2, 0, 2, PluginVersion.Stable)]
+    [Version(2, 0, 3, PluginVersion.Stable)]
     [Help("群内长时间无人发言发一张相关的熊猫。")]
     public sealed class GroupQuiet : CoolQApplicationPlugin
     {
         public override Guid Guid => new Guid("5f60b007-7984-4eae-98e5-bdfb4cfc9df9");
 
         private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
-        private static ConcurrentDictionary<string, GroupSettings> _groupDic;
+        private static CoolQIdentityDictionary<GroupSettings> groupSettings;
 
         public GroupQuiet()
         {
             Logger.Origin("上次群发言情况载入中。");
-            _groupDic = LoadSettings<ConcurrentDictionary<string, GroupSettings>>();
-            if (_groupDic != null)
+            groupSettings = LoadSettings<CoolQIdentityDictionary<GroupSettings>>();
+            if (groupSettings != null)
             {
-                foreach (var item in _groupDic)
-                {
-                    item.Value.Task = Task.Run(() => DelayScan(item.Key));
-                }
+                groupSettings.Foreach(settings => { settings.Value.Task = Task.Run(() => DelayScan(settings.Identity)); });
             }
-            else _groupDic = new ConcurrentDictionary<string, GroupSettings>();
+            else groupSettings = new CoolQIdentityDictionary<GroupSettings>();
             Logger.Origin("上次群发言情载入完毕，并开启了线程。");
         }
 
@@ -45,29 +42,28 @@ namespace Daylily.Plugin.ShaDiao.Application
             var routeMsg = scope.RouteMessage;
             if (routeMsg.MessageType == MessageType.Private)
                 return null;
-            string groupId = routeMsg.GroupId ?? routeMsg.DiscussId;
+            var id = (CoolQIdentity)routeMsg.Identity;
 
-            if (!_groupDic.ContainsKey(groupId))
+            if (!groupSettings.ContainsKey(id))
             {
-                _groupDic.GetOrAdd(groupId, new GroupSettings
+                groupSettings.Add(id, new GroupSettings
                 {
-                    Identity = (CoolQIdentity)routeMsg.Identity,
                     LastSentIsMe = false,
                     CdTime = 60 * 60 * 24,
                 });
 
-                _groupDic[groupId].Task = Task.Run(() => DelayScan(groupId));
+                groupSettings[id].Task = Task.Run(() => DelayScan(id));
             }
 
-            if ((DateTime.Now - _groupDic[groupId].StartCd).TotalSeconds > _groupDic[groupId].CdTime)
+            if ((DateTime.Now - groupSettings[id].StartCd).TotalSeconds > groupSettings[id].CdTime)
             {
-                _groupDic[groupId].LastSent = DateTime.Now;
-                _groupDic[groupId].LastSentIsMe = false;
-                _groupDic[groupId].TrigTime = StaticRandom.Next(60 * 60 * 2, 60 * 60 * 3);
+                groupSettings[id].LastSent = DateTime.Now;
+                groupSettings[id].LastSentIsMe = false;
+                groupSettings[id].TrigTime = StaticRandom.Next(60 * 60 * 2, 60 * 60 * 3);
 #if DEBUG
                 //Logger.Debug(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
 #endif
-                SaveSettings(_groupDic);
+                SaveSettings(groupSettings);
             }
             else
             {
@@ -77,21 +73,20 @@ namespace Daylily.Plugin.ShaDiao.Application
             }
             return null;
         }
-        private void DelayScan(object groupIdObj)
+        private void DelayScan(CoolQIdentity id)
         {
-            string groupId = (string)groupIdObj;
             while (true)
             {
                 Thread.Sleep(5000);
-                if (_groupDic[groupId].LastSentIsMe) continue;
-                if ((DateTime.Now - _groupDic[groupId].LastSent).TotalSeconds < _groupDic[groupId].TrigTime) continue;
-                _groupDic[groupId].LastSentIsMe = true;
-                _groupDic[groupId].StartCd = DateTime.Now;
+                if (groupSettings[id].LastSentIsMe) continue;
+                if ((DateTime.Now - groupSettings[id].LastSent).TotalSeconds < groupSettings[id].TrigTime) continue;
+                groupSettings[id].LastSentIsMe = true;
+                groupSettings[id].StartCd = DateTime.Now;
                 try
                 {
                     var cqImg = new FileImage(Path.Combine(PandaDir, "quiet.jpg")).ToString();
-                    SendMessage(new CoolQRouteMessage(cqImg, _groupDic[groupId].Identity));
-                    SaveSettings(_groupDic);
+                    SendMessage(new CoolQRouteMessage(cqImg, id));
+                    SaveSettings(groupSettings);
                 }
                 catch (Exception ex)
                 {
@@ -101,7 +96,6 @@ namespace Daylily.Plugin.ShaDiao.Application
         }
         private class GroupSettings
         {
-            public CoolQIdentity Identity { get; set; }
             [JsonIgnore]
             public Task Task { get; set; }
             public bool LastSentIsMe { get; set; }
