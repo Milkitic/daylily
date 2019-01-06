@@ -2,6 +2,7 @@
 using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Newtonsoft.Json;
@@ -39,8 +40,9 @@ namespace Daylily.Plugin.ShaDiao.Application
             Logger.Origin("上次群发言情载入完毕，并开启了线程。");
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             if (routeMsg.MessageType == MessageType.Private)
                 return null;
             string groupId = routeMsg.GroupId ?? routeMsg.DiscussId;

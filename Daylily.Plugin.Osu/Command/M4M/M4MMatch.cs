@@ -5,6 +5,7 @@ using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.Utils.StringUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
@@ -59,8 +60,9 @@ namespace Daylily.Plugin.Osu
             _matchList = LoadSettings<List<MatchInfo>>("MatchList") ?? new List<MatchInfo>();
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             _routeMsg = routeMsg;
             if (List)
             {

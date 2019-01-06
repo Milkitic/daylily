@@ -1,10 +1,11 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
+using Daylily.CoolQ;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Osu
 {
@@ -24,8 +25,9 @@ namespace Daylily.Plugin.Osu
                       new ConcurrentDictionary<string, DateTime>();
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             if (routeMsg.MessageType == MessageType.Private)
                 return null;
             var msg = routeMsg.RawMessage.ToUpper();

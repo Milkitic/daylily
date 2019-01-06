@@ -1,4 +1,5 @@
 ﻿using Daylily.Bot.Backend;
+using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
@@ -19,8 +20,9 @@ namespace Daylily.Plugin.ShaDiao
         [Help("要禁言的时长，小时为单位，支持小数")]
         public double SleepTime { get; set; }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             if (routeMsg.GroupId == "133605766")
                 return null;
             if (routeMsg.GroupId == null)

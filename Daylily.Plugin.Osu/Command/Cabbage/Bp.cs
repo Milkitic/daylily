@@ -1,5 +1,5 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -16,8 +16,9 @@ namespace Daylily.Plugin.Osu.Cabbage
     {
         public override Guid Guid => new Guid("e6f44b37-be2b-418e-b0a3-f1c461294b04");
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             CabbageCommon.MessageQueue.Enqueue(routeMsg);
 
             bool isTaskFree = CabbageCommon.TaskQuery == null || CabbageCommon.TaskQuery.IsCanceled ||

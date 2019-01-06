@@ -34,7 +34,10 @@ namespace Daylily.Plugin.Osu
                 Private = new CoolQPrivateMessageApi(),
             };
 
-            Logger.Success("收到：" + newPlugin.OnMessageReceived(cm).Message);
+            Logger.Success("收到：" + newPlugin.OnMessageReceived(new CoolQ.CoolQScopeEventArgs
+            {
+                RouteMessage = cm
+            }).Message);
             Console.ReadKey();
         }
     }

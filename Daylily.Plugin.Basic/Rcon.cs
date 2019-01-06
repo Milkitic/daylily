@@ -1,11 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Daylily.Bot;
+﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Daylily.Plugin.Basic
 {
@@ -44,8 +45,9 @@ namespace Daylily.Plugin.Basic
 
         public override void OnInitialized(string[] args) { }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             string userId = routeMsg.UserId;
             MessageType type = routeMsg.MessageType;
             Authority level = routeMsg.CurrentAuthority;

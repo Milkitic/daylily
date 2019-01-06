@@ -25,7 +25,10 @@ namespace TestMyPlugin
                     Group = new CoolQGroupMessageApi(),
                 };
 
-                Logger.Raw("回复：" + newPlugin.OnMessageReceived(cm).RawMessage);
+                Logger.Raw("回复：" + newPlugin.OnMessageReceived(new Daylily.CoolQ.CoolQScopeEventArgs
+                {
+                    RouteMessage = cm
+                }).RawMessage);
             }
         }
     }

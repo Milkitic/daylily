@@ -11,6 +11,6 @@ namespace Daylily.Bot.Backend.Plugins
         public abstract bool RunInMultiThreading { get; }
         public abstract bool RunInMultipleInstances { get; }
 
-        public abstract RouteMessage OnMessageReceived(RouteMessage routeMsg);
+        public abstract RouteMessage OnMessageReceived(ScopeEventArgs routeMsg);
     }
 }

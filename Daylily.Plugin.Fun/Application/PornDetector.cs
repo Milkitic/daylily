@@ -2,6 +2,7 @@
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
@@ -31,8 +32,9 @@ namespace Daylily.Plugin.ShaDiao.Application
             Logger.Origin("上次用户计数载入完毕。");
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             // 查黄图
             if (routeMsg.Group == null || routeMsg.GroupId != "133605766") return null;
             var imgList = CoolQCode.GetImageInfo(routeMsg.RawMessage);

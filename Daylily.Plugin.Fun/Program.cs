@@ -1,8 +1,8 @@
 ﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
 using System;
-using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 
 namespace Daylily.Plugin.ShaDiao
 {
@@ -22,7 +22,10 @@ namespace Daylily.Plugin.ShaDiao
                 Group = new CoolQGroupMessageApi(),
             };
 
-            Logger.Success("收到：" + newPlugin.OnMessageReceived(cm).Message);
+            Logger.Success("收到：" + newPlugin.OnMessageReceived(new CoolQ.CoolQScopeEventArgs
+            {
+                RouteMessage = cm
+            }).Message);
             Console.ReadKey();
         }
     }

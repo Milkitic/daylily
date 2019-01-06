@@ -6,6 +6,7 @@ using Daylily.Common.Utils.HtmlUtils;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
 using Daylily.Common.Utils.StringUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Database.BLL;
@@ -39,8 +40,9 @@ namespace Daylily.Plugin.Osu
 
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             string userName, userId;
             if (OsuId == null)
             {

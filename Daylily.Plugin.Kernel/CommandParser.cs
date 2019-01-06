@@ -1,9 +1,10 @@
-﻿using System;
-using Daylily.Bot;
+﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Command;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -19,15 +20,16 @@ namespace Daylily.Plugin.Kernel
             CanDisabled = false
         };
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
-            if (string.IsNullOrEmpty(routeMessageObj.FullCommand))
+            var routeMsg = scope.RouteMessage;
+            if (string.IsNullOrEmpty(routeMsg.FullCommand))
                 return null;
-            string fullCmd = routeMessageObj.FullCommand;
+            string fullCmd = routeMsg.FullCommand;
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
-            ca.Analyze(fullCmd, routeMessageObj);
+            ca.Analyze(fullCmd, routeMsg);
 
-            if (!DaylilyCore.Current.PluginManager.ContainsPlugin(routeMessageObj.Command))
+            if (!DaylilyCore.Current.PluginManager.ContainsPlugin(routeMsg.Command))
                 return null;
 
             return null;

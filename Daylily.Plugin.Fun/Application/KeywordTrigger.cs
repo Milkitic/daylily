@@ -1,6 +1,7 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -42,8 +43,9 @@ namespace Daylily.Plugin.ShaDiao.Application
             SaveSettings(_triggerObjects, "UserDictionary");
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             if (routeMsg.Command == "keyedit")
             {
                 if (routeMsg.FreeArgs.Count == 1)

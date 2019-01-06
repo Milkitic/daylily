@@ -1,6 +1,7 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
@@ -31,8 +32,9 @@ namespace Daylily.Plugin.Basic
 
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             // 接收的信息
             string message = routeMsg.RawMessage;
             // 发送者的QQ

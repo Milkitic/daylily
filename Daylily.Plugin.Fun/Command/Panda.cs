@@ -1,6 +1,7 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -51,8 +52,9 @@ namespace Daylily.Plugin.ShaDiao
 
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             FontFamily font = GetRandFont(GetFonts());
             var pandas = GetPandas();
             if (UseAll)

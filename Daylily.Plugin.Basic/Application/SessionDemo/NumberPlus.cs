@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Session;
+using Daylily.CoolQ;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Daylily.Bot.Backend;
-using Daylily.Bot.Session;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
 
 namespace Daylily.Plugin.Basic.Application.SessionDemo
 {
@@ -19,8 +20,9 @@ namespace Daylily.Plugin.Basic.Application.SessionDemo
 
         private static readonly ConcurrentDictionary<Session, (string, List<string>)> SessionsList =
             new ConcurrentDictionary<Session, (string, List<string>)>();
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             if (routeMsg.RawMessage.Contains("两数相加"))
             {
                 if (SessionsList.Count >= 3)

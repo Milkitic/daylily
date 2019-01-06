@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Daylily.Bot;
+﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Backend.Plugins;
 using Daylily.Bot.Message;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -60,8 +60,9 @@ namespace Daylily.Plugin.Kernel
             LoadDisableSettings();
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             _routeMsg = routeMsg;
             _identity = (CoolQIdentity)_routeMsg.Identity;
             _plugins = Bot.Backend.PluginManager.Current.Plugins.OfType<MessagePlugin>()

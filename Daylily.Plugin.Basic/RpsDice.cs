@@ -1,4 +1,5 @@
 ﻿using Daylily.Bot.Backend;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -14,8 +15,9 @@ namespace Daylily.Plugin.Basic
     {
         public override Guid Guid => new Guid("d6ba1003-4c02-46d6-94c5-52b737f7b967");
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             switch (routeMsg.Command)
             {
                 case "dice":

@@ -1,6 +1,7 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -25,8 +26,9 @@ namespace Daylily.Plugin.Kernel
             Priority = 88
         };
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             if (DisabledList.Keys.Contains((CoolQIdentity)routeMsg.Identity))
             {
                 var guidList = DisabledList[(CoolQIdentity)routeMsg.Identity];

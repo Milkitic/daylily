@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Daylily.Bot;
+﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
+using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Daylily.Plugin.Basic
 {
@@ -36,8 +37,9 @@ namespace Daylily.Plugin.Basic
         [Help("要发送的信息。")]
         public string Message { get; set; }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             string sessionId = null;
             var sessionType = MessageType.Private;
             if (routeMsg.CurrentAuthority != Authority.Root)

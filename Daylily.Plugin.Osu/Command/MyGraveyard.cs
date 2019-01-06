@@ -3,6 +3,7 @@ using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Database.BLL;
@@ -22,8 +23,9 @@ namespace Daylily.Plugin.Osu
     {
         public override Guid Guid => new Guid("cbfe5649-6898-4182-aad3-7121f786b4cd");
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             BllUserRole bllUserRole = new BllUserRole();
             List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
             if (userInfo.Count == 0)

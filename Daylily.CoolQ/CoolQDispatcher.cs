@@ -103,7 +103,7 @@ namespace Daylily.CoolQ
                     try
                     {
                         CoolQRouteMessage coolQRouteMessage = CoolQRouteMessage.Parse(currentMsg);
-                        HandleMessage(new ScopeEventArgs<CoolQRouteMessage>
+                        HandleMessage(new CoolQScopeEventArgs
                         {
                             ApplicationPlugins = PluginManager.ApplicationInstances
                                 .OrderByDescending(k => k.MiddlewareConfig?.Priority).ToList(),
@@ -118,7 +118,7 @@ namespace Daylily.CoolQ
             }
         }
 
-        private async void HandleMessage(ScopeEventArgs<CoolQRouteMessage> scope)
+        private async void HandleMessage(CoolQScopeEventArgs scope)
         {
             if (RaiseSessionEvent(scope.RouteMessage)) return;
 
@@ -130,7 +130,7 @@ namespace Daylily.CoolQ
             }
         }
 
-        private async Task<bool> HandleApplication(ScopeEventArgs<CoolQRouteMessage> scope)
+        private async Task<bool> HandleApplication(CoolQScopeEventArgs scope)
         {
             int? priority = int.MinValue;
             bool handled = false;
@@ -165,7 +165,7 @@ namespace Daylily.CoolQ
             return handled;
         }
 
-        private void HandleCommand(ScopeEventArgs<CoolQRouteMessage> scope)
+        private void HandleCommand(CoolQScopeEventArgs scope)
         {
             CoolQRouteMessage replyObj = null;
             if (!PluginManager.ContainsPlugin(scope.RouteMessage.Command)) return;
@@ -181,7 +181,7 @@ namespace Daylily.CoolQ
                         {
                             if (!plugin.TryInjectParameters(scope.RouteMessage))
                                 return;
-                            replyObj = plugin.OnMessageReceived(scope.RouteMessage);
+                            replyObj = plugin.OnMessageReceived(scope);
                         }
                         catch (Exception ex)
                         {

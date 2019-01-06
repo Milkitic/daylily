@@ -2,6 +2,7 @@
 using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.Bot.Session.TreeStructure;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -30,9 +31,9 @@ namespace Daylily.Plugin.ShaDiao
 
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
-
+            var routeMsg = scope.RouteMessage;
             _routeMsg = routeMsg;
             try
             {

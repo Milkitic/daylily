@@ -1,4 +1,5 @@
 ﻿using Daylily.Bot.Backend;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -33,8 +34,9 @@ namespace Daylily.Plugin.Basic
 
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             bool isParam1 = int.TryParse(Param1, out int param1);
             bool isParam2 = int.TryParse(Param2, out int param2);
             bool isCNum = int.TryParse(Count, out int count);

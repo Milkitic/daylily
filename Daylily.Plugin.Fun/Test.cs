@@ -2,6 +2,7 @@
 using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -19,8 +20,9 @@ namespace Daylily.Plugin.ShaDiao
     {
         public override Guid Guid => new Guid("cb6a36b8-7437-4545-80bd-8b54ade7f35c");
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             if (!routeMsg.RawMessage.Equals("/转"))
                 return null;
             using (Session session = new Session(1000 * 60, routeMsg.Identity, routeMsg.UserId))

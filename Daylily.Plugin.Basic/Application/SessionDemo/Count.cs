@@ -1,8 +1,9 @@
-﻿using System;
-using Daylily.Bot.Backend;
+﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Session;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using System;
 
 namespace Daylily.Plugin.Basic.Application.SessionDemo
 {
@@ -15,8 +16,9 @@ namespace Daylily.Plugin.Basic.Application.SessionDemo
         public override Guid Guid => new Guid("6b840ae4-d35e-40e8-9db0-40122a567ae8");
 
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             if (!routeMsg.RawMessage.Contains("数咩羊"))
                 return null;
 

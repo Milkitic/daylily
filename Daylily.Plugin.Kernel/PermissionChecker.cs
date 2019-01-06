@@ -49,8 +49,9 @@ namespace Daylily.Plugin.Kernel
             return null;
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             long userId = Convert.ToInt64(routeMsg.UserId);
             string message = routeMsg.Message.RawMessage;
 
@@ -58,14 +59,14 @@ namespace Daylily.Plugin.Kernel
             switch (requestAuth)
             {
                 case Authority.Public:
-                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) routeMsg.Identity].GroupInfo
+                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].GroupInfo
                             ?.Admins.Count(q => q.UserId == userId) != 0)
                         routeMsg.CurrentAuthority = Authority.Admin;
                     if (userId == 2241521134)
                         routeMsg.CurrentAuthority = Authority.Root;
                     break;
                 case Authority.Admin:
-                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) routeMsg.Identity].GroupInfo
+                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].GroupInfo
                             ?.Admins.Count(q => q.UserId == userId) == 0)
                     {
                         Logger.Raw("Access denied.");

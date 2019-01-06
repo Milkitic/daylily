@@ -3,11 +3,11 @@ using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.CoolQ;
+using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Linq;
-using Daylily.CoolQ.CoolQHttp;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -21,32 +21,32 @@ namespace Daylily.Plugin.Kernel
             CanDisabled = false
         };
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
-            var cm = routeMessageObj;
-            long groupId = Convert.ToInt64(cm.GroupId);
-            long userId = Convert.ToInt64(cm.UserId);
-            long discussId = Convert.ToInt64(cm.DiscussId);
-            var type = cm.MessageType;
+            var routeMsg = scope.RouteMessage;
+            long groupId = Convert.ToInt64(routeMsg.GroupId);
+            long userId = Convert.ToInt64(routeMsg.UserId);
+            long discussId = Convert.ToInt64(routeMsg.DiscussId);
+            var type = routeMsg.MessageType;
 
-            string group, sender, message = cm.Message.RawMessage;
+            string group, sender, message = routeMsg.Message.RawMessage;
             if (type == MessageType.Private)
             {
                 group = "私聊";
-                sender = CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)cm.Identity].Name;
+                sender = CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].Name;
             }
             else if (type == MessageType.Discuss)
             {
-                group = CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)cm.Identity].Name;
-                sender = cm.UserId;
+                group = CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].Name;
+                sender = routeMsg.UserId;
             }
             else
             {
                 var userInfo =
-                    CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) cm.Identity]?.GroupInfo?.Members
+                    CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity]?.GroupInfo?.Members
                         ?.FirstOrDefault(i => i.UserId == userId) ??
-                    CoolQHttpApi.GetGroupMemberInfo(cm.GroupId, cm.UserId).Data;
-                group = CoolQDispatcher.Current.SessionInfo?[(CoolQIdentity)cm.Identity]?.Name;
+                    CoolQHttpApi.GetGroupMemberInfo(routeMsg.GroupId, routeMsg.UserId).Data;
+                group = CoolQDispatcher.Current.SessionInfo?[(CoolQIdentity)routeMsg.Identity]?.Name;
                 sender = string.IsNullOrEmpty(userInfo.Card)
                     ? userInfo.Nickname
                     : userInfo.Card;

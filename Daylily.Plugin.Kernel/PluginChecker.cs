@@ -1,6 +1,7 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -18,8 +19,9 @@ namespace Daylily.Plugin.Kernel
     {
         public override Guid Guid => new Guid("14f02b6a-44d3-4064-9e9d-c04796793ec7");
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             var plugins = DaylilyCore.Current.PluginManager.ApplicationInstances
                 .OrderByDescending(k => k.MiddlewareConfig?.Priority);
             StringBuilder sb = new StringBuilder();
@@ -57,7 +59,7 @@ namespace Daylily.Plugin.Kernel
 
             sb.AppendLine("Command plugins");
 
-            return routeMessageObj.ToSource(sb.ToString().Trim('\n').Trim('\r'));
+            return routeMsg.ToSource(sb.ToString().Trim('\n').Trim('\r'));
         }
     }
 }

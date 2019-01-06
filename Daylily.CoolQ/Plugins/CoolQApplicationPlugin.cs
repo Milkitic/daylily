@@ -1,4 +1,5 @@
-﻿using Daylily.Bot.Backend.Plugins;
+﻿using Daylily.Bot;
+using Daylily.Bot.Backend.Plugins;
 using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
 
@@ -6,11 +7,11 @@ namespace Daylily.CoolQ.Plugins
 {
     public abstract class CoolQApplicationPlugin : ApplicationPlugin
     {
-        public abstract CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg);
+        public abstract CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs routeMsg);
 
-        public override RouteMessage OnMessageReceived(RouteMessage routeMsg)
+        public override RouteMessage OnMessageReceived(ScopeEventArgs routeMsg)
         {
-            return OnMessageReceived((CoolQRouteMessage)routeMsg);
+            return OnMessageReceived((CoolQScopeEventArgs)routeMsg);
         }
     }
 }

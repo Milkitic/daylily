@@ -1,5 +1,6 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -26,17 +27,18 @@ namespace Daylily.Plugin.Kernel
                          new ConcurrentDictionary<string, int>();
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
-            if (string.IsNullOrEmpty(routeMessageObj.FullCommand))
+            var routeMsg = scope.RouteMessage;
+            if (string.IsNullOrEmpty(routeMsg.FullCommand))
                 return null;
-            if (!CommandRate.Keys.Contains(routeMessageObj.Command))
+            if (!CommandRate.Keys.Contains(routeMsg.Command))
             {
-                CommandRate.TryAdd(routeMessageObj.Command, 1);
+                CommandRate.TryAdd(routeMsg.Command, 1);
             }
             else
             {
-                CommandRate[routeMessageObj.Command]++;
+                CommandRate[routeMsg.Command]++;
             }
 
             SaveSettings(CommandRate, "CommandRate");

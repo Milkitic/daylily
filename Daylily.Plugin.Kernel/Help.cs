@@ -6,6 +6,7 @@ using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Utils.StringUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Daylily.Plugin.Kernel.Helps;
@@ -40,7 +41,7 @@ namespace Daylily.Plugin.Kernel
         public bool UseList { get; set; }
 
         private static string _versionInfo;
-        private CoolQRouteMessage _cm;
+        private CoolQRouteMessage _routeMsg;
         private static readonly string HelpDir = Path.Combine(Domain.ResourcePath, "help");
         private static readonly string StaticDir = Path.Combine(HelpDir, "static");
 
@@ -49,14 +50,15 @@ namespace Daylily.Plugin.Kernel
             _versionInfo = args == null ? "" : args[0];
         }
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
-            _cm = routeMsg;
+            var routeMsg = scope.RouteMessage;
+            _routeMsg = routeMsg;
             if (UseList)
                 return routeMsg.ToSource(ShowList());
             if (CommandName == null)
             {
-                using (Session session = new Session(20000, _cm.Identity, _cm.UserId))
+                using (Session session = new Session(20000, _routeMsg.Identity, _routeMsg.UserId))
                 {
                     Dictionary<string, string> dic = new Dictionary<string, string>
                     {
@@ -86,7 +88,7 @@ namespace Daylily.Plugin.Kernel
 
                                 SendMessage(routeMsg.ToSource("已发送至私聊，请查看。", true));
                                 var helpStr = ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt"));
-                                SendMessage(new CoolQRouteMessage(helpStr, new CoolQIdentity(_cm.UserId, MessageType.Private)));
+                                SendMessage(new CoolQRouteMessage(helpStr, new CoolQIdentity(_routeMsg.UserId, MessageType.Private)));
                                 return null;
                             }
 
@@ -114,7 +116,7 @@ namespace Daylily.Plugin.Kernel
         {
             CommandPlugin[] plugins = DaylilyCore.Current.PluginManager.Commands.Select(k => k.Instance).Distinct().ToArray();
             ApplicationPlugin[] apps = DaylilyCore.Current.PluginManager.ApplicationInstances.ToArray();
-            var groupCmd = plugins.Where(plugin => plugin.TargetAuthority <= _cm.CurrentAuthority)
+            var groupCmd = plugins.Where(plugin => plugin.TargetAuthority <= _routeMsg.CurrentAuthority)
                 .GroupBy(k => k.GetType().Namespace);
             Dictionary<string, Dictionary<string, string>> dicNs = new Dictionary<string, Dictionary<string, string>>();
             foreach (IGrouping<string, CommandPlugin> group in groupCmd.OrderBy(k => k.Key))
@@ -130,7 +132,7 @@ namespace Daylily.Plugin.Kernel
                         $"{plugin.Name}。{plugin.Helps[0]}");
                 }
             }
-            Dictionary<string, string> dicApp = apps.Where(plugin => plugin.TargetAuthority <= _cm.CurrentAuthority)
+            Dictionary<string, string> dicApp = apps.Where(plugin => plugin.TargetAuthority <= _routeMsg.CurrentAuthority)
                 .OrderBy(k => k.Name).ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]);
 
             string[] hot = DaylilyCore.Current.PluginManager.GetPlugin<CommandCounter>()?.CommandRate

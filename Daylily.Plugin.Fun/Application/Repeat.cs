@@ -1,6 +1,7 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
@@ -21,8 +22,9 @@ namespace Daylily.Plugin.ShaDiao.Application
         private static readonly ConcurrentDictionary<string, GroupSettings> GroupDic = new ConcurrentDictionary<string, GroupSettings>();
         private const int MaxNum = 10;
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             if (routeMsg.MessageType == MessageType.Private)
                 return null;
             string groupId = routeMsg.GroupId ?? routeMsg.DiscussId;
