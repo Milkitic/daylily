@@ -5,6 +5,7 @@ using Daylily.Common.Utils.LoggerUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Daylily.Bot.Backend.Plugins
@@ -45,8 +46,8 @@ namespace Daylily.Bot.Backend.Plugins
         {
             Type t = GetType();
             if (!t.IsDefined(typeof(NameAttribute), false)) Name = t.Name;
-            if (!t.IsDefined(typeof(AuthorAttribute), false)) Author = new[] { "undefined" };
-            if (!t.IsDefined(typeof(HelpAttribute), false)) Helps = new[] { "尚无帮助信息" };
+            if (!t.IsDefined(typeof(AuthorAttribute), false)) Author = new[] { "anonym" };
+            if (!t.IsDefined(typeof(HelpAttribute), false)) Helps = new[] { "Nothing here." };
             if (!t.IsDefined(typeof(VersionAttribute), false))
             {
                 Major = 0;
@@ -64,7 +65,7 @@ namespace Daylily.Bot.Backend.Plugins
                         Name = name.Name ?? t.Name;
                         break;
                     case AuthorAttribute author:
-                        Author = author.Author ?? new[] { "undefined" };
+                        Author = author.Author ?? new[] { "anonym" };
                         break;
                     case VersionAttribute ver:
                         Major = ver.Major;
@@ -72,10 +73,12 @@ namespace Daylily.Bot.Backend.Plugins
                         Patch = ver.Patch;
                         State = ver.PluginVersion;
                         if (State == PluginVersion.Alpha)
-                            Logger.Warn($"\"{Name}\" 仅为{State}版本。可能出现大量无法预料的问题。");
+                            Logger.Warn($"\"{Name}\" is currently in \"{State}\" state, which may leads to crash.");
                         break;
                     case HelpAttribute help:
-                        Helps = help.Helps ?? new[] { "尚无帮助信息" };
+                        Helps = help.Helps != null
+                            ? help.Helps.Select(k => k.EndsWith("。") ? k : k + "。").ToArray()
+                            : new[] { "Nothing here." };
                         TargetAuthority = help.Authority;
                         break;
                 }
@@ -101,7 +104,7 @@ namespace Daylily.Bot.Backend.Plugins
             if (writeLog)
             {
                 var fileInfo = new FileInfo(saveName);
-                Logger.Success($"写入了 {Path.Combine("~", fileInfo.Directory?.Name, fileInfo.Name)}。");
+                Logger.Success($"Saved settings to \"{Path.Combine("~", fileInfo.Directory?.Name, fileInfo.Name)}\".");
             }
         }
 
@@ -120,7 +123,7 @@ namespace Daylily.Bot.Backend.Plugins
                 if (writeLog)
                 {
                     var fileInfo = new FileInfo(saveName);
-                    Logger.Success($"读取了 {Path.Combine("~", fileInfo.Directory?.Name, fileInfo.Name)}。");
+                    Logger.Success($"Loaded settings from \"{Path.Combine("~", fileInfo.Directory?.Name, fileInfo.Name)}\".");
                 }
 
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
