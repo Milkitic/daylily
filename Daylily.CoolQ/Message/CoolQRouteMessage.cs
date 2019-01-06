@@ -43,7 +43,9 @@ namespace Daylily.CoolQ.Message
         [JsonIgnore]
         public CoolQGroupMessageApi Group { get; set; }
 
-        public CoolQRouteMessage() { }
+        public CoolQRouteMessage()
+        {
+        }
 
         public CoolQRouteMessage(string message, CoolQIdentity cqIdentity, string atId = null) :
             this(new CoolQMessage(new Text(message)), cqIdentity, atId)

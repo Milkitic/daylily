@@ -22,60 +22,71 @@ namespace Daylily.Plugin.Kernel
             CanDisabled = false
         };
 
+        public static Authority? GetAuthority(string message, out string fullCommand)
+        {
+            if (message.StartsWith(DaylilyCore.Current.CommandFlag))
+            {
+                if (message.StartsWith($"{DaylilyCore.Current.CommandFlag}root ") ||
+                    message.Trim() == $"{DaylilyCore.Current.CommandFlag}root")
+                {
+                    fullCommand = message.Substring(5).Trim();
+                    return Authority.Root;
+                }
+                else if (message.StartsWith($"{DaylilyCore.Current.CommandFlag}sudo ") ||
+                         message.Trim() == $"{DaylilyCore.Current.CommandFlag}sudo")
+                {
+                    fullCommand = message.Substring(5).Trim();
+                    return Authority.Admin;
+                }
+                else
+                {
+                    fullCommand = message.Substring(1);
+                    return Authority.Public;
+                }
+            }
+
+            fullCommand = null;
+            return null;
+        }
+
         public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            var cm = routeMsg;
+            long userId = Convert.ToInt64(routeMsg.UserId);
+            string message = routeMsg.Message.RawMessage;
 
-            long groupId = Convert.ToInt64(cm.GroupId);
-            long userId = Convert.ToInt64(cm.UserId);
-            long discussId = Convert.ToInt64(cm.DiscussId);
-            string message = cm.Message.RawMessage;
-            var type = cm.MessageType;
-
-            if (message.Substring(0, 1) == Bot.DaylilyCore.Current.CommandFlag)
+            var requestAuth = GetAuthority(message, out var fullCommand);
+            switch (requestAuth)
             {
-                if (message.IndexOf(Bot.DaylilyCore.Current.CommandFlag + "root ", StringComparison.InvariantCulture) == 0)
-                {
-                    if (cm.UserId != "2241521134")
-                    {
-                        Logger.Raw("Access denied.");
-                        return routeMsg.ToSource(DefaultReply.FakeRoot).Handle();
-                    }
-                    else
-                    {
-                        cm.FullCommand = message.Substring(6, message.Length - 6);
-                        cm.CurrentAuthority = Authority.Root;
-                    }
-
-                }
-                else if (message.IndexOf(Bot.DaylilyCore.Current.CommandFlag + "sudo ", StringComparison.InvariantCulture) == 0 &&
-                         cm.MessageType == MessageType.Group)
-                {
-                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) cm.Identity].GroupInfo
-                        .Admins.Count(q => q.UserId == userId) == 0)
+                case Authority.Public:
+                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) routeMsg.Identity].GroupInfo
+                            ?.Admins.Count(q => q.UserId == userId) != 0)
+                        routeMsg.CurrentAuthority = Authority.Admin;
+                    if (userId == 2241521134)
+                        routeMsg.CurrentAuthority = Authority.Root;
+                    break;
+                case Authority.Admin:
+                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) routeMsg.Identity].GroupInfo
+                            ?.Admins.Count(q => q.UserId == userId) == 0)
                     {
                         Logger.Raw("Access denied.");
                         return routeMsg.ToSource(DefaultReply.FakeAdmin).Handle();
                     }
-                    else
-                    {
-                        cm.FullCommand = message.Substring(6, message.Length - 6);
-                        cm.CurrentAuthority = Authority.Admin;
-                    }
-                }
-                else
-                {
-                    // auto
-                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity) cm.Identity].GroupInfo
-                        ?.Admins.Count(q => q.UserId == userId) != 0)
-                        cm.CurrentAuthority = Authority.Admin;
-                    if (cm.UserId == "2241521134")
-                        cm.CurrentAuthority = Authority.Root;
 
-                    cm.FullCommand = message.Substring(1, message.Length - 1);
-                }
+                    break;
+                case Authority.Root:
+                    if (userId != 2241521134)
+                    {
+                        Logger.Raw("Access denied.");
+                        return routeMsg.ToSource(DefaultReply.FakeRoot).Handle();
+                    }
+
+                    break;
             }
 
+            if (fullCommand != null)
+                routeMsg.FullCommand = fullCommand;
+            if (requestAuth != null)
+                routeMsg.CurrentAuthority = requestAuth.Value;
             return null;
         }
     }

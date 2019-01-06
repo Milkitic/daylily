@@ -1,24 +1,24 @@
-﻿using Daylily.Bot;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Backend.Plugins;
 using Daylily.Bot.Message;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Daylily.Plugin.Basic
+namespace Daylily.Plugin.Kernel
 {
     [Name("插件管理")]
     [Author("yf_extension")]
     [Version(2, 1, 1, PluginVersion.Alpha)]
     [Help("动态管理插件的启用状态。", "仅限当前群生效。", Authority = Authority.Admin)]
     [Command("plugin")]
-    public class PluginManage : CoolQCommandPlugin
+    public class PluginManager : CoolQCommandPlugin
     {
         public override Guid Guid => new Guid("1888139a-860d-41f6-8684-639b2b6923e9");
 
@@ -64,7 +64,7 @@ namespace Daylily.Plugin.Basic
         {
             _routeMsg = routeMsg;
             _identity = (CoolQIdentity)_routeMsg.Identity;
-            _plugins = PluginManager.Current.Plugins.OfType<MessagePlugin>()
+            _plugins = Bot.Backend.PluginManager.Current.Plugins.OfType<MessagePlugin>()
                 .Where(k => (k.MiddlewareConfig as BackendConfig)?.CanDisabled == true)
                 .Where(k => k.TargetAuthority != Authority.Root);
             if (!DisabledList.ContainsKey(_identity))

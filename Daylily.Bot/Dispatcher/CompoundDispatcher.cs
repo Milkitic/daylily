@@ -15,12 +15,18 @@ namespace Daylily.Bot.Dispatcher
         public abstract void SendMessage(RouteMessage message);
         public abstract bool Event_Received(object sender, EventEventArgs args);
 
-        protected void RaiseSessionEvent(RouteMessage message)
+        protected virtual bool RaiseSessionEvent(RouteMessage message)
         {
-            SessionReceived?.Invoke(null, new SessionReceivedEventArgs
+            if (SessionReceived != null)
             {
-                RouteMessageObj = message
-            });
+                SessionReceived?.Invoke(null, new SessionReceivedEventArgs
+                {
+                    RouteMessageObj = message
+                });
+                return true;
+            }
+
+            return false;
         }
     }
 }

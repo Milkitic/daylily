@@ -24,7 +24,6 @@ namespace Daylily.CoolQ
         public SessionList SessionInfo { get; } = new SessionList();
         public List<GroupMemberGroupInfo> GroupMemberGroupInfo { get; set; } = new List<GroupMemberGroupInfo>();
 
-        private readonly Random _rnd = new Random();
         private const int MinTime = 100; // 每条缓冲时间
         private const int MaxTime = 300; // 每条缓冲时间
         public PluginManager PluginManager => DaylilyCore.Current.PluginManager;
@@ -104,7 +103,12 @@ namespace Daylily.CoolQ
                     try
                     {
                         CoolQRouteMessage coolQRouteMessage = CoolQRouteMessage.Parse(currentMsg);
-                        HandleMessage(coolQRouteMessage);
+                        HandleMessage(new CoolQScopeObject
+                        {
+                            ApplicationPlugins = PluginManager.ApplicationInstances
+                                .OrderByDescending(k => k.MiddlewareConfig?.Priority).ToList(),
+                            RouteMessage = coolQRouteMessage
+                        });
                     }
                     catch (Exception ex)
                     {
@@ -114,33 +118,24 @@ namespace Daylily.CoolQ
             }
         }
 
-        private async void HandleMessage(CoolQRouteMessage cm)
+        private async void HandleMessage(CoolQScopeObject scope)
         {
-            RaiseSessionEvent(cm);
-            var handled = await HandleApplication(cm);
-            if (!handled)
-            {
-                if (!string.IsNullOrEmpty(cm.FullCommand))
-                {
-                    HandleCommand(cm);
-                }
+            if (RaiseSessionEvent(scope.RouteMessage)) return;
 
-                //if (!cmdFlag)
-                //    SessionReceived?.Invoke(null, new SessionReceivedEventArgs
-                //    {
-                //        MessageObj = cm
-                //    });
+            var handled = await HandleApplication(scope);
+            if (handled) return;
+            if (!string.IsNullOrEmpty(scope.RouteMessage.FullCommand))
+            {
+                HandleCommand(scope.RouteMessage);
             }
-            Thread.Sleep(_rnd.Next(MinTime, MaxTime));
         }
 
-        private async Task<bool> HandleApplication(CoolQRouteMessage cm)
+        private async Task<bool> HandleApplication(CoolQScopeObject scope)
         {
             int? priority = int.MinValue;
             bool handled = false;
-
             //var app = PluginManager.GetPlugin < PluginSwitch >
-            foreach (var appPlugin in PluginManager.ApplicationInstances.OrderByDescending(k => k.MiddlewareConfig?.Priority))
+            foreach (var appPlugin in scope.ApplicationPlugins)
             {
                 int? p = appPlugin.MiddlewareConfig?.Priority;
                 if (p < priority && handled)
@@ -156,8 +151,8 @@ namespace Daylily.CoolQ
                 CoolQRouteMessage replyObj = null;
                 var task = Task.Run(() =>
                 {
-                    replyObj = ((CoolQApplicationPlugin)appPlugin).OnMessageReceived(cm);
-                    if (replyObj != null) SendMessage(replyObj);
+                    replyObj = ((CoolQApplicationPlugin)appPlugin).OnMessageReceived(scope.RouteMessage);
+                    if (replyObj != null && !replyObj.Canceled) SendMessage(replyObj);
                 });
 
                 if (!appPlugin.RunInMultiThreading)
@@ -173,21 +168,10 @@ namespace Daylily.CoolQ
         private void HandleCommand(CoolQRouteMessage cm)
         {
             CoolQRouteMessage replyObj = null;
-
-
             if (!PluginManager.ContainsPlugin(cm.Command)) return;
 
             Type t = PluginManager.GetPluginType(cm.Command);
-            //if (ValidateDisabled(cm, t))
-            //{
-            //    SendMessage(routeMsg.ToSource("本群已禁用此命令...", cm));
-            //    return;
-            //}
-
-            //CoolQCommandPlugin plugin =
-            //    t == typeof(ExtendPlugin)
-            //    ? CoolQPluginManager.CommandMapStatic[cm.Command]
-            //    : GetInstance(t);
+            
             CoolQCommandPlugin plugin = PluginManager.GetNewInstance<CoolQCommandPlugin>(t);
             if (plugin != null)
             {

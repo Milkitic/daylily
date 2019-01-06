@@ -1,12 +1,12 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
-using Daylily.Bot;
-using Daylily.Bot.Backend;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -14,58 +14,45 @@ namespace Daylily.Plugin.Kernel
     {
         public override Guid Guid => new Guid("20e7a3e1-fdc3-4b3a-bff1-ecf396a63311");
 
-        public ConcurrentDictionary<long, List<string>> GroupDisabledList { get; set; } =
-            new ConcurrentDictionary<long, List<string>>();
-        public ConcurrentDictionary<long, List<string>> DiscussDisabledList { get; set; } =
-            new ConcurrentDictionary<long, List<string>>();
-        public ConcurrentDictionary<long, List<string>> PrivateDisabledList { get; set; } =
-            new ConcurrentDictionary<long, List<string>>();
+        private static ConcurrentDictionary<CoolQIdentity, List<Guid>> DisabledList => PluginManager.
+            DisabledList;
+
+        public override bool RunInMultiThreading => false;
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
-            CanDisabled = false
+            CanDisabled = false,
+            Priority = 88
         };
 
-        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMessageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQRouteMessage routeMsg)
         {
-            return null;
-        }
-
-        public bool ValidateDisabled(CoolQRouteMessage cm, MemberInfo t)
-        {
-            switch (cm.MessageType)
+            if (DisabledList.Keys.Contains((CoolQIdentity)routeMsg.Identity))
             {
-                case MessageType.Group:
-                    if (!GroupDisabledList.Keys.Contains(long.Parse(cm.GroupId)))
+                var guidList = DisabledList[(CoolQIdentity)routeMsg.Identity];
+                PermissionChecker.GetAuthority(routeMsg.RawMessage, out var fullCommand);
+                var cmdName = fullCommand?.Split(' ')[0];
+                if (cmdName != null)
+                {
+                    Guid? pluginGuid = Bot.Backend.PluginManager.Current.GetPlugin(cmdName)?.Guid;
+                    if (pluginGuid != null)
                     {
-                        GroupDisabledList.TryAdd(long.Parse(cm.GroupId), new List<string>());
+                        if (guidList.Contains(pluginGuid.Value))
+                            return routeMsg.ToSource("本群已禁用此命令.").Handle();
                     }
-
-                    if (GroupDisabledList[long.Parse(cm.GroupId)].Contains(t.Name))
-                        return true;
-                    break;
-                case MessageType.Private:
-                    if (!PrivateDisabledList.Keys.Contains(long.Parse(cm.UserId)))
-                    {
-                        PrivateDisabledList.TryAdd(long.Parse(cm.UserId), new List<string>());
-                    }
-
-                    if (PrivateDisabledList[long.Parse(cm.UserId)].Contains(t.Name))
-                        return true;
-                    break;
-                case MessageType.Discuss:
-                    if (!DiscussDisabledList.Keys.Contains(long.Parse(cm.DiscussId)))
-                    {
-                        DiscussDisabledList.TryAdd(long.Parse(cm.DiscussId), new List<string>());
-                    }
-
-                    if (DiscussDisabledList[long.Parse(cm.DiscussId)].Contains(t.Name))
-                        return true;
-                    break;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                    //Guid? pluginGuid = null;
+                    //if (pluginGuid != null)
+                    //{
+                    //    return new CoolQRouteMessage().Handle();
+                    //}
+                }
             }
 
-            return false;
+            return null;
         }
-
     }
 }
