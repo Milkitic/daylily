@@ -61,9 +61,9 @@ namespace Daylily.Plugin.Kernel
                 case Authority.Public:
                     if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].GroupInfo
                             ?.Admins.Count(q => q.UserId == userId) != 0)
-                        routeMsg.CurrentAuthority = Authority.Admin;
+                        requestAuth = Authority.Admin;
                     if (userId == 2241521134)
-                        routeMsg.CurrentAuthority = Authority.Root;
+                        requestAuth = Authority.Root;
                     break;
                 case Authority.Admin:
                     if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].GroupInfo
