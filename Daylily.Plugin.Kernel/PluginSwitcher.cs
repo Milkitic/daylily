@@ -19,7 +19,7 @@ namespace Daylily.Plugin.Kernel
     [Version(2, 1, 1, PluginVersion.Alpha)]
     [Help("动态管理插件的启用状态。", "仅限当前群生效。", Authority = Authority.Admin)]
     [Command("plugin")]
-    public class PluginManager : CoolQCommandPlugin
+    public class PluginSwitcher : CoolQCommandPlugin
     {
         public override Guid Guid => new Guid("1888139a-860d-41f6-8684-639b2b6923e9");
 
@@ -66,7 +66,7 @@ namespace Daylily.Plugin.Kernel
             var routeMsg = scope.RouteMessage;
             _routeMsg = routeMsg;
             _identity = (CoolQIdentity)_routeMsg.Identity;
-            _plugins = Bot.Backend.PluginManager.Current.Plugins.OfType<MessagePlugin>()
+            _plugins = PluginManager.Current.Plugins.OfType<MessagePlugin>()
                 .Where(k => (k.MiddlewareConfig as BackendConfig)?.CanDisabled == true)
                 .Where(k => k.TargetAuthority != Authority.Root);
             if (!DisabledList.ContainsKey(_identity))

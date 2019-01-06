@@ -16,7 +16,7 @@ namespace Daylily.Plugin.Kernel
     {
         public override Guid Guid => new Guid("20e7a3e1-fdc3-4b3a-bff1-ecf396a63311");
 
-        private static CoolQIdentityDictionary<List<Guid>> DisabledList => PluginManager.
+        private static CoolQIdentityDictionary<List<Guid>> DisabledList => PluginSwitcher.
             DisabledList;
 
         public override bool RunInMultiThreading => false;
