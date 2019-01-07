@@ -53,7 +53,7 @@ namespace Daylily.Plugin.Basic
             if (UseAllGroup)
             {
                 sessionType = MessageType.Group;
-                List<GroupInfo> list = CoolQHttpApi.GetGroupList().Data;
+                List<GroupInfo> list = CoolQHttpApiClient.GetGroupList().Data;
                 List<string> failedList = new List<string>();
                 string ok = $"◈◈ {DateTime.Now:M月d日 H:mm}公告 ◈◈{Environment.NewLine}";
                 string msg = ok + innerMessage;

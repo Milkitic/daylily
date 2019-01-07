@@ -1,11 +1,8 @@
-﻿using CSharpOsu.Module;
-using Daylily.Bot.Message;
-using Daylily.Common.Utils.LoggerUtils;
+﻿using Daylily.Bot.Message;
+using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
-using Daylily.Osu.Interface;
 using System;
-using System.Linq;
 
 namespace Daylily.Plugin.Osu
 {

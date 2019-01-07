@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
-using Daylily.Assist.Interface;
+﻿using Daylily.Assist;
 using Daylily.Common.IO;
 using Daylily.CoolQ.Message;
+using System;
+using System.IO;
 
 namespace Daylily.CoolQ
 {
@@ -43,7 +43,7 @@ namespace Daylily.CoolQ
             string[] settings;
             if (!FileInfo.Exists)
             {
-                string tmp = AssistApi.GetImgFile(fileName);
+                string tmp = AssistApiClient.GetImgFile(fileName);
                 settings = tmp.Replace("\r", "").Trim('\n').Split('\n');
             }
             else

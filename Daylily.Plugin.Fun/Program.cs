@@ -1,10 +1,10 @@
 ﻿using Daylily.Bot.Message;
-using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
 using System;
 
-namespace Daylily.Plugin.ShaDiao
+namespace Daylily.Plugin.Fun
 {
     class Program
     {

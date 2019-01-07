@@ -3,7 +3,7 @@ using Daylily.Bot.Backend;
 using Daylily.Bot.Command;
 using Daylily.Bot.Dispatcher;
 using Daylily.Bot.Message;
-using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
@@ -11,7 +11,6 @@ using Daylily.CoolQ.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Daylily.CoolQ
@@ -212,13 +211,13 @@ namespace Daylily.CoolQ
             switch (routeMessage.MessageType)
             {
                 case MessageType.Group:
-                    status = CoolQHttpApi.SendGroupMessageAsync(routeMessage.GroupId, msg).Status;
+                    status = CoolQHttpApiClient.SendGroupMessageAsync(routeMessage.GroupId, msg).Status;
                     break;
                 case MessageType.Discuss:
-                    status = CoolQHttpApi.SendDiscussMessageAsync(routeMessage.DiscussId, msg).Status;
+                    status = CoolQHttpApiClient.SendDiscussMessageAsync(routeMessage.DiscussId, msg).Status;
                     break;
                 case MessageType.Private:
-                    status = CoolQHttpApi.SendPrivateMessageAsync(routeMessage.UserId, msg).Status;
+                    status = CoolQHttpApiClient.SendPrivateMessageAsync(routeMessage.UserId, msg).Status;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

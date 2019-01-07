@@ -5,7 +5,7 @@ using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.IO;
-using Daylily.Common.Utils.StringUtils;
+using Daylily.Common.Text;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;

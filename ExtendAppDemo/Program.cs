@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace ExtendAppDemo
 {
     class Program
     {
         static void Main(string[] args)
-        {  
+        {
             // 由于一些特殊情况，传进来的json需要转义
             string sourceJson = args[0].Replace("+++", " ").Replace("---", "\\\"");
 

@@ -5,10 +5,7 @@ using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Reflection;
-using Daylily.Bot.Backend.Plugins;
 
 namespace Daylily.Plugin.Kernel
 {

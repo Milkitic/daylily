@@ -1,12 +1,12 @@
 ﻿using Daylily.Bot.Backend.Plugins;
 using Daylily.Common;
-using Daylily.Common.Utils.LoggerUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Daylily.Common.Logging;
 
 namespace Daylily.Bot.Backend
 {

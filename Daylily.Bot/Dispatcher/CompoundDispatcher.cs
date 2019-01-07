@@ -3,6 +3,7 @@ using Daylily.Bot.Session;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Daylily.Common;
 
 namespace Daylily.Bot.Dispatcher
 {

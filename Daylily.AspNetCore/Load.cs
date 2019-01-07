@@ -1,18 +1,15 @@
 ﻿using Daylily.Bot;
 using Daylily.Common;
 using Daylily.Common.IO;
-using Daylily.Common.Utils.LoggerUtils;
-using Daylily.Common.Utils.StringUtils;
+using Daylily.Common.Logging;
+using Daylily.Common.Text;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.Message;
 using Daylily.Cos;
 using Daylily.Osu;
-using Daylily.Osu.Database;
+using Daylily.Osu.Data;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Daylily.AspNetCore
 {
@@ -41,16 +38,16 @@ namespace Daylily.AspNetCore
             DbHelper.ConnectionString.Add("cabbage", secret.ConnectionStrings.DefaultConnection);
             DbHelper.ConnectionString.Add("daylily", secret.ConnectionStrings.MyConnection);
 
-            OsuApiKey.ApiKey = secret.OsuSettings.ApiKey;
-            OsuApiKey.UserName = secret.OsuSettings.UserName;
-            OsuApiKey.Password = secret.OsuSettings.Password;
+            OsuApiConfig.ApiKey = secret.OsuSettings.ApiKey;
+            OsuApiConfig.UserName = secret.OsuSettings.UserName;
+            OsuApiConfig.Password = secret.OsuSettings.Password;
 
             Signature.AppId = secret.CosSettings.AppId;
             Signature.SecretId = secret.CosSettings.SecretId;
             Signature.SecretKey = secret.CosSettings.SecretKey;
             Signature.BucketName = secret.CosSettings.BucketName;
 
-            CoolQHttpApi.ApiUrl = secret.BotSettings.PostUrl;
+            CoolQHttpApiClient.ApiUrl = secret.BotSettings.PostUrl;
             CoolQCode.CqPath = secret.BotSettings.CqDir;
             DaylilyCore.Current.CommandFlag = secret.BotSettings.CommandFlag;
         }

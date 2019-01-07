@@ -1,7 +1,7 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
-using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Logging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.Message;
@@ -45,7 +45,7 @@ namespace Daylily.Plugin.Kernel
                 var userInfo =
                     CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity]?.GroupInfo?.Members
                         ?.FirstOrDefault(i => i.UserId == userId) ??
-                    CoolQHttpApi.GetGroupMemberInfo(routeMsg.GroupId, routeMsg.UserId).Data;
+                    CoolQHttpApiClient.GetGroupMemberInfo(routeMsg.GroupId, routeMsg.UserId).Data;
                 group = CoolQDispatcher.Current.SessionInfo?[(CoolQIdentity)routeMsg.Identity]?.Name;
                 sender = string.IsNullOrEmpty(userInfo.Card)
                     ? userInfo.Nickname

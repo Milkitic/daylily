@@ -1,5 +1,5 @@
-﻿using Daylily.Common.Utils.LoggerUtils;
-using Daylily.Common.Utils.SocketUtils;
+﻿using Daylily.Common.Logging;
+using Daylily.Common.Web.Socket;
 
 namespace Daylily.Bot.Console
 {

@@ -1,4 +1,6 @@
-﻿namespace Daylily.Bot
+﻿using Daylily.Common;
+
+namespace Daylily.Bot
 {
     public interface IMiddleware
     {

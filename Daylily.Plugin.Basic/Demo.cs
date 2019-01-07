@@ -1,6 +1,6 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
-using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Logging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;

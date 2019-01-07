@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Daylily.Common;
+using Daylily.Common.Text;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Daylily.Common;
-using Daylily.Common.Utils.StringUtils;
 using Contract = Daylily.Common.Contract;
 
 namespace Daylily.CoolQ.Message
@@ -584,6 +584,6 @@ namespace Daylily.CoolQ.Message
         public CoolQCode[] CoolQCodes { get; }
 
         public Assemblage(CoolQCode[] coolQCodes) => CoolQCodes = coolQCodes;
-        
+
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Daylily.Bot
+namespace Daylily.Common
 {
     public class ExceptionEventArgs : EventArgs
     {

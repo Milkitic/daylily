@@ -1,7 +1,7 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Dispatcher;
 using Daylily.Bot.Frontend;
-using Daylily.Bot.Message;
+using Daylily.Common;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Newtonsoft.Json;
 using System;
@@ -70,7 +70,7 @@ namespace Daylily.CoolQ
                         var arg = new NoticeEventArgs(parsedObj);
                         GroupFileUploaded?.Invoke(this, arg);
                         Noticed?.Invoke(this, arg);
-                  }
+                    }
                     else if (obj.notice_type == "group_admin") // 群管理员变动
                     {
                         GroupAdminChange parsedObj = JsonConvert.DeserializeObject<GroupAdminChange>(rawJson);

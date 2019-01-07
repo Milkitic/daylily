@@ -1,15 +1,8 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Dispatcher;
 using Daylily.Bot.Frontend;
-using Daylily.Bot.Message;
-using Daylily.Common;
-using Daylily.Common.IO;
-using Daylily.Common.Utils.LoggerUtils;
-using Daylily.Common.Utils.SocketUtils;
-using Daylily.Common.Utils.StringUtils;
+using Daylily.Common.Logging;
 using Daylily.CoolQ;
-using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
-using Daylily.CoolQ.Message;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Daylily.AspNetCore

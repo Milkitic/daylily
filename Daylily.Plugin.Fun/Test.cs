@@ -1,7 +1,6 @@
-﻿using Daylily.Bot.Message;
-using Daylily.Bot.Session;
+﻿using Daylily.Bot.Session;
 using Daylily.Common;
-using Daylily.Common.Utils.RequestUtils;
+using Daylily.Common.Web;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
@@ -14,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace Daylily.Plugin.ShaDiao
+namespace Daylily.Plugin.Fun
 {
     class Test : CoolQApplicationPlugin
     {
@@ -35,7 +34,7 @@ namespace Daylily.Plugin.ShaDiao
                     if (infoList == null) return routeMessage.ToSource("你发送的消息没有包含图片。");
                     if (infoList.Length > 5) return routeMessage.ToSource("你发送的图片过多。");
 
-                    List<Image> imgList = infoList.Select(imgInfo => HttpClientUtil.GetImageFromUrl(imgInfo.Url))
+                    List<Image> imgList = infoList.Select(imgInfo => HttpClient.GetImageFromUrl(imgInfo.Url))
                         .ToList();
 
                     var sendList = HandleImage(imgList);

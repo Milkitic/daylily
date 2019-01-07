@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Daylily.Bot.Backend.Plugins;
+using Daylily.Common.Logging;
+using Daylily.CoolQ;
+using Daylily.CoolQ.CoolQHttp;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot.Backend.Plugins;
-using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ;
-using Daylily.CoolQ.CoolQHttp;
-using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
 
 namespace Daylily.Plugin.Basic
 {
@@ -35,14 +35,14 @@ namespace Daylily.Plugin.Basic
 
         private static void UpdateGroupList(int i)
         {
-            List<GroupInfo> list = CoolQHttpApi.GetGroupList().Data;
+            List<GroupInfo> list = CoolQHttpApiClient.GetGroupList().Data;
             List<GroupMemberGroupInfo> newList = new List<GroupMemberGroupInfo>();
             foreach (var groupInfo in list)
             {
                 try
                 {
-                    GroupInfoV2 v2 = CoolQHttpApi.GetGroupInfoV2(groupInfo.GroupId.ToString()).Data;
-                    v2.Members = CoolQHttpApi.GetGroupMemberList(v2.GroupId.ToString()).Data/*.Where(q => q.Role == "member")*/.ToList();
+                    GroupInfoV2 v2 = CoolQHttpApiClient.GetGroupInfoV2(groupInfo.GroupId.ToString()).Data;
+                    v2.Members = CoolQHttpApiClient.GetGroupMemberList(v2.GroupId.ToString()).Data/*.Where(q => q.Role == "member")*/.ToList();
                     if (i % 6 == 0)
                         foreach (var groupMember in v2.Members)
                         {
