@@ -27,7 +27,7 @@ namespace Daylily.Plugin.Osu
         "将你自己的图上传，我会地合理地挑选与你和另一人互相推荐，以达成互相摸图的目的。",
         "每个人同时只限一张图，第二张图会覆盖第一张图。")]
     [Command("m4m")]
-    public class M4MMatch : CoolQCommandPlugin
+    class M4MMatch : CoolQCommandPlugin
     {
         public override Guid Guid => new Guid("161f465e-5889-4b5b-bb99-693ae6eb87fa");
 
