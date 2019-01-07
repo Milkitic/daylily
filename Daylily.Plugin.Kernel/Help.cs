@@ -132,8 +132,10 @@ namespace Daylily.Plugin.Kernel
                         $"{plugin.Name}。{plugin.Helps[0]}");
                 }
             }
-            Dictionary<string, string> dicApp = apps.Where(plugin => plugin.TargetAuthority <= _routeMsg.CurrentAuthority)
-                .OrderBy(k => k.Name).ToDictionary(plugin => plugin.Name, plugin => plugin.Helps[0]);
+            Dictionary<string, string> dicApp = apps
+                .Where(plugin => plugin.TargetAuthority <= _routeMsg.CurrentAuthority)
+                .OrderBy(k => k.Name)
+                .ToDictionary(plugin => plugin.Name, plugin => plugin.Helps.Length > 0 ? plugin.Helps[0] : "");
 
             string[] hot = DaylilyCore.Current.PluginManager.GetPlugin<CommandCounter>()?.CommandRate
                 .OrderByDescending(k => k.Value)
