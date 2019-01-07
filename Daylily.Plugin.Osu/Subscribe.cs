@@ -23,7 +23,7 @@ namespace Daylily.Plugin.Osu
     [Version(2, 0, 2, PluginVersion.Alpha)]
     [Help("订阅某个mapper的qua、rank、love、传图提醒。", "限制为群内推送10个名额，个人推送5个名额。")]
     [Command("sub")]
-    public class Subscribe : CoolQCommandPlugin
+    class Subscribe : CoolQCommandPlugin
     {
         public override Guid Guid => new Guid("2690bff7-1e5c-4069-98b8-d0fdfc612a02");
 

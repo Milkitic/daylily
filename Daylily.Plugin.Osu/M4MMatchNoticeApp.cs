@@ -13,7 +13,7 @@ namespace Daylily.Plugin.Osu
     [Author("yf_extension")]
     [Version(2, 0, 1, PluginVersion.Stable)]
     [Help("用于提醒群友使用m4m插件。")]
-    public class M4MMatchNoticeApp : CoolQApplicationPlugin
+    class M4MMatchNoticeApp : CoolQApplicationPlugin
     {
         public override Guid Guid => new Guid("8f8cb4ce-379f-4a0a-9dcc-d1a1fb8bdd9c");
 
