@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Daylily.Bot.Models;
 
 namespace Daylily.Bot.Command
 {
@@ -39,24 +38,23 @@ namespace Daylily.Bot.Command
             SimpleParams = _divider.SimpleArgs;
         }
 
-        public void Analyze(string fullCmd, CommonMessage commonMessage)
+        public void Analyze(string fullCmd, ICommand command)
         {
-            //outCm = (CommonMessage)inCm.Clone();
             if (_divider.TryDivide(fullCmd))
             {
-                commonMessage.Args = _divider.Args;
-                commonMessage.FreeArgs = _divider.FreeArgs;
-                commonMessage.Switches = _divider.Switches;
+                command.Args = _divider.Args;
+                command.FreeArgs = _divider.FreeArgs;
+                command.Switches = _divider.Switches;
             }
             else
             {
-                commonMessage.Args = new Dictionary<string, string>();
-                commonMessage.FreeArgs = new List<string>();
-                commonMessage.Switches = new Dictionary<string, string>();
+                command.Args = new Dictionary<string, string>();
+                command.FreeArgs = new List<string>();
+                command.Switches = new Dictionary<string, string>();
             }
-            commonMessage.Command = _divider.CommandName;
-            commonMessage.ArgString = _divider.ArgString;
-            commonMessage.SimpleArgs = _divider.SimpleArgs;
+            command.Command = _divider.CommandName;
+            command.ArgString = _divider.ArgString;
+            command.SimpleArgs = _divider.SimpleArgs;
         }
     }
 }

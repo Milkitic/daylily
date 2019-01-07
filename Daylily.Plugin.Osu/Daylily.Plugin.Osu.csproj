@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Daylily.Bot\Daylily.Bot.csproj" />
     <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
+    <ProjectReference Include="..\Daylily.CoolQ\Daylily.CoolQ.csproj" />
     <ProjectReference Include="..\Daylily.Osu\Daylily.Osu.csproj" />
   </ItemGroup>
 

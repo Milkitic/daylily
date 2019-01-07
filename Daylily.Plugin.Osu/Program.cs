@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using CSharpOsu.Module;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
+﻿using CSharpOsu.Module;
+using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ.Models.CqResponse;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
+using Daylily.CoolQ.Message;
 using Daylily.Osu.Interface;
+using System;
+using System.Linq;
 
 namespace Daylily.Plugin.Osu
 {
@@ -22,19 +22,22 @@ namespace Daylily.Plugin.Osu
                 //SubscribeMapper = "pw384",
                 //List = true
             };
-            newPlugin.Initialize(args);
-            CommonMessage cm = new CommonMessage
+            newPlugin.OnInitialized(args);
+            CoolQRouteMessage cm = new CoolQRouteMessage
             {
                 GroupId = "123456788",
                 UserId = "2241521134",
-                Message = "SB",
+                Message = CoolQMessage.Parse("SB"),
                 MessageType = MessageType.Private,
-                Group = new GroupMsg(),
-                Discuss = new DiscussMsg(),
-                Private = new PrivateMsg(),
+                Group = new CoolQGroupMessageApi(),
+                Discuss = new CoolQDiscussMessageApi(),
+                Private = new CoolQPrivateMessageApi(),
             };
 
-            Logger.Success("收到：" + newPlugin.Message_Received(cm).Message);
+            Logger.Success("收到：" + newPlugin.OnMessageReceived(new CoolQ.CoolQScopeEventArgs
+            {
+                RouteMessage = cm
+            }).Message);
             Console.ReadKey();
         }
     }

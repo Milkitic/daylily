@@ -1,49 +1,47 @@
-﻿using System;
+﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
+using Daylily.Common.Utils.LoggerUtils;
+using Daylily.Common.Utils.RequestUtils;
+using Daylily.CoolQ;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
+using Daylily.Osu.Database.BLL;
+using Daylily.Osu.Database.Model;
+using Daylily.Osu.Interface;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Common.Utils.LoggerUtils;
-using Daylily.Common.Utils.RequestUtils;
-using Daylily.CoolQ;
-using Daylily.Osu.Database.BLL;
-using Daylily.Osu.Database.Model;
-using Daylily.Osu.Interface;
-using Newtonsoft.Json;
 
 namespace Daylily.Plugin.Osu
 {
     [Name("Modding查询")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Beta)]
+    [Version(2, 0, 0, PluginVersion.Beta)]
     [Help("查询Modding所得点赞或kd，并生成相应统计图。")]
     [Command("kd")]
-    public class Kudosu : CommandPlugin
+    public class Kudosu : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("46e46ca7-728d-494b-b201-84ca6b76891a");
+
         [Help("查询指定的osu用户名。若带空格，请使用引号。")]
         [FreeArg]
         public string OsuId { get; set; }
 
-        public override void Initialize(string[] args)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
-
-        }
-
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
-        {
+            var routeMsg = scope.RouteMessage;
             string id;
             string uname;
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
-                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+                List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
                 if (userInfo.Count == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
+                    return routeMsg.ToSource(DefaultReply.IdNotBound, true);
 
                 id = userInfo[0].UserId.ToString();
                 uname = userInfo[0].CurrentUname;
@@ -52,12 +50,12 @@ namespace Daylily.Plugin.Osu
             {
                 int userNum = OldSiteApi.GetUser(OsuId, out var userObj);
                 if (userNum == 0)
-                    return new CommonMessageResponse(LoliReply.IdNotFound, messageObj, true);
+                    return routeMsg.ToSource(DefaultReply.IdNotFound, true);
                 if (userNum > 1)
                 {
                     // ignored
                 }
-                
+
                 id = userObj.user_id;
                 uname = userObj.username;
             }
@@ -79,7 +77,7 @@ namespace Daylily.Plugin.Osu
 
                 if (totalList.Count != 0) continue;
 
-                return new CommonMessageResponse("此人一张图都没摸过……", messageObj, true);
+                return routeMsg.ToSource("此人一张图都没摸过……", true);
             } while (tmpList.Count != 0);
 
             List<KdInfo> kdInfoList = new List<KdInfo>();
@@ -106,7 +104,7 @@ namespace Daylily.Plugin.Osu
 
             var cqImg = new FileImage(Draw(kdInfoList, uname)).ToString();
 
-            return new CommonMessageResponse(cqImg, messageObj);
+            return routeMsg.ToSource(cqImg);
         }
 
         private static Bitmap Draw(IReadOnlyList<KdInfo> kdInfoList, string uname)

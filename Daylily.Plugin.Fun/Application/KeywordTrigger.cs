@@ -1,0 +1,111 @@
+﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
+using Daylily.Common;
+using Daylily.CoolQ;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace Daylily.Plugin.ShaDiao.Application
+{
+    [Name("关键词触发")]
+    [Author("yf_extension")]
+    [Version(2, 0, 1, PluginVersion.Alpha)]
+    [Help("收到已给的关键词时，根据已给几率返回一张熊猫图。")]
+    public class KeywordTrigger : CoolQApplicationPlugin
+    {
+        public override Guid Guid => new Guid("1abf7c43-bafb-4536-a2be-e9aff8a2fc51");
+
+        private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
+        private static List<TriggerObject> _triggerObjects;
+        public KeywordTrigger()
+        {
+            _triggerObjects = LoadSettings<List<TriggerObject>>("UserDictionary") ?? new List<TriggerObject>
+            {
+                new TriggerObject(new[] {"我"}, new[] {"me1.jpg"}, 0.5),
+                new TriggerObject(new[] {"你"}, new[] {"you1.jpg", "you2.jpg"}, 2),
+                new TriggerObject(new[] {"为啥", "为什么", "为毛", "为嘛", "why "}, new[] {"why1.jpg"}, 20),
+                new TriggerObject(new[] {"看来", "原来"}, new[] {"kanlai1.jpg", "kanlai2.jpg"}, 30),
+                new TriggerObject(new[] {"黄花菜"},
+                    new[]
+                    {
+                        "sb1.jpg", "sb2.jpg", "sb3.jpg", "sb4.jpg", "sb5.jpg", "sb6.jpg", "sb7.jpg", "sb8.jpg",
+                        "sb9.jpg"
+                    }, 50)
+            };
+
+            // 概率从小到大排序，更科学
+            _triggerObjects.Sort(new TriggerComparer());
+            _triggerObjects.RemoveAll(p => p == null);
+            SaveSettings(_triggerObjects, "UserDictionary");
+        }
+
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
+        {
+            var routeMsg = scope.RouteMessage;
+            if (routeMsg.Command == "keyedit")
+            {
+                if (routeMsg.FreeArgs.Count == 1)
+                    return routeMsg.ToSource(routeMsg.FreeArgs[0] + " (KeywordTrigger)");
+            }
+            string msg = routeMsg.RawMessage;
+
+            foreach (var item in _triggerObjects)
+            {
+                if (Trig(msg, item.Words, item.Pictrues, out string img, item.ChancePercent))
+                    return routeMsg.ToSource(new FileImage(Path.Combine(PandaDir, img)).ToString());
+            }
+
+            return null;
+        }
+
+        private static bool Trig(string message, IEnumerable<string> keywords, IReadOnlyList<string> pics,
+            out string imgP, double chancePercent = 10)
+        {
+            var chance = chancePercent / 100d;
+            string msg = message.ToLower();
+            if (keywords.Any(msg.Contains))
+            {
+                imgP = pics[StaticRandom.Next(pics.Count)];
+                return StaticRandom.NextDouble() < chance;
+            }
+
+            imgP = null;
+            return false;
+        }
+
+        public class TriggerObject
+        {
+            public TriggerObject(IEnumerable<string> words, IReadOnlyList<string> pictrues, double chancePercent)
+            {
+                Contract.Requires<ArgumentOutOfRangeException>(chancePercent >= 0 && chancePercent <= 100);
+                Contract.Requires<ArgumentOutOfRangeException>(words != null);
+                Contract.Requires<ArgumentOutOfRangeException>(pictrues != null);
+                Words = words;
+                Pictrues = pictrues;
+                ChancePercent = chancePercent;
+            }
+
+            public IEnumerable<string> Words { get; set; }
+            public IReadOnlyList<string> Pictrues { get; set; }
+            public double ChancePercent { get; set; }
+        }
+
+        private class TriggerComparer : IComparer<TriggerObject>
+        {
+            public int Compare(TriggerObject obj1, TriggerObject obj2)
+            {
+                if (obj1 == null && obj2 == null)
+                    return 0;
+                if (obj1 != null && obj2 == null)
+                    return 1;
+                if (obj1 == null && obj2 != null)
+                    return -1;
+                return obj1.ChancePercent >= obj2.ChancePercent ? 1 : -1;
+            }
+        }
+    }
+}

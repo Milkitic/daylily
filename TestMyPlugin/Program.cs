@@ -1,9 +1,8 @@
-﻿using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Daylily.Bot.Message;
 using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ.Models.CqResponse;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
+using Daylily.CoolQ.Message;
+using Daylily.Plugin.Basic;
 using System;
 
 namespace TestMyPlugin
@@ -12,42 +11,25 @@ namespace TestMyPlugin
     {
         static void Main(string[] args)
         {
-            RepeatPlugin newPlugin = new RepeatPlugin();
-            newPlugin.Initialize(args);
+            Roll newPlugin = new Roll();
+            newPlugin.OnInitialized(args);
             while (true)
             {
                 var msg = Console.ReadLine();
-                CommonMessage cm = new CommonMessage()
+                CoolQRouteMessage cm = new CoolQRouteMessage()
                 {
                     GroupId = "123456788",
                     UserId = "2241521134",
-                    Message = msg,
+                    Message = CoolQMessage.Parse(msg),
                     MessageType = MessageType.Group,
-                    Group = new GroupMsg(),
+                    Group = new CoolQGroupMessageApi(),
                 };
 
-                Logger.Raw("回复：" + newPlugin.Message_Received(cm).Message);
+                Logger.Raw("回复：" + newPlugin.OnMessageReceived(new Daylily.CoolQ.CoolQScopeEventArgs
+                {
+                    RouteMessage = cm
+                }).RawMessage);
             }
-
-            Console.ReadKey();
-        }
-    }
-
-    [Name("复读")]
-    [Author("yf_extension")]
-    [Version(0, 0, 1, PluginVersion.Beta)]
-    [Help("复读。")]
-    [Command("repeat")]
-    public class RepeatPlugin : CommandPlugin
-    {
-        public override void Initialize(string[] args)
-        {
-
-        }
-
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
-        {
-            return new CommonMessageResponse(messageObj.Message, messageObj);
         }
     }
 }

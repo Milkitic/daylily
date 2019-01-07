@@ -1,29 +1,32 @@
-﻿using System;
+﻿using Bleatingsheep.Osu.ApiV2b;
+using Bleatingsheep.Osu.ApiV2b.Models;
+using Daylily.Bot;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
+using Daylily.Common.Utils.LoggerUtils;
+using Daylily.CoolQ;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
+using Daylily.Osu.Interface;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Bleatingsheep.Osu.ApiV2b;
-using Bleatingsheep.Osu.ApiV2b.Models;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
-using Daylily.Common.Utils.LoggerUtils;
-using Daylily.CoolQ;
-using Daylily.Osu.Interface;
 
 namespace Daylily.Plugin.Osu
 {
     [Name("Mapper订阅")]
     [Author("yf_extension")]
-    [Version(0, 1, 2, PluginVersion.Alpha)]
+    [Version(2, 0, 2, PluginVersion.Alpha)]
     [Help("订阅某个mapper的qua、rank、love、传图提醒。", "限制为群内推送10个名额，个人推送5个名额。")]
     [Command("sub")]
-    public class Subscribe : CommandPlugin
+    public class Subscribe : CoolQCommandPlugin
     {
+        public override Guid Guid => new Guid("2690bff7-1e5c-4069-98b8-d0fdfc612a02");
+
         [Arg("u")]
         [Help("需要取消订阅的mapper用户名。")]
         public string UnsubscribeMapper { get; set; }
@@ -43,7 +46,7 @@ namespace Daylily.Plugin.Osu
         private const int PrivateMax = 5;
         private const int GroupMax = 10;
 
-        public override void Initialize(string[] args)
+        public override void OnInitialized(string[] args)
         {
             _userDic = LoadSettings<ConcurrentDictionary<string, List<UserInfo>>>("userDictionary") ??
                        new ConcurrentDictionary<string, List<UserInfo>>();
@@ -112,117 +115,117 @@ namespace Daylily.Plugin.Osu
             });
         }
 
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             string subId;
-            switch (messageObj.MessageType)
+            switch (routeMsg.MessageType)
             {
                 case MessageType.Private:
-                    subId = messageObj.UserId;
+                    subId = routeMsg.UserId;
                     break;
                 case MessageType.Discuss:
-                    subId = messageObj.DiscussId;
+                    subId = routeMsg.DiscussId;
                     break;
                 case MessageType.Group:
                 default:
-                    subId = messageObj.GroupId;
+                    subId = routeMsg.GroupId;
                     break;
             }
 
             if (List)
             {
-                List<string> subedId = GetSubscribed(messageObj.MessageType, subId).ToList();
+                List<string> subedId = GetSubscribed(routeMsg.MessageType, subId).ToList();
                 subedId.Sort();
                 int subedCount = subedId.Count;
-                string subject = messageObj.MessageType == MessageType.Private ? "你" : "本群";
+                string subject = routeMsg.MessageType == MessageType.Private ? "你" : "本群";
                 return subedCount == 0
-                    ? new CommonMessageResponse($"{subject}没有订阅任何mapper。", messageObj)
-                    : new CommonMessageResponse(
+                    ? routeMsg.ToSource($"{subject}没有订阅任何mapper。")
+                    : routeMsg.ToSource(
                         string.Format("以下是{0}的订阅名单，共计{1}个：\r\n{2}", subject, subedCount,
-                            string.Join("\r\n", OldSiteApi.GetUsernameByUid(subedId))),
-                        messageObj);
+                            string.Join("\r\n", OldSiteApi.GetUsernameByUid(subedId))));
             }
 
             if (SubscribeMapper != null)
             {
-                if (messageObj.MessageType == MessageType.Group && messageObj.PermissionLevel == PermissionLevel.Public)
-                    return new CommonMessageResponse(LoliReply.AdminOnly + "个人推送请私聊.", messageObj);
+                if (routeMsg.MessageType == MessageType.Group && routeMsg.CurrentAuthority == Authority.Public)
+                    return routeMsg.ToSource(DefaultReply.AdminOnly + "个人推送请私聊.");
 
-                List<string> subedId = GetSubscribed(messageObj.MessageType, subId).ToList();
+                List<string> subedId = GetSubscribed(routeMsg.MessageType, subId).ToList();
                 subedId.Sort();
                 int subedCount = subedId.Count;
-                if (messageObj.MessageType == MessageType.Private && subedCount >= PrivateMax)
+                if (routeMsg.MessageType == MessageType.Private && subedCount >= PrivateMax)
                 {
-                    return new CommonMessageResponse(
+                    return routeMsg.ToSource(
                         string.Format("你已经订阅了{0}个mapper啦，人家已经装不下的说：{1}", subedCount,
-                            string.Join(", ", OldSiteApi.GetUsernameByUid(subedId))), messageObj);
+                            string.Join(", ", OldSiteApi.GetUsernameByUid(subedId))));
                 }
 
-                if (messageObj.MessageType != MessageType.Private && subedCount >= GroupMax)
+                if (routeMsg.MessageType != MessageType.Private && subedCount >= GroupMax)
                 {
-                    return new CommonMessageResponse(
+                    return routeMsg.ToSource(
                         string.Format("这个群已经订阅了{0}个mapper啦，人家已经装不下的说：{1}", subedCount,
-                            string.Join(", ", OldSiteApi.GetUsernameByUid(subedId))), messageObj);
+                            string.Join(", ", OldSiteApi.GetUsernameByUid(subedId))));
                 }
 
                 int count = OldSiteApi.GetUser(SubscribeMapper, out var userObj);
                 if (count == 0)
-                    return new CommonMessageResponse("找不到指定mapper..", messageObj);
+                    return routeMsg.ToSource("找不到指定mapper..");
 
                 if (count > 1)
-                    return new CommonMessageResponse($"找到{count}个mapper..", messageObj);
+                    return routeMsg.ToSource($"找到{count}个mapper..");
 
                 string mapperId = userObj.user_id;
                 string mapperName = userObj.username;
 
                 if (!_userDic.ContainsKey(mapperId))
                     _userDic.TryAdd(mapperId, new List<UserInfo>());
-                if (_userDic[mapperId].Contains(new UserInfo(subId, messageObj.MessageType)))
+                if (_userDic[mapperId].Contains(new UserInfo(subId, routeMsg.MessageType)))
                 {
-                    string subject = messageObj.MessageType == MessageType.Private ? "你" : "本群";
-                    return new CommonMessageResponse($"{subject}已经订阅过{mapperName}啦..", messageObj);
+                    string subject = routeMsg.MessageType == MessageType.Private ? "你" : "本群";
+                    return routeMsg.ToSource($"{subject}已经订阅过{mapperName}啦..");
                 }
 
-                _userDic[mapperId].Add(new UserInfo(subId, messageObj.MessageType));
+                _userDic[mapperId].Add(new UserInfo(subId, routeMsg.MessageType));
                 SaveSettings(_userDic, "userDictionary");
-                string sub = messageObj.MessageType == MessageType.Private ? "私聊提醒你" : "在本群提醒";
-                return new CommonMessageResponse($"{mapperName}订阅成功啦！今后他qualified、rank或love或上传图后会主动{sub}。", messageObj);
+                string sub = routeMsg.MessageType == MessageType.Private ? "私聊提醒你" : "在本群提醒";
+                return routeMsg.ToSource($"{mapperName}订阅成功啦！今后他qualified、rank或love或上传图后会主动{sub}。");
             }
 
             if (UnsubscribeMapper != null)
             {
-                if (messageObj.MessageType == MessageType.Group && messageObj.PermissionLevel == PermissionLevel.Public)
-                    return new CommonMessageResponse(LoliReply.AdminOnly + "个人推送请私聊.", messageObj);
+                if (routeMsg.MessageType == MessageType.Group && routeMsg.CurrentAuthority == Authority.Public)
+                    return routeMsg.ToSource(DefaultReply.AdminOnly + "个人推送请私聊.");
 
                 int count = OldSiteApi.GetUser(UnsubscribeMapper, out var userObj);
                 if (count == 0)
                 {
-                    return new CommonMessageResponse("找不到指定mapper..", messageObj);
+                    return routeMsg.ToSource("找不到指定mapper..");
                 }
 
                 if (count > 1)
                 {
-                    return new CommonMessageResponse($"找到{count}个mapper..", messageObj);
+                    return routeMsg.ToSource($"找到{count}个mapper..");
                 }
 
                 string mapperId = userObj.user_id;
                 string mapperName = userObj.username;
-                if (!_userDic.ContainsKey(mapperId) || !_userDic[mapperId].Contains(new UserInfo(subId, messageObj.MessageType)))
+                if (!_userDic.ContainsKey(mapperId) || !_userDic[mapperId].Contains(new UserInfo(subId, routeMsg.MessageType)))
                 {
-                    string subject = messageObj.MessageType == MessageType.Private ? "你" : "本群";
-                    return new CommonMessageResponse($"目前这个mapper没有被{subject}订阅..", messageObj);
+                    string subject = routeMsg.MessageType == MessageType.Private ? "你" : "本群";
+                    return routeMsg.ToSource($"目前这个mapper没有被{subject}订阅..");
                 }
 
-                _userDic[mapperId].Remove(new UserInfo(subId, messageObj.MessageType));
+                _userDic[mapperId].Remove(new UserInfo(subId, routeMsg.MessageType));
                 if (_userDic[mapperId].Count == 0)
                     _userDic.Remove(mapperId, out _);
 
                 SaveSettings(_userDic, "userDictionary");
-                string sub = messageObj.MessageType == MessageType.Private ? "为你" : "在本群";
-                return new CommonMessageResponse($"订阅取消成功，今后不再{sub}推送{mapperName}的有关动态。", messageObj);
+                string sub = routeMsg.MessageType == MessageType.Private ? "为你" : "在本群";
+                return routeMsg.ToSource($"订阅取消成功，今后不再{sub}推送{mapperName}的有关动态。");
             }
 
-            return new CommonMessageResponse(LoliReply.ParamMissing, messageObj);
+            return routeMsg.ToSource(DefaultReply.ParamMissing);
         }
 
         private static IEnumerable<string> GetSubscribed(MessageType messageType, string subId)
@@ -252,7 +255,7 @@ namespace Daylily.Plugin.Osu
 
 #else
                 SaveLogs(str, "pushes");
-                SendMessage(new CommonMessageResponse(str, new Identity(session, sessionType)));
+                SendMessage(routeMsg.ToSource(str, new Identity(session, sessionType)));
                 Thread.Sleep(3000);
 #endif
 

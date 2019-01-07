@@ -1,62 +1,59 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Daylily.Bot;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.Sessions;
+﻿using Daylily.Bot;
+using Daylily.Bot.Message;
+using Daylily.Bot.Session;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.StringUtils;
-using Daylily.CoolQ;
-using Daylily.CoolQ.Interface.CqHttp;
-using Daylily.CoolQ.Models;
+using Daylily.CoolQ.Message;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Daylily.CoolQ;
 
 namespace Daylily.Plugin.Osu.Cabbage
 {
     internal static class CabbageCommon
     {
-        public static readonly ConcurrentQueue<CommonMessage> MessageQueue = new ConcurrentQueue<CommonMessage>();
+        public static readonly ConcurrentQueue<CoolQRouteMessage> MessageQueue = new ConcurrentQueue<CoolQRouteMessage>();
         public static Task TaskQuery;
 
         public static void Query()
         {
             while (MessageQueue.Count != 0)
             {
-                if (!MessageQueue.TryDequeue(out var messageObj))
+                if (!MessageQueue.TryDequeue(out var routeMsg))
                     continue;
-                var cmd = messageObj.Command;
+                var cmd = routeMsg.Command;
 
                 const long cabbageId = 1020640876;
                 string uname;
                 if (cmd == "statme" || cmd == "bpme" || cmd == "mybp" || cmd == "costme" || cmd == "mycost")
                 {
                     BllUserRole bllUserRole = new BllUserRole();
-                    List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+                    List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
                     if (userInfo.Count == 0)
-                        CoolQDispatcher.SendMessage(new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true));
+                        DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(DefaultReply.IdNotBound, true));
 
                     uname = userInfo[0].CurrentUname;
                 }
                 else
-                    uname = messageObj.ArgString;
+                    uname = routeMsg.ArgString;
 
-                using (Session session = new Session(25000, new Identity(cabbageId, MessageType.Private), cabbageId))
+                using (Session session = new Session(25000, new CoolQIdentity(cabbageId, MessageType.Private), cabbageId))
                 {
-                    CoolQDispatcher.SendMessage(
-                        new CommonMessageResponse($"!{cmd.Replace("my", "").Replace("me", "")} {uname}",
-                            new Identity(cabbageId, MessageType.Private)));
+                    DaylilyCore.Current.MessageDispatcher?.SendMessage(
+                        new CoolQRouteMessage($"!{cmd.Replace("my", "").Replace("me", "")} {uname}",
+                            new CoolQIdentity(cabbageId, MessageType.Private)));
                     try
                     {
-                        CommonMessage result = session.GetMessage();
+                        CoolQRouteMessage result = (CoolQRouteMessage)session.GetMessage();
                         session.Timeout = 600;
-                        CommonMessage result2 = null;
+                        CoolQRouteMessage result2 = null;
                         try
                         {
-                            result2 = session.GetMessage();
+                            result2 = (CoolQRouteMessage)session.GetMessage();
                         }
                         catch
                         {
@@ -64,17 +61,17 @@ namespace Daylily.Plugin.Osu.Cabbage
                         }
 
                         ImageInfo[] imgList =
-                            CqCode.GetImageInfo(result.Message) ?? CqCode.GetImageInfo(result2?.Message);
+                            CoolQCode.GetImageInfo(result.RawMessage) ?? CoolQCode.GetImageInfo(result2?.RawMessage);
 
                         if (imgList == null)
                         {
-                            CoolQDispatcher.SendMessage(new CommonMessageResponse(result.Message, messageObj));
+                            DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(result.RawMessage));
                             if (result2 != null)
-                                CoolQDispatcher.SendMessage(new CommonMessageResponse(result2.Message, messageObj));
+                                DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(result2.RawMessage));
                             continue;
                         }
                         //throw new IndexOutOfRangeException("查询失败：" + result.Message);
-                        var message = CqCode.DecodeToString(result.Message);
+                        var message = CoolQCode.DecodeToString(result.RawMessage);
                         foreach (var item in imgList)
                         {
                             var str = new FileImage(new Uri(item.Url));
@@ -92,24 +89,24 @@ namespace Daylily.Plugin.Osu.Cabbage
                             message = str1 + str + str2;
                         }
 
-                        CoolQDispatcher.SendMessage(
-                            new CommonMessageResponse(message + "\r\n（查询由白菜支持）", messageObj));
+                        DaylilyCore.Current.MessageDispatcher?.SendMessage(
+                            routeMsg.ToSource(message + "\r\n（查询由白菜支持）"));
                     }
                     catch (IndexOutOfRangeException e)
                     {
                         string msg = e.Message;
-                        CoolQDispatcher.SendMessage(new CommonMessageResponse(msg, messageObj, true));
+                        DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(msg, true));
                     }
                     catch (TimeoutException)
                     {
                         string msg = "查询失败，白菜没有搭理人家..";
-                        CoolQDispatcher.SendMessage(new CommonMessageResponse(msg, messageObj, true));
+                        DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(msg, true));
                     }
                     catch (Exception ex)
                     {
                         string msg = "查询失败，未知错误。";
                         Logger.Exception(ex);
-                        CoolQDispatcher.SendMessage(new CommonMessageResponse(msg, messageObj, true));
+                        DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(msg, true));
                     } // catch
                 } // using
             } // while

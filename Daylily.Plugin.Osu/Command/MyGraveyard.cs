@@ -1,38 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using Bleatingsheep.Osu.ApiV2b.Models;
-using Daylily.Bot.Attributes;
-using Daylily.Bot.Enum;
-using Daylily.Bot.Models;
-using Daylily.Bot.PluginBase;
+﻿using Bleatingsheep.Osu.ApiV2b.Models;
+using Daylily.Bot;
+using Daylily.Bot.Backend;
 using Daylily.Common.Utils.LoggerUtils;
 using Daylily.Common.Utils.RequestUtils;
 using Daylily.CoolQ;
+using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Plugins;
 using Daylily.Osu.Database.BLL;
 using Daylily.Osu.Database.Model;
-using Daylily.Osu.Models;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace Daylily.Plugin.Osu
 {
     [Name("随机挖坑")]
     [Author("yf_extension")]
-    [Version(0, 1, 0, PluginVersion.Beta)]
+    [Version(2, 0, 0, PluginVersion.Beta)]
     [Help("从发送者的Graveyard Beatmaps中随机挖一张图。")]
     [Command("挖坑")]
-    public class MyGraveyard : CommandPlugin
+    public class MyGraveyard : CoolQCommandPlugin
     {
-        public override void Initialize(string[] args)
-        {
+        public override Guid Guid => new Guid("cbfe5649-6898-4182-aad3-7121f786b4cd");
 
-        }
-
-        public override CommonMessageResponse Message_Received(CommonMessage messageObj)
+        public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
+            var routeMsg = scope.RouteMessage;
             BllUserRole bllUserRole = new BllUserRole();
-            List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(messageObj.UserId));
+            List<TblUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
             if (userInfo.Count == 0)
-                return new CommonMessageResponse(LoliReply.IdNotBound, messageObj, true);
+                return routeMsg.ToSource(DefaultReply.IdNotBound, true);
 
             var id = userInfo[0].UserId.ToString();
 
@@ -56,7 +53,7 @@ namespace Daylily.Plugin.Osu
 
             if (totalList.Count == 0)
             {
-                return new CommonMessageResponse("惊了，你竟然会没坑！", messageObj, true);
+                return routeMsg.ToSource("惊了，你竟然会没坑！", true);
             }
 
             Random rnd = new Random();
@@ -64,7 +61,7 @@ namespace Daylily.Plugin.Osu
             var cqMusic = new CustomMusic("https://osu.ppy.sh/s/" + beatmap.Id, $"https://b.ppy.sh/preview/{beatmap.Id}.mp3", beatmap.Title,
                 $"{beatmap.Artist}\r\n({beatmap.FavouriteCount} fav)", $"https://b.ppy.sh/thumb/{beatmap.Id}l.jpg");
 
-            return new CommonMessageResponse(cqMusic.ToString(), messageObj);
+            return routeMsg.ToSource(cqMusic.ToString());
         }
     }
 }
