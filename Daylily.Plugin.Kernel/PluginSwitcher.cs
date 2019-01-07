@@ -126,7 +126,7 @@ namespace Daylily.Plugin.Kernel
 
         private CoolQRouteMessage DisablePlugin()
         {
-            var inputs = DisabledPlugin.Split(',');
+            var inputs = EnabledPlugin.Split(',');
             if (inputs.Length == 1)
             {
                 MessagePlugin plugin = InnerGetPlugin(EnabledPlugin);
@@ -151,7 +151,7 @@ namespace Daylily.Plugin.Kernel
                     sb.AppendLine($"指定插件 \"{input}\" 不存在.");
                     continue;
                 }
-                if (!_disabled.Contains(plugin.Guid))
+                if (_disabled.Contains(plugin.Guid))
                 {
                     sb.AppendLine($"指定插件 \"{GetPluginString(plugin)}\" 已被禁用.");
                     continue;
