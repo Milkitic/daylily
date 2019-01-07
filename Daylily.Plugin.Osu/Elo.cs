@@ -16,7 +16,7 @@ namespace Daylily.Plugin.Osu
     [Version(2, 0, 0, PluginVersion.Stable)]
     [Help("获取玩家的ELO信息。", "Mapping ELO Project 是以 ELO 等级分制度 来对选手在作图竞赛中的表现进行量化衡量以及排名的一个项目。", "详情：t/728158")]
     [Command("elo")]
-    public class Elo : CoolQCommandPlugin
+    class Elo : CoolQCommandPlugin
     {
         public override Guid Guid => new Guid("774c4420-5a5c-4240-a742-9b030a1e989e");
 
