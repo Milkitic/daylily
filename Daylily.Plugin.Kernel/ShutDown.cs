@@ -1,11 +1,10 @@
-﻿using Daylily.Bot.Backend;
+﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Daylily.Plugin.Kernel
@@ -17,6 +16,11 @@ namespace Daylily.Plugin.Kernel
     [Command("poweroff")]
     public class ShutDown : CoolQCommandPlugin
     {
+        public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
+        {
+            CanDisabled = false
+        };
+
         [FreeArg(Default = 10)]
         [Help("关闭的持续时间，最大支持7天，最小支持1分钟。（单位：分钟）")]
         public int ElapsingTime { get; set; }

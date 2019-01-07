@@ -14,7 +14,7 @@ namespace Daylily.Plugin.Fun
     [Command("sleep")]
     public class Sleep : CoolQCommandPlugin
     {
-        public override Guid Guid => new Guid("cb6a36b8-7437-4545-80bd-8b54ade7f35c");
+        public override Guid Guid => new Guid("4c729d16-3954-4e70-ad4c-8a0ea72efe1a");
 
         [FreeArg(Default = -1)]
         [Help("要禁言的时长，小时为单位，支持小数")]
