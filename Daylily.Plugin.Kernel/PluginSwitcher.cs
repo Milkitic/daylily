@@ -14,7 +14,7 @@ namespace Daylily.Plugin.Kernel
 {
     [Name("插件管理")]
     [Author("yf_extension")]
-    [Version(2, 1, 2, PluginVersion.Alpha)]
+    [Version(2, 1, 3, PluginVersion.Alpha)]
     [Help("动态管理插件的启用状态。", "仅限当前群生效。", Authority = Authority.Admin)]
     [Command("plugin")]
     public class PluginSwitcher : CoolQCommandPlugin
@@ -45,7 +45,7 @@ namespace Daylily.Plugin.Kernel
         private IEnumerable<MessagePlugin> _plugins;
         private List<Guid> _disabled;
 
-        public static CoolQIdentityDictionary<List<Guid>> DisabledList { get; set; } =
+        public static CoolQIdentityDictionary<List<Guid>> DisabledList { get; private set; } =
             new CoolQIdentityDictionary<List<Guid>>();
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
@@ -86,38 +86,82 @@ namespace Daylily.Plugin.Kernel
 
         private CoolQRouteMessage EnablePlugin()
         {
-            var plugin = _plugins.FirstOrDefault(k => k.Name == DisabledPlugin);
-            if (plugin == null)
+            var inputs = DisabledPlugin.Split(',');
+            if (inputs.Length == 1)
             {
-                return _routeMsg.ToSource($"指定插件 \"{DisabledPlugin}\" 不存在.");
-            }
+                MessagePlugin plugin = InnerGetPlugin(DisabledPlugin);
+                if (plugin == null)
+                    return _routeMsg.ToSource($"指定插件 \"{DisabledPlugin}\" 不存在.");
 
-            foreach (var item in _disabled)
-            {
-                if (item != plugin.Guid) continue;
-                _disabled.Remove(item);
+                if (!_disabled.Contains(plugin.Guid))
+                    return _routeMsg.ToSource($"指定插件 \"{GetPluginString(plugin)}\" 未被禁用.");
+
+                _disabled.Remove(_disabled.First(k => k == plugin.Guid));
                 SaveDisableSettings();
-                return _routeMsg.ToSource($"已经启用插件 \"{item}\".");
+                return _routeMsg.ToSource($"已经启用插件 \"{GetPluginString(plugin)}\".");
             }
 
-            return _routeMsg.ToSource($"指定插件 \"{DisabledPlugin}\" 未被禁用.");
+            var sb = new StringBuilder();
+            var plugins = inputs.Select(k => (k, InnerGetPlugin(k)));
+            foreach (var (input, plugin) in plugins)
+            {
+                sb.Append(input + ": ");
+                if (plugin == null)
+                {
+                    sb.AppendLine($"指定插件 \"{input}\" 不存在.");
+                    continue;
+                }
+                if (!_disabled.Contains(plugin.Guid))
+                {
+                    sb.AppendLine($"指定插件 \"{GetPluginString(plugin)}\" 未被禁用.");
+                    continue;
+                }
+                _disabled.Remove(_disabled.First(k => k == plugin.Guid));
+                sb.AppendLine($"已经启用插件 \"{GetPluginString(plugin)}\".");
+            }
+
+            SaveDisableSettings();
+            return _routeMsg.ToSource(sb.ToString().Trim('\n', '\r'));
         }
 
         private CoolQRouteMessage DisablePlugin()
         {
-            var disabled = DisabledList[_identity];
-
-            foreach (var plugin in _plugins)
+            var inputs = DisabledPlugin.Split(',');
+            if (inputs.Length == 1)
             {
-                if (plugin.Name != EnabledPlugin) continue;
-                if (disabled.Contains(plugin.Guid))
-                    return _routeMsg.ToSource($"指定插件 \"{EnabledPlugin}\" 已被禁用.");
-                disabled.Add(plugin.Guid);
+                MessagePlugin plugin = InnerGetPlugin(EnabledPlugin);
+                if (plugin == null)
+                    return _routeMsg.ToSource($"指定插件 \"{EnabledPlugin}\" 不存在.");
+
+                if (_disabled.Contains(plugin.Guid))
+                    return _routeMsg.ToSource($"指定插件 \"{GetPluginString(plugin)}\" 已被禁用.");
+
+                _disabled.Add(plugin.Guid);
                 SaveDisableSettings();
-                return _routeMsg.ToSource($"已经禁用插件 \"{plugin.Name}\".");
+                return _routeMsg.ToSource($"已经禁用插件 \"{GetPluginString(plugin)}\".");
             }
 
-            return _routeMsg.ToSource($"指定插件 \"{EnabledPlugin}\" 不存在.");
+            var sb = new StringBuilder();
+            var plugins = inputs.Select(k => (k, InnerGetPlugin(k)));
+            foreach (var (input, plugin) in plugins)
+            {
+                sb.Append(input + ": ");
+                if (plugin == null)
+                {
+                    sb.AppendLine($"指定插件 \"{input}\" 不存在.");
+                    continue;
+                }
+                if (!_disabled.Contains(plugin.Guid))
+                {
+                    sb.AppendLine($"指定插件 \"{GetPluginString(plugin)}\" 已被禁用.");
+                    continue;
+                }
+                _disabled.Add(plugin.Guid);
+                sb.AppendLine($"已经禁用插件 \"{GetPluginString(plugin)}\".");
+            }
+
+            SaveDisableSettings();
+            return _routeMsg.ToSource(sb.ToString().Trim('\n', '\r'));
         }
 
         private void SaveDisableSettings()
@@ -130,7 +174,6 @@ namespace Daylily.Plugin.Kernel
             DisabledList =
                 LoadSettings<CoolQIdentityDictionary<List<Guid>>>("DisabledList") ??
                 new CoolQIdentityDictionary<List<Guid>>();
-
         }
 
         private CoolQRouteMessage ShowPluginList()
@@ -149,7 +192,7 @@ namespace Daylily.Plugin.Kernel
                     if (DisableOnly && !disabled.Contains(plugin) ||
                         EnableOnly && disabled.Contains(plugin))
                         continue;
-                    sb.AppendLine(string.Format("  {0} {1}", plugin.Name, disabled.Contains(plugin) ? " (已禁用)" : ""));
+                    sb.AppendLine(string.Format("  {0} {1}", GetPluginString(plugin), disabled.Contains(plugin) ? " (已禁用)" : ""));
                 }
             }
 
@@ -158,5 +201,23 @@ namespace Daylily.Plugin.Kernel
             return null;
         }
 
+        private MessagePlugin InnerGetPlugin(string key)
+        {
+            return _plugins
+                .FirstOrDefault(k =>
+                    k.Name == key
+                    || k.GetType().Name == key
+                    || k is CommandPlugin cmd && cmd.Commands.Contains(key)
+                );
+        }
+
+        private string GetPluginString(MessagePlugin plugin)
+        {
+            return
+                string.Format("{0} ({1}){2}",
+                    plugin.Name,
+                    plugin.GetType().Name,
+                    plugin is CommandPlugin cmd ? $" ({string.Join(", ", cmd.Commands)})" : "");
+        }
     }
 }
