@@ -7,7 +7,6 @@ using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,25 +15,54 @@ namespace Daylily.Plugin.ShaDiao.Application
 {
     [Name("死群熊猫")]
     [Author("yf_extension")]
-    [Version(2, 0, 3, PluginVersion.Stable)]
+    [Version(2, 1, 0, PluginVersion.Stable)]
     [Help("群内长时间无人发言发一张相关的熊猫。")]
     public sealed class GroupQuiet : CoolQApplicationPlugin
     {
         public override Guid Guid => new Guid("5f60b007-7984-4eae-98e5-bdfb4cfc9df9");
 
         private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
-        private static CoolQIdentityDictionary<GroupSettings> groupSettings;
+        private static CoolQIdentityDictionary<GroupSettings> _settings;
+        private static readonly CancellationTokenSource Cts = new CancellationTokenSource();
 
-        public GroupQuiet()
+        public override void OnInitialized(string[] args)
         {
-            Logger.Origin("上次群发言情况载入中。");
-            groupSettings = LoadSettings<CoolQIdentityDictionary<GroupSettings>>();
-            if (groupSettings != null)
+            _settings = LoadSettings<CoolQIdentityDictionary<GroupSettings>>()
+                            ?? new CoolQIdentityDictionary<GroupSettings>();
+            Task.Factory.StartNew(ScanningAction, TaskCreationOptions.LongRunning);
+            Logger.Origin("上次群发言情载入完毕，开启扫描。");
+        }
+
+        private void ScanningAction()
+        {
+            while (!Cts.IsCancellationRequested)
             {
-                groupSettings.Foreach(settings => { settings.Value.Task = Task.Run(() => DelayScan(settings.Identity)); });
+                Thread.Sleep(1000 * 30);
+                _settings.Foreach(pair =>
+                {
+                    var id = pair.Identity;
+                    var settings = pair.Value;
+
+                    if (settings.LastSentIsMe) return;
+
+                    var elapsedTime = (DateTime.Now - settings.LastSent);
+                    if (elapsedTime < settings.TrigTime) return;
+
+                    settings.LastSentIsMe = true;
+                    settings.StartCd = DateTime.Now;
+                    settings.TrigTime = TimeSpan.FromSeconds(StaticRandom.Next(60 * 60 * 2, 60 * 60 * 3));
+                    if (elapsedTime + TimeSpan.FromMinutes(2) >= settings.TrigTime) return;
+
+                    var file = Path.Combine(PandaDir, "quiet.jpg");
+                    if (File.Exists(file))
+                        SendMessage(new CoolQRouteMessage(new FileImage(file), id));
+                    else
+                        OnErrorOccured(
+                            new Bot.ExceptionEventArgs(new FileNotFoundException("Cannot locate file", file)));
+
+                    SaveSettings(_settings);
+                });
             }
-            else groupSettings = new CoolQIdentityDictionary<GroupSettings>();
-            Logger.Origin("上次群发言情载入完毕，并开启了线程。");
         }
 
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
@@ -44,26 +72,23 @@ namespace Daylily.Plugin.ShaDiao.Application
                 return null;
             var id = (CoolQIdentity)routeMsg.Identity;
 
-            if (!groupSettings.ContainsKey(id))
+            if (!_settings.ContainsKey(id))
             {
-                groupSettings.Add(id, new GroupSettings
+                _settings.Add(id, new GroupSettings
                 {
                     LastSentIsMe = false,
-                    CdTime = 60 * 60 * 24,
+                    CdTime = TimeSpan.FromHours(24),
                 });
-
-                groupSettings[id].Task = Task.Run(() => DelayScan(id));
             }
 
-            if ((DateTime.Now - groupSettings[id].StartCd).TotalSeconds > groupSettings[id].CdTime)
+            if (DateTime.Now - _settings[id].StartCd > _settings[id].CdTime)
             {
-                groupSettings[id].LastSent = DateTime.Now;
-                groupSettings[id].LastSentIsMe = false;
-                groupSettings[id].TrigTime = StaticRandom.Next(60 * 60 * 2, 60 * 60 * 3);
+                _settings[id].LastSent = DateTime.Now;
+                _settings[id].LastSentIsMe = false;
 #if DEBUG
                 //Logger.Debug(groupId + ". Last: " + _groupDic[groupId].LastSent + ", Sent: " + _groupDic[groupId].LastSentIsMe);
 #endif
-                SaveSettings(groupSettings);
+                SaveSettings(_settings);
             }
             else
             {
@@ -73,37 +98,19 @@ namespace Daylily.Plugin.ShaDiao.Application
             }
             return null;
         }
-        private void DelayScan(CoolQIdentity id)
-        {
-            while (true)
-            {
-                Thread.Sleep(5000);
-                if (groupSettings[id].LastSentIsMe) continue;
-                if ((DateTime.Now - groupSettings[id].LastSent).TotalSeconds < groupSettings[id].TrigTime) continue;
-                groupSettings[id].LastSentIsMe = true;
-                groupSettings[id].StartCd = DateTime.Now;
-                try
-                {
-                    var cqImg = new FileImage(Path.Combine(PandaDir, "quiet.jpg")).ToString();
-                    SendMessage(new CoolQRouteMessage(cqImg, id));
-                    SaveSettings(groupSettings);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Exception(ex);
-                }
-            }
-        }
+
         private class GroupSettings
         {
-            [JsonIgnore]
-            public Task Task { get; set; }
+            [JsonProperty("freeze")]
             public bool LastSentIsMe { get; set; }
+            [JsonProperty("last")]
             public DateTime LastSent { get; set; }
+            [JsonProperty("cd_last")]
             public DateTime StartCd { get; set; }
-            public long TrigTime { get; set; } //seconds
-            public long CdTime { get; set; } //seconds
-
+            [JsonProperty("trig")]
+            public TimeSpan TrigTime { get; set; }
+            [JsonProperty("cd")]
+            public TimeSpan CdTime { get; set; }
         }
     }
 }

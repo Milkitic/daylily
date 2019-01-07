@@ -48,7 +48,11 @@ namespace Daylily.CoolQ.Message
         }
 
         public CoolQRouteMessage(string message, CoolQIdentity cqIdentity, string atId = null) :
-            this(new CoolQMessage(new Text(message)), cqIdentity, atId)
+            this(new Text(message), cqIdentity, atId)
+        {
+        }
+        public CoolQRouteMessage(CoolQCode message, CoolQIdentity cqIdentity, string atId = null) :
+            this(new CoolQMessage(message), cqIdentity, atId)
         {
         }
 

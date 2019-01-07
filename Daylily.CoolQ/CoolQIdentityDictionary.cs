@@ -1,5 +1,4 @@
-﻿using Daylily.Bot.Backend;
-using Daylily.CoolQ.Message;
+﻿using Daylily.CoolQ.Message;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,9 +9,9 @@ using System.Text;
 
 namespace Daylily.CoolQ
 {
-    public struct ListType<T>
+    public struct ValuePair<T>
     {
-        public ListType(CoolQIdentity identity, T value) : this()
+        public ValuePair(CoolQIdentity identity, T value) : this()
         {
             Identity = identity;
             this.Value = value;
@@ -24,15 +23,15 @@ namespace Daylily.CoolQ
         public T Value { get; set; }
     }
 
-    public class ForeachClass<T> : IEnumerable<ListType<T>>
+    public class ForeachClass<T> : IEnumerable<ValuePair<T>>
     {
-        public ForeachClass(List<ListType<T>> list)
+        public ForeachClass(List<ValuePair<T>> list)
         {
             List = list;
         }
-        private List<ListType<T>> List { get; }
+        private List<ValuePair<T>> List { get; }
 
-        public IEnumerator<ListType<T>> GetEnumerator()
+        public IEnumerator<ValuePair<T>> GetEnumerator()
         {
             return new ListTypeEnumerator(List);
         }
@@ -42,13 +41,13 @@ namespace Daylily.CoolQ
             return GetEnumerator();
         }
 
-        private class ListTypeEnumerator : IEnumerator<ListType<T>>
+        private class ListTypeEnumerator : IEnumerator<ValuePair<T>>
         {
             private int _index;
-            private ListType<T> _current;
-            private readonly List<ListType<T>> _list;
+            private ValuePair<T> _current;
+            private readonly List<ValuePair<T>> _list;
 
-            public ListTypeEnumerator(List<ListType<T>> list)
+            public ListTypeEnumerator(List<ValuePair<T>> list)
             {
                 _list = list;
                 _index = -1;
@@ -61,7 +60,7 @@ namespace Daylily.CoolQ
                 _index++;
                 if (_index >= _list.Count) return false;
 
-                _current = new ListType<T>(_list[_index].Identity, _list[_index].Value);
+                _current = new ValuePair<T>(_list[_index].Identity, _list[_index].Value);
                 return true;
             }
 
@@ -71,7 +70,7 @@ namespace Daylily.CoolQ
                 _current = default;
             }
 
-            ListType<T> IEnumerator<ListType<T>>.Current => _current;
+            ValuePair<T> IEnumerator<ValuePair<T>>.Current => _current;
 
             public void Dispose()
             {
@@ -85,8 +84,8 @@ namespace Daylily.CoolQ
     public class CoolQIdentityDictionary<T>
     {
         [JsonProperty("collection")]
-        private List<ListType<T>> List { get; set; } =
-            new List<ListType<T>>();
+        private List<ValuePair<T>> List { get; set; } =
+            new List<ValuePair<T>>();
         [JsonIgnore]
         private ForeachClass<T> ForEachObject { get; }
 
@@ -95,7 +94,7 @@ namespace Daylily.CoolQ
             ForEachObject = new ForeachClass<T>(List);
         }
 
-        public void Foreach(Action<ListType<T>> action)
+        public void Foreach(Action<ValuePair<T>> action)
         {
             foreach (var type in ForEachObject)
             {
@@ -103,11 +102,11 @@ namespace Daylily.CoolQ
             }
         }
 
-        public void Add(ListType<T> item)
+        public void Add(ValuePair<T> item)
         {
             if (!ContainsKey(item.Identity))
             {
-                List.Add(new ListType<T>(item.Identity, item.Value));
+                List.Add(new ValuePair<T>(item.Identity, item.Value));
             }
             else
             {
@@ -128,23 +127,23 @@ namespace Daylily.CoolQ
             List.Clear();
         }
 
-        public bool Contains(ListType<T> item)
+        public bool Contains(ValuePair<T> item)
         {
             if (!ContainsKey(item.Identity)) return false;
             if (!this[item.Identity].Equals(item.Value)) return false;
             return true;
         }
 
-        public void CopyTo(ListType<T>[] array, int arrayIndex)
+        public void CopyTo(ValuePair<T>[] array, int arrayIndex)
         {
             var o = List.Skip(arrayIndex).ToArray();
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = new ListType<T>(o[i].Identity, o[i].Value);
+                array[i] = new ValuePair<T>(o[i].Identity, o[i].Value);
             }
         }
 
-        public bool Remove(ListType<T> item)
+        public bool Remove(ValuePair<T> item)
         {
             if (!Contains(item)) return false;
             return Remove(item.Identity);
@@ -160,7 +159,7 @@ namespace Daylily.CoolQ
         {
             if (ContainsKey(key))
                 throw new ArgumentOutOfRangeException($"Already contains identity: \"{key}\"");
-            List.Add(new ListType<T>(key, value));
+            List.Add(new ValuePair<T>(key, value));
         }
 
         public bool ContainsKey(CoolQIdentity key)
