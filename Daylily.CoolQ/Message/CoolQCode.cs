@@ -283,7 +283,7 @@ namespace Daylily.CoolQ.Message
         /// 纯文本。
         /// </summary>
         /// <param name="content">文本内容。</param>
-        public Text(string content) => Content = Escape(content);
+        public Text(string content) => Content = /*Escape*/(content);
     }
 
     /// <summary>
