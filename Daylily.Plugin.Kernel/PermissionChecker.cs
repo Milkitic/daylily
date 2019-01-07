@@ -22,7 +22,7 @@ namespace Daylily.Plugin.Kernel
             CanDisabled = false
         };
 
-        public static Authority? GetAuthority(string message, out string fullCommand)
+        public static Authority? GetRequestAuthority(string message, out string fullCommand)
         {
             if (message.StartsWith(DaylilyCore.Current.CommandFlag))
             {
@@ -49,13 +49,44 @@ namespace Daylily.Plugin.Kernel
             return null;
         }
 
+        public static Authority GetActualAuthority(CoolQRouteMessage routeMsg, out string fullCommand)
+        {
+            string message = routeMsg.Message.RawMessage;
+            var requestAuth = GetRequestAuthority(message, out fullCommand) ?? Authority.Public;
+            long userId = Convert.ToInt64(routeMsg.UserId);
+
+            switch (requestAuth)
+            {
+                case Authority.Public:
+                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].GroupInfo
+                            ?.Admins.Count(q => q.UserId == userId) != 0)
+                        requestAuth = Authority.Admin;
+                    if (userId == 2241521134)
+                        requestAuth = Authority.Root;
+                    break;
+                case Authority.Admin:
+                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].GroupInfo
+                            ?.Admins.Count(q => q.UserId == userId) != 0)
+                        return Authority.Admin;
+
+                    break;
+                case Authority.Root:
+                    if (userId == 2241521134)
+                        return Authority.Root;
+
+                    break;
+            }
+
+            return requestAuth;
+        }
+
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;
             long userId = Convert.ToInt64(routeMsg.UserId);
             string message = routeMsg.Message.RawMessage;
 
-            var requestAuth = GetAuthority(message, out var fullCommand);
+            var requestAuth = GetRequestAuthority(message, out var fullCommand);
             switch (requestAuth)
             {
                 case Authority.Public:

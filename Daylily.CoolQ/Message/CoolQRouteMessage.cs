@@ -11,6 +11,7 @@ namespace Daylily.CoolQ.Message
         public Authority CurrentAuthority { get; set; }
         public MessageType MessageType { get; set; }
 
+        public CoolQIdentity CoolQIdentity => (CoolQIdentity)Identity;
         public override ISessionIdentity Identity
         {
             get

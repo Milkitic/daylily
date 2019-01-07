@@ -194,7 +194,7 @@ namespace Daylily.CoolQ
         public T this[CoolQIdentity key]
         {
             get => List.Single(k => k.Identity == key).Value;
-            set => throw new NotSupportedException();
+            set => List.Remove(List.FirstOrDefault(k => k.Identity == key));
         }
 
         [JsonIgnore]

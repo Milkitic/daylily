@@ -30,7 +30,7 @@ namespace Daylily.Plugin.Kernel
             if (DisabledList.Keys.Contains((CoolQIdentity)routeMsg.Identity))
             {
                 var guidList = DisabledList[(CoolQIdentity)routeMsg.Identity];
-                PermissionChecker.GetAuthority(routeMsg.RawMessage, out var fullCommand);
+                PermissionChecker.GetRequestAuthority(routeMsg.RawMessage, out var fullCommand);
                 var cmdName = fullCommand?.Split(' ')[0];
                 foreach (var plugin in Bot.Backend.PluginManager.Current.ApplicationInstances)
                 {

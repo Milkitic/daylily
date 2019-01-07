@@ -7,11 +7,11 @@ namespace Daylily.CoolQ.Plugins
 {
     public abstract class CoolQCommandPlugin : CommandPlugin
     {
-        public abstract CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs routeMsg);
+        public abstract CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope);
 
-        public override RouteMessage OnMessageReceived(ScopeEventArgs routeMsg)
+        public override RouteMessage OnMessageReceived(ScopeEventArgs scope)
         {
-            return OnMessageReceived((CoolQScopeEventArgs)routeMsg);
+            return OnMessageReceived((CoolQScopeEventArgs)scope);
         }
     }
 }

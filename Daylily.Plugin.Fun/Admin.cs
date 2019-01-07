@@ -15,7 +15,7 @@ namespace Daylily.Plugin.Fun
     [Version(2, 0, 0, PluginVersion.Beta)]
     [Help("咕4鸽2菜单。")]
     [Command("admin")]
-    public class Admin : CoolQCommandPlugin
+    class Admin : CoolQCommandPlugin
     {
         public override Guid Guid => new Guid("e5b99b9b-4165-4e4d-9ed2-7117b3c12787");
 

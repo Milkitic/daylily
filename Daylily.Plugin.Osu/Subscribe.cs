@@ -255,7 +255,7 @@ namespace Daylily.Plugin.Osu
 
 #else
                 SaveLogs(str, "pushes");
-                SendMessage(routeMsg.ToSource(str, new Identity(session, sessionType)));
+                SendMessage(new CoolQRouteMessage(str, new CoolQIdentity(session, sessionType)));
                 Thread.Sleep(3000);
 #endif
 
