@@ -26,7 +26,7 @@ namespace Daylily.Plugin.Osu.Cabbage
                     continue;
                 var cmd = routeMsg.Command;
 
-                const long cabbageId = 1020640876;
+                const long cabbageId = 1335734629;
                 string uname;
                 if (cmd == "statme" || cmd == "bpme" || cmd == "mybp" || cmd == "costme" || cmd == "mycost")
                 {
