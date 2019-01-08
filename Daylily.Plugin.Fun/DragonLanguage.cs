@@ -14,8 +14,8 @@ namespace Daylily.Plugin.Fun
     {
         public override Guid Guid { get; }
 
-        public string[] DragonMessages = { "wslnm", "nmsl", "nmntys", "fnmdp" };
-        public List<string> UserDictionary { get; set; }
+        private readonly string[] _dragonMessages = { "wslnm", "nmsl", "nmntys", "fnmdp" };
+        private List<string> UserDictionary { get; set; }
 
         public override void OnInitialized(string[] args)
         {
@@ -40,7 +40,7 @@ namespace Daylily.Plugin.Fun
 
         private bool Detect(string msg)
         {
-            var compared = DragonMessages;
+            var compared = _dragonMessages;
             var list = new List<char[]>();
             var word = new StringBuilder();
             foreach (var c in msg)
