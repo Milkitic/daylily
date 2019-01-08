@@ -70,6 +70,10 @@ namespace Daylily.AspNetCore
                     {
                         daylily.EventDispatcher?.Event_Received(sender, new EventEventArgs(e.ParsedObject));
                     };
+                    cqFrontend.EventReceived += (sender, e) =>
+                    {
+                        daylily.EventDispatcher?.Event_Received(sender, e);
+                    };
                 }
 
                 frontend.MessageReceived += (sender, e) =>

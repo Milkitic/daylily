@@ -228,7 +228,14 @@ namespace Daylily.CoolQ
 
         public override bool Event_Received(object sender, EventEventArgs args)
         {
-            throw new NotImplementedException();
+            bool handled = false;
+            var obj = args.ParsedObject;
+            if (obj is string str)
+            {
+                SendMessage(new CoolQRouteMessage(str, new CoolQIdentity(2241521134, MessageType.Private)));
+            }
+
+            return handled;
         }
     }
 }

@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="TinyPinyin.Core.Standard" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
