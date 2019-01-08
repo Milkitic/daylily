@@ -12,7 +12,7 @@ namespace Daylily.Plugin.Fun
 {
     public class DragonLanguage : ApplicationPlugin
     {
-        public override Guid Guid { get; }
+        public override Guid Guid { get; } = new Guid("33cc804f-1704-4e34-a958-85bd9d1069e1");
 
         private readonly string[] _dragonMessages = { "wslnm", "nmsl", "nmntys", "fnmdp" };
         private List<string> UserDictionary { get; set; }
@@ -26,16 +26,13 @@ namespace Daylily.Plugin.Fun
         {
             var routeMsg = (CoolQRouteMessage)scope.RouteMessage;
             var msg = routeMsg.RawMessage;
-            if (Detect(msg))
-            {
-                UserDictionary.Add(msg);
-                SaveSettings(UserDictionary);
-                return routeMsg.ToSource(msg.Length < 10
-                    ? "你龙语了？"
-                    : UserDictionary[StaticRandom.Next(UserDictionary.Count)]);
-            }
+            if (!Detect(msg)) return null;
 
-            return null;
+            UserDictionary.Add(msg);
+            SaveSettings(UserDictionary);
+            return routeMsg.ToSource(msg.Length < 10
+                ? "你龙语了？"
+                : UserDictionary[StaticRandom.Next(UserDictionary.Count)]);
         }
 
         private bool Detect(string msg)
@@ -63,23 +60,17 @@ namespace Daylily.Plugin.Fun
             throw new NotImplementedException();
         }
 
-        private static void DetectWord(ICollection<char[]> list, StringBuilder word)
+        private void DetectWord(ICollection<char[]> list, StringBuilder word)
         {
-            if (word.Length != 0)
-            {
-                list.Add(GetChars(word.ToString()));
-                word.Clear();
-            }
+            if (word.Length == 0) return;
+            list.Add(GetChars(word.ToString()));
+            word.Clear();
         }
 
-        private static char[] DetectPinyin(char c)
-        {
-            return new[] { PinyinHelper.GetPinyin(c).FirstOrDefault() };
-        }
+        private char[] DetectPinyin(char c) =>
+            new[] { PinyinHelper.GetPinyin(c).FirstOrDefault() };
 
-        private static char[] GetChars(string c)
-        {
-            return c.Where(k => k != 'a' && k != 'e' && k != 'i' && k != 'o' && k != 'u').ToArray();
-        }
+        private char[] GetChars(string c) =>
+            c.Where(k => _dragonMessages.Any(g => g.Contains(g))).ToArray();
     }
 }
