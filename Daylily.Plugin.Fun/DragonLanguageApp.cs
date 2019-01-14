@@ -51,6 +51,8 @@ namespace Daylily.Plugin.Fun
             var routeMsg = scope.RouteMessage;
             var msg = routeMsg.RawMessage;
             if (!Detect(msg, out var tuples)) return null;
+
+            CoolQRouteMessage message = null;
             foreach ((string origin, string mine) in tuples)
             {
                 if (Filter.Any(k => mine.Contains(k)))
@@ -67,34 +69,33 @@ namespace Daylily.Plugin.Fun
             if (Count >= 30)
             {
                 var sayRate = StaticRandom.NextDouble();
-                var mark = StaticRandom.NextDouble() <= 0.3 ? "?" : "";
-                if (sayRate <= 0.3)
+                var mark = StaticRandom.NextDouble() <= 0.5 ? "?" : "";
+                if (sayRate <= 0.4)
                 {
                     var keys = UserDictionary.Keys.ToList();
                     var key = keys[StaticRandom.Next(keys.Count)];
                     var list = UserDictionary[key];
-                    
+
                     if (key != Templates[0])
                     {
                         var nextRate = StaticRandom.NextDouble();
-                        if (nextRate <= 0.2 && keys.Contains(Templates[0]))
+                        if (nextRate <= 0.4 && keys.Contains(Templates[0]))
                         {
                             var list2 = UserDictionary[Templates[0]];
-                            routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + ", " +
+                            message = routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + ", " +
                                               list2[StaticRandom.Next(list2.Count)].Expression + mark);
                         }
                         else
-                            return routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + mark);
+                            message = routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + mark);
                     }
                     else
-                        return routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + mark);
+                        message = routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + mark);
                 }
-
-
             }
 
+            if (message == null) return null;
             Thread.Sleep(StaticRandom.Next(0, 7000));
-            return null;
+            return message;
         }
 
         private bool Detect(string msg, out (string origin, string mine)[] info)
