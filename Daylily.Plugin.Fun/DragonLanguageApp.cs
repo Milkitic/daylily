@@ -25,7 +25,8 @@ namespace Daylily.Plugin.Fun
     {
         public override Guid Guid { get; } = new Guid("33cc804f-1704-4e34-a958-85bd9d1069e1");
 
-        private static readonly string[] Templates = { "wslnm", "nmsl", "nmntys", "fnmdp", "rsndm" };
+        private static readonly string[] Templates = { "nmsl", "wslnm", "nmntys", "fnmdp", "rsndm" };
+        private static readonly string[] Filter = { "你妈", "妈死", "日死", "你吗", "nm", "nima", "ni ma" };
         private ConcurrentDictionary<string, List<UserExpression>> UserDictionary { get; set; }
         private int Count => UserDictionary.Sum(k => k.Value.Count);
         public override void OnInitialized(string[] args)
@@ -52,6 +53,8 @@ namespace Daylily.Plugin.Fun
             if (!Detect(msg, out var tuples)) return null;
             foreach ((string origin, string mine) in tuples)
             {
+                if (Filter.Any(k => mine.Contains(k)))
+                    continue;
                 if (!UserDictionary.ContainsKey(origin))
                     UserDictionary.TryAdd(origin, new List<UserExpression>());
                 var o = UserDictionary[origin].FirstOrDefault(k => k.Expression == mine);
@@ -63,35 +66,35 @@ namespace Daylily.Plugin.Fun
             SaveSettings(UserDictionary);
             if (Count >= 30)
             {
-                var sayRate = Random.NextDouble();
-                var questionRate = Random.NextDouble();
+                var sayRate = StaticRandom.NextDouble();
+                var mark = StaticRandom.NextDouble() <= 0.3 ? "?" : "";
                 if (sayRate <= 0.3)
                 {
                     var keys = UserDictionary.Keys.ToList();
-                    var key = keys[Random.Next(keys.Count)];
+                    var key = keys[StaticRandom.Next(keys.Count)];
                     var list = UserDictionary[key];
-
-                    if (key != "nmsl")
+                    
+                    if (key != Templates[0])
                     {
-                        var nextRate = Random.NextDouble();
-                        if (nextRate <= 0.1 || keys.Contains("nmsl"))
+                        var nextRate = StaticRandom.NextDouble();
+                        if (nextRate <= 0.2 && keys.Contains(Templates[0]))
                         {
-                            var list2 = UserDictionary["nmsl"];
-                            routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + "," +
-                                              list2[StaticRandom.Next(list2.Count)].Expression +
-                                              (questionRate <= 0.5 ? "?" : ""));
+                            var list2 = UserDictionary[Templates[0]];
+                            routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + ", " +
+                                              list2[StaticRandom.Next(list2.Count)].Expression + mark);
                         }
-                        return routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression +
-                                                 (questionRate <= 0.5 ? "?" : ""));
+                        else
+                            return routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + mark);
                     }
-
+                    else
+                        return routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + mark);
                 }
 
 
             }
 
             Thread.Sleep(StaticRandom.Next(0, 7000));
-            return null; routeMsg.ToSource("@龙花菜 有人龙语了");
+            return null;
         }
 
         private bool Detect(string msg, out (string origin, string mine)[] info)
