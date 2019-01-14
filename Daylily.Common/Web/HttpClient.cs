@@ -66,7 +66,9 @@ namespace Daylily.Common.Web
         /// <param name="args">参数字典</param>
         /// <param name="argsHeader">请求头字典</param>
         /// <returns></returns>
-        public static string HttpPost(string url, IDictionary<string, string> args, IDictionary<string, string> argsHeader = null)
+        public static string HttpPost(string url, 
+            IDictionary<string, string> args,
+            IDictionary<string, string> argsHeader = null)
         {
             HttpContent content;
             if (args != null)

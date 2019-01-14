@@ -115,7 +115,8 @@ namespace Daylily.Bot.Backend
 
                     //Assembly asm = Assembly.LoadFile(fi.FullName);
                     Assembly asm = System.Runtime.Loader.AssemblyLoadContext.Default.LoadFromAssemblyPath(fi.FullName);
-                    // 目前无Unload
+                    //https://github.com/dotnet/coreclr/blob/master/src/System.Private.CoreLib/src/System/Runtime/Loader/AssemblyLoadContext.cs#L250
+                    //System.Runtime.Loader.AssemblyLoadContext.GetLoadContext(asm).Unload();
 
                     Type[] t = asm.GetExportedTypes();
                     foreach (Type type in t)
