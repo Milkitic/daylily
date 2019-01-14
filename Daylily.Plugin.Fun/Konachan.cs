@@ -29,7 +29,7 @@ namespace Daylily.Plugin.Fun
 
         private string GetWebsite(CoolQRouteMessage routeMsg)
         {
-            var name = routeMsg.Command.ToUpperInvariant();
+            var name = routeMsg.CommandName.ToUpperInvariant();
             return Websites.GetValueOrDefault(name);
         }
 

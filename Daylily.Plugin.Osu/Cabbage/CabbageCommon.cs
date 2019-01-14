@@ -24,7 +24,7 @@ namespace Daylily.Plugin.Osu.Cabbage
             {
                 if (!MessageQueue.TryDequeue(out var routeMsg))
                     continue;
-                var cmd = routeMsg.Command;
+                var cmd = routeMsg.CommandName;
 
                 const long cabbageId = 1335734629;
                 string uname;

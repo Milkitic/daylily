@@ -25,7 +25,7 @@ namespace Daylily.Bot.Command
                     switch (info)
                     {
                         case ArgAttribute argAttr:
-                            if (command.Switches.ContainsKey(argAttr.Name))
+                            if (command.Switches.Contains(argAttr.Name))
                             {
                                 if (argAttr.IsSwitch)
                                 {

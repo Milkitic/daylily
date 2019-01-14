@@ -1,35 +1,36 @@
-﻿using System;
+﻿using Daylily.Common.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Daylily.Common.Logging;
 
 namespace Daylily.Bot.Command
 {
     public class ParamDividerV2 : IParamDivider
     {
-        public string CommandName { get; private set; }
-        public string ArgString { get; private set; }
-
-        public Dictionary<string, string> Args { get; } = new Dictionary<string, string>();
-        public List<string> FreeArgs { get; } = new List<string>();
-        public Dictionary<string, string> Switches { get; } = new Dictionary<string, string>();
-        public List<string> SimpleArgs { get; set; }
-
         private static readonly char[] Quote = { '\'', '\"' };
-        public bool TryDivide(string fullCmd)
+        public bool TryDivide(string fullCmd, out ICommand command)
         {
-            CommandName = fullCmd.Split(' ')[0].Trim();
-            ArgString = fullCmd.IndexOf(" ", StringComparison.Ordinal) == -1
-                ? ""
-                : fullCmd.Substring(fullCmd.IndexOf(" ", StringComparison.Ordinal) + 1,
-                    fullCmd.Length - CommandName.Length - 1).Trim();
-            List<string> splitedParam = new List<string>();
-            SimpleArgs = ArgString.Split(' ').ToList();
-            if (ArgString == "") return false;
+            var commandName = fullCmd.Split(' ')[0].Trim();
+            var argString = fullCmd.IndexOf(" ", StringComparison.Ordinal) == -1
+                  ? ""
+                  : fullCmd.Substring(fullCmd.IndexOf(" ", StringComparison.Ordinal) + 1,
+                      fullCmd.Length - commandName.Length - 1).Trim();
+            var args = new Dictionary<string, string>();
+            var freeArgs = new List<string>();
+            var switches = new List<string>();
+            var simpleArgs = argString.Split(' ').ToList();
+
+            if (argString == "")
+            {
+                command = new Command(commandName, args, freeArgs, switches, fullCmd, argString, simpleArgs);
+                return false;
+            }
+
+            var splitParam = new List<string>();
             try
             {
-                splitedParam.AddRange(ArgString.Split(' '));
-                foreach (var item in splitedParam)
+                splitParam.AddRange(argString.Split(' '));
+                foreach (var item in splitParam)
                 {
                     if (Quote.Any(q => ContainsChar(q, item)))
                     {
@@ -40,16 +41,16 @@ namespace Daylily.Bot.Command
                 bool combined = true;
                 foreach (var item in Quote)
                 {
-                    for (int i = 0; i < splitedParam.Count - 1; i++)
+                    for (int i = 0; i < splitParam.Count - 1; i++)
                     {
-                        string cur = splitedParam[i], next = splitedParam[i + 1];
+                        string cur = splitParam[i], next = splitParam[i + 1];
 
                         if (cur.StartsWith(item) && !cur.EndsWith(item))
                         {
                             combined = false;
-                            splitedParam[i] = cur + " " + next;
-                            splitedParam.Remove(next);
-                            if (splitedParam[i].EndsWith(item))
+                            splitParam[i] = cur + " " + next;
+                            splitParam.Remove(next);
+                            if (splitParam[i].EndsWith(item))
                                 combined = true;
                             i--;
                         }
@@ -57,18 +58,18 @@ namespace Daylily.Bot.Command
                     if (!combined) throw new ArgumentException("Expect '" + item + "'.");
                 }
 
-                string tmpKey = null, tmpValue;
+                string tmpKey = null;
                 bool isLastKeyOrValue = false;
 
-                splitedParam.Add("-");
-                foreach (var item in splitedParam)
+                splitParam.Add("-");
+                foreach (var item in splitParam)
                 {
-                    tmpValue = null;
+                    string tmpValue = null;
                     if (item.StartsWith('-'))
                     {
                         if (tmpKey != null)
                         {
-                            Switches.Add(tmpKey, tmpKey);
+                            switches.Add(tmpKey);
                         }
 
                         tmpKey = item.Remove(0, 1);
@@ -82,12 +83,12 @@ namespace Daylily.Bot.Command
                         }
                         if (!isLastKeyOrValue)
                         {
-                            FreeArgs.Add(tmpValue);
+                            freeArgs.Add(tmpValue);
                             //throw new ArgumentException("Expect key.");
                         }
                         else
                         {
-                            Args.Add(tmpKey, tmpValue);
+                            args.Add(tmpKey, tmpValue);
                             tmpKey = null;
                             tmpValue = null;
                             isLastKeyOrValue = false;
@@ -100,9 +101,11 @@ namespace Daylily.Bot.Command
             catch (Exception ex)
             {
                 Logger.Debug(ex.Message);
+                command = new Command(commandName, args, freeArgs, switches, fullCmd, argString, simpleArgs);
                 return false;
             }
 
+            command = new Command(commandName, args, freeArgs, switches, fullCmd, argString, simpleArgs);
             return true;
         }
 

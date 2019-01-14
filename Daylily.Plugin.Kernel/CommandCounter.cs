@@ -32,13 +32,13 @@ namespace Daylily.Plugin.Kernel
             var routeMsg = scope.RouteMessage;
             if (string.IsNullOrEmpty(routeMsg.FullCommand))
                 return null;
-            if (!CommandRate.Keys.Contains(routeMsg.Command))
+            if (!CommandRate.Keys.Contains(routeMsg.CommandName))
             {
-                CommandRate.TryAdd(routeMsg.Command, 1);
+                CommandRate.TryAdd(routeMsg.CommandName, 1);
             }
             else
             {
-                CommandRate[routeMsg.Command]++;
+                CommandRate[routeMsg.CommandName]++;
             }
 
             SaveSettings(CommandRate, "CommandRate");

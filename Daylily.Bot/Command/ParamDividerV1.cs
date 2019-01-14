@@ -5,31 +5,23 @@ namespace Daylily.Bot.Command
 {
     public class ParamDividerV1 : IParamDivider
     {
-        public string CommandName { get; private set; }
-        public string ArgString { get; private set; }
-
-        public Dictionary<string, string> Args { get; } =
-            new Dictionary<string, string>();
-
-        public List<string> FreeArgs { get; } = new List<string>();
-        public Dictionary<string, string> Switches { get; } =
-            new Dictionary<string, string>();
-
-        public List<string> SimpleArgs { get; set; } = new List<string>();
-
-        public bool TryDivide(string fullCmd)
+        public bool TryDivide(string fullCmd, out ICommand command)
         {
-            CommandName = fullCmd.Split(' ')[0].Trim();
-            ArgString = fullCmd.IndexOf(" ", StringComparison.Ordinal) == -1
-                ? ""
-                : fullCmd.Substring(fullCmd.IndexOf(" ", StringComparison.Ordinal) + 1,
-                    fullCmd.Length - CommandName.Length - 1).Trim();
+            var commandName = fullCmd.Split(' ')[0].Trim();
+            var argString = fullCmd.IndexOf(" ", StringComparison.Ordinal) == -1
+                    ? ""
+                    : fullCmd.Substring(fullCmd.IndexOf(" ", StringComparison.Ordinal) + 1,
+                        fullCmd.Length - commandName.Length - 1).Trim();
+            var args = new Dictionary<string, string>();
+            var freeArgs = new List<string>();
+            var switches = new List<string>();
+            var simpleArgs = new List<string>();
 
             char quoteFlag = '\0';
             bool isKeyOrValue = true;
             int startP = -1, endP = -1;
             string tmpKey = "", tmpValue = "";
-            string param = ArgString + " ";
+            string param = argString + " ";
             try
             {
                 for (var i = 0; i < param.Length; i++)
@@ -58,14 +50,14 @@ namespace Daylily.Bot.Command
                                 if (isKeyOrValue)
                                 {
                                     tmpKey = param.Substring(startP, endP - startP).Trim().TrimStart('-');
-                                    Switches.Add(tmpKey, tmpKey);
+                                    switches.Add(tmpKey);
                                     isKeyOrValue = false;
                                 }
                                 else
                                 {
                                     tmpValue = param.Substring(startP, endP - startP).Trim().Trim('\"');
-                                    Args.Add(tmpKey, tmpValue);
-                                    Switches.Remove(tmpKey, out _);
+                                    args.Add(tmpKey, tmpValue);
+                                    switches.Remove(tmpKey);
                                 }
                                 startP = i;
                                 break;
@@ -82,9 +74,11 @@ namespace Daylily.Bot.Command
             }
             catch
             {
+                command = new Command(commandName, args, freeArgs, switches, fullCmd, argString, simpleArgs);
                 return false;
             }
 
+            command = new Command(commandName, args, freeArgs, switches, fullCmd, argString, simpleArgs);
             return true;
         }
     }

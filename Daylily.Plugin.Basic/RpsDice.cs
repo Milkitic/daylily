@@ -18,7 +18,7 @@ namespace Daylily.Plugin.Basic
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;
-            switch (routeMsg.Command)
+            switch (routeMsg.CommandName)
             {
                 case "dice":
                     return routeMsg.ToSource(new Dice());

@@ -2,14 +2,20 @@
 
 namespace Daylily.Bot.Command
 {
-    public interface ICommand
+    public interface ICommand : IArgument
     {
-        string FullCommand { get; set; }
-        string Command { get; set; }
-        string ArgString { get; set; }
-        Dictionary<string, string> Args { get; set; }
-        List<string> FreeArgs { get; set; }
-        Dictionary<string, string> Switches { get; set; }
-        List<string> SimpleArgs { get; set; }
+        string FullCommand { get; }
+        string CommandName { get; }
+    }
+
+    public interface IWritableCommand : ICommand
+    {
+        new string FullCommand { get; set; }
+        new string CommandName { get; set; }
+        new string ArgString { get; set; }
+        new Dictionary<string, string> Args { get; set; }
+        new List<string> FreeArgs { get; set; }
+        new List<string> Switches { get; set; }
+        new List<string> SimpleArgs { get; set; }
     }
 }

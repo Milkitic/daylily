@@ -166,9 +166,9 @@ namespace Daylily.CoolQ
         private void HandleCommand(CoolQScopeEventArgs scope)
         {
             CoolQRouteMessage replyObj = null;
-            if (!PluginManager.ContainsPlugin(scope.RouteMessage.Command)) return;
+            if (!PluginManager.ContainsPlugin(scope.RouteMessage.CommandName)) return;
 
-            Type t = PluginManager.GetPluginType(scope.RouteMessage.Command);
+            Type t = PluginManager.GetPluginType(scope.RouteMessage.CommandName);
 
             CoolQCommandPlugin plugin = PluginManager.CreateInstance<CoolQCommandPlugin>(t);
             if (plugin != null)

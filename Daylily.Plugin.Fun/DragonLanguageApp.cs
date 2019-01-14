@@ -25,8 +25,13 @@ namespace Daylily.Plugin.Fun
     {
         public override Guid Guid { get; } = new Guid("33cc804f-1704-4e34-a958-85bd9d1069e1");
 
-        private static readonly string[] Templates = { "nmsl", "wslnm", "nmntys", "fnmdp", "rsndm" };
-        private static readonly string[] Filter = { "你妈", "妈死", "日死", "你吗", "nm", "nima", "ni ma" };
+        private static readonly string[] Templates = { "nmsl", "wslnm", "nmntys", "fnmdp", "rsndm", "wcnmb" };
+
+        private static readonly string[] Filter =
+        {
+            "你妈", "妈死", "日死", "你吗", "你媽", "媽死", "你嗎", "nm", "nima", "ni ma", "penis", "dick", "cunt", "tentum",
+            "priapus", "phallus", "fuck", "shit"
+        };
         private ConcurrentDictionary<string, List<UserExpression>> UserDictionary { get; set; }
         private int Count => UserDictionary.Sum(k => k.Value.Count);
         public override void OnInitialized(string[] args)
@@ -70,7 +75,7 @@ namespace Daylily.Plugin.Fun
             {
                 var sayRate = StaticRandom.NextDouble();
                 var mark = StaticRandom.NextDouble() <= 0.5 ? "?" : "";
-                if (sayRate <= 0.4)
+                if (sayRate <= 0.5)
                 {
                     var keys = UserDictionary.Keys.ToList();
                     var key = keys[StaticRandom.Next(keys.Count)];
@@ -79,7 +84,7 @@ namespace Daylily.Plugin.Fun
                     if (key != Templates[0])
                     {
                         var nextRate = StaticRandom.NextDouble();
-                        if (nextRate <= 0.4 && keys.Contains(Templates[0]))
+                        if (nextRate <= 0.5 && keys.Contains(Templates[0]))
                         {
                             var list2 = UserDictionary[Templates[0]];
                             message = routeMsg.ToSource(list[StaticRandom.Next(list.Count)].Expression + ", " +

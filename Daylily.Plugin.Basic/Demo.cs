@@ -57,7 +57,7 @@ namespace Daylily.Plugin.Basic
 
             // 若是命令，下面两个字段不为null，当接收消息是 "/demo asdf 1234" 的情况：
             // 此字段为 "demo"
-            string command = routeMsg.Command;
+            string command = routeMsg.CommandName;
             // 此字段为 "asdf 1234"
             string argString = routeMsg.ArgString;
             // 当前处于的权限状态，默认为Public（即开放权限）

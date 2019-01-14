@@ -45,7 +45,7 @@ namespace Daylily.Plugin.Fun
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;
-            if (routeMsg.Command == "keyedit")
+            if (routeMsg.CommandName == "keyedit")
             {
                 if (routeMsg.FreeArgs.Count == 1)
                     return routeMsg.ToSource(routeMsg.FreeArgs[0] + " (KeywordTrigger)");

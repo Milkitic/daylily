@@ -1,6 +1,6 @@
-﻿using System;
-using Daylily.Bot.Command;
+﻿using Daylily.Bot.Command;
 using Daylily.Common.Logging;
+using System;
 
 namespace Daylily.Bot.Console
 {
@@ -11,14 +11,15 @@ namespace Daylily.Bot.Console
             Logger.Raw("> " + message);
             Response(message);
         }
+
         public void Response(string command)
         {
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
-            ca.Analyze(command);
+            var cmd = ca.Analyze(command);
 
             try
             {
-                switch (ca.CommandName)
+                switch (cmd.CommandName)
                 {
                     case "stop":
                         Logger.Raw("Application is shutting down... ");
@@ -26,31 +27,31 @@ namespace Daylily.Bot.Console
                         break;
                     case "console":
                         {
-                            if (ca.Args.ContainsKey("cut-count"))
+                            if (cmd.Args.ContainsKey("cut-count"))
                             {
-                                if (ca.Switches.ContainsKey("set"))
+                                if (cmd.Switches.Contains("set"))
                                 {
-                                    SocketLogger.CutCount = int.Parse(ca.Args["cut-count"]);
-                                    Logger.Raw(ca.CommandName + ": set: oparation succeed");
+                                    SocketLogger.CutCount = int.Parse(cmd.Args["cut-count"]);
+                                    Logger.Raw(cmd.CommandName + ": set: oparation succeed");
                                 }
                                 else
                                 {
-                                    Logger.Raw(ca.CommandName + ": parameter mismatch");
+                                    Logger.Raw(cmd.CommandName + ": parameter mismatch");
                                 }
                             }
-                            else if (ca.Switches.ContainsKey("get"))
+                            else if (cmd.Switches.Contains("get"))
                             {
-                                if (ca.Switches.ContainsKey("cut-count"))
+                                if (cmd.Switches.Contains("cut-count"))
                                 {
                                     Logger.Raw(SocketLogger.CutCount.ToString());
                                 }
                             }
                             else
-                                Logger.Raw(ca.CommandName + ": parameter mismatch");
+                                Logger.Raw(cmd.CommandName + ": parameter mismatch");
                             break;
                         }
                     default:
-                        Logger.Raw(ca.CommandName + ": command not found");
+                        Logger.Raw(cmd.CommandName + ": command not found");
                         break;
                 }
             }

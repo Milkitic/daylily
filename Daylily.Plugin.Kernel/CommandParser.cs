@@ -29,7 +29,7 @@ namespace Daylily.Plugin.Kernel
             CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
             ca.Analyze(fullCmd, routeMsg);
 
-            if (!DaylilyCore.Current.PluginManager.ContainsPlugin(routeMsg.Command))
+            if (!DaylilyCore.Current.PluginManager.ContainsPlugin(routeMsg.CommandName))
                 return null;
 
             return null;
