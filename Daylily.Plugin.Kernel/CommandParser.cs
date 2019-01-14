@@ -26,7 +26,7 @@ namespace Daylily.Plugin.Kernel
             if (string.IsNullOrEmpty(routeMsg.FullCommand))
                 return null;
             string fullCmd = routeMsg.FullCommand;
-            CommandAnalyzer ca = new CommandAnalyzer(new ParamDividerV2());
+            var ca = new CommandAnalyzer<StreamParamDivider>();
             ca.Analyze(fullCmd, routeMsg);
 
             if (!DaylilyCore.Current.PluginManager.ContainsPlugin(routeMsg.CommandName))
