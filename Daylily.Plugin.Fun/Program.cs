@@ -12,7 +12,7 @@ namespace Daylily.Plugin.Fun
         {
             // 引用添加项目Daylily.Common
             Panda newPlugin = new Panda();
-            newPlugin.OnInitialized(args);
+            newPlugin.OnInitialized(new Bot.StartupConfig(null, null, new Bot.StartupConfig.Metadata()));
             CoolQRouteMessage cm = new CoolQRouteMessage()
             {
                 GroupId = "123456788",

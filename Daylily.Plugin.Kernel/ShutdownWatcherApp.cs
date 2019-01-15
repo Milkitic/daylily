@@ -27,7 +27,7 @@ namespace Daylily.Plugin.Kernel
 
         public CoolQIdentityDictionary<DateTime?> ExpireTimeCollection { get; private set; }
         public bool IsScanning { get; set; }
-        public override void OnInitialized(string[] args)
+        public override void OnInitialized(StartupConfig startup)
         {
             ExpireTimeCollection = LoadSettings<CoolQIdentityDictionary<DateTime?>>() ??
                                    new CoolQIdentityDictionary<DateTime?>();

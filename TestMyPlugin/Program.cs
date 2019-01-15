@@ -1,4 +1,5 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot;
+using Daylily.Bot.Message;
 using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
@@ -12,7 +13,7 @@ namespace TestMyPlugin
         static void Main(string[] args)
         {
             Roll newPlugin = new Roll();
-            newPlugin.OnInitialized(args);
+            newPlugin.OnInitialized(new StartupConfig(null, null, new StartupConfig.Metadata()));
             while (true)
             {
                 var msg = Console.ReadLine();

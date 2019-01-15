@@ -28,12 +28,7 @@ namespace Daylily.Plugin.Basic
         [FreeArg]
         [Help("此参数(c)为抽取的数量。")]
         public string Count { get; set; }
-
-        public override void OnInitialized(string[] args)
-        {
-
-        }
-
+        
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;

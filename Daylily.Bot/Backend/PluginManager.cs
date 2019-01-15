@@ -13,7 +13,7 @@ namespace Daylily.Bot.Backend
     public class PluginManager
     {
         public static PluginManager Current { get; private set; }
-
+        public event Action<StartupConfig> sb;
         public PluginManager()
         {
             Current = this;
@@ -190,6 +190,7 @@ namespace Daylily.Bot.Backend
                 }
 
                 plugin.OnInitialized(null);
+                sb += plugin.AllPlugins_Initialized;
                 Logger.Origin($"{pluginType} \"{plugin.Name}\" {commands}已经加载完毕。{error}");
             }
             catch (Exception ex)

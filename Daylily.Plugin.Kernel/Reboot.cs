@@ -1,4 +1,5 @@
 ﻿using System;
+using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ;
@@ -15,6 +16,11 @@ namespace Daylily.Plugin.Kernel
     public class Shutdown : CoolQCommandPlugin
     {
         public override Guid Guid => new Guid("ee3fc222-b05d-403b-b8c2-542a61b72a4d");
+
+        public override void AllPlugins_Initialized(StartupConfig startup)
+        {
+            base.AllPlugins_Initialized(startup);
+        }
 
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {

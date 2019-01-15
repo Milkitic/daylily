@@ -27,7 +27,7 @@ namespace Daylily.Bot.Backend.Plugins
 
         public event ExceptionEventHandler ErrorOccured;
 
-        public virtual void OnInitialized(string[] args)
+        public virtual void OnInitialized(StartupConfig startup)
         {
 
         }
@@ -37,7 +37,7 @@ namespace Daylily.Bot.Backend.Plugins
 
         }
 
-        public virtual void AllPlugins_Initialized(string[] args)
+        public virtual void AllPlugins_Initialized(StartupConfig startup)
         {
 
         }

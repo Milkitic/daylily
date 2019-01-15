@@ -45,9 +45,9 @@ namespace Daylily.Plugin.Kernel
         private static readonly string HelpDir = Path.Combine(Domain.ResourcePath, "help");
         private static readonly string StaticDir = Path.Combine(HelpDir, "static");
 
-        public override void OnInitialized(string[] args)
+        public override void OnInitialized(StartupConfig startup)
         {
-            _versionInfo = args == null ? "" : args[0];
+            _versionInfo = $"{startup.ApplicationMetadata.ApplicationName} {startup.ApplicationMetadata.BotVersion}";
         }
 
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)

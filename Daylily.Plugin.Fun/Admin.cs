@@ -24,12 +24,7 @@ namespace Daylily.Plugin.Fun
 
         const string mainNode = "Main";
         const string memberMenuNode = "memberMenu";
-
-        public override void OnInitialized(string[] args)
-        {
-
-        }
-
+        
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;

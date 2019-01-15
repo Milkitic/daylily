@@ -20,9 +20,9 @@ namespace Daylily.Plugin.Kernel
             CanDisabled = false
         };
 
-        public override void OnInitialized(string[] args)
+        public override void OnInitialized(StartupConfig startup)
         {
-            base.OnInitialized(args);
+            base.OnInitialized(startup);
             CommandRate = LoadSettings<ConcurrentDictionary<string, int>>("CommandRate") ??
                          new ConcurrentDictionary<string, int>();
         }

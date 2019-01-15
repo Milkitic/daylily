@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Daylily.Bot;
 using Daylily.Bot.Backend.Plugins;
 using Daylily.Common.Logging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -15,9 +16,9 @@ namespace Daylily.Plugin.Kernel
     {
         public override Guid Guid => new Guid("21a5d3c8-255c-4219-a682-2d0bcc0b5176");
 
-        public override void OnInitialized(string[] args)
+        public override void OnInitialized(StartupConfig startup)
         {
-            base.OnInitialized(args);
+            base.OnInitialized(startup);
 
             int i = 0;
             //UpdateGroupList(i);

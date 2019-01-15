@@ -45,12 +45,7 @@ namespace Daylily.Plugin.Fun
         private const int SmFontSize = 13, NmFontSize = 16, LgFontSize = 24;
 
         private const string MagicalWord = "                              ."; // 解决底层跨平台傻吊bug的方案
-
-        public override void OnInitialized(string[] args)
-        {
-
-        }
-
+        
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot;
 using Daylily.Bot.Backend.Plugins;
 using Daylily.Common;
 using Daylily.Common.Logging;
@@ -12,9 +13,9 @@ namespace Daylily.Plugin.Kernel
     {
         public override Guid Guid => new Guid("0e4d58ea-4e4f-41ae-a377-47b2c56b2e10");
 
-        public override void OnInitialized(string[] args)
+        public override void OnInitialized(StartupConfig startup)
         {
-            base.OnInitialized(args);
+            base.OnInitialized(startup);
 
             Task.Run(() =>
             {

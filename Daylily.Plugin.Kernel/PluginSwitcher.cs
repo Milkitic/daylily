@@ -54,7 +54,7 @@ namespace Daylily.Plugin.Kernel
             CanDisabled = false
         };
 
-        public override void OnInitialized(string[] args)
+        public override void OnInitialized(StartupConfig startup)
         {
             LoadDisableSettings();
         }

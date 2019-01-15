@@ -42,9 +42,7 @@ namespace Daylily.Plugin.Basic
         private static CancellationToken Ct = Cts.Token;
         private static DateTime _newTime;
         private static string _message;
-
-        public override void OnInitialized(string[] args) { }
-
+        
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;

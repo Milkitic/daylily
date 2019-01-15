@@ -32,12 +32,7 @@ namespace Daylily.Plugin.Fun
             var name = routeMsg.CommandName.ToUpperInvariant();
             return Websites.GetValueOrDefault(name);
         }
-
-        public override void OnInitialized(string[] args)
-        {
-            return;
-        }
-
+        
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;

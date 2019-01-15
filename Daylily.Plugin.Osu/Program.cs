@@ -1,4 +1,5 @@
-﻿using Daylily.Bot.Message;
+﻿using Daylily.Bot;
+using Daylily.Bot.Message;
 using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Message;
@@ -19,7 +20,7 @@ namespace Daylily.Plugin.Osu
                 //SubscribeMapper = "pw384",
                 //List = true
             };
-            newPlugin.OnInitialized(args);
+            newPlugin.OnInitialized(new StartupConfig(null, null, new StartupConfig.Metadata()));
             CoolQRouteMessage cm = new CoolQRouteMessage
             {
                 GroupId = "123456788",

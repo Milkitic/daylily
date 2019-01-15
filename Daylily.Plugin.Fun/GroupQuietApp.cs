@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot;
 
 namespace Daylily.Plugin.Fun
 {
@@ -25,7 +26,7 @@ namespace Daylily.Plugin.Fun
         private static CoolQIdentityDictionary<GroupSettings> _settings;
         private static readonly CancellationTokenSource Cts = new CancellationTokenSource();
 
-        public override void OnInitialized(string[] args)
+        public override void OnInitialized(StartupConfig startup)
         {
             _settings = LoadSettings<CoolQIdentityDictionary<GroupSettings>>()
                             ?? new CoolQIdentityDictionary<GroupSettings>();

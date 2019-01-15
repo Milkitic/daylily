@@ -55,7 +55,7 @@ namespace Daylily.Plugin.Osu
         [Help("查看目前的列表。")]
         public bool List { get; set; }
 
-        public override void OnInitialized(string[] args)
+        public override void OnInitialized(StartupConfig startup)
         {
             _matchList = LoadSettings<List<MatchInfo>>("MatchList") ?? new List<MatchInfo>();
         }

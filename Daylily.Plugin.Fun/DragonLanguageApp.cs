@@ -34,7 +34,8 @@ namespace Daylily.Plugin.Fun
         };
         private ConcurrentDictionary<string, List<UserExpression>> UserDictionary { get; set; }
         private int Count => UserDictionary.Sum(k => k.Value.Count);
-        public override void OnInitialized(string[] args)
+
+        public override void OnInitialized(StartupConfig startup)
         {
             UserDictionary = LoadSettings<ConcurrentDictionary<string, List<UserExpression>>>() ??
                              new ConcurrentDictionary<string, List<UserExpression>>();

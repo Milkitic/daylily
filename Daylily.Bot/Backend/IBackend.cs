@@ -16,8 +16,8 @@ namespace Daylily.Bot.Backend
         Authority TargetAuthority { get; }
         Guid Guid { get; }
 
-        void OnInitialized(string[] args);
+        void OnInitialized(StartupConfig startup);
         void OnErrorOccured(ExceptionEventArgs args);
-        void AllPlugins_Initialized(string[] args);
+        void AllPlugins_Initialized(StartupConfig startup);
     }
 }

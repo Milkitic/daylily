@@ -64,7 +64,7 @@ namespace Daylily.Plugin.Fun
         private static string _imagePath, _content;
         private CoolQRouteMessage _cm;
 
-        public override void OnInitialized(string[] args)
+        public override void OnInitialized(StartupConfig startup)
         {
             _imagePath = Path.Combine(SettingsPath, "image");
             _content = Path.Combine(_imagePath, ".content");

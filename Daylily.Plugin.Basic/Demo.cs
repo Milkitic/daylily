@@ -26,12 +26,7 @@ namespace Daylily.Plugin.Basic
 
         private static Thread _tThread;
         private static string UserId { get; set; }
-
-        public override void OnInitialized(string[] args)
-        {
-
-        }
-
+        
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;

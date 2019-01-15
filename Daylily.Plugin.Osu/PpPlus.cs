@@ -1,5 +1,6 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Logging;
 using Daylily.Common.Text;
@@ -17,7 +18,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
-using Daylily.Bot.Message;
 
 namespace Daylily.Plugin.Osu
 {
@@ -33,11 +33,6 @@ namespace Daylily.Plugin.Osu
         [FreeArg]
         [Help("查询指定的osu用户名。若带空格，请使用引号。")]
         public string OsuId { get; set; }
-
-        public override void OnInitialized(string[] args)
-        {
-
-        }
 
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
