@@ -1,19 +1,19 @@
 ﻿using Daylily.Bot.Backend.Plugins;
 using Daylily.Common;
+using Daylily.Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Daylily.Common.Logging;
 
 namespace Daylily.Bot.Backend
 {
     public class PluginManager
     {
         public static PluginManager Current { get; private set; }
-        public event Action<StartupConfig> sb;
+        public event Action<StartupConfig> AllPluginInitialized;
         public PluginManager()
         {
             Current = this;
@@ -49,7 +49,6 @@ namespace Daylily.Bot.Backend
         protected List<TaggedClass<Assembly>> Assemblies { get; } = new List<TaggedClass<Assembly>>();
 
         protected static readonly string BackendDirectory = Domain.PluginPath;
-        protected static readonly string ExtendedDirectory = Domain.ExtendedPluginPath;
 
         public bool ContainsPlugin(string command)
         {
@@ -150,6 +149,8 @@ namespace Daylily.Bot.Backend
                 if (!isValid)
                     Logger.Warn($"\"{fi.Name}\" 不是合法的插件扩展。");
             }
+
+            AllPluginInitialized?.Invoke(startupConfig);
         }
 
         protected virtual void InsertPlugin(Type type, StartupConfig startupConfig)
@@ -189,8 +190,8 @@ namespace Daylily.Bot.Backend
                         break;
                 }
 
-                plugin.OnInitialized(null);
-                sb += plugin.AllPlugins_Initialized;
+                plugin.OnInitialized(startupConfig);
+                AllPluginInitialized += plugin.AllPlugins_Initialized;
                 Logger.Origin($"{pluginType} \"{plugin.Name}\" {commands}已经加载完毕。{error}");
             }
             catch (Exception ex)

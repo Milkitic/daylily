@@ -71,6 +71,8 @@ namespace Daylily.CoolQ.Message
         public override CoolQIdentity ReadJson(JsonReader reader, Type objectType, CoolQIdentity existingValue, bool hasExistingValue,
             JsonSerializer serializer)
         {
+            if (reader.Value == null)
+                return default;
             var str = ((string)reader.Value).TrimStart('{').TrimEnd('}');
             var ok = str.Split(' ');
             return new CoolQIdentity(ok[1], Enum.Parse<MessageType>(ok[0]));

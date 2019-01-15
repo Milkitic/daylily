@@ -15,7 +15,7 @@ namespace Daylily.Common
         public static string ResourcePath => Path.Combine(CurrentPath, "Resource");
 
         public static string PluginPath => Path.Combine(CurrentPath, "Plugin");
-        public static string ExtendedPluginPath => Path.Combine(PluginPath, "Extended");
+        //public static string ExtendedPluginPath => Path.Combine(PluginPath, "Extended");
 
         public static string LogPath => Path.Combine(CurrentPath, "Log");
 
