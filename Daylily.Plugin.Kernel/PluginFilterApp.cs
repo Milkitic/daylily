@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Daylily.Plugin.Kernel
 {
-    public class PluginFilter : CoolQApplicationPlugin
+    public class PluginFilterApp : CoolQApplicationPlugin
     {
         public override Guid Guid => new Guid("20e7a3e1-fdc3-4b3a-bff1-ecf396a63311");
 
@@ -30,7 +30,7 @@ namespace Daylily.Plugin.Kernel
             if (DisabledList.Keys.Contains((CoolQIdentity)routeMsg.Identity))
             {
                 var guidList = DisabledList[(CoolQIdentity)routeMsg.Identity];
-                PermissionChecker.GetRequestAuthority(routeMsg.RawMessage, out var fullCommand);
+                PermissionCheckerApp.GetRequestAuthority(routeMsg.RawMessage, out var fullCommand);
                 var cmdName = fullCommand?.Split(' ')[0];
                 foreach (var plugin in Bot.Backend.PluginManager.Current.ApplicationInstances)
                 {

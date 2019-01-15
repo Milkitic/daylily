@@ -87,9 +87,8 @@ namespace Daylily.Bot.Backend.Plugins
 
         protected string SettingsPath => Path.Combine(Domain.PluginPath, GetType().Name);
 
-        protected Random GlobalRandom => DaylilyCore.Current.GlobalRandom;
-        protected static Random StaticRandom { get; } = new Random();
-        protected Random Random { get; } = new Random();
+        protected ConcurrentRandom GlobalRandom => DaylilyCore.Current.GlobalRandom;
+        protected static ConcurrentRandom StaticRandom { get; } = new ConcurrentRandom();
         protected static void SendMessage(RouteMessage routeMsg) => DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg);
         protected virtual void SaveSettings<T>(T cls, string fileName = null, bool writeLog = false)
         {

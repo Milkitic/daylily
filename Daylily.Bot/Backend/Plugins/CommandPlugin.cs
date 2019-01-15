@@ -1,9 +1,10 @@
 ﻿using Daylily.Bot.Message;
+using Daylily.Common;
+using Daylily.Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Daylily.Common.Logging;
 
 namespace Daylily.Bot.Backend.Plugins
 {
@@ -13,6 +14,7 @@ namespace Daylily.Bot.Backend.Plugins
         public override bool RunInMultiThreading { get; } = true;
         public override bool RunInMultipleInstances { get; } = true;
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig();
+        protected ConcurrentRandom Random { get; } = new ConcurrentRandom();
 
         public virtual void OnCommandBindingFailed(BindingFailedEventArgs args)
         {

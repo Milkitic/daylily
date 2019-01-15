@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Daylily.Plugin.Kernel
 {
-    public class CliNotification : CoolQApplicationPlugin
+    public class CliNotificationApp : CoolQApplicationPlugin
     {
         public override Guid Guid => new Guid("9a71f0a2-fd2e-4d7e-abd8-681d14d0d83e");
 

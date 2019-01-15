@@ -6,6 +6,7 @@ using Daylily.CoolQ.Plugins;
 using Daylily.Osu;
 using Daylily.Osu.Cabbage;
 using System;
+using Daylily.Bot.Message;
 
 namespace Daylily.Plugin.Osu
 {

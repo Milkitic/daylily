@@ -43,7 +43,7 @@ namespace Daylily.Plugin.Kernel
                 return routeMsg.ToSource("时间范围设置不对，，你故意的8，，，");
             }
 
-            var plugin = PluginManager.Current.GetPlugin<ShutdownWatcher>();
+            var plugin = PluginManager.Current.GetPlugin<ShutdownWatcherApp>();
             if (plugin == null)
             {
                 return routeMsg.ToSource("操作失败了。。当前未装载相关插件");

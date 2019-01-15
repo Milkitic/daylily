@@ -9,7 +9,7 @@ namespace Daylily.Plugin.Basic
 {
     [Name("获取随机数")]
     [Author("yf_extension")]
-    [Version(2, 0, 0, PluginVersion.Stable)]
+    [Version(2, 0, 1, PluginVersion.Stable)]
     [Help("获取一个或多个随机数。")]
     [Command("roll")]
     public class Roll : CoolQCommandPlugin
@@ -65,14 +65,14 @@ namespace Daylily.Plugin.Basic
             List<int> newList = new List<int>();
             if (Repeat || count > uBound - lBound)
             {
-                string repMsg = ((count > uBound - lBound) && !Repeat) ? "（可能包含重复结果）" : "";
+                string repMsg = ((count > uBound - lBound) || Repeat) ? "（包含重复结果）" : "";
                 for (int i = 0; i < count; i++)
                 {
                     newList.Add(GetRand(lBound, uBound - 1));
                 }
 
                 newList.Sort();
-                return repMsg + string.Join(',', newList);
+                return repMsg + string.Join(", ", newList);
             }
 
             // else
@@ -88,7 +88,7 @@ namespace Daylily.Plugin.Basic
             }
 
             newList.Sort();
-            return string.Join(',', newList);
+            return string.Join(", ", newList);
         }
     }
 }

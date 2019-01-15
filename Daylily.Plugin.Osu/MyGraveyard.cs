@@ -1,6 +1,6 @@
 ﻿using Bleatingsheep.Osu.ApiV2b.Models;
-using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.Common.Logging;
 using Daylily.Common.Web;
 using Daylily.CoolQ;
@@ -55,8 +55,7 @@ namespace Daylily.Plugin.Osu
                 return routeMsg.ToSource("惊了，你竟然会没坑！", true);
             }
 
-            Random rnd = new Random();
-            Beatmapset beatmap = totalList[rnd.Next(totalList.Count)];
+            Beatmapset beatmap = totalList[StaticRandom.Next(totalList.Count)];
             var cqMusic = new CustomMusic("https://osu.ppy.sh/s/" + beatmap.Id, $"https://b.ppy.sh/preview/{beatmap.Id}.mp3", beatmap.Title,
                 $"{beatmap.Artist}\r\n({beatmap.FavouriteCount} fav)", $"https://b.ppy.sh/thumb/{beatmap.Id}l.jpg");
 

@@ -137,7 +137,7 @@ namespace Daylily.Plugin.Kernel
                 .OrderBy(k => k.Name)
                 .ToDictionary(plugin => plugin.Name, plugin => plugin.Helps.Length > 0 ? plugin.Helps[0] : "");
 
-            string[] hot = DaylilyCore.Current.PluginManager.GetPlugin<CommandCounter>()?.CommandRate
+            string[] hot = DaylilyCore.Current.PluginManager.GetPlugin<CommandCounterApp>()?.CommandRate
                 .OrderByDescending(k => k.Value)
                 .Take(5)
                 .Where(k => k.Value > 50)

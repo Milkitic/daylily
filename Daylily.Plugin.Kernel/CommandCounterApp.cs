@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 
 namespace Daylily.Plugin.Kernel
 {
-    public class CommandCounter : CoolQApplicationPlugin
+    public class CommandCounterApp : CoolQApplicationPlugin
     {
         public override Guid Guid => new Guid("fe577f01-b63f-45e2-88bd-3236224b93b9");
 

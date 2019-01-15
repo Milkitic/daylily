@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
+using Daylily.Bot.Message;
 
 namespace Daylily.Plugin.Osu
 {

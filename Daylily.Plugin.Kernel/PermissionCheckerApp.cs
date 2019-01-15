@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Daylily.Plugin.Kernel
 {
-    public class PermissionChecker : CoolQApplicationPlugin
+    public class PermissionCheckerApp : CoolQApplicationPlugin
     {
         public override Guid Guid => new Guid("9a4e9dba-f96b-4846-988d-55d2650a6f2b");
 

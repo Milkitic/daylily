@@ -1,6 +1,7 @@
 ﻿using System;
+using Daylily.Common;
 
-namespace Daylily.Bot
+namespace Daylily.Bot.Message
 {
     public static class DefaultReply
     {
@@ -27,6 +28,6 @@ namespace Daylily.Bot
 
         public const string FakeAdmin = "你不是这个群的管理员，所以没有办法使用提权命令。";
 
-        private static readonly Random Random = new Random();
+        private static readonly ConcurrentRandom Random = new ConcurrentRandom();
     }
 }

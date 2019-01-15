@@ -8,6 +8,7 @@ using Daylily.Osu.Cabbage;
 using Daylily.Osu.Elo;
 using System;
 using System.Collections.Generic;
+using Daylily.Bot.Message;
 
 namespace Daylily.Plugin.Osu
 {

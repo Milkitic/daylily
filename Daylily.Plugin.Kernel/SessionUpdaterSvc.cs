@@ -1,17 +1,17 @@
-﻿using Daylily.Bot.Backend.Plugins;
-using Daylily.Common.Logging;
-using Daylily.CoolQ;
-using Daylily.CoolQ.CoolQHttp;
-using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot.Backend.Plugins;
+using Daylily.Common.Logging;
+using Daylily.CoolQ;
+using Daylily.CoolQ.CoolQHttp;
+using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
 
-namespace Daylily.Plugin.Basic
+namespace Daylily.Plugin.Kernel
 {
-    class SessionService : ServicePlugin
+    class SessionUpdaterSvc : ServicePlugin
     {
         public override Guid Guid => new Guid("21a5d3c8-255c-4219-a682-2d0bcc0b5176");
 

@@ -55,7 +55,7 @@ namespace Daylily.Bot
 
         public PluginManager PluginManager { get; set; } = new PluginManager();
 
-        public Random GlobalRandom { get; } = new Random();
+        public ConcurrentRandom GlobalRandom { get; } = new ConcurrentRandom();
 
         public string CommandFlag = "/";
 

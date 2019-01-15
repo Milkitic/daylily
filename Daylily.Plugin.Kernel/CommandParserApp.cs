@@ -8,7 +8,7 @@ using System;
 
 namespace Daylily.Plugin.Kernel
 {
-    public class CommandParser : CoolQApplicationPlugin
+    public class CommandParserApp : CoolQApplicationPlugin
     {
         public override Guid Guid => new Guid("cc509b6d-5a7c-4579-a398-1e895ac1664a");
 

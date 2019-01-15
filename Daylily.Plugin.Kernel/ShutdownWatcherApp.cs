@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Daylily.Plugin.Kernel
 {
     [Help(Authority = Authority.Admin)]
-    public class ShutdownWatcher : CoolQApplicationPlugin
+    public class ShutdownWatcherApp : CoolQApplicationPlugin
     {
         public override MiddlewareConfig MiddlewareConfig => new BackendConfig
         {
@@ -66,7 +66,7 @@ namespace Daylily.Plugin.Kernel
             var routeMsg = scope.RouteMessage;
             if (routeMsg.MessageType == MessageType.Private)
                 return null;
-            var auth = PermissionChecker.GetActualAuthority(routeMsg, out var fullCommand);
+            var auth = PermissionCheckerApp.GetActualAuthority(routeMsg, out var fullCommand);
             if (fullCommand == "poweron")
             {
                 bool alive = IsMeAlive(routeMsg.CoolQIdentity);
