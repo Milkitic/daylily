@@ -228,11 +228,34 @@ namespace Daylily.CoolQ
 
         public override bool Event_Received(object sender, EventEventArgs args)
         {
+            var rootId = new CoolQIdentity(2241521134, MessageType.Private);
             bool handled = false;
             var obj = args.ParsedObject;
-            if (obj is string str)
+            switch (obj)
             {
-                SendMessage(new CoolQRouteMessage(str, new CoolQIdentity(2241521134, MessageType.Private)));
+                case string str:
+                    SendMessage(new CoolQRouteMessage(str, rootId));
+                    break;
+                case FriendRequest friendRequest:
+                    {
+                        var msg = string.Format("{0} ({1})邀请加我为好友",
+                            CoolQHttpApiClient.GetStrangerInfo(friendRequest.UserId.ToString()).Data?.Nickname,
+                            friendRequest.UserId);
+                        SendMessage(new CoolQRouteMessage(msg, rootId));
+                        break;
+                    }
+                case GroupInvite groupInvite:
+                    if (groupInvite.SubType == "invite")
+                    {
+                        var msg = string.Format("{0} ({1})邀请我加入群{2}",
+                            CoolQHttpApiClient.GetStrangerInfo(groupInvite.UserId.ToString()).Data?.Nickname,
+                            groupInvite.UserId,
+                            groupInvite.GroupId);
+                        SendMessage(new CoolQRouteMessage(msg, rootId));
+                    }
+                    break;
+                case GroupAdminChange groupAdminChange:
+                    break;
             }
 
             return handled;
