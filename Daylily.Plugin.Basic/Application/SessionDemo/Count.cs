@@ -4,6 +4,7 @@ using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using System;
+using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Basic.Application.SessionDemo
 {

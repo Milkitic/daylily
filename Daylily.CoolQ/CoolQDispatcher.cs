@@ -20,7 +20,10 @@ namespace Daylily.CoolQ
         public static CoolQDispatcher Current { get; private set; }
         public override MiddlewareConfig MiddlewareConfig { get; } = new MiddlewareConfig();
 
-        public SessionList SessionInfo { get; } = new SessionList();
+        public readonly CoolQIdentityDictionary<Session> SessionList =
+            new CoolQIdentityDictionary<Session>();
+
+        //public SessionList SessionInfo { get; } = new SessionList();
         public List<GroupMemberGroupInfo> GroupMemberGroupInfo { get; set; } = new List<GroupMemberGroupInfo>();
 
         private const int MinTime = 100; // 每条缓冲时间
@@ -36,36 +39,36 @@ namespace Daylily.CoolQ
         {
             bool handled = false;
             var originObj = (CoolQMessageApi)args.ParsedObject;
-            CoolQIdentity id;
+            CoolQIdentity identity;
             switch (originObj)
             {
                 case CoolQPrivateMessageApi privateMsg:
-                    id = new CoolQIdentity(privateMsg.UserId, MessageType.Private);
+                    identity = new CoolQIdentity(privateMsg.UserId, MessageType.Private);
                     break;
                 case CoolQDiscussMessageApi discussMsg:
-                    id = new CoolQIdentity(discussMsg.DiscussId, MessageType.Discuss);
+                    identity = new CoolQIdentity(discussMsg.DiscussId, MessageType.Discuss);
                     break;
                 case CoolQGroupMessageApi groupMsg:
-                    id = new CoolQIdentity(groupMsg.GroupId, MessageType.Group);
+                    identity = new CoolQIdentity(groupMsg.GroupId, MessageType.Group);
                     break;
                 default:
-                    throw new ArgumentException();
+                    throw new ArgumentOutOfRangeException();
             }
-
-            SessionInfo.TryAdd(originObj);
-            if (SessionInfo[id].MsgQueue.Count < SessionInfo[id].MsgLimit) // 允许缓存n条，再多的丢弃
+            if (!SessionList.ContainsKey(identity))
+                SessionList.Add(identity, new Session(identity));
+            if (SessionList[identity].MsgQueue.Count < SessionList[identity].MsgLimit) // 允许缓存n条，再多的丢弃
             {
-                SessionInfo[id].MsgQueue.Enqueue(originObj);
+                SessionList[identity].MsgQueue.Enqueue(originObj);
             }
-            else if (!SessionInfo[id].LockMsg)
+            else if (!SessionList[identity].LockMsg)
             {
-                SessionInfo[id].LockMsg = true;
+                SessionList[identity].LockMsg = true;
                 SendMessage(CoolQRouteMessage.Parse(originObj).ToSource(originObj.Message));
             }
 
-            if (!SessionInfo[id].TryRun(() => DispatchMessage(originObj)))
+            if (!SessionList[identity].TryRun(() => DispatchMessage(originObj)))
             {
-                Logger.Info("当前已有" + SessionInfo[id].MsgQueue.Count + "条消息在" + SessionInfo[id].Name + "排队");
+                Logger.Info("当前已有" + SessionList[identity].MsgQueue.Count + "条消息在" + identity + "排队");
             }
 
             return handled;
@@ -92,11 +95,11 @@ namespace Daylily.CoolQ
                     throw new ArgumentException();
             }
 
-            SessionInfo[cqIdentity].LockMsg = false;
+            SessionList[cqIdentity].LockMsg = false;
 
             void RunNext<T>(CoolQIdentity id) where T : CoolQMessageApi
             {
-                while (SessionInfo[id].MsgQueue.TryDequeue(out object current))
+                while (SessionList[id].MsgQueue.TryDequeue(out object current))
                 {
                     var currentMsg = (T)current;
                     try
@@ -204,9 +207,7 @@ namespace Daylily.CoolQ
             var msg = (routeMessage.EnableAt && routeMessage.MessageType != MessageType.Private
                           ? new At(routeMessage.UserId) + " "
                           : "") + ((CoolQMessage)routeMessage.Message).Compose();
-            var info = SessionInfo[(CoolQIdentity)routeMessage.Identity] == null
-                ? $"{((CoolQIdentity)routeMessage.Identity).Type}{((CoolQIdentity)routeMessage.Identity).Id}"
-                : SessionInfo[(CoolQIdentity)routeMessage.Identity].Name;
+            string info = routeMessage.Identity.ToString();
             string status;
             switch (routeMessage.MessageType)
             {

@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Kernel
 {

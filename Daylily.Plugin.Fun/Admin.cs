@@ -7,6 +7,7 @@ using Daylily.CoolQ.Plugins;
 using System;
 using System.Linq;
 using Action = Daylily.Bot.Session.TreeStructure.Action;
+using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Fun
 {

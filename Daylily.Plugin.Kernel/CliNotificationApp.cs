@@ -30,29 +30,30 @@ namespace Daylily.Plugin.Kernel
             var type = routeMsg.MessageType;
 
             string group, sender, message = routeMsg.Message.RawMessage;
+            var data = CoolQDispatcher.Current.SessionList[(CoolQIdentity)routeMsg.Identity].GetDataAsync().Result;
+
             if (type == MessageType.Private)
             {
                 group = "私聊";
-                sender = CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].Name;
+                sender = data.Name;
             }
             else if (type == MessageType.Discuss)
             {
-                group = CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].Name;
+                group = data.Name;
                 sender = routeMsg.UserId;
             }
             else
             {
-                var userInfo =
-                    CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity]?.GroupInfo?.Members
+                var userInfo = data?.GroupInfo?.Members
                         ?.FirstOrDefault(i => i.UserId == userId) ??
                     CoolQHttpApiClient.GetGroupMemberInfo(routeMsg.GroupId, routeMsg.UserId).Data;
-                group = CoolQDispatcher.Current.SessionInfo?[(CoolQIdentity)routeMsg.Identity]?.Name;
+                group = data?.Name;
                 sender = string.IsNullOrEmpty(userInfo.Card)
                     ? userInfo.Nickname
                     : userInfo.Card;
             }
 
-            Logger.Message($"({group}) {sender}:\r\n  {CoolQCode.DecodeToString(message)}");
+            Logger.Message($"({group}) {sender}:\r\n  {CoolQCode.DecodeToString(message).Replace("\n", "\n  ")}");
             return null;
         }
     }

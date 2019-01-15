@@ -54,22 +54,25 @@ namespace Daylily.Plugin.Kernel
             string message = routeMsg.Message.RawMessage;
             var requestAuth = GetRequestAuthority(message, out fullCommand) ?? Authority.Public;
             long userId = Convert.ToInt64(routeMsg.UserId);
-
             switch (requestAuth)
             {
                 case Authority.Public:
-                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].GroupInfo
-                            ?.Admins.Count(q => q.UserId == userId) != 0)
-                        requestAuth = Authority.Admin;
-                    if (userId == 2241521134)
-                        requestAuth = Authority.Root;
-                    break;
+                    {
+                        var data = CoolQDispatcher.Current.SessionList[(CoolQIdentity)routeMsg.Identity].GetDataAsync().Result;
+                        if (data.GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
+                            requestAuth = Authority.Admin;
+                        if (userId == 2241521134)
+                            requestAuth = Authority.Root;
+                        break;
+                    }
                 case Authority.Admin:
-                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].GroupInfo
-                            ?.Admins.Count(q => q.UserId == userId) != 0)
-                        return Authority.Admin;
+                    {
+                        var data = CoolQDispatcher.Current.SessionList[(CoolQIdentity)routeMsg.Identity].GetDataAsync().Result;
+                        if (data.GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
+                            return Authority.Admin;
 
-                    break;
+                        break;
+                    }
                 case Authority.Root:
                     if (userId == 2241521134)
                         return Authority.Root;
@@ -90,20 +93,23 @@ namespace Daylily.Plugin.Kernel
             switch (requestAuth)
             {
                 case Authority.Public:
-                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].GroupInfo
-                            ?.Admins.Count(q => q.UserId == userId) != 0)
-                        requestAuth = Authority.Admin;
-                    if (userId == 2241521134)
-                        requestAuth = Authority.Root;
+                    {
+                        var data = CoolQDispatcher.Current.SessionList[(CoolQIdentity)routeMsg.Identity].GetDataAsync().Result;
+                        if (data.GroupInfo?.Admins.Count(q => q.UserId == userId) != 0)
+                            requestAuth = Authority.Admin;
+                        if (userId == 2241521134)
+                            requestAuth = Authority.Root;
+                    }
                     break;
                 case Authority.Admin:
-                    if (CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)routeMsg.Identity].GroupInfo
-                            ?.Admins.Count(q => q.UserId == userId) == 0)
                     {
-                        Logger.Raw("Access denied.");
-                        return routeMsg.ToSource(DefaultReply.FakeAdmin).Handle();
+                        var data = CoolQDispatcher.Current.SessionList[(CoolQIdentity)routeMsg.Identity].GetDataAsync().Result;
+                        if (data.GroupInfo?.Admins.Count(q => q.UserId == userId) == 0)
+                        {
+                            Logger.Raw("Access denied.");
+                            return routeMsg.ToSource(DefaultReply.FakeAdmin).Handle();
+                        }
                     }
-
                     break;
                 case Authority.Root:
                     if (userId != 2241521134)

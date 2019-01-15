@@ -178,8 +178,9 @@ namespace Daylily.Plugin.Kernel
 
         private CoolQRouteMessage ShowPluginList()
         {
+            var id = (CoolQIdentity) _routeMsg.Identity;
             var sb = new StringBuilder();
-            sb.AppendLine(CoolQDispatcher.Current.SessionInfo[(CoolQIdentity)_routeMsg.Identity].Name + " 的插件情况：");
+            sb.AppendLine(CoolQDispatcher.Current.SessionList[id].GetDataAsync().Result.Name + " 的插件情况：");
             var pluginGroup = _plugins.GroupBy(k => k.PluginType);
 
             var disabled = _plugins.Where(k => _disabled.Contains(k.Guid)).ToArray();
