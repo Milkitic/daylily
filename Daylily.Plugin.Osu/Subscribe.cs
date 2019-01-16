@@ -43,6 +43,7 @@ namespace Daylily.Plugin.Osu
         private static List<SlimBeatmapsets> _todaySets;
 
         private static readonly TimeSpan RangeTime = new TimeSpan(24, 0, 0);
+        private OldSiteApiClient _client;
         private const int PrivateMax = 5;
         private const int GroupMax = 10;
 
@@ -51,6 +52,7 @@ namespace Daylily.Plugin.Osu
             _userDic = LoadSettings<ConcurrentDictionary<string, List<UserInfo>>>("userDictionary") ??
                        new ConcurrentDictionary<string, List<UserInfo>>();
             _todaySets = LoadSettings<List<SlimBeatmapsets>>("today") ?? new List<SlimBeatmapsets>();
+            _client = new OldSiteApiClient();
 
             Task.Run(() =>
             {
@@ -143,7 +145,7 @@ namespace Daylily.Plugin.Osu
                     ? routeMsg.ToSource($"{subject}没有订阅任何mapper。")
                     : routeMsg.ToSource(
                         string.Format("以下是{0}的订阅名单，共计{1}个：\r\n{2}", subject, subedCount,
-                            string.Join("\r\n", OldSiteApiClient.GetUserNameByUid(subedId))));
+                            string.Join("\r\n", _client.GetUserNameByUid(subedId))));
             }
 
             if (SubscribeMapper != null)
@@ -158,17 +160,17 @@ namespace Daylily.Plugin.Osu
                 {
                     return routeMsg.ToSource(
                         string.Format("你已经订阅了{0}个mapper啦，人家已经装不下的说：{1}", subedCount,
-                            string.Join(", ", OldSiteApiClient.GetUserNameByUid(subedId))));
+                            string.Join(", ", _client.GetUserNameByUid(subedId))));
                 }
 
                 if (routeMsg.MessageType != MessageType.Private && subedCount >= GroupMax)
                 {
                     return routeMsg.ToSource(
                         string.Format("这个群已经订阅了{0}个mapper啦，人家已经装不下的说：{1}", subedCount,
-                            string.Join(", ", OldSiteApiClient.GetUserNameByUid(subedId))));
+                            string.Join(", ", _client.GetUserNameByUid(subedId))));
                 }
 
-                int count = OldSiteApiClient.GetUser(SubscribeMapper, out var userObj);
+                int count = _client.GetUser(SubscribeMapper, out var userObj);
                 if (count == 0)
                     return routeMsg.ToSource("找不到指定mapper..");
 
@@ -176,7 +178,7 @@ namespace Daylily.Plugin.Osu
                     return routeMsg.ToSource($"找到{count}个mapper..");
 
                 string mapperId = userObj.user_id;
-                string mapperName = userObj.username;
+                string mapperName = userObj.UserName;
 
                 if (!_userDic.ContainsKey(mapperId))
                     _userDic.TryAdd(mapperId, new List<UserInfo>());
@@ -197,7 +199,7 @@ namespace Daylily.Plugin.Osu
                 if (routeMsg.MessageType == MessageType.Group && routeMsg.CurrentAuthority == Authority.Public)
                     return routeMsg.ToSource(DefaultReply.AdminOnly + "个人推送请私聊.");
 
-                int count = OldSiteApiClient.GetUser(UnsubscribeMapper, out var userObj);
+                int count = _client.GetUser(UnsubscribeMapper, out var userObj);
                 if (count == 0)
                 {
                     return routeMsg.ToSource("找不到指定mapper..");
@@ -209,7 +211,7 @@ namespace Daylily.Plugin.Osu
                 }
 
                 string mapperId = userObj.user_id;
-                string mapperName = userObj.username;
+                string mapperName = userObj.UserName;
                 if (!_userDic.ContainsKey(mapperId) || !_userDic[mapperId].Contains(new UserInfo(subId, routeMsg.MessageType)))
                 {
                     string subject = routeMsg.MessageType == MessageType.Private ? "你" : "本群";
@@ -297,14 +299,19 @@ namespace Daylily.Plugin.Osu
 
         private Beatmapset[] GetBeatmapsets(string mapperId)
         {
-            var mapperName = OldSiteApiClient.GetUserNameByUid(mapperId);
+            var mapperName = _client.GetUserNameByUid(mapperId);
 
             Beatmapset[] mapsets = NewSiteApiClient
-                .SearchAllBeatmaps(mapperName,
-                    new BeatmapsetsSearchOptions { Status = BeatmapStatus.Qualified })
-                .Union(NewSiteApiClient.SearchAllBeatmaps(mapperName,
-                    new BeatmapsetsSearchOptions { Status = BeatmapStatus.PendingWip })).ToArray()
-                .Union(NewSiteApiClient.SearchAllBeatmaps(mapperName)).ToArray();
+                .SearchAllBeatmaps(mapperName, new BeatmapsetsSearchOptions {Status = BeatmapStatus.Qualified})
+                .Union(
+                    NewSiteApiClient.SearchAllBeatmaps(
+                        mapperName,
+                        new BeatmapsetsSearchOptions {Status = BeatmapStatus.PendingWip}
+                    )
+                )
+                .ToArray()
+                .Union(NewSiteApiClient.SearchAllBeatmaps(mapperName))
+                .ToArray();
 
             mapsets = mapsets
                 .Where(i => i.Creator == mapperName)

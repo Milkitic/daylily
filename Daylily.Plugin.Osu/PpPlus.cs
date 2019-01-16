@@ -38,6 +38,7 @@ namespace Daylily.Plugin.Osu
         {
             var routeMsg = scope.RouteMessage;
             string userName, userId;
+            OldSiteApiClient client = new OldSiteApiClient();
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
@@ -49,7 +50,7 @@ namespace Daylily.Plugin.Osu
             }
             else
             {
-                int userNum = OldSiteApiClient.GetUser(OsuId, out var userObj);
+                int userNum = client.GetUser(OsuId, out var userObj);
                 if (userNum == 0)
                     return routeMsg.ToSource(DefaultReply.IdNotFound, true);
                 if (userNum > 1)
@@ -58,7 +59,7 @@ namespace Daylily.Plugin.Osu
                 }
 
                 userId = userObj.user_id;
-                userName = userObj.username;
+                userName = userObj.UserName;
             }
 
             var jsonString = HttpClient.HttpGet("https://syrin.me/pp+/u/" + userId);

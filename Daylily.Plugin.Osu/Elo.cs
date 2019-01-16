@@ -1,5 +1,6 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
@@ -8,7 +9,6 @@ using Daylily.Osu.Cabbage;
 using Daylily.Osu.Elo;
 using System;
 using System.Collections.Generic;
-using Daylily.Bot.Message;
 
 namespace Daylily.Plugin.Osu
 {
@@ -24,12 +24,13 @@ namespace Daylily.Plugin.Osu
         [FreeArg]
         [Help("查询指定的osu用户名。若带空格，请使用引号。")]
         public string OsuId { get; set; }
-        
+
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;
             string id;
             string uname;
+            OldSiteApiClient client = new OldSiteApiClient();
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
@@ -42,7 +43,7 @@ namespace Daylily.Plugin.Osu
             }
             else
             {
-                int userNum = OldSiteApiClient.GetUser(OsuId, out var userObj);
+                int userNum = client.GetUser(OsuId, out var userObj);
                 if (userNum == 0)
                     return routeMsg.ToSource(DefaultReply.IdNotFound, true);
                 if (userNum > 1)
@@ -51,7 +52,7 @@ namespace Daylily.Plugin.Osu
                 }
 
                 id = userObj.user_id;
-                uname = userObj.username;
+                uname = userObj.UserName;
             }
 
             var eloInfo = EloApiClient.GetEloByUid(long.Parse(id));

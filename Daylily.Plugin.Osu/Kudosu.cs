@@ -36,6 +36,7 @@ namespace Daylily.Plugin.Osu
             var routeMsg = scope.RouteMessage;
             string id;
             string uname;
+            OldSiteApiClient client = new OldSiteApiClient();
             if (OsuId == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
@@ -48,7 +49,7 @@ namespace Daylily.Plugin.Osu
             }
             else
             {
-                int userNum = OldSiteApiClient.GetUser(OsuId, out var userObj);
+                int userNum = client.GetUser(OsuId, out var userObj);
                 if (userNum == 0)
                     return routeMsg.ToSource(DefaultReply.IdNotFound, true);
                 if (userNum > 1)
@@ -57,7 +58,7 @@ namespace Daylily.Plugin.Osu
                 }
 
                 id = userObj.user_id;
-                uname = userObj.username;
+                uname = userObj.UserName;
             }
 
             List<KudosuInfo> totalList = new List<KudosuInfo>();

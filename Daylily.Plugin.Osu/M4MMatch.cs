@@ -460,6 +460,7 @@ namespace Daylily.Plugin.Osu
             Beatmapset set = null;
             bool valid = false;
             int retry = 0;
+            OldSiteApiClient client = new OldSiteApiClient();
             while (!valid && retry < 3)
             {
                 CoolQRouteMessage cmMap = (CoolQRouteMessage)_session.GetMessage();
@@ -469,7 +470,7 @@ namespace Daylily.Plugin.Osu
 
                 if (set != null)
                 {
-                    if (OldSiteApiClient.GetUidByUsername(set.Creator) != _osuId)
+                    if (client.GetUidByUsername(set.Creator) != _osuId)
                     {
                         SendMessage(_routeMsg.ToSource("这个不是你的地图哦！必须是要你自己上传的地图。再发一个新的地址给我吧？"));
                     }

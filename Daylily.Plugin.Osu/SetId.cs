@@ -31,7 +31,8 @@ namespace Daylily.Plugin.Osu
                 return routeMsg.ToSource(DefaultReply.ParamMissing);
 
             BllUserRole bllUserRole = new BllUserRole();
-            int userNum = OldSiteApiClient.GetUser(OsuId, out var userObj);
+            OldSiteApiClient client = new OldSiteApiClient();
+            int userNum = client.GetUser(OsuId, out var userObj);
             if (userNum == 0)
                 return routeMsg.ToSource(DefaultReply.IdNotFound, true);
             if (userNum > 1)
@@ -42,7 +43,7 @@ namespace Daylily.Plugin.Osu
             var role = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
             if (role.Count != 0)
             {
-                if (role[0].CurrentUname == userObj.username)
+                if (role[0].CurrentUname == userObj.UserName)
                     return routeMsg.ToSource("我早就认识你啦.", true);
                 string msg = role[0].CurrentUname + "，我早就认识你啦. 有什么问题请找Mother Ship（扔锅）";
                 return routeMsg.ToSource(msg, true);
@@ -54,7 +55,7 @@ namespace Daylily.Plugin.Osu
                 Role = "creep",
                 QQ = long.Parse(routeMsg.UserId),
                 LegacyUname = "[]",
-                CurrentUname = userObj.username,
+                CurrentUname = userObj.UserName,
                 IsBanned = false,
                 RepeatCount = 0,
                 SpeakingCount = 0,
@@ -63,7 +64,7 @@ namespace Daylily.Plugin.Osu
             int c = bllUserRole.InsertUserRole(newRole);
             return c < 1
                 ? routeMsg.ToSource("由于各种强大的原因，绑定失败..")
-                : routeMsg.ToSource("明白了，" + userObj.username + "，多好的名字呢.");
+                : routeMsg.ToSource("明白了，" + userObj.UserName + "，多好的名字呢.");
         }
 
         private static string Decode(string source) =>
