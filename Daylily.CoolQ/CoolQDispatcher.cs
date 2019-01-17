@@ -121,7 +121,10 @@ namespace Daylily.CoolQ
 
         private async void HandleMessage(CoolQScopeEventArgs scope)
         {
-            if (RaiseSessionEvent(scope.RouteMessage)) return;
+            if (RaiseSessionEvent(scope.RouteMessage))
+            {
+                //return;
+            }
 
             var handled = await HandleApplication(scope);
             if (handled) return;
