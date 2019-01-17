@@ -1,4 +1,5 @@
-﻿using Daylily.Bot;
+﻿using CSharpOsu.V1.User;
+using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ;
@@ -23,7 +24,7 @@ namespace Daylily.Plugin.Osu
 
         [FreeArg]
         [Help("查询指定的osu用户名。若带空格，请使用引号。")]
-        public string OsuId { get; set; }
+        public string UserName { get; set; }
 
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
@@ -31,7 +32,7 @@ namespace Daylily.Plugin.Osu
             string id;
             string uname;
             OldSiteApiClient client = new OldSiteApiClient();
-            if (OsuId == null)
+            if (UserName == null)
             {
                 BllUserRole bllUserRole = new BllUserRole();
                 List<TableUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
@@ -43,7 +44,7 @@ namespace Daylily.Plugin.Osu
             }
             else
             {
-                int userNum = client.GetUser(OsuId, out var userObj);
+                int userNum = client.GetUser(UserComponent.FromUserName(UserName), out var userObj);
                 if (userNum == 0)
                     return routeMsg.ToSource(DefaultReply.IdNotFound, true);
                 if (userNum > 1)
@@ -51,7 +52,7 @@ namespace Daylily.Plugin.Osu
                     // ignored
                 }
 
-                id = userObj.user_id;
+                id = userObj.UserId.ToString();
                 uname = userObj.UserName;
             }
 

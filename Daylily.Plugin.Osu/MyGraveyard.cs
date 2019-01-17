@@ -1,4 +1,4 @@
-﻿using Bleatingsheep.Osu.ApiV2b.Models;
+﻿using CSharpOsu.V1.User;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.Common.Logging;
@@ -6,6 +6,7 @@ using Daylily.Common.Web;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
+using Daylily.Osu;
 using Daylily.Osu.Cabbage;
 using Newtonsoft.Json;
 using System;
@@ -15,7 +16,7 @@ namespace Daylily.Plugin.Osu
 {
     [Name("随机挖坑")]
     [Author("yf_extension")]
-    [Version(2, 0, 0, PluginVersion.Beta)]
+    [Version(2, 1, 0, PluginVersion.Beta)]
     [Help("从发送者的Graveyard Beatmaps中随机挖一张图。")]
     [Command("挖坑")]
     public class MyGraveyard : CoolQCommandPlugin
@@ -30,34 +31,23 @@ namespace Daylily.Plugin.Osu
             if (userInfo.Count == 0)
                 return routeMsg.ToSource(DefaultReply.IdNotBound, true);
 
-            var id = userInfo[0].UserId.ToString();
+            var id = userInfo[0].UserId;
 
-            List<Beatmapset> totalList = new List<Beatmapset>();
-            Beatmapset[] tmpArray;
-            int page = 0;
-            const int count = 10;
-            do
-            {
-                string json = WebRequest.GetResponseString(
-                    WebRequest.CreateGetHttpResponse(
-                        "https://osu.ppy.sh/users/" + id + "/beatmapsets/graveyard?offset=" + page + "&limit=" + count));
-                Logger.Debug("GET JSON");
+            var client = new OldSiteApiClient();
+            var beatmapSets = client.GetBeatmapSetsByCreator(new UserId(id));
 
-                tmpArray = JsonConvert.DeserializeObject<Beatmapset[]>(json);
-                totalList.AddRange(tmpArray);
-                page += count;
-
-                if (tmpArray.Length != count) break;
-            } while (tmpArray.Length != 0);
-
-            if (totalList.Count == 0)
+            if (beatmapSets.Length == 0)
             {
                 return routeMsg.ToSource("惊了，你竟然会没坑！", true);
             }
 
-            Beatmapset beatmap = totalList[StaticRandom.Next(totalList.Count)];
-            var cqMusic = new CustomMusic("https://osu.ppy.sh/s/" + beatmap.Id, $"https://b.ppy.sh/preview/{beatmap.Id}.mp3", beatmap.Title,
-                $"{beatmap.Artist}\r\n({beatmap.FavouriteCount} fav)", $"https://b.ppy.sh/thumb/{beatmap.Id}l.jpg");
+            var beatmapSet = beatmapSets[StaticRandom.Next(beatmapSets.Length)];
+            var cqMusic = new CustomMusic(
+                $"https://osu.ppy.sh/s/{beatmapSet.Id}",
+                $"https://b.ppy.sh/preview/{beatmapSet.Id}.mp3", 
+                beatmapSet.Title,
+                $"{beatmapSet.Artist}\r\n({beatmapSet.FavouriteCount} fav)", 
+                $"https://b.ppy.sh/thumb/{beatmapSet.Id}l.jpg");
 
             return routeMsg.ToSource(cqMusic.ToString());
         }

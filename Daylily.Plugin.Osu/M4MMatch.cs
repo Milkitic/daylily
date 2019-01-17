@@ -1,4 +1,5 @@
-﻿using Bleatingsheep.Osu.ApiV2b.Models;
+﻿using CSharpOsu.V1.Beatmap;
+using CSharpOsu.V1.User;
 using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
@@ -17,18 +18,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using CSharpOsu.V1;
 using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Osu
 {
     [Name("m4m匹配")]
     [Author("yf_extension")]
-    [Version(2, 0, 0, PluginVersion.Alpha)]
+    [Version(2, 1, 0, PluginVersion.Alpha)]
     [Help("这是一个利用平台进行自动化管理的M4M机制，无须自己各处求摸。",
         "将你自己的图上传，我会地合理地挑选与你和另一人互相推荐，以达成互相摸图的目的。",
         "每个人同时只限一张图，第二张图会覆盖第一张图。")]
     [Command("m4m")]
-    class M4MMatch : CoolQCommandPlugin
+    public class M4MMatch : CoolQCommandPlugin
     {
         public override Guid Guid => new Guid("161f465e-5889-4b5b-bb99-693ae6eb87fa");
 
@@ -71,18 +73,18 @@ namespace Daylily.Plugin.Osu
                 {
                     BllUserRole bllUserRole = new BllUserRole();
                     List<string> strs = new List<string>();
-                    foreach (var item in _matchList)
+                    foreach (var matchInfo in _matchList)
                     {
-                        var userInfo = bllUserRole.GetUserRoleByQq(long.Parse(item.Qq))[0];
+                        var userInfo = bllUserRole.GetUserRoleByQq(long.Parse(matchInfo.Qq))[0];
                         string osuName = userInfo.CurrentUname;
-                        string id = item.SetId;
+                        long? id = matchInfo.SetId;
                         string status;
 
-                        if (item.TargetQq == null)
+                        if (matchInfo.TargetQq == null)
                             status = "等待匹配";
                         else
                         {
-                            var info = bllUserRole.GetUserRoleByQq(long.Parse(item.TargetQq))[0];
+                            var info = bllUserRole.GetUserRoleByQq(long.Parse(matchInfo.TargetQq))[0];
                             string name = info.CurrentUname;
                             status = $"已经和{name}匹配";
                         }
@@ -183,6 +185,11 @@ namespace Daylily.Plugin.Osu
                         // Finish
                         else if (Finish)
                         {
+                            if (_myInfo.TargetQq == null)
+                            {
+                                return _routeMsg.ToSource("你尚且还没有正在进行的匹配。");
+                            }
+
                             var oInfo = _matchList.FirstOrDefault(q => q.Qq == _myInfo.TargetQq);
                             if (DateTime.Now - _myInfo.LastNoticeTime < new TimeSpan(3, 0, 0))
                                 return _routeMsg.ToSource("你已在三小时之内发出过完成提醒，请稍后再试。");
@@ -202,6 +209,11 @@ namespace Daylily.Plugin.Osu
                         // Cancel
                         else if (Cancel)
                         {
+                            if (_myInfo.TargetQq == null)
+                            {
+                                return _routeMsg.ToSource("你尚且还没有正在进行的匹配。");
+                            }
+
                             var oInfo = _matchList.FirstOrDefault(q => q.Qq == _myInfo.TargetQq);
 
                             if (oInfo.MatchTime == null)
@@ -457,7 +469,7 @@ namespace Daylily.Plugin.Osu
             Thread.Sleep(2000);
             SendMessage(_routeMsg.ToSource("请将你的地图链接发送给我 :)"));
             _session.Timeout = 120000;
-            Beatmapset set = null;
+            OsuBeatmapSet set = null;
             bool valid = false;
             int retry = 0;
             OldSiteApiClient client = new OldSiteApiClient();
@@ -466,15 +478,18 @@ namespace Daylily.Plugin.Osu
                 CoolQRouteMessage cmMap = (CoolQRouteMessage)_session.GetMessage();
                 string url = cmMap.RawMessage.Replace("\r\n", "");
 
-                set = GetBeatmapset(url);
+                set = GetBeatmapSet(url);
 
                 if (set != null)
                 {
-                    if (client.GetUidByUsername(set.Creator) != _osuId)
+                    if (client.GetUidByUserName(new UserName(set.Creator)) != _osuId)
                     {
                         SendMessage(_routeMsg.ToSource("这个不是你的地图哦！必须是要你自己上传的地图。再发一个新的地址给我吧？"));
                     }
-                    else if (set.RankedDate != null)
+                    else if (set.RankedDate != null ||
+                             set.QualifiedDate != null ||
+                             set.ApprovedDate != null ||
+                             set.LovedDate != null)
                     {
                         SendMessage(_routeMsg.ToSource("这张图已经rank咯！必须是非rank图。再发一个新的地址给我吧？"));
                     }
@@ -561,16 +576,17 @@ namespace Daylily.Plugin.Osu
             return retryCount < 3;
         }
 
-        private Beatmapset GetBeatmapset(string url)
+        private OsuBeatmapSet GetBeatmapSet(string url)
         {
+            OldSiteApiClient client = new OldSiteApiClient();
             StringFinder sf = new StringFinder(url);
             if (url.Length > 8 && sf.FindNext("ppy.sh/b/", false) != 8)
             {
                 SendMessage(_routeMsg.ToSource("请稍后，核对中……"));
                 sf.FindToLast();
                 string cut = sf.Cut();
-                string bId = cut.Split('?')[0];
-                return NewSiteApiClient.GetBeatmapsetsByBidAsync(bId).Result;
+                string bId = cut.Split('?')[0].Split('&')[0];
+                return client.GetBeatmapSet(BeatmapComponent.FromMapId(bId));
             }
 
             if (url.Length > 8 && sf.FindNext("ppy.sh/s/", false) != 8)
@@ -578,8 +594,8 @@ namespace Daylily.Plugin.Osu
                 SendMessage(_routeMsg.ToSource("请稍后，核对中……"));
                 sf.FindToLast();
                 string cut = sf.Cut();
-                string sId = cut.Split('?')[0];
-                return NewSiteApiClient.GetBeatmapsetsBySidAsync(sId).Result;
+                string sId = cut.Split('?')[0].Split('&')[0];
+                return client.GetBeatmapSet(BeatmapComponent.FromSetId(sId));
             }
 
             if (url.Length > 18 && sf.FindNext("ppy.sh/beatmapsets/", false) != 18)
@@ -587,8 +603,8 @@ namespace Daylily.Plugin.Osu
                 SendMessage(_routeMsg.ToSource("请稍后，核对中……"));
                 sf.FindToLast();
                 string cut = sf.Cut();
-                string sId = cut.Split('#')[0].Split('?')[0];
-                return NewSiteApiClient.GetBeatmapsetsBySidAsync(sId).Result;
+                string sId = cut.Split('#')[0].Split('?')[0].Split('&')[0];
+                return client.GetBeatmapSet(BeatmapComponent.FromSetId(sId));
             }
 
             return null;
@@ -602,13 +618,13 @@ namespace Daylily.Plugin.Osu
     public class LightMaps
     {
         public int TotalLength { get; set; }
-        public string Mode { get; set; }
+        public GameMode Mode { get; set; }
     }
+
     public class LightSets
     {
-        public string Id { get; set; }
+        public long? Id { get; set; }
         public List<LightMaps> Beatmaps { get; set; }
-
     }
 
     public class MatchInfo
@@ -620,13 +636,13 @@ namespace Daylily.Plugin.Osu
         public string TargetQq { get; set; }
         public DateTime? LastConfirmedTime { get; set; }
         public DateTime? LastNoticeTime { get; set; }
-        public List<string> FinishedSet { get; set; } = new List<string>();
+        public List<long?> FinishedSet { get; set; } = new List<long?>();
         public DateTime? MatchTime { get; set; }
         public DateTime LastUse { get; set; }
         [JsonIgnore] public bool IsOperating { get; set; } = false;
 
         // extension
-        [JsonIgnore] public string SetId => Set?.Id;
+        [JsonIgnore] public long? SetId => Set?.Id;
         [JsonIgnore] public string SetUrl => Set == null ? null : "https://osu.ppy.sh/beatmapsets/" + Set.Id;
         [JsonIgnore] public int DiffCount => Set.Beatmaps.Count;
         [JsonIgnore] public int AvgLength => (int)Math.Round(Set.Beatmaps.Average(k => k.TotalLength));
@@ -642,16 +658,16 @@ namespace Daylily.Plugin.Osu
                 {
                     switch (map.Mode)
                     {
-                        case "osu":
+                        case GameMode.Standard:
                             modes[0] = true;
                             break;
-                        case "taiko":
+                        case GameMode.Taiko:
                             modes[1] = true;
                             break;
-                        case "fruits":
+                        case GameMode.CtB:
                             modes[2] = true;
                             break;
-                        case "mania":
+                        case GameMode.OsuMania:
                             modes[3] = true;
                             break;
                     }
@@ -661,7 +677,7 @@ namespace Daylily.Plugin.Osu
             }
         }
 
-        public void UpdateSet(Beatmapset set, string mark)
+        public void UpdateSet(OsuBeatmapSet set, string mark)
         {
             Contract.Requires<InvalidOperationException>(TargetQq == null);
             LightSets tmpSets = new LightSets
@@ -674,8 +690,8 @@ namespace Daylily.Plugin.Osu
             {
                 tmpSets.Beatmaps.Add(new LightMaps
                 {
-                    TotalLength = s.TotalLength,
-                    Mode = s.Mode
+                    TotalLength = s.TotalLength ?? -1,
+                    Mode = s.GameMode
                 });
             }
 
@@ -683,11 +699,11 @@ namespace Daylily.Plugin.Osu
             Mark = mark;
         }
 
-        public void UpdateSet(string setId, string mark)
-        {
-            Contract.Requires<InvalidOperationException>(TargetQq == null);
-            UpdateSet(NewSiteApiClient.GetBeatmapsetsBySidAsync(setId).Result, mark);
-        }
+        //public void UpdateSet(string setId, string mark)
+        //{
+        //    Contract.Requires<InvalidOperationException>(TargetQq == null);
+        //    UpdateSet(NewSiteApiClient.GetBeatmapsetsBySidAsync(setId).Result, mark);
+        //}
 
         public void RemoveSet()
         {

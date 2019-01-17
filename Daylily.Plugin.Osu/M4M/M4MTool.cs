@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CSharpOsu.V1;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Daylily.Plugin.Osu.M4M
@@ -11,7 +12,7 @@ namespace Daylily.Plugin.Osu.M4M
                 return -1;
             if (b1.Length != b2.Length)
                 return -1;
-  
+
             return b1.Where((t, i) => t && b2[i]).Any() ? 1 : 0;
         }
 
@@ -26,7 +27,7 @@ namespace Daylily.Plugin.Osu.M4M
 
         public static int GetPreferanceTotalLength(this MatchInfo myInfo, MatchInfo otherInfo)
         {
-            List<string> mods = new List<string>();
+            List<GameMode> mods = new List<GameMode>();
             for (var i = 0; i < myInfo.Preference.Length; i++)
             {
                 var b = myInfo.Preference[i];
@@ -34,16 +35,16 @@ namespace Daylily.Plugin.Osu.M4M
                 switch (i)
                 {
                     case 0:
-                        mods.Add("osu");
+                        mods.Add(GameMode.Standard);
                         break;
                     case 1:
-                        mods.Add("taiko");
+                        mods.Add(GameMode.Taiko);
                         break;
                     case 2:
-                        mods.Add("fruits");
+                        mods.Add(GameMode.CtB);
                         break;
                     case 3:
-                        mods.Add("mania");
+                        mods.Add(GameMode.OsuMania);
                         break;
                 }
             }

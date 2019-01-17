@@ -1,12 +1,13 @@
-﻿using Daylily.Bot;
+﻿using CSharpOsu.V1.User;
+using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Message;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Daylily.Osu;
 using Daylily.Osu.Cabbage;
 using System;
-using Daylily.Bot.Message;
 
 namespace Daylily.Plugin.Osu
 {
@@ -21,18 +22,18 @@ namespace Daylily.Plugin.Osu
 
         [FreeArg]
         [Help("绑定指定的osu用户名。若带空格，请使用引号。")]
-        public string OsuId { get; set; }
+        public string UserName { get; set; }
 
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;
-            string osuId = Decode(OsuId);
-            if (string.IsNullOrEmpty(osuId))
+            string userName = Decode(UserName);
+            if (string.IsNullOrEmpty(userName))
                 return routeMsg.ToSource(DefaultReply.ParamMissing);
 
             BllUserRole bllUserRole = new BllUserRole();
             OldSiteApiClient client = new OldSiteApiClient();
-            int userNum = client.GetUser(OsuId, out var userObj);
+            int userNum = client.GetUser(UserComponent.FromUserName(UserName), out var userObj);
             if (userNum == 0)
                 return routeMsg.ToSource(DefaultReply.IdNotFound, true);
             if (userNum > 1)
@@ -51,7 +52,7 @@ namespace Daylily.Plugin.Osu
 
             var newRole = new TableUserRole
             {
-                UserId = long.Parse(userObj.user_id),
+                UserId = userObj.UserId,
                 Role = "creep",
                 QQ = long.Parse(routeMsg.UserId),
                 LegacyUname = "[]",

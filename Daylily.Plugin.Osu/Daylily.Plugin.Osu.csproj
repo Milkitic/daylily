@@ -20,10 +20,4 @@
     <ProjectReference Include="..\Daylily.Osu\Daylily.Osu.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Bleatingsheep.Osu.ApiV2b">
-      <HintPath>..\..\库\Bleatingsheep.Osu.ApiV2\Bleatingsheep.Osu.ApiV2b\bin\Release\netstandard2.0\Bleatingsheep.Osu.ApiV2b.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

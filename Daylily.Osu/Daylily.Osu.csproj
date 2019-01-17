@@ -10,14 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CSharpOsu.Standard\CSharpOsu.Standard.csproj" />
+    <ProjectReference Include="..\..\..\CSharpOsu\CSharpOsu\CSharpOsu.csproj" />
     <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Bleatingsheep.Osu.ApiV2b">
-      <HintPath>..\..\库\Bleatingsheep.Osu.ApiV2\Bleatingsheep.Osu.ApiV2b\bin\Release\netstandard2.0\Bleatingsheep.Osu.ApiV2b.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

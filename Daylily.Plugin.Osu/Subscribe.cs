@@ -1,5 +1,5 @@
-﻿using Bleatingsheep.Osu.ApiV2b;
-using Bleatingsheep.Osu.ApiV2b.Models;
+﻿using CSharpOsu.V1.Beatmap;
+using CSharpOsu.V1.User;
 using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
@@ -20,10 +20,10 @@ namespace Daylily.Plugin.Osu
 {
     [Name("Mapper订阅")]
     [Author("yf_extension")]
-    [Version(2, 0, 2, PluginVersion.Alpha)]
-    [Help("订阅某个mapper的qua、rank、love、传图提醒。", "限制为群内推送10个名额，个人推送5个名额。")]
+    [Version(2, 1, 2, PluginVersion.Alpha)]
+    [Help("订阅某个mapper的qua、rank、love提醒。", "限制为群内推送10个名额，个人推送5个名额。")]
     [Command("sub")]
-    class Subscribe : CoolQCommandPlugin
+    public class Subscribe : CoolQCommandPlugin
     {
         public override Guid Guid => new Guid("2690bff7-1e5c-4069-98b8-d0fdfc612a02");
 
@@ -39,18 +39,24 @@ namespace Daylily.Plugin.Osu
         [Help("需要订阅的mapper用户名。")]
         public string SubscribeMapper { get; set; }
 
-        private static ConcurrentDictionary<string, List<UserInfo>> _userDic;
+        private static ConcurrentDictionary<long, List<CoolQIdentity>> _userDic;
         private static List<SlimBeatmapsets> _todaySets;
 
         private static readonly TimeSpan RangeTime = new TimeSpan(24, 0, 0);
-        private OldSiteApiClient _client;
+        private static OldSiteApiClient _client;
         private const int PrivateMax = 5;
         private const int GroupMax = 10;
 
+        public class Test
+        {
+            public string Id { get; set; }
+            public MessageType Type { get; set; }
+        }
+
         public override void OnInitialized(StartupConfig startup)
         {
-            _userDic = LoadSettings<ConcurrentDictionary<string, List<UserInfo>>>("userDictionary") ??
-                       new ConcurrentDictionary<string, List<UserInfo>>();
+            _userDic = LoadSettings<ConcurrentDictionary<long, List<CoolQIdentity>>>("userDictionary") ??
+                       new ConcurrentDictionary<long, List<CoolQIdentity>>();
             _todaySets = LoadSettings<List<SlimBeatmapsets>>("today") ?? new List<SlimBeatmapsets>();
             _client = new OldSiteApiClient();
 
@@ -66,35 +72,35 @@ namespace Daylily.Plugin.Osu
                 while (true)
                 {
                     // 由于其中会有很多阻塞 使用异步
-                    Task asyncdTask = new Task(() =>
+                    Task asyncTask = new Task(() =>
                     {
-                        RemoveOverdueMapsets();
+                        RemoveOverdueMapSets();
 
                         // 以mapper为单位的设计
                         foreach (var pair in _userDic)
                         {
                             try
                             {
-                                string mapper = pair.Key;
-                                List<UserInfo> userList = pair.Value;
+                                long mapperId = pair.Key;
+                                List<CoolQIdentity> userList = pair.Value;
                                 if (pair.Value.Count == 0)
                                 {
-                                    RemoveUnusefulMapper(mapper);
+                                    RemoveUnusefulMapper(mapperId);
                                     continue;
                                 }
 
-                                Beatmapset[] mapsets = GetBeatmapsets(mapper);
+                                OsuBeatmapSet[] mapsets = GetBeatmapSets(new UserId(mapperId));
 
                                 if (mapsets.Length <= 0) continue;
                                 foreach (var item in mapsets)
                                 {
                                     _todaySets.Add(new SlimBeatmapsets
                                     {
-                                        Creator = item.Creator,
+                                        CreatorId = mapperId,
                                         Id = item.Id,
                                         RankedDate = item.RankedDate,
                                         Status = item.Status,
-                                        SubmittedDate = item.SubmittedDate
+                                        //SubmittedDate = item.SubmittedDate
                                     });
                                 }
 
@@ -110,9 +116,9 @@ namespace Daylily.Plugin.Osu
                         }
                     });
 
-                    asyncdTask.Start();
+                    asyncTask.Start();
                     Thread.Sleep(sleepTime);
-                    Task.WaitAll(asyncdTask); // 等待执行完毕
+                    Task.WaitAll(asyncTask); // 等待执行完毕
                 }
             });
         }
@@ -120,32 +126,18 @@ namespace Daylily.Plugin.Osu
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;
-            string subId;
-            switch (routeMsg.MessageType)
-            {
-                case MessageType.Private:
-                    subId = routeMsg.UserId;
-                    break;
-                case MessageType.Discuss:
-                    subId = routeMsg.DiscussId;
-                    break;
-                case MessageType.Group:
-                default:
-                    subId = routeMsg.GroupId;
-                    break;
-            }
-
             if (List)
             {
-                List<string> subedId = GetSubscribed(routeMsg.MessageType, subId).ToList();
-                subedId.Sort();
-                int subedCount = subedId.Count;
+                UserId[] subscribedUsers = GetSubscribed(routeMsg.CoolQIdentity)
+                    .Select(k => new UserId(k))
+                    .OrderBy(k => k.IdOrName)
+                    .ToArray();
+                int count = subscribedUsers.Length;
                 string subject = routeMsg.MessageType == MessageType.Private ? "你" : "本群";
-                return subedCount == 0
-                    ? routeMsg.ToSource($"{subject}没有订阅任何mapper。")
-                    : routeMsg.ToSource(
-                        string.Format("以下是{0}的订阅名单，共计{1}个：\r\n{2}", subject, subedCount,
-                            string.Join("\r\n", _client.GetUserNameByUid(subedId))));
+                if (count == 0)
+                    return routeMsg.ToSource($"{subject}没有订阅任何mapper。");
+                var names = _client.GetUserNameByUid(subscribedUsers);
+                return routeMsg.ToSource($"以下是{subject}的订阅名单，共计{count}个：\r\n{string.Join("\r\n", names)}");
             }
 
             if (SubscribeMapper != null)
@@ -153,42 +145,44 @@ namespace Daylily.Plugin.Osu
                 if (routeMsg.MessageType == MessageType.Group && routeMsg.CurrentAuthority == Authority.Public)
                     return routeMsg.ToSource(DefaultReply.AdminOnly + "个人推送请私聊.");
 
-                List<string> subedId = GetSubscribed(routeMsg.MessageType, subId).ToList();
-                subedId.Sort();
-                int subedCount = subedId.Count;
+                var subscribedUsers = GetSubscribed(routeMsg.CoolQIdentity)
+                    .Select(k => new UserId(k))
+                    .OrderBy(k => k.IdOrName)
+                    .ToArray();
+                int subedCount = subscribedUsers.Length;
                 if (routeMsg.MessageType == MessageType.Private && subedCount >= PrivateMax)
                 {
                     return routeMsg.ToSource(
                         string.Format("你已经订阅了{0}个mapper啦，人家已经装不下的说：{1}", subedCount,
-                            string.Join(", ", _client.GetUserNameByUid(subedId))));
+                            string.Join(", ", _client.GetUserNameByUid(subscribedUsers))));
                 }
 
                 if (routeMsg.MessageType != MessageType.Private && subedCount >= GroupMax)
                 {
                     return routeMsg.ToSource(
                         string.Format("这个群已经订阅了{0}个mapper啦，人家已经装不下的说：{1}", subedCount,
-                            string.Join(", ", _client.GetUserNameByUid(subedId))));
+                            string.Join(", ", _client.GetUserNameByUid(subscribedUsers))));
                 }
 
-                int count = _client.GetUser(SubscribeMapper, out var userObj);
+                int count = _client.GetUser(UserComponent.FromUserName(SubscribeMapper), out var userObj);
                 if (count == 0)
                     return routeMsg.ToSource("找不到指定mapper..");
 
                 if (count > 1)
                     return routeMsg.ToSource($"找到{count}个mapper..");
 
-                string mapperId = userObj.user_id;
+                long mapperId = userObj.UserId;
                 string mapperName = userObj.UserName;
 
                 if (!_userDic.ContainsKey(mapperId))
-                    _userDic.TryAdd(mapperId, new List<UserInfo>());
-                if (_userDic[mapperId].Contains(new UserInfo(subId, routeMsg.MessageType)))
+                    _userDic.TryAdd(mapperId, new List<CoolQIdentity>());
+                if (_userDic[mapperId].Contains(routeMsg.CoolQIdentity))
                 {
                     string subject = routeMsg.MessageType == MessageType.Private ? "你" : "本群";
                     return routeMsg.ToSource($"{subject}已经订阅过{mapperName}啦..");
                 }
 
-                _userDic[mapperId].Add(new UserInfo(subId, routeMsg.MessageType));
+                _userDic[mapperId].Add(routeMsg.CoolQIdentity);
                 SaveSettings(_userDic, "userDictionary");
                 string sub = routeMsg.MessageType == MessageType.Private ? "私聊提醒你" : "在本群提醒";
                 return routeMsg.ToSource($"{mapperName}订阅成功啦！今后他qualified、rank或love或上传图后会主动{sub}。");
@@ -199,7 +193,7 @@ namespace Daylily.Plugin.Osu
                 if (routeMsg.MessageType == MessageType.Group && routeMsg.CurrentAuthority == Authority.Public)
                     return routeMsg.ToSource(DefaultReply.AdminOnly + "个人推送请私聊.");
 
-                int count = _client.GetUser(UnsubscribeMapper, out var userObj);
+                int count = _client.GetUser(UserComponent.FromUserName(UnsubscribeMapper), out var userObj);
                 if (count == 0)
                 {
                     return routeMsg.ToSource("找不到指定mapper..");
@@ -210,15 +204,15 @@ namespace Daylily.Plugin.Osu
                     return routeMsg.ToSource($"找到{count}个mapper..");
                 }
 
-                string mapperId = userObj.user_id;
+                long mapperId = userObj.UserId;
                 string mapperName = userObj.UserName;
-                if (!_userDic.ContainsKey(mapperId) || !_userDic[mapperId].Contains(new UserInfo(subId, routeMsg.MessageType)))
+                if (!_userDic.ContainsKey(mapperId) || !_userDic[mapperId].Contains(routeMsg.CoolQIdentity))
                 {
                     string subject = routeMsg.MessageType == MessageType.Private ? "你" : "本群";
                     return routeMsg.ToSource($"目前这个mapper没有被{subject}订阅..");
                 }
 
-                _userDic[mapperId].Remove(new UserInfo(subId, routeMsg.MessageType));
+                _userDic[mapperId].Remove(routeMsg.CoolQIdentity);
                 if (_userDic[mapperId].Count == 0)
                     _userDic.Remove(mapperId, out _);
 
@@ -230,18 +224,15 @@ namespace Daylily.Plugin.Osu
             return routeMsg.ToSource(DefaultReply.ParamMissing);
         }
 
-        private static IEnumerable<string> GetSubscribed(MessageType messageType, string subId)
+        private static IEnumerable<long> GetSubscribed(CoolQIdentity identity)
         {
-            return _userDic.Where(k => k.Value.Contains(new UserInfo(subId, messageType))).Select(k => k.Key);
+            return _userDic.Where(k => k.Value.Contains(identity)).Select(k => k.Key);
         }
 
-        private void PushNews(IEnumerable<UserInfo> userList, IReadOnlyList<Beatmapset> mapsets)
+        private void PushNews(IEnumerable<CoolQIdentity> userList, IReadOnlyList<OsuBeatmapSet> mapsets)
         {
-            foreach (var userTuple in userList) // 遍历发给订阅此mapper的用户
+            foreach (var identity in userList) // 遍历发给订阅此mapper的用户
             {
-                var session = userTuple.Id;
-                var sessionType = userTuple.Type;
-
                 StringBuilder sb = new StringBuilder(mapsets[0].Creator + "有新的动态：\r\n");
                 foreach (var mapset in mapsets)
                 {
@@ -257,38 +248,44 @@ namespace Daylily.Plugin.Osu
 
 #else
                 SaveLogs(str, "pushes");
-                SendMessage(new CoolQRouteMessage(str, new CoolQIdentity(session, sessionType)));
+                SendMessage(new CoolQRouteMessage(str, identity));
                 Thread.Sleep(3000);
 #endif
 
             }
-            string StatusToReadable(string status)
+            string StatusToReadable(BeatmapApprovedState? status)
             {
                 switch (status)
                 {
-                    case "pending":
-                    case "wip":
+                    case BeatmapApprovedState.Graveyard:
+                        return "坟";
+                    case BeatmapApprovedState.Pending:
                         return "上传";
-                    case "ranked":
+                    case BeatmapApprovedState.Ranked:
                         return "Rank";
-                    case "qualified":
+                    case BeatmapApprovedState.Approved:
+                        return "Approve";
+                    case BeatmapApprovedState.Qualified:
                         return "Qualify";
-                    case "loved":
+                    case BeatmapApprovedState.Loved:
                         return "Love";
+                    case null:
+                        return " *不可描述* ";
                     default:
-                        return status;
+                        throw new ArgumentOutOfRangeException(nameof(status), status, null);
                 }
             }
         }
 
-        private void RemoveOverdueMapsets()
+        private void RemoveOverdueMapSets()
         {
             for (var i = 0; i < _todaySets.Count; i++)
             {
                 var set = _todaySets[i];
-                var duration = set.RankedDate != null
-                    ? DateTime.UtcNow - set.RankedDate
-                    : DateTime.UtcNow - set.SubmittedDate;
+                //var duration = set.RankedDate != null
+                //    ? DateTime.UtcNow - set.RankedDate
+                //    : DateTime.UtcNow - set.SubmittedDate;
+                var duration = DateTime.UtcNow - set.RankedDate;
                 if (duration <= RangeTime) // 若过期则删除记录
                     continue;
                 _todaySets.Remove(set);
@@ -297,37 +294,42 @@ namespace Daylily.Plugin.Osu
             }
         }
 
-        private Beatmapset[] GetBeatmapsets(string mapperId)
+        private OsuBeatmapSet[] GetBeatmapSets(UserComponent user)
         {
-            var mapperName = _client.GetUserNameByUid(mapperId);
+            _client.GetUser(user, out var userObj);
 
-            Beatmapset[] mapsets = NewSiteApiClient
-                .SearchAllBeatmaps(mapperName, new BeatmapsetsSearchOptions {Status = BeatmapStatus.Qualified})
-                .Union(
-                    NewSiteApiClient.SearchAllBeatmaps(
-                        mapperName,
-                        new BeatmapsetsSearchOptions {Status = BeatmapStatus.PendingWip}
-                    )
-                )
-                .ToArray()
-                .Union(NewSiteApiClient.SearchAllBeatmaps(mapperName))
+            //OsuBeatmapSet[] mapsets = NewSiteApiClient
+            //    .SearchAllBeatmaps(mapperName, new BeatmapsetsSearchOptions { Status = BeatmapStatus.Qualified })
+            //    .Union(
+            //        NewSiteApiClient.SearchAllBeatmaps(
+            //            mapperName,
+            //            new BeatmapsetsSearchOptions { Status = BeatmapStatus.PendingWip }
+            //        )
+            //    )
+            //    .ToArray()
+            //    .Union(NewSiteApiClient.SearchAllBeatmaps(mapperName))
+            //    .ToArray();
+            OsuBeatmapSet[] mapsets = _client
+                .GetBeatmapSetsByCreator(user)
                 .ToArray();
-
             mapsets = mapsets
-                .Where(i => i.Creator == mapperName)
+                .Where(i => i.Creator == userObj.UserName)
                 .Where(i =>
-                    (i.Status == "qualified" || i.Status == "ranked" || i.Status == "loved") &&
-                    DateTime.UtcNow - i.RankedDate < RangeTime ||
+                    (i.Status == BeatmapApprovedState.Qualified
+                     || i.Status == BeatmapApprovedState.Ranked
+                     || i.Status == BeatmapApprovedState.Loved) &&
+                    DateTime.UtcNow - i.RankedDate < RangeTime /*||
                     (i.Status == "pending" || i.Status == "wip") &&
-                    DateTime.UtcNow - i.SubmittedDate < RangeTime).ToArray();
+                    DateTime.UtcNow - i.SubmittedDate < RangeTime*/).ToArray();
 
-            // 先从今日已提醒中筛选此mapper的图
-            IEnumerable<SlimBeatmapsets> todayThisCreatorSet = _todaySets.Where(k => k.Creator == mapperName);
-            // 从总集合中筛选未提醒过的图
-            IEnumerable<Beatmapset> mapsetsNormal = mapsets.Where(set =>
+            // 先从今日已提醒中筛选此mapper的图 IEnumerable<SlimBeatmapsets>
+            var todayThisCreatorSet = _todaySets.Where(k => k.CreatorId == userObj.UserId);
+            // 从总集合中筛选未提醒过的图 IEnumerable<OsuBeatmapSet>
+            var mapsetsNormal = mapsets.Where(set =>
                 !todayThisCreatorSet.Select(todaySet => todaySet.Id).Contains(set.Id));
+
             // 从总集合中筛选提醒过，但是状态改变了的图
-            Beatmapset[] mapsetsStatusChanged = mapsets.Where(set =>
+            OsuBeatmapSet[] mapsetsStatusChanged = mapsets.Where(set =>
             {
                 var matchedSet = todayThisCreatorSet.FirstOrDefault(k => k.Id == set.Id);
                 return matchedSet != null && matchedSet.Status != set.Status;
@@ -344,9 +346,9 @@ namespace Daylily.Plugin.Osu
             return mapsets;
         }
 
-        private void RemoveUnusefulMapper(string mapper)
+        private void RemoveUnusefulMapper(long creatorId)
         {
-            _userDic.TryRemove(mapper, out _);
+            _userDic.TryRemove(creatorId, out _);
             SaveUserSettings();
         }
 
@@ -355,23 +357,11 @@ namespace Daylily.Plugin.Osu
 
         public class SlimBeatmapsets
         {
-            public string Id { get; set; }
-            public DateTime? SubmittedDate { get; set; }
-            public DateTime? RankedDate { get; set; }
-            public string Creator { get; set; }
-            public string Status { get; set; }
-        }
-
-        public struct UserInfo
-        {
-            public string Id { get; set; }
-            public MessageType Type { get; set; }
-
-            public UserInfo(string id, MessageType type) : this()
-            {
-                Id = id;
-                Type = type;
-            }
+            public long Id { get; set; }
+            //public DateTime? SubmittedDate { get; set; }
+            public DateTimeOffset? RankedDate { get; set; }
+            public long CreatorId { get; set; }
+            public BeatmapApprovedState? Status { get; set; }
         }
     }
 }
