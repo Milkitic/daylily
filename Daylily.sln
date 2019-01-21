@@ -39,6 +39,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSharp", "..\..\OSharp\OSharp\OSharp.csproj", "{D07AD671-90C3-4AA3-86DC-0DD122A79337}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daylily.TuLing", "Daylily.TuLing\Daylily.TuLing.csproj", "{7F7497FC-29E9-4C2A-8F6D-F774B23439FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{D07AD671-90C3-4AA3-86DC-0DD122A79337}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D07AD671-90C3-4AA3-86DC-0DD122A79337}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D07AD671-90C3-4AA3-86DC-0DD122A79337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F7497FC-29E9-4C2A-8F6D-F774B23439FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7497FC-29E9-4C2A-8F6D-F774B23439FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7497FC-29E9-4C2A-8F6D-F774B23439FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F7497FC-29E9-4C2A-8F6D-F774B23439FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,6 +128,7 @@ Global
 		{02D93BC8-6B0E-494C-A0C2-0588DF1577C2} = {210CBD05-D624-4DA0-BF6A-444E4DBD4772}
 		{134D841F-6648-4B66-A0D9-42C3336CF28E} = {210CBD05-D624-4DA0-BF6A-444E4DBD4772}
 		{D07AD671-90C3-4AA3-86DC-0DD122A79337} = {A647853D-3BE2-4A06-875C-575E54575E84}
+		{7F7497FC-29E9-4C2A-8F6D-F774B23439FD} = {A647853D-3BE2-4A06-875C-575E54575E84}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61C8A762-DE94-46FE-8E8D-A5B4F84EA7AE}
