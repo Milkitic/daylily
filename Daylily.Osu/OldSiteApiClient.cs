@@ -1,6 +1,6 @@
-﻿using CSharpOsu.V1;
-using CSharpOsu.V1.Beatmap;
-using CSharpOsu.V1.User;
+﻿using OSharp.V1;
+using OSharp.V1.Beatmap;
+using OSharp.V1.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;

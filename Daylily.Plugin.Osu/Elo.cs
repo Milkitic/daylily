@@ -1,6 +1,4 @@
-﻿using CSharpOsu.V1.User;
-using Daylily.Bot;
-using Daylily.Bot.Backend;
+﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
@@ -8,6 +6,7 @@ using Daylily.CoolQ.Plugins;
 using Daylily.Osu;
 using Daylily.Osu.Cabbage;
 using Daylily.Osu.Elo;
+using OSharp.V1.User;
 using System;
 using System.Collections.Generic;
 

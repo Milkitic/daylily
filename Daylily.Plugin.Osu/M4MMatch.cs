@@ -1,9 +1,6 @@
-﻿using CSharpOsu.V1.Beatmap;
-using CSharpOsu.V1.User;
-using Daylily.Bot;
+﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
-using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.Text;
 using Daylily.CoolQ;
@@ -14,11 +11,13 @@ using Daylily.Osu;
 using Daylily.Osu.Cabbage;
 using Daylily.Plugin.Osu.M4M;
 using Newtonsoft.Json;
+using OSharp.V1;
+using OSharp.V1.Beatmap;
+using OSharp.V1.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using CSharpOsu.V1;
 using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Osu

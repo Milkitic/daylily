@@ -1,14 +1,11 @@
-﻿using CSharpOsu.V1.User;
-using Daylily.Bot.Backend;
+﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Message;
-using Daylily.Common.Logging;
-using Daylily.Common.Web;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
 using Daylily.CoolQ.Plugins;
 using Daylily.Osu;
 using Daylily.Osu.Cabbage;
-using Newtonsoft.Json;
+using OSharp.V1.User;
 using System;
 using System.Collections.Generic;
 
@@ -44,9 +41,9 @@ namespace Daylily.Plugin.Osu
             var beatmapSet = beatmapSets[StaticRandom.Next(beatmapSets.Length)];
             var cqMusic = new CustomMusic(
                 $"https://osu.ppy.sh/s/{beatmapSet.Id}",
-                $"https://b.ppy.sh/preview/{beatmapSet.Id}.mp3", 
+                $"https://b.ppy.sh/preview/{beatmapSet.Id}.mp3",
                 beatmapSet.Title,
-                $"{beatmapSet.Artist}\r\n({beatmapSet.FavouriteCount} fav)", 
+                $"{beatmapSet.Artist}\r\n({beatmapSet.FavouriteCount} fav)",
                 $"https://b.ppy.sh/thumb/{beatmapSet.Id}l.jpg");
 
             return routeMsg.ToSource(cqMusic.ToString());
