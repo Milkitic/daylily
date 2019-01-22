@@ -9,7 +9,7 @@ namespace Daylily.CoolQ.CoolQHttp
 {
     public static class CoolQHttpApiClient
     {
-        public static string ApiUrl { private get; set; } = "http://www.mothership.top:5700";
+        public static string ApiUrl { private get; set; }
 
         private const string PrivateMsgPath = "/send_private_msg";
         private const string PrivateMsgAsyncPath = "/send_private_msg_async";

@@ -10,6 +10,7 @@ using Daylily.Osu;
 using Daylily.Osu.Data;
 using System;
 using System.IO;
+using Daylily.TuLing;
 
 namespace Daylily.AspNetCore
 {
@@ -50,6 +51,8 @@ namespace Daylily.AspNetCore
             CoolQHttpApiClient.ApiUrl = secret.BotSettings.PostUrl;
             CoolQCode.CqPath = secret.BotSettings.CqDir;
             DaylilyCore.Current.CommandFlag = secret.BotSettings.CommandFlag;
+
+            TuLingSecret.ApiKey = secret.TuLingSettings.ApiKey;
         }
     }
 }

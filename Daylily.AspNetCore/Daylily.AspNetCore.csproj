@@ -37,6 +37,7 @@
     <ProjectReference Include="..\Daylily.CoolQ\Daylily.CoolQ.csproj" />
     <ProjectReference Include="..\Daylily.Cos\Daylily.Cos.csproj" />
     <ProjectReference Include="..\Daylily.Osu\Daylily.Osu.csproj" />
+    <ProjectReference Include="..\Daylily.TuLing\Daylily.TuLing.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

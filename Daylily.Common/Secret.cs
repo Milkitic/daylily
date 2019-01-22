@@ -6,6 +6,7 @@
         public OsuSettings OsuSettings { get; set; }
         public CosSettings CosSettings { get; set; }
         public BotSettings BotSettings { get; set; }
+        public TuLingSettings TuLingSettings { get; set; }
     }
 
     public struct ConnectionStrings
@@ -27,6 +28,10 @@
         public string SecretId { get; set; }
         public string SecretKey { get; set; }
         public string BucketName { get; set; }
+    }
+    public struct TuLingSettings
+    {
+        public string ApiKey { get; set; }
     }
 
     public struct BotSettings
