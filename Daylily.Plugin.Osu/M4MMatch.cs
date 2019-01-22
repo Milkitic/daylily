@@ -617,7 +617,7 @@ namespace Daylily.Plugin.Osu
     public class LightMaps
     {
         public int TotalLength { get; set; }
-        public GameMode Mode { get; set; }
+        public GameMode? Mode { get; set; }
     }
 
     public class LightSets

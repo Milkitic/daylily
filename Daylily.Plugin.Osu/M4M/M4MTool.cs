@@ -49,7 +49,7 @@ namespace Daylily.Plugin.Osu.M4M
                 }
             }
 
-            LightMaps[] maps = otherInfo.Set.Beatmaps.Where(map => mods.Contains(map.Mode)).ToArray();
+            LightMaps[] maps = otherInfo.Set.Beatmaps.Where(map => map.Mode != null && mods.Contains(map.Mode.Value)).ToArray();
             return maps.Sum(map => map.TotalLength);
         }
     }
