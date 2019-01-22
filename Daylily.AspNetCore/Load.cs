@@ -52,7 +52,7 @@ namespace Daylily.AspNetCore
             CoolQCode.CqPath = secret.BotSettings.CqDir;
             DaylilyCore.Current.CommandFlag = secret.BotSettings.CommandFlag;
 
-            TuLingSecret.ApiKey = secret.TuLingSettings.ApiKey;
+            TuLingSecret.ApiKeys = secret.TuLingSettings.ApiKey;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Daylily.Bot.Backend;
+﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Command;
 using Daylily.Common;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Message;
@@ -20,7 +22,8 @@ namespace Daylily.Plugin.Fun
 
         private static readonly string PandaDir = Path.Combine(Domain.ResourcePath, "panda");
         private static List<TriggerObject> _triggerObjects;
-        public KeywordTriggerApp()
+
+        public override void OnInitialized(StartupConfig startup)
         {
             _triggerObjects = LoadSettings<List<TriggerObject>>("UserDictionary") ?? new List<TriggerObject>
             {
@@ -45,6 +48,22 @@ namespace Daylily.Plugin.Fun
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;
+            if (string.IsNullOrEmpty(routeMsg.FullCommand))
+                return null;
+            string fullCmd = routeMsg.FullCommand;
+            var ca = new CommandAnalyzer<StreamParamDivider>();
+            var cmd = ca.Analyze(fullCmd);
+
+            if (cmd.CommandName == "kwd"/* && routeMsg.CurrentAuthority == Bot.Message.Authority.Root*/)
+            {
+                if (cmd.Switches.Contains("list"))
+                {
+                    return routeMsg.ToSource(Newtonsoft.Json.JsonConvert.SerializeObject(_triggerObjects, Newtonsoft.Json.Formatting.Indented));
+                }
+
+                return null;
+            }
+
             if (routeMsg.CommandName == "keyedit")
             {
                 if (routeMsg.FreeArgs.Count == 1)

@@ -12,7 +12,7 @@ namespace Daylily.TuLing
     {
         private const string RequestUri = "http://openapi.tuling123.com/openapi/api/v2";
 
-        public Response SendText(string content, string userId, string groupId, string userName = null)
+        public Response SendText(string apiKey,string content, string userId, string groupId, string userName = null)
         {
             var request = new Request
             {
@@ -25,7 +25,7 @@ namespace Daylily.TuLing
                 },
                 UserInfo = new UserInfo
                 {
-                    ApiKey = TuLingSecret.ApiKey,
+                    ApiKey = apiKey,
                     UserId = userId,
                     GroupId = groupId,
                     UserIdName = userName

@@ -31,7 +31,7 @@
     }
     public struct TuLingSettings
     {
-        public string ApiKey { get; set; }
+        public string[] ApiKey { get; set; }
     }
 
     public struct BotSettings

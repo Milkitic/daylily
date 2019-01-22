@@ -6,6 +6,6 @@ namespace Daylily.TuLing
 {
     public static class TuLingSecret
     {
-        public static string ApiKey { get; set; }
+        public static string[] ApiKeys { get; set; }
     }
 }
