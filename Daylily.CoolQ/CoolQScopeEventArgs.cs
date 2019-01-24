@@ -1,5 +1,5 @@
 ﻿using Daylily.Bot;
-using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Messaging;
 
 namespace Daylily.CoolQ
 {

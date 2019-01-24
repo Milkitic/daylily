@@ -2,16 +2,17 @@
 using Daylily.Bot.Backend;
 using Daylily.Bot.Command;
 using Daylily.Bot.Dispatcher;
-using Daylily.Bot.Message;
 using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Daylily.Bot.Backend.Plugin;
+using Daylily.Bot.Messaging;
+using Daylily.CoolQ.Plugin;
 
 namespace Daylily.CoolQ
 {
@@ -109,7 +110,7 @@ namespace Daylily.CoolQ
                         CoolQRouteMessage coolQRouteMessage = CoolQRouteMessage.Parse(currentMsg);
                         HandleMessage(new CoolQScopeEventArgs
                         {
-                            DisabledApplications = new List<Bot.Backend.Plugins.ApplicationPlugin>(),
+                            DisabledApplications = new List<ApplicationPlugin>(),
                             RouteMessage = coolQRouteMessage
                         });
                     }

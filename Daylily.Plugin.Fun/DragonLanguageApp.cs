@@ -1,11 +1,8 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
-using Daylily.Bot.Backend.Plugins;
-using Daylily.Bot.Message;
 using Daylily.Common.Collections;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -13,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Daylily.CoolQ.Plugin;
 using TinyPinyin.Core;
 
 namespace Daylily.Plugin.Fun

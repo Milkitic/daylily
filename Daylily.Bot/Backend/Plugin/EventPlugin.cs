@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Daylily.Bot.Backend.Plugins
+namespace Daylily.Bot.Backend.Plugin
 {
-    public abstract class EventPlugin : Plugin, IConcurrentBackend
+    public abstract class EventPlugin : PluginBase, IConcurrentBackend
     {
         public override PluginType PluginType => PluginType.Event;
         public bool RunInMultiThreading { get; } = true;

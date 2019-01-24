@@ -1,5 +1,4 @@
-﻿using Daylily.Bot.Backend.Plugins;
-using Daylily.Common;
+﻿using Daylily.Common;
 using Daylily.Common.Logging;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Daylily.Bot.Backend.Plugin;
 
 namespace Daylily.Bot.Backend
 {
@@ -39,13 +39,13 @@ namespace Daylily.Bot.Backend
                 .Where(k => k.Instance.PluginType == PluginType.Service)
                 .Select(k => (ServicePlugin)k.Instance);
 
-        public IEnumerable<Plugin> Plugins =>
+        public IEnumerable<PluginBase> Plugins =>
             TaggedPlugins
                 .Select(k => k.Instance)
                 .Distinct();
 
         protected List<TaggedClass<Type>> CachedCommands { get; } = new List<TaggedClass<Type>>();
-        protected List<TaggedClass<Plugin>> TaggedPlugins { get; } = new List<TaggedClass<Plugin>>();
+        protected List<TaggedClass<PluginBase>> TaggedPlugins { get; } = new List<TaggedClass<PluginBase>>();
         protected List<TaggedClass<Assembly>> Assemblies { get; } = new List<TaggedClass<Assembly>>();
 
         protected static readonly string BackendDirectory = Domain.PluginPath;
@@ -60,12 +60,12 @@ namespace Daylily.Bot.Backend
             return Commands.FirstOrDefault(k => k.Tag == command).Instance;
         }
 
-        public T CreateInstance<T>() where T : Plugin
+        public T CreateInstance<T>() where T : PluginBase
         {
             return Activator.CreateInstance(typeof(T)) as T;
         }
 
-        public static T CreateInstance<T>(Type pluginType) where T : Plugin
+        public static T CreateInstance<T>(Type pluginType) where T : PluginBase
         {
             return Activator.CreateInstance(pluginType) as T;
         }
@@ -75,7 +75,7 @@ namespace Daylily.Bot.Backend
             return CachedCommands.FirstOrDefault(k => k.Tag == command).Instance;
         }
 
-        public T GetPlugin<T>() where T : Plugin
+        public T GetPlugin<T>() where T : PluginBase
         {
             return (T)TaggedPlugins.FirstOrDefault(k => k.Instance.GetType() == typeof(T)).Instance;
         }
@@ -157,7 +157,7 @@ namespace Daylily.Bot.Backend
         {
             try
             {
-                Plugin plugin = (Plugin)Activator.CreateInstance(type);
+                PluginBase plugin = (PluginBase)Activator.CreateInstance(type);
                 string pluginType, error = "", commands = "";
                 switch (plugin.PluginType)
                 {
@@ -168,7 +168,7 @@ namespace Daylily.Bot.Backend
                         {
                             foreach (var cmd in cmdPlugin.Commands)
                             {
-                                TaggedPlugins.Add(new TaggedClass<Plugin>(cmd, cmdPlugin));
+                                TaggedPlugins.Add(new TaggedClass<PluginBase>(cmd, cmdPlugin));
                                 CachedCommands.Add(new TaggedClass<Type>(cmd, type));
                             }
 
@@ -186,7 +186,7 @@ namespace Daylily.Bot.Backend
                     case PluginType.Service:
                     default:
                         pluginType = plugin.PluginType == PluginType.Application ? "应用" : "服务";
-                        TaggedPlugins.Add(new TaggedClass<Plugin>(null, plugin));
+                        TaggedPlugins.Add(new TaggedClass<PluginBase>(null, plugin));
                         break;
                 }
 

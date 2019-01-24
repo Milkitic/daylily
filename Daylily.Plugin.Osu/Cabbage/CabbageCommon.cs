@@ -1,15 +1,15 @@
 ﻿using Daylily.Bot;
-using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.Common.Logging;
 using Daylily.Common.Text;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Messaging;
 using Daylily.Osu.Cabbage;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Daylily.Bot.Messaging;
 using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Osu.Cabbage

@@ -1,8 +1,7 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Common;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,6 +9,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Fun
 {

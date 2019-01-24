@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Daylily.Bot;
-using Daylily.Bot.Backend.Plugins;
+using Daylily.Bot.Backend.Plugin;
 using Daylily.Common;
 using Daylily.Common.Logging;
 

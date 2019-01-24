@@ -2,10 +2,10 @@
 using Daylily.Bot.Session;
 using Daylily.Bot.Session.TreeStructure;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Linq;
+using Daylily.CoolQ.Plugin;
 using Action = Daylily.Bot.Session.TreeStructure.Action;
 using Session = Daylily.Bot.Session.Session;
 

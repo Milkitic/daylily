@@ -1,11 +1,8 @@
-﻿using Daylily.Bot.Message;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Daylily.Bot.Messaging;
 
-namespace Daylily.Bot.Backend.Plugins
+namespace Daylily.Bot.Backend.Plugin
 {
-    public abstract class MessagePlugin : Plugin, IConcurrentBackend
+    public abstract class MessagePlugin : PluginBase, IConcurrentBackend
     {
         public override PluginType PluginType => PluginType.Unknown;
         public abstract bool RunInMultiThreading { get; }

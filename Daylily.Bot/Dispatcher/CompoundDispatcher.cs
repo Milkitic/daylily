@@ -1,8 +1,8 @@
-﻿using Daylily.Bot.Message;
-using Daylily.Bot.Session;
+﻿using Daylily.Bot.Session;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Daylily.Bot.Messaging;
 using Daylily.Common;
 
 namespace Daylily.Bot.Dispatcher

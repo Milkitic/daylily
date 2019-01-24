@@ -1,9 +1,9 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Threading.Tasks;
+using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Osu.Cabbage
 {

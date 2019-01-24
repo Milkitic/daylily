@@ -1,10 +1,8 @@
-﻿using Daylily.Bot.Command;
+﻿using System.Collections.Generic;
+using Daylily.Bot.Command;
 using Daylily.Bot.Session;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Daylily.Bot.Message
+namespace Daylily.Bot.Messaging
 {
     public abstract class RouteMessage : IWritableCommand, IRouteMessage
     {

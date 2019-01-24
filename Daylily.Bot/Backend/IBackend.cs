@@ -1,5 +1,5 @@
 ﻿using System;
-using Daylily.Bot.Message;
+using Daylily.Bot.Messaging;
 using Daylily.Common;
 
 namespace Daylily.Bot.Backend

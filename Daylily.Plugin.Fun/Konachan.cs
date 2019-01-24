@@ -1,12 +1,12 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using Daylily.Plugin.Fun.Moebooru;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Fun
 {

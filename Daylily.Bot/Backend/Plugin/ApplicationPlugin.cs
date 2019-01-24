@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Daylily.Bot.Backend.Plugins
+﻿namespace Daylily.Bot.Backend.Plugin
 {
     public abstract class ApplicationPlugin : MessagePlugin
     {

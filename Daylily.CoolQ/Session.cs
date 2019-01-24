@@ -1,12 +1,12 @@
-﻿using Daylily.Bot.Message;
-using Daylily.CoolQ.CoolQHttp;
+﻿using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Abstract;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
-using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Daylily.Bot.Messaging;
 
 namespace Daylily.CoolQ
 {

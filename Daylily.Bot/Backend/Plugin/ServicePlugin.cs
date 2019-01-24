@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Daylily.Bot.Backend.Plugins
+﻿namespace Daylily.Bot.Backend.Plugin
 {
-    public abstract class ServicePlugin : Plugin
+    public abstract class ServicePlugin : PluginBase
     {
         public sealed override PluginType PluginType => PluginType.Service;
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig();

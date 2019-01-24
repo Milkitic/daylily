@@ -1,12 +1,10 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Text;
 using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using Daylily.Osu;
 using Daylily.Osu.Cabbage;
 using Daylily.Plugin.Osu.M4M;
@@ -18,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Daylily.Bot.Messaging;
+using Daylily.CoolQ.Plugin;
 using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Osu

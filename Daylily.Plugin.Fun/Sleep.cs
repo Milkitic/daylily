@@ -1,9 +1,9 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
+using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Fun
 {

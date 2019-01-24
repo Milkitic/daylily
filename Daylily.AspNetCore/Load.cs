@@ -4,7 +4,7 @@ using Daylily.Common.IO;
 using Daylily.Common.Logging;
 using Daylily.Common.Text;
 using Daylily.CoolQ.CoolQHttp;
-using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Messaging;
 using Daylily.Cos;
 using Daylily.Osu;
 using Daylily.Osu.Data;

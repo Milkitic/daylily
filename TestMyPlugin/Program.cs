@@ -1,10 +1,10 @@
 ﻿using Daylily.Bot;
-using Daylily.Bot.Message;
 using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
-using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Messaging;
 using Daylily.Plugin.Basic;
 using System;
+using Daylily.Bot.Messaging;
 
 namespace TestMyPlugin
 {

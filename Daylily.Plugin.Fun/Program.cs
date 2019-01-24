@@ -1,8 +1,8 @@
-﻿using Daylily.Bot.Message;
-using Daylily.Common.Logging;
+﻿using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
-using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Messaging;
 using System;
+using Daylily.Bot.Messaging;
 
 namespace Daylily.Plugin.Fun
 {

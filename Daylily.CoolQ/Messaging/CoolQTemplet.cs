@@ -1,4 +1,4 @@
-﻿namespace Daylily.CoolQ.Message
+﻿namespace Daylily.CoolQ.Messaging
 {
     class CoolQTemplet
     {

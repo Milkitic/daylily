@@ -1,17 +1,17 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Logging;
 using Daylily.Common.Web;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using Daylily.Bot.Messaging;
+using Daylily.CoolQ.Plugin;
 
 //using System.Threading;
 

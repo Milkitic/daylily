@@ -1,4 +1,4 @@
-﻿using Daylily.CoolQ.Message;
+﻿using Daylily.CoolQ.Messaging;
 using Newtonsoft.Json;
 using System;
 using System.Collections;

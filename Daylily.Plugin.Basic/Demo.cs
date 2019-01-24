@@ -1,12 +1,12 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
 using Daylily.Common.Logging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Threading;
+using Daylily.Bot.Messaging;
+using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Basic
 {

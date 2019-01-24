@@ -1,9 +1,9 @@
-﻿using Daylily.Bot.Message;
-using Daylily.Bot.Session;
+﻿using Daylily.Bot.Session;
 using Newtonsoft.Json;
 using System;
+using Daylily.Bot.Messaging;
 
-namespace Daylily.CoolQ.Message
+namespace Daylily.CoolQ.Messaging
 {
     [JsonConverter(typeof(CoolQIdentityJsonConverter))]
     public struct CoolQIdentity : ISessionIdentity

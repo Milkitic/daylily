@@ -1,11 +1,11 @@
 ﻿using Daylily.Bot;
-using Daylily.Bot.Backend.Plugins;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Daylily.Bot.Backend.Plugin;
 
 namespace Daylily.Plugin.Kernel
 {

@@ -1,4 +1,4 @@
-﻿namespace Daylily.Bot.Message
+﻿namespace Daylily.Bot.Messaging
 {
     public enum Authority
     {

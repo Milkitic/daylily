@@ -2,8 +2,7 @@
 using Daylily.Common;
 using Daylily.Common.Web;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,6 +11,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using Daylily.CoolQ.Plugin;
 using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Fun

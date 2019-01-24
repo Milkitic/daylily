@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using Contract = Daylily.Common.Contract;
 
-namespace Daylily.CoolQ.Message
+namespace Daylily.CoolQ.Messaging
 {
     /// <summary>
     /// CQ码

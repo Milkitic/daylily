@@ -3,12 +3,12 @@ using Daylily.Bot.Backend;
 using Daylily.Bot.Command;
 using Daylily.Common;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Fun
 {

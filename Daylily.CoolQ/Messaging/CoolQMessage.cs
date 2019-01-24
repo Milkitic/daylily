@@ -1,10 +1,10 @@
-﻿using Daylily.Bot.Message;
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using Daylily.Bot.Messaging;
 
-namespace Daylily.CoolQ.Message
+namespace Daylily.CoolQ.Messaging
 {
     public class CoolQMessage : IMessage
     {

@@ -1,9 +1,9 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.Bot.Session;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using System;
+using Daylily.CoolQ.Plugin;
 using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Basic.Application.SessionDemo

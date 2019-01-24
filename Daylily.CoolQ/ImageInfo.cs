@@ -1,6 +1,6 @@
 ﻿using Daylily.Assist;
 using Daylily.Common.IO;
-using Daylily.CoolQ.Message;
+using Daylily.CoolQ.Messaging;
 using System;
 using System.IO;
 

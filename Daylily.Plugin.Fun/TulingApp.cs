@@ -1,13 +1,13 @@
 ﻿using Daylily.Bot;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using Daylily.TuLing;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Fun
 {

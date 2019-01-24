@@ -1,7 +1,6 @@
-﻿using System;
-using Daylily.Common;
+﻿using Daylily.Common;
 
-namespace Daylily.Bot.Message
+namespace Daylily.Bot.Messaging
 {
     public static class DefaultReply
     {

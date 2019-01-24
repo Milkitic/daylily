@@ -1,14 +1,11 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
-using Daylily.Bot.Backend.Plugins;
-using Daylily.Bot.Message;
 using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Text;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using Daylily.Plugin.Kernel.Helps;
 using System;
 using System.Collections.Generic;
@@ -17,6 +14,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Daylily.Bot.Backend.Plugin;
+using Daylily.Bot.Messaging;
+using Daylily.CoolQ.Plugin;
 using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Kernel
@@ -149,7 +149,7 @@ namespace Daylily.Plugin.Kernel
         private CoolQCode ShowDetail()
         {
             Custom custom;
-            Bot.Backend.Plugins.Plugin plugin;
+            PluginBase plugin;
             if (DaylilyCore.Current.PluginManager.ContainsPlugin(CommandName))
             {
                 plugin = DaylilyCore.Current.PluginManager.GetPlugin(CommandName);

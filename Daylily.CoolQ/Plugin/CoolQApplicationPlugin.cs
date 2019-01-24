@@ -1,11 +1,11 @@
 ﻿using Daylily.Bot;
-using Daylily.Bot.Backend.Plugins;
-using Daylily.Bot.Message;
-using Daylily.CoolQ.Message;
+using Daylily.Bot.Backend.Plugin;
+using Daylily.Bot.Messaging;
+using Daylily.CoolQ.Messaging;
 
-namespace Daylily.CoolQ.Plugins
+namespace Daylily.CoolQ.Plugin
 {
-    public abstract class CoolQCommandPlugin : CommandPlugin
+    public abstract class CoolQApplicationPlugin : ApplicationPlugin
     {
         public abstract CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope);
 

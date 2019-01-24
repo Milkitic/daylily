@@ -1,12 +1,10 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Logging;
 using Daylily.Common.Text;
 using Daylily.Common.Web;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using Daylily.Osu;
 using Daylily.Osu.Cabbage;
 using Daylily.Plugin.Osu.HtmlUtils;
@@ -18,6 +16,8 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
+using Daylily.Bot.Messaging;
+using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Osu
 {

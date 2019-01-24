@@ -1,16 +1,14 @@
-﻿using Daylily.Bot.Message;
-using Daylily.Common;
-using Daylily.Common.IO;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
+using Daylily.Bot.Messaging;
+using Daylily.Common;
+using Daylily.Common.IO;
 using Daylily.Common.Logging;
 
-namespace Daylily.Bot.Backend.Plugins
+namespace Daylily.Bot.Backend.Plugin
 {
-    public abstract class Plugin : IBackend
+    public abstract class PluginBase : IBackend
     {
         public abstract PluginType PluginType { get; }
         public string Name { get; set; }
@@ -42,7 +40,7 @@ namespace Daylily.Bot.Backend.Plugins
 
         }
 
-        protected Plugin()
+        protected PluginBase()
         {
             Type t = GetType();
             if (!t.IsDefined(typeof(NameAttribute), false)) Name = t.Name;

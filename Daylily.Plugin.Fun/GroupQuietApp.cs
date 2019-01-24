@@ -1,16 +1,16 @@
 ﻿using Daylily.Bot.Backend;
-using Daylily.Bot.Message;
 using Daylily.Common;
 using Daylily.Common.Logging;
 using Daylily.CoolQ;
-using Daylily.CoolQ.Message;
-using Daylily.CoolQ.Plugins;
+using Daylily.CoolQ.Messaging;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Daylily.Bot;
+using Daylily.Bot.Messaging;
+using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Fun
 {

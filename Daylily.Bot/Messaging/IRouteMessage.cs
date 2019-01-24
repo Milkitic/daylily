@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Daylily.Bot.Session;
+﻿using Daylily.Bot.Session;
 
-namespace Daylily.Bot.Message
+namespace Daylily.Bot.Messaging
 {
     public interface IRouteMessage : IResponsiveMessage
     {

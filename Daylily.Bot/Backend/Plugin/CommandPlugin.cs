@@ -1,12 +1,9 @@
-﻿using Daylily.Bot.Message;
+﻿using System;
+using System.Linq;
 using Daylily.Common;
 using Daylily.Common.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Daylily.Bot.Backend.Plugins
+namespace Daylily.Bot.Backend.Plugin
 {
     public abstract class CommandPlugin : MessagePlugin, IInjectableBackend
     {

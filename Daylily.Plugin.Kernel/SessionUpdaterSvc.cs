@@ -1,5 +1,4 @@
 ﻿using Daylily.Bot;
-using Daylily.Bot.Backend.Plugins;
 using Daylily.Common.Logging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Daylily.Bot.Backend.Plugin;
 
 namespace Daylily.Plugin.Kernel
 {

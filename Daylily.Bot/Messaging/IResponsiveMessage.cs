@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Daylily.Bot.Message
+﻿namespace Daylily.Bot.Messaging
 {
     public interface IResponsiveMessage
     {

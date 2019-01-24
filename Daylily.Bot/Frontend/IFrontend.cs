@@ -1,5 +1,4 @@
 ﻿using Daylily.Bot.Dispatcher;
-using Daylily.Bot.Message;
 
 namespace Daylily.Bot.Frontend
 {
