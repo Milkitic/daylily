@@ -36,6 +36,8 @@ namespace Daylily.Common
             return val;
         }
 
+        public double NextDouble100() => Next(0, 100);
+
         public int Next(int maxValue)
         {
             int val;
@@ -55,6 +57,8 @@ namespace Daylily.Common
             return val;
         }
 
+        public double Next(double maxValue) => Next(0, maxValue);
+
         public int Next(int minValue, int maxValue)
         {
             int val;
@@ -70,6 +74,16 @@ namespace Daylily.Common
             //    _prev = val;
             //}
 
+            return val;
+        }
+
+        public double Next(double minValue, double maxValue)
+        {
+            double val;
+            lock (_lock)
+            {
+                val = _random.NextDouble() * (maxValue - minValue) + minValue;
+            }
             return val;
         }
 
