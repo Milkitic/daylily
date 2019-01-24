@@ -23,7 +23,7 @@ namespace Daylily.Plugin.Kernel
 {
     [Name("黄花菜帮助")]
     [Author("yf_extension")]
-    [Version(2, 0, 4, PluginVersion.Beta)]
+    [Version(2, 0, 5, PluginVersion.Beta)]
     [Help("查看此帮助信息。")]
     [Command("help")]
     public class Help : CoolQCommandPlugin
@@ -56,7 +56,9 @@ namespace Daylily.Plugin.Kernel
             var routeMsg = scope.RouteMessage;
             _routeMsg = routeMsg;
             if (UseList)
-                return routeMsg.ToSource(ShowList());
+                return routeMsg
+                    .ToSource(ShowList())
+                    .ForceToSend();
             if (CommandName == null)
             {
                 using (Session session = new Session(20000, _routeMsg.Identity, _routeMsg.UserId))
@@ -71,46 +73,66 @@ namespace Daylily.Plugin.Kernel
                     string[] sb = dic.Select(k => $"【{k.Key}】 {k.Value}").ToArray();
 
                     string msg = "被召唤啦！请选择你要查看的帮助类型：\r\n" + string.Join("\r\n", sb);
-                    SendMessage(routeMsg.ToSource(msg));
+                    SendMessage(routeMsg
+                        .ToSource(msg)
+                        .ForceToSend()
+                    );
                     try
                     {
-                        var a = dic.Select(k => k.Key).ToArray();
+                        var keys = dic.Select(k => k.Key).ToArray();
 
                         CoolQRouteMessage cm;
                         do
                         {
                             cm = (CoolQRouteMessage)session.GetMessage();
                             if (cm.RawMessage.Contains("你是谁"))
-                                return routeMsg.ToSource(new FileImage(Path.Combine(StaticDir, "help.jpg")).ToString());
+                                return routeMsg
+                                    .ToSource(new FileImage(Path.Combine(StaticDir, "help.jpg")).ToString())
+                                    .ForceToSend();
                             if (cm.Message.RawMessage.Contains("基础帮助"))
                             {
                                 if (cm.MessageType == MessageType.Private)
-                                    return routeMsg.ToSource(ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt")));
+                                    return routeMsg
+                                        .ToSource(ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt")))
+                                        .ForceToSend();
 
-                                SendMessage(routeMsg.ToSource("已发送至私聊，请查看。", true));
+                                SendMessage(routeMsg
+                                    .ToSource("已发送至私聊，请查看。", true)
+                                    .ForceToSend()
+                                );
                                 var helpStr = ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt"));
-                                SendMessage(new CoolQRouteMessage(helpStr, new CoolQIdentity(_routeMsg.UserId, MessageType.Private)));
+                                SendMessage(new CoolQRouteMessage(helpStr, new CoolQIdentity(_routeMsg.UserId, MessageType.Private))
+                                    .ForceToSend()
+                                );
                                 return null;
                             }
 
                             if (cm.RawMessage.Contains("查列表"))
-                                return routeMsg.ToSource(ShowList());
+                                return routeMsg
+                                    .ToSource(ShowList())
+                                    .ForceToSend();
 
                             SendMessage(routeMsg.ToSource("请回复大括号内的文字。"));
 
-                        } while (!a.Contains(cm.RawMessage));
+                        } while (!keys.Contains(cm.RawMessage));
 
-                        return routeMsg.ToSource(ShowList());
+                        return routeMsg
+                            .ToSource(ShowList())
+                            .ForceToSend();
                     }
                     catch (TimeoutException)
                     {
-                        return routeMsg.ToSource("没人鸟我，走了.jpg");
+                        return routeMsg
+                            .ToSource("没人鸟我，走了.jpg")
+                            .ForceToSend();
                     }
 
                 }
             }
-            else
-                return routeMsg.ToSource(ShowDetail());
+
+            return routeMsg
+                .ToSource(ShowDetail())
+                .ForceToSend();
         }
 
         private CoolQCode ShowList()
