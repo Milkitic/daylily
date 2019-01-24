@@ -1,8 +1,10 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Messaging;
 using Daylily.Common.Logging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using Daylily.Osu;
 using OSharp.V1.Beatmap;
 using OSharp.V1.User;
@@ -13,14 +15,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Osu
 {
     [Name("Mapper订阅")]
     [Author("yf_extension")]
-    [Version(2, 1, 3, PluginVersion.Alpha)]
+    [Version(2, 1, 4, PluginVersion.Alpha)]
     [Help("订阅某个mapper的qua、rank、love提醒。", "限制为群内推送10个名额，个人推送5个名额。")]
     [Command("sub")]
     public class Subscribe : CoolQCommandPlugin
@@ -166,10 +166,10 @@ namespace Daylily.Plugin.Osu
 
                 int count = _client.GetUser(UserComponent.FromUserName(SubscribeMapper), out var userObj);
                 if (count == 0)
-                    return routeMsg.ToSource("找不到指定mapper..");
+                    return routeMsg.ToSource($"找不到指定mapper: \"{SubscribeMapper}\"..");
 
                 if (count > 1)
-                    return routeMsg.ToSource($"找到{count}个mapper..");
+                    return routeMsg.ToSource($"找到{count}个mapper..人家不懂是要找哪一个");
 
                 long mapperId = userObj.UserId;
                 string mapperName = userObj.UserName;
@@ -185,7 +185,9 @@ namespace Daylily.Plugin.Osu
                 _userDic[mapperId].Add(routeMsg.CoolQIdentity);
                 SaveSettings(_userDic, "userDictionary");
                 string sub = routeMsg.MessageType == MessageType.Private ? "私聊提醒你" : "在本群提醒";
-                return routeMsg.ToSource($"{mapperName}订阅成功啦！今后他qualified、rank或love或上传图后会主动{sub}。");
+                return routeMsg
+                    .ToSource($"{mapperName}订阅成功啦！今后他qualified、rank或love或上传图后会主动{sub}。")
+                    .ForceToSend();
             }
 
             if (UnsubscribeMapper != null)
