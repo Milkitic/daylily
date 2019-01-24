@@ -71,7 +71,7 @@ namespace Daylily.Plugin.Kernel
                     string[] sb = dic.Select(k => $"【{k.Key}】 {k.Value}").ToArray();
 
                     string msg = "被召唤啦！请选择你要查看的帮助类型：\r\n" + string.Join("\r\n", sb);
-                    SendMessageAsync(routeMsg.ToSource(msg));
+                    SendMessage(routeMsg.ToSource(msg));
                     try
                     {
                         var a = dic.Select(k => k.Key).ToArray();
@@ -87,16 +87,16 @@ namespace Daylily.Plugin.Kernel
                                 if (cm.MessageType == MessageType.Private)
                                     return routeMsg.ToSource(ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt")));
 
-                                SendMessageAsync(routeMsg.ToSource("已发送至私聊，请查看。", true));
+                                SendMessage(routeMsg.ToSource("已发送至私聊，请查看。", true));
                                 var helpStr = ConcurrentFile.ReadAllText(Path.Combine(StaticDir, "common.txt"));
-                                SendMessageAsync(new CoolQRouteMessage(helpStr, new CoolQIdentity(_routeMsg.UserId, MessageType.Private)));
+                                SendMessage(new CoolQRouteMessage(helpStr, new CoolQIdentity(_routeMsg.UserId, MessageType.Private)));
                                 return null;
                             }
 
                             if (cm.RawMessage.Contains("查列表"))
                                 return routeMsg.ToSource(ShowList());
 
-                            SendMessageAsync(routeMsg.ToSource("请回复大括号内的文字。"));
+                            SendMessage(routeMsg.ToSource("请回复大括号内的文字。"));
 
                         } while (!a.Contains(cm.RawMessage));
 

@@ -87,7 +87,7 @@ namespace Daylily.Bot.Backend.Plugin
 
         protected ConcurrentRandom GlobalRandom => DaylilyCore.Current.GlobalRandom;
         protected static ConcurrentRandom StaticRandom { get; } = new ConcurrentRandom();
-        protected static void SendMessageAsync(RouteMessage routeMsg) =>
+        protected static void SendMessage(RouteMessage routeMsg) =>
             DaylilyCore.Current.MessageDispatcher?.SendMessageAsync(routeMsg);
         protected virtual void SaveSettings<T>(T cls, string fileName = null, bool writeLog = false)
         {

@@ -107,7 +107,7 @@ namespace Daylily.Plugin.Basic
             string reply2 = "回复到了别处";
             string userId2 = "xxxxxxx";
             long groupId2 = 123456;
-            SendMessageAsync(new CoolQRouteMessage(reply2, new CoolQIdentity(groupId2, MessageType.Group), userId2));
+            SendMessage(new CoolQRouteMessage(reply2, new CoolQIdentity(groupId2, MessageType.Group), userId2));
             return null;
         }
 
@@ -126,7 +126,7 @@ namespace Daylily.Plugin.Basic
                 {
                     // 这里可以做大量其他操作，更新数据库等，不阻塞主线程
                     string message = "Pong!";
-                    SendMessageAsync(new CoolQRouteMessage(message, new CoolQIdentity(UserId, MessageType.Private)));
+                    SendMessage(new CoolQRouteMessage(message, new CoolQIdentity(UserId, MessageType.Private)));
                 }
                 catch (Exception ex)
                 {

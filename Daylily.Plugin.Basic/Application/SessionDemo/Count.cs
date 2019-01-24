@@ -25,7 +25,7 @@ namespace Daylily.Plugin.Basic.Application.SessionDemo
 
             using (Session session = new Session(8000, routeMsg.Identity, routeMsg.UserId))
             {
-                SendMessageAsync(routeMsg.ToSource("睡不着那就一起数咩羊吧。来，我先开始，1！"));
+                SendMessage(routeMsg.ToSource("睡不着那就一起数咩羊吧。来，我先开始，1！"));
                 int count = 1;
                 try
                 {
@@ -39,21 +39,21 @@ namespace Daylily.Plugin.Basic.Application.SessionDemo
                             if (res == count + 1)
                             {
                                 count += 2;
-                                SendMessageAsync(routeMsg.ToSource(count.ToString()));
+                                SendMessage(routeMsg.ToSource(count.ToString()));
                             }
                             else
                             {
-                                SendMessageAsync(routeMsg.ToSource($"你数错啦，是不是困了？现在是{count}，到你了"));
+                                SendMessage(routeMsg.ToSource($"你数错啦，是不是困了？现在是{count}，到你了"));
                             }
                         }
                         else
-                            SendMessageAsync(routeMsg.ToSource($"不对！要好好数数哦！现在是{count}，到你了"));
+                            SendMessage(routeMsg.ToSource($"不对！要好好数数哦！现在是{count}，到你了"));
 
                         System.Threading.Thread.Sleep(1000);
 
                         if (count > 15)
                         {
-                            SendMessageAsync(routeMsg.ToSource("不数羊了，人家都困了，聊点别的吧！"));
+                            SendMessage(routeMsg.ToSource("不数羊了，人家都困了，聊点别的吧！"));
                             break;
                         }
                         obj = (CoolQRouteMessage)session.GetMessage();
@@ -61,7 +61,7 @@ namespace Daylily.Plugin.Basic.Application.SessionDemo
                 }
                 catch (TimeoutException)
                 {
-                    SendMessageAsync(routeMsg.ToSource("数不动了吗，那就好好睡觉咯，晚安！"));
+                    SendMessage(routeMsg.ToSource("数不动了吗，那就好好睡觉咯，晚安！"));
                 }
 
             }

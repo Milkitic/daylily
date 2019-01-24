@@ -79,7 +79,7 @@ namespace Daylily.Plugin.Basic
                         Ct.ThrowIfCancellationRequested();
                     }
 
-                    SendMessageAsync(new CoolQRouteMessage(_message, new CoolQIdentity(userId, MessageType.Private)));
+                    SendMessage(new CoolQRouteMessage(_message, new CoolQIdentity(userId, MessageType.Private)));
                 });
                 string reply = $"日程提醒已新建，{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。";
                 return routeMsg.ToSource(reply, true);

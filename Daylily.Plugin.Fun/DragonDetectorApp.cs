@@ -96,7 +96,7 @@ namespace Daylily.Plugin.Fun
 
             if (gSets.DragonCount < 1) return;
             Logger.Info("[" + gSets.GroupId + "] (龙图) " + gSets.DragonCount);
-            SendMessageAsync(gSets.routeMsg.ToSource("你龙了?"));
+            SendMessage(gSets.routeMsg.ToSource("你龙了?"));
             gSets.Clear();
         }
 

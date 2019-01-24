@@ -198,7 +198,7 @@ namespace Daylily.Plugin.Kernel
             }
 
             sb.Append("（为避免消息过长，本条消息为私聊发送）");
-            SendMessageAsync(new CoolQRouteMessage(sb.ToString(), new CoolQIdentity(_routeMsg.UserId, MessageType.Private)));
+            SendMessage(new CoolQRouteMessage(sb.ToString(), new CoolQIdentity(_routeMsg.UserId, MessageType.Private)));
             return null;
         }
 

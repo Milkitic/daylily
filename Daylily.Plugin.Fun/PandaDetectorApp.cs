@@ -119,7 +119,7 @@ namespace Daylily.Plugin.Fun
                 string resPath = Path.Combine(Domain.PluginPath, "dragon", "resource_panda_send");
                 FileInfo[] files = new DirectoryInfo(resPath).GetFiles();
                 var cqImg = new FileImage(files[StaticRandom.Next(files.Length)].FullName).ToString();
-                SendMessageAsync(gSets.routeMsg.ToSource(cqImg));
+                SendMessage(gSets.routeMsg.ToSource(cqImg));
             }
 
             gSets.Clear();
