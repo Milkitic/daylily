@@ -1,18 +1,18 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Messaging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Kernel
 {
     [Name("强制重启")]
     [Author("yf_extension")]
-    [Version(2, 0, 1, PluginVersion.Stable)]
+    [Version(2, 0, 2, PluginVersion.Stable)]
     [Help("此命令会立刻结束程序进程并重启。", Authority = Authority.Root)]
     [Command("reboot")]
     public class Reboot : CoolQCommandPlugin
@@ -41,9 +41,10 @@ namespace Daylily.Plugin.Kernel
                 }
 
                 SendMessage(new CoolQRouteMessage(
-                    "重启完成，花费" +
-                    Math.Round((DateTime.Now - rebootTime).TotalSeconds, 3) +
-                    "秒.", id));
+                    $"重启完成，花费{Math.Round((DateTime.Now - rebootTime).TotalSeconds, 3)}秒.", id
+                    )
+                    .ForceToSend()
+                );
             });
 
             _rebootInfo.OperatorId = null;
@@ -59,7 +60,10 @@ namespace Daylily.Plugin.Kernel
 
             _rebootInfo = new RebootInfo(DateTime.Now, routeMsg.CoolQIdentity);
             SaveSettings(_rebootInfo);
-            SendMessage(routeMsg.ToSource("开始重启..."));
+            SendMessage(routeMsg
+                .ToSource("开始重启...")
+                .ForceToSend()
+            );
             Environment.Exit(0);
             return null;
         }
