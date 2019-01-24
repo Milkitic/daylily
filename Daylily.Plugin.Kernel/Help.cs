@@ -1,11 +1,14 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Backend.Plugin;
+using Daylily.Bot.Messaging;
 using Daylily.Bot.Session;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Text;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using Daylily.Plugin.Kernel.Helps;
 using System;
 using System.Collections.Generic;
@@ -14,9 +17,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Daylily.Bot.Backend.Plugin;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
 using Session = Daylily.Bot.Session.Session;
 
 namespace Daylily.Plugin.Kernel
@@ -201,7 +201,7 @@ namespace Daylily.Plugin.Kernel
                 };
             }
             else
-                return "未找到相关资源...";
+                return $"未找到相关资源 \"{CommandName}\"...";
 
             var sbArg = new StringBuilder();
             var sbFree = new StringBuilder();
