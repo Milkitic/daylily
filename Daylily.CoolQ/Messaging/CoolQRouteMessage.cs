@@ -159,27 +159,21 @@ namespace Daylily.CoolQ.Messaging
             return this;
         }
 
-        public CoolQRouteMessage RandomDelayMilliseconds()
+        public CoolQRouteMessage RandomDelaySeconds()
         {
-            DelayTime = TimeSpan.FromMilliseconds(
-                DaylilyCore.Current.GlobalRandom.NextDouble() * 4000 + 1000
-            );
+            DelayTime = TimeSpan.FromSeconds(DaylilyCore.Current.GlobalRandom.NextDouble(1, 5));
             return this;
         }
 
-        public CoolQRouteMessage RandomDelaySeconds(int maxValue)
+        public CoolQRouteMessage RandomDelaySeconds(double maxValue)
         {
-            DelayTime = TimeSpan.FromMilliseconds(
-                DaylilyCore.Current.GlobalRandom.NextDouble() * (maxValue - 1000) + 1000
-            );
+            DelayTime = TimeSpan.FromMilliseconds(DaylilyCore.Current.GlobalRandom.NextDouble(1, maxValue));
             return this;
         }
 
-        public CoolQRouteMessage RandomDelaySeconds(int minValue, int maxValue)
+        public CoolQRouteMessage RandomDelaySeconds(double minValue, double maxValue)
         {
-            DelayTime = TimeSpan.FromMilliseconds(
-                DaylilyCore.Current.GlobalRandom.NextDouble() * (maxValue - minValue) + minValue
-            );
+            DelayTime = TimeSpan.FromMilliseconds(DaylilyCore.Current.GlobalRandom.NextDouble(minValue, maxValue));
             return this;
         }
 
