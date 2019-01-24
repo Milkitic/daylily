@@ -25,10 +25,5 @@ namespace Daylily.Bot.Messaging
         public string UserId { get; set; }
 
         public string RawMessage => Message.RawMessage;
-
-        protected RouteMessage()
-        {
-            Canceled = true;
-        }
     }
 }

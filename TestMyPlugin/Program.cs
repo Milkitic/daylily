@@ -17,14 +17,12 @@ namespace TestMyPlugin
             while (true)
             {
                 var msg = Console.ReadLine();
-                CoolQRouteMessage cm = new CoolQRouteMessage()
+                CoolQRouteMessage cm = CoolQRouteMessage.Parse(new CoolQGroupMessageApi
                 {
-                    GroupId = "123456788",
-                    UserId = "2241521134",
-                    Message = CoolQMessage.Parse(msg),
-                    MessageType = MessageType.Group,
-                    Group = new CoolQGroupMessageApi(),
-                };
+                    GroupId = 123456788,
+                    UserId = 2241521134,
+                    Message = msg,
+                });
 
                 Logger.Raw("回复：" + newPlugin.OnMessageReceived(new Daylily.CoolQ.CoolQScopeEventArgs
                 {

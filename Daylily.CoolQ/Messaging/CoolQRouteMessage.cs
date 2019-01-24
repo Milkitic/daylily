@@ -45,7 +45,7 @@ namespace Daylily.CoolQ.Messaging
         [JsonIgnore]
         public ReportBase ReportMeta { get; set; }
 
-        public CoolQRouteMessage()
+        private CoolQRouteMessage()
         {
         }
 
@@ -139,6 +139,13 @@ namespace Daylily.CoolQ.Messaging
             }
 
             return coolQMessage;
+        }
+
+        public CoolQRouteMessage HandleAndCancel()
+        {
+            Handled = true;
+            Canceled = true;
+            return this;
         }
 
         public CoolQRouteMessage Handle()

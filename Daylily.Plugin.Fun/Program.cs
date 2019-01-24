@@ -13,14 +13,12 @@ namespace Daylily.Plugin.Fun
             // 引用添加项目Daylily.Common
             Panda newPlugin = new Panda();
             newPlugin.OnInitialized(new Bot.StartupConfig(null, null, new Bot.StartupConfig.Metadata()));
-            CoolQRouteMessage cm = new CoolQRouteMessage()
+            CoolQRouteMessage cm = CoolQRouteMessage.Parse(new CoolQGroupMessageApi
             {
-                GroupId = "123456788",
-                UserId = "2241521134",
-                Message = CoolQMessage.Parse("SB"),
-                MessageType = MessageType.Group,
-                Group = new CoolQGroupMessageApi(),
-            };
+                GroupId = 123456788,
+                UserId = 2241521134,
+                Message = "SB",
+            });
 
             Logger.Success("收到：" + newPlugin.OnMessageReceived(new CoolQ.CoolQScopeEventArgs
             {

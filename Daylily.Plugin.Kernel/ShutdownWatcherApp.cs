@@ -1,14 +1,14 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Messaging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -95,7 +95,7 @@ namespace Daylily.Plugin.Kernel
 
             return IsMeAlive(routeMsg.CoolQIdentity)
                 ? null
-                : new CoolQRouteMessage().Handle();
+                : routeMsg.HandleAndCancel();
         }
 
         private bool IsMeAlive(CoolQIdentity id)

@@ -1,9 +1,9 @@
 ﻿using Daylily.Bot;
+using Daylily.Bot.Messaging;
 using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Messaging;
 using System;
-using Daylily.Bot.Messaging;
 
 namespace Daylily.Plugin.Osu
 {
@@ -21,16 +21,12 @@ namespace Daylily.Plugin.Osu
                 //List = true
             };
             newPlugin.OnInitialized(new StartupConfig(null, null, new StartupConfig.Metadata()));
-            CoolQRouteMessage cm = new CoolQRouteMessage
+            CoolQRouteMessage cm = CoolQRouteMessage.Parse(new CoolQGroupMessageApi
             {
-                GroupId = "123456788",
-                UserId = "2241521134",
-                Message = CoolQMessage.Parse("SB"),
-                MessageType = MessageType.Private,
-                Group = new CoolQGroupMessageApi(),
-                Discuss = new CoolQDiscussMessageApi(),
-                Private = new CoolQPrivateMessageApi(),
-            };
+                GroupId = 123456788,
+                UserId = 2241521134,
+                Message = "SB",
+            });
 
             Logger.Success("收到：" + newPlugin.OnMessageReceived(new CoolQ.CoolQScopeEventArgs
             {
