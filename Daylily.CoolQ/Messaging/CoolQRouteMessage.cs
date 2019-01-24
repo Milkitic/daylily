@@ -41,6 +41,8 @@ namespace Daylily.CoolQ.Messaging
         public CoolQDiscussMessageApi Discuss { get; set; }
         [JsonIgnore]
         public CoolQGroupMessageApi Group { get; set; }
+        [JsonIgnore]
+        public ReportBase ReportMeta { get; set; }
 
         public CoolQRouteMessage()
         {
@@ -111,8 +113,10 @@ namespace Daylily.CoolQ.Messaging
                 Message = CoolQMessage.Parse(coolQMessageApi.Message),
                 UserId = coolQMessageApi.UserId.ToString(),
                 MessageId = coolQMessageApi.MessageId,
-                CurrentAuthority = level
+                CurrentAuthority = level,
+                ReportMeta = coolQMessageApi
             };
+
             switch (coolQMessageApi)
             {
                 case CoolQPrivateMessageApi privateMsg:

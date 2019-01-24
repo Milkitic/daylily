@@ -1,13 +1,13 @@
 ﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Messaging;
 using Daylily.Common;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Fun
 {
@@ -28,7 +28,7 @@ namespace Daylily.Plugin.Fun
                 return null;
 
             string[] ids = CoolQCode.GetAt(routeMsg.RawMessage);
-            if (ids == null || !ids.Contains("2181697779") && !ids.Contains("3421735167")) return null;
+            if (ids == null || !ids.Contains(routeMsg.ReportMeta.SelfId)) return null;
             Thread.Sleep(StaticRandom.Next(200, 300));
             if (StaticRandom.NextDouble() < 0.9)
                 return routeMsg.ToSource("", true);
