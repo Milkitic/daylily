@@ -17,6 +17,8 @@ namespace Daylily.CoolQ
 {
     public class CoolQDispatcher : CompoundDispatcher
     {
+        public event Action<CoolQRouteMessage> OnMessageSending;
+
         public static CoolQDispatcher Current { get; private set; }
         public override MiddlewareConfig MiddlewareConfig { get; } = new MiddlewareConfig();
 
@@ -206,22 +208,25 @@ namespace Daylily.CoolQ
 
         public override void SendMessage(RouteMessage message)
         {
-            var routeMessage = (CoolQRouteMessage)message;
-            var msg = (routeMessage.EnableAt && routeMessage.MessageType != MessageType.Private
-                          ? new At(routeMessage.UserId) + " "
-                          : "") + ((CoolQMessage)routeMessage.Message).Compose();
-            string info = routeMessage.Identity.ToString();
+            var routeMsg = (CoolQRouteMessage)message;
+            OnMessageSending?.Invoke(routeMsg);
+            if (routeMsg.Canceled)
+                return;
+            var msg = (routeMsg.EnableAt && routeMsg.MessageType != MessageType.Private
+                          ? new At(routeMsg.UserId) + " "
+                          : "") + ((CoolQMessage)routeMsg.Message).Compose();
+            string info = routeMsg.Identity.ToString();
             string status;
-            switch (routeMessage.MessageType)
+            switch (routeMsg.MessageType)
             {
                 case MessageType.Group:
-                    status = CoolQHttpApiClient.SendGroupMessageAsync(routeMessage.GroupId, msg).Status;
+                    status = CoolQHttpApiClient.SendGroupMessageAsync(routeMsg.GroupId, msg).Status;
                     break;
                 case MessageType.Discuss:
-                    status = CoolQHttpApiClient.SendDiscussMessageAsync(routeMessage.DiscussId, msg).Status;
+                    status = CoolQHttpApiClient.SendDiscussMessageAsync(routeMsg.DiscussId, msg).Status;
                     break;
                 case MessageType.Private:
-                    status = CoolQHttpApiClient.SendPrivateMessageAsync(routeMessage.UserId, msg).Status;
+                    status = CoolQHttpApiClient.SendPrivateMessageAsync(routeMsg.UserId, msg).Status;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
