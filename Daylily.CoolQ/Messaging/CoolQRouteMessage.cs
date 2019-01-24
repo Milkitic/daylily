@@ -102,7 +102,9 @@ namespace Daylily.CoolQ.Messaging
                 Message = message,
                 EnableAt = enableAt,
                 Handled = Handled,
-                Canceled = false
+                Canceled = false,
+                IsForced = IsForced,
+                DelayTime = DelayTime
             };
         }
 
