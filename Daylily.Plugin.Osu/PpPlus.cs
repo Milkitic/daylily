@@ -23,7 +23,7 @@ namespace Daylily.Plugin.Osu
 {
     [Name("PP+查询")]
     [Author("yf_extension")]
-    [Version(2, 0, 3, PluginVersion.Stable)]
+    [Version(2, 0, 4, PluginVersion.Stable)]
     [Help("获取发送者的PP+信息，并生成相应六维图。")]
     [Command("pp")]
     public class PpPlus : CoolQCommandPlugin
@@ -64,7 +64,9 @@ namespace Daylily.Plugin.Osu
 
             var jsonString = HttpClient.HttpGet("https://syrin.me/pp+/u/" + userId);
             if (jsonString == null)
-                return routeMsg.ToSource("PP+获取超时，请重试…", true);
+                return routeMsg
+                    .ToSource("PP+获取超时，请重试…", true)
+                    .ForceToSend();
 
             StringFinder sf = new StringFinder(jsonString);
             sf.FindNext("<div class=\"performance-table\">", false);
@@ -87,7 +89,9 @@ namespace Daylily.Plugin.Osu
             }
 
             var cqImg = new FileImage(Draw(userName, dValue)).ToString();
-            return routeMsg.ToSource(cqImg);
+            return routeMsg
+                .ToSource(cqImg)
+                .ForceToSend();
         }
 
         private static Bitmap Draw(string user, IReadOnlyDictionary<string, int> dPfmance)
