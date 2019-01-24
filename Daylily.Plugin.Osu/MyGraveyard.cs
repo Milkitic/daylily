@@ -1,19 +1,20 @@
 ﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Messaging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using Daylily.Osu;
 using Daylily.Osu.Cabbage;
 using OSharp.V1.User;
 using System;
 using System.Collections.Generic;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
+using System.Linq;
 
 namespace Daylily.Plugin.Osu
 {
     [Name("随机挖坑")]
     [Author("yf_extension")]
-    [Version(2, 1, 0, PluginVersion.Beta)]
+    [Version(2, 1, 2, PluginVersion.Beta)]
     [Help("从发送者的Graveyard Beatmaps中随机挖一张图。")]
     [Command("挖坑")]
     public class MyGraveyard : CoolQCommandPlugin
@@ -31,11 +32,13 @@ namespace Daylily.Plugin.Osu
             var id = userInfo[0].UserId;
 
             var client = new OldSiteApiClient();
-            var beatmapSets = client.GetBeatmapSetsByCreator(new UserId(id));
+            var beatmapSets = client.GetBeatmapSetsByCreator(new UserId(id))
+                .Where(k => k.Beatmaps.FirstOrDefault()?.LastUpdate.AddDays(28) < DateTimeOffset.Now)
+                .ToArray();
 
             if (beatmapSets.Length == 0)
             {
-                return routeMsg.ToSource("惊了，你竟然会没坑！", true);
+                return routeMsg.ToSource("你没有Graveyard Beatmaps！", true);
             }
 
             var beatmapSet = beatmapSets[StaticRandom.Next(beatmapSets.Length)];
@@ -46,7 +49,9 @@ namespace Daylily.Plugin.Osu
                 $"{beatmapSet.Artist}\r\n({beatmapSet.FavouriteCount} fav)",
                 $"https://b.ppy.sh/thumb/{beatmapSet.Id}l.jpg");
 
-            return routeMsg.ToSource(cqMusic.ToString());
+            return routeMsg
+                .ToSource(cqMusic.ToString())
+                .ForceToSend();
         }
     }
 }
