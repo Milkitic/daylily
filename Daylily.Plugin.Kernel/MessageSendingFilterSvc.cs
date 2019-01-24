@@ -26,19 +26,16 @@ namespace Daylily.Plugin.Kernel
             var id = routeMsg.CoolQIdentity;
             if (!_identityDictionary.ContainsKey(id))
                 _identityDictionary.Add(id, new List<(string, DateTime)>());
+
+            _identityDictionary[id].RemoveAll(k => k.sentTime.AddMinutes(2) < DateTime.Now);
+            if (_identityDictionary[id].Any(k => k.message == routeMsg.RawMessage))
+            {
+                routeMsg.Canceled = true;
+            }
             else
             {
-                _identityDictionary[id].RemoveAll(k => k.sentTime.AddMinutes(2) < DateTime.Now);
-                if (_identityDictionary[id].Any(k => k.message == routeMsg.RawMessage))
-                {
-                    routeMsg.Canceled = true;
-                }
-                else
-                {
-                    _identityDictionary[id].Add((routeMsg.RawMessage, DateTime.Now));
-                }
+                _identityDictionary[id].Add((routeMsg.RawMessage, DateTime.Now));
             }
-
         }
     }
 }
