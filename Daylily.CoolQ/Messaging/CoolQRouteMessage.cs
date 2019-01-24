@@ -1,4 +1,5 @@
-﻿using Daylily.Bot.Messaging;
+﻿using Daylily.Bot;
+using Daylily.Bot.Messaging;
 using Daylily.Bot.Session;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Newtonsoft.Json;
@@ -155,6 +156,30 @@ namespace Daylily.CoolQ.Messaging
         public CoolQRouteMessage Delay(TimeSpan delay)
         {
             DelayTime = delay;
+            return this;
+        }
+
+        public CoolQRouteMessage RandomDelayMilliseconds()
+        {
+            DelayTime = TimeSpan.FromMilliseconds(
+                DaylilyCore.Current.GlobalRandom.NextDouble() * 4000 + 1000
+            );
+            return this;
+        }
+
+        public CoolQRouteMessage RandomDelaySeconds(int maxValue)
+        {
+            DelayTime = TimeSpan.FromMilliseconds(
+                DaylilyCore.Current.GlobalRandom.NextDouble() * (maxValue - 1000) + 1000
+            );
+            return this;
+        }
+
+        public CoolQRouteMessage RandomDelaySeconds(int minValue, int maxValue)
+        {
+            DelayTime = TimeSpan.FromMilliseconds(
+                DaylilyCore.Current.GlobalRandom.NextDouble() * (maxValue - minValue) + minValue
+            );
             return this;
         }
 
