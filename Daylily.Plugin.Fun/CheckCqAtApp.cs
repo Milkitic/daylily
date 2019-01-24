@@ -13,7 +13,7 @@ namespace Daylily.Plugin.Fun
 {
     [Name("@检测")]
     [Author("yf_extension")]
-    [Version(2, 0, 1, PluginVersion.Stable)]
+    [Version(2, 0, 2, PluginVersion.Stable)]
     [Help("当自己被at时回击at对方")]
     public class CheckCqAtApp : CoolQApplicationPlugin
     {
@@ -29,9 +29,10 @@ namespace Daylily.Plugin.Fun
 
             string[] ids = CoolQCode.GetAt(routeMsg.RawMessage);
             if (ids == null || !ids.Contains(routeMsg.ReportMeta.SelfId)) return null;
-            Thread.Sleep(StaticRandom.Next(200, 300));
             if (StaticRandom.NextDouble() < 0.9)
-                return routeMsg.ToSource("", true);
+                return routeMsg
+                    .ToSource("", true)
+                    .Delay(TimeSpan.FromSeconds(StaticRandom.Next(5)));
             else
             {
                 var cqImg = new FileImage(Path.Combine(PandaDir, "at.jpg"));
