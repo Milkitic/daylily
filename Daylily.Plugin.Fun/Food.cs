@@ -21,7 +21,7 @@ namespace Daylily.Plugin.Fun
 {
     [Name("深夜美食")]
     [Author("yf_extension")]
-    [Version(2, 0, 3, PluginVersion.Beta)]
+    [Version(2, 0, 4, PluginVersion.Beta)]
     [Help("查询深夜美食，若参数为空，则返回随机")]
     [Command("food")]
     public class Food : CoolQCommandPlugin
@@ -107,7 +107,9 @@ namespace Daylily.Plugin.Fun
             if (ClearCache)
             {
                 ClearContent();
-                return _cm.ToSource("已重新建立缓存");
+                return _cm
+                    .ToSource("已重新建立缓存")
+                    .ForceToSend();
             }
 
             return ModuleSearch(fullContent);
@@ -128,7 +130,9 @@ namespace Daylily.Plugin.Fun
             var file = GetRandomPhoto(dir);
 
             Bitmap bitmap = DrawWatermark(file);
-            return _cm.ToSource(new FileImage(bitmap, 85).ToString());
+            return _cm
+                .ToSource(new FileImage(bitmap, 85).ToString())
+                .ForceToSend();
         }
 
         private CoolQRouteMessage ModuleHot()
@@ -141,7 +145,9 @@ namespace Daylily.Plugin.Fun
             var hotFile = GetRandomPhoto(hotPath);
 
             Bitmap hotBitmap = DrawWatermark(hotFile);
-            return _cm.ToSource(new FileImage(hotBitmap, 85).ToString());
+            return _cm
+                .ToSource(new FileImage(hotBitmap, 85).ToString())
+                .ForceToSend();
         }
 
         private CoolQRouteMessage ModuleTop()
@@ -157,7 +163,9 @@ namespace Daylily.Plugin.Fun
                 i++;
             }
 
-            return _cm.ToSource(sb.ToString().TrimEnd('\n').TrimEnd('\r'));
+            return _cm
+                .ToSource(sb.ToString().TrimEnd('\n').TrimEnd('\r'))
+                .ForceToSend();
         }
 
         private CoolQRouteMessage ModuleLike(IEnumerable<string> fullContent)
@@ -171,7 +179,7 @@ namespace Daylily.Plugin.Fun
                 LikeDic.TryAdd(_cm.UserId, new List<string>());
 
             if (LikeDic[_cm.UserId].Contains(album[0]))
-                return _cm.ToSource("你点过赞啦", true);
+                return _cm.ToSource($"你点过\"{Like}\"的赞啦", true);
 
             LikeDic[_cm.UserId].Add(album[0]);
             SaveSettings(LikeDic);
