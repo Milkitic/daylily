@@ -16,7 +16,7 @@ namespace Daylily.Plugin.Kernel
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
-            Priority = -2,
+            Priority = 9,
             CanDisabled = false
         };
 

@@ -1,12 +1,12 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Messaging;
 using Daylily.Common.Logging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using System;
 using System.Linq;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Kernel
 {
@@ -18,7 +18,7 @@ namespace Daylily.Plugin.Kernel
 
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig
         {
-            Priority = -1,
+            Priority = 10,
             CanDisabled = false
         };
 
@@ -107,7 +107,8 @@ namespace Daylily.Plugin.Kernel
                         if (data.GroupInfo?.Admins.Count(q => q.UserId == userId) == 0)
                         {
                             Logger.Raw("Access denied.");
-                            return routeMsg.ToSource(DefaultReply.FakeAdmin).Handle();
+                            requestAuth = Authority.Public;
+                            SendMessage(routeMsg.ToSource(DefaultReply.FakeAdmin).Handle());
                         }
                     }
                     break;
@@ -115,7 +116,8 @@ namespace Daylily.Plugin.Kernel
                     if (userId != 2241521134)
                     {
                         Logger.Raw("Access denied.");
-                        return routeMsg.ToSource(DefaultReply.FakeRoot).Handle();
+                        requestAuth = Authority.Public;
+                        SendMessage(routeMsg.ToSource(DefaultReply.FakeRoot).Handle());
                     }
 
                     break;
