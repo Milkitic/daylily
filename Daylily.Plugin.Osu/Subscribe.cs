@@ -20,7 +20,7 @@ namespace Daylily.Plugin.Osu
 {
     [Name("Mapper订阅")]
     [Author("yf_extension")]
-    [Version(2, 1, 2, PluginVersion.Alpha)]
+    [Version(2, 1, 3, PluginVersion.Alpha)]
     [Help("订阅某个mapper的qua、rank、love提醒。", "限制为群内推送10个名额，个人推送5个名额。")]
     [Command("sub")]
     public class Subscribe : CoolQCommandPlugin
@@ -318,6 +318,7 @@ namespace Daylily.Plugin.Osu
                     (i.Status == BeatmapApprovedState.Qualified
                      || i.Status == BeatmapApprovedState.Ranked
                      || i.Status == BeatmapApprovedState.Loved) &&
+                    i.RankedDate != null &&
                     DateTime.UtcNow - i.RankedDate < RangeTime /*||
                     (i.Status == "pending" || i.Status == "wip") &&
                     DateTime.UtcNow - i.SubmittedDate < RangeTime*/).ToArray();
