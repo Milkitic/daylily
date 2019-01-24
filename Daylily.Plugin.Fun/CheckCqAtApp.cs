@@ -32,7 +32,7 @@ namespace Daylily.Plugin.Fun
             if (StaticRandom.NextDouble() < 0.9)
                 return routeMsg
                     .ToSource("", true)
-                    .Delay(TimeSpan.FromMilliseconds(StaticRandom.Next(5000)));
+                    .RandomDelaySeconds(5);
             else
             {
                 var cqImg = new FileImage(Path.Combine(PandaDir, "at.jpg"));
