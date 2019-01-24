@@ -82,7 +82,9 @@ namespace Daylily.Plugin.Fun
             var result = response.Results.FirstOrDefault();
             return
                 result != null
-                    ? routeMsg.ToSource(result.Values.Text)
+                    ? routeMsg.ToSource(result.Values.Text
+                        .Replace('呢', 'e')
+                        .Trim('。').Trim('?').Trim('!').Trim('～').Trim('~').Trim('？').Trim('！'))
                     : null;
         }
     }
