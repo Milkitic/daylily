@@ -27,7 +27,7 @@ namespace Daylily.Plugin.Fun
                 return null;
             using (Session session = new Session(1000 * 60, routeMsg.Identity, routeMsg.UserId))
             {
-                SendMessage(routeMsg.ToSource("请发送图片，5张以内，1分钟内有效。", true));
+                SendMessageAsync(routeMsg.ToSource("请发送图片，5张以内，1分钟内有效。", true));
                 try
                 {
                     CoolQRouteMessage routeMessage = (CoolQRouteMessage)session.GetMessage();

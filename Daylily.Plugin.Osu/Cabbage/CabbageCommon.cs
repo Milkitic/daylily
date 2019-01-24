@@ -34,7 +34,7 @@ namespace Daylily.Plugin.Osu.Cabbage
                     BllUserRole bllUserRole = new BllUserRole();
                     List<TableUserRole> userInfo = bllUserRole.GetUserRoleByQq(long.Parse(routeMsg.UserId));
                     if (userInfo.Count == 0)
-                        DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(DefaultReply.IdNotBound, true));
+                        DaylilyCore.Current.MessageDispatcher?.SendMessageAsync(routeMsg.ToSource(DefaultReply.IdNotBound, true));
 
                     uname = userInfo[0].CurrentUname;
                 }
@@ -43,7 +43,7 @@ namespace Daylily.Plugin.Osu.Cabbage
 
                 using (Session session = new Session(25000, new CoolQIdentity(cabbageId, MessageType.Private), cabbageId))
                 {
-                    DaylilyCore.Current.MessageDispatcher?.SendMessage(
+                    DaylilyCore.Current.MessageDispatcher?.SendMessageAsync(
                         new CoolQRouteMessage($"!{cmd.Replace("my", "").Replace("me", "")} {uname}",
                             new CoolQIdentity(cabbageId, MessageType.Private)));
                     try
@@ -65,9 +65,9 @@ namespace Daylily.Plugin.Osu.Cabbage
 
                         if (imgList == null)
                         {
-                            DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(result.RawMessage));
+                            DaylilyCore.Current.MessageDispatcher?.SendMessageAsync(routeMsg.ToSource(result.RawMessage));
                             if (result2 != null)
-                                DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(result2.RawMessage));
+                                DaylilyCore.Current.MessageDispatcher?.SendMessageAsync(routeMsg.ToSource(result2.RawMessage));
                             continue;
                         }
                         //throw new IndexOutOfRangeException("查询失败：" + result.Message);
@@ -89,24 +89,24 @@ namespace Daylily.Plugin.Osu.Cabbage
                             message = str1 + str + str2;
                         }
 
-                        DaylilyCore.Current.MessageDispatcher?.SendMessage(
+                        DaylilyCore.Current.MessageDispatcher?.SendMessageAsync(
                             routeMsg.ToSource(message + "\r\n（查询由白菜支持）"));
                     }
                     catch (IndexOutOfRangeException e)
                     {
                         string msg = e.Message;
-                        DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(msg, true));
+                        DaylilyCore.Current.MessageDispatcher?.SendMessageAsync(routeMsg.ToSource(msg, true));
                     }
                     catch (TimeoutException)
                     {
                         string msg = "查询失败，白菜没有搭理人家..";
-                        DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(msg, true));
+                        DaylilyCore.Current.MessageDispatcher?.SendMessageAsync(routeMsg.ToSource(msg, true));
                     }
                     catch (Exception ex)
                     {
                         string msg = "查询失败，未知错误。";
                         Logger.Exception(ex);
-                        DaylilyCore.Current.MessageDispatcher?.SendMessage(routeMsg.ToSource(msg, true));
+                        DaylilyCore.Current.MessageDispatcher?.SendMessageAsync(routeMsg.ToSource(msg, true));
                     } // catch
                 } // using
             } // while

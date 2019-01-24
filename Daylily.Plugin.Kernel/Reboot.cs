@@ -40,7 +40,7 @@ namespace Daylily.Plugin.Kernel
                     i++;
                 }
 
-                SendMessage(new CoolQRouteMessage(
+                SendMessageAsync(new CoolQRouteMessage(
                     "重启完成，花费" +
                     Math.Round((DateTime.Now - rebootTime).TotalSeconds, 3) +
                     "秒.", id));
@@ -59,7 +59,7 @@ namespace Daylily.Plugin.Kernel
 
             _rebootInfo = new RebootInfo(DateTime.Now, routeMsg.CoolQIdentity);
             SaveSettings(_rebootInfo);
-            SendMessage(routeMsg.ToSource("开始重启..."));
+            SendMessageAsync(routeMsg.ToSource("开始重启..."));
             Environment.Exit(0);
             return null;
         }

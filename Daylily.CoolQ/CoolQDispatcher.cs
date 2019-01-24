@@ -1,18 +1,18 @@
 ﻿using Daylily.Bot;
 using Daylily.Bot.Backend;
+using Daylily.Bot.Backend.Plugin;
 using Daylily.Bot.Command;
 using Daylily.Bot.Dispatcher;
+using Daylily.Bot.Messaging;
 using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Daylily.Bot.Backend.Plugin;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
 
 namespace Daylily.CoolQ
 {
@@ -66,7 +66,7 @@ namespace Daylily.CoolQ
             else if (!SessionList[identity].LockMsg)
             {
                 SessionList[identity].LockMsg = true;
-                SendMessage(CoolQRouteMessage.Parse(originObj).ToSource(originObj.Message));
+                SendMessageAsync(CoolQRouteMessage.Parse(originObj).ToSource(originObj.Message));
             }
 
             if (!SessionList[identity].TryRun(() => DispatchMessage(originObj)))
@@ -159,7 +159,7 @@ namespace Daylily.CoolQ
                 var task = Task.Run(() =>
                 {
                     replyObj = ((CoolQApplicationPlugin)appPlugin).OnMessageReceived(scope);
-                    if (replyObj != null && !replyObj.Canceled) SendMessage(replyObj);
+                    if (replyObj != null && !replyObj.Canceled) SendMessageAsync(replyObj);
                 });
 
                 if (!appPlugin.RunInMultiThreading)
@@ -196,7 +196,7 @@ namespace Daylily.CoolQ
                         }
 
                         if (replyObj == null) return;
-                        SendMessage(replyObj);
+                        SendMessageAsync(replyObj);
                     }
                 );
             }
@@ -207,12 +207,18 @@ namespace Daylily.CoolQ
 
         }
 
-        public override void SendMessage(RouteMessage message)
+        public override async void SendMessageAsync(RouteMessage message)
         {
             var routeMsg = (CoolQRouteMessage)message;
             OnMessageSending?.Invoke(routeMsg);
-            if (routeMsg.Canceled)
+            if (routeMsg.Canceled && !routeMsg.IsForced)
                 return;
+
+            if (routeMsg.DelayTime > TimeSpan.FromSeconds(0))
+            {
+                await Task.Delay(routeMsg.DelayTime).ConfigureAwait(false);
+            }
+
             var msg = (routeMsg.EnableAt && routeMsg.MessageType != MessageType.Private
                           ? new At(routeMsg.UserId) + " "
                           : "") + ((CoolQMessage)routeMsg.Message).Compose();
@@ -244,14 +250,14 @@ namespace Daylily.CoolQ
             switch (obj)
             {
                 case string str:
-                    SendMessage(new CoolQRouteMessage(str, rootId));
+                    SendMessageAsync(new CoolQRouteMessage(str, rootId));
                     break;
                 case FriendRequest friendRequest:
                     {
                         var msg = string.Format("{0} ({1})邀请加我为好友",
                             CoolQHttpApiClient.GetStrangerInfo(friendRequest.UserId.ToString()).Data?.Nickname,
                             friendRequest.UserId);
-                        SendMessage(new CoolQRouteMessage(msg, rootId));
+                        SendMessageAsync(new CoolQRouteMessage(msg, rootId));
                         break;
                     }
                 case GroupInvite groupInvite:
@@ -261,7 +267,7 @@ namespace Daylily.CoolQ
                             CoolQHttpApiClient.GetStrangerInfo(groupInvite.UserId.ToString()).Data?.Nickname,
                             groupInvite.UserId,
                             groupInvite.GroupId);
-                        SendMessage(new CoolQRouteMessage(msg, rootId));
+                        SendMessageAsync(new CoolQRouteMessage(msg, rootId));
                     }
                     break;
                 case GroupAdminChange groupAdminChange:

@@ -43,7 +43,7 @@ namespace Daylily.Plugin.Fun
                             const string mainText = "· 管理员菜单：\r\n" +
                                                     " 1. 群员指令\r\n" +
                                                     " 2. 投票指令";
-                            SendMessage(routeMsg.ToSource(mainText));
+                            SendMessageAsync(routeMsg.ToSource(mainText));
                             CoolQRouteMessage cmMain = SessionCondition("1", "2");
                             switch (cmMain.RawMessage)
                             {
@@ -90,7 +90,7 @@ namespace Daylily.Plugin.Fun
                                           " 7. 群员更名\r\n" +
                                           " 8. 把群员变成定时炸弹\r\n" +
                                           " 9. 返回";
-                SendMessage(_routeMsg.ToSource(memberText));
+                SendMessageAsync(_routeMsg.ToSource(memberText));
                 CoolQRouteMessage cmPlayer = SessionCondition("1", "2", "3", "4", "5", "6", "7", "8", "9");
                 switch (cmPlayer.RawMessage)
                 {

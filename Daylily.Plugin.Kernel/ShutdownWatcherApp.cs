@@ -41,7 +41,7 @@ namespace Daylily.Plugin.Kernel
                         ExpireTimeCollection.Foreach(pair =>
                         {
                             if (DateTime.Now < pair.Value) return;
-                            CoolQDispatcher.Current.SendMessage(new CoolQRouteMessage("啊，活过来了", pair.Identity));
+                            CoolQDispatcher.Current.SendMessageAsync(new CoolQRouteMessage("啊，活过来了", pair.Identity));
                             pair.Value = null;
                             ExpireTimeCollection.Remove(pair.Identity);
                             SaveConfig();

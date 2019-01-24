@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using Daylily.Bot.Command;
+﻿using Daylily.Bot.Command;
 using Daylily.Bot.Session;
+using System;
+using System.Collections.Generic;
 
 namespace Daylily.Bot.Messaging
 {
@@ -8,7 +9,10 @@ namespace Daylily.Bot.Messaging
     {
         public bool Handled { get; set; } = false;
         public bool Canceled { get; set; } = false;
+        public bool IsForced { get; set; } = false;
+        public TimeSpan DelayTime { get; set; } = TimeSpan.FromSeconds(0);
         public object Tag { get; set; }
+
         public string FullCommand { get; set; }
         public string CommandName { get; set; }
         public string ArgString { get; set; }

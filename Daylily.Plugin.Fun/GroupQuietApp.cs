@@ -56,7 +56,7 @@ namespace Daylily.Plugin.Fun
 
                     var file = Path.Combine(PandaDir, "quiet.jpg");
                     if (File.Exists(file))
-                        SendMessage(new CoolQRouteMessage(new FileImage(file), id));
+                        SendMessageAsync(new CoolQRouteMessage(new FileImage(file), id));
                     else
                         OnErrorOccured(
                             new ExceptionEventArgs(new FileNotFoundException("Cannot locate file", file)));

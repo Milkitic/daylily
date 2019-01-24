@@ -248,7 +248,7 @@ namespace Daylily.Plugin.Osu
 
 #else
                 SaveLogs(str, "pushes");
-                SendMessage(new CoolQRouteMessage(str, identity));
+                SendMessageAsync(new CoolQRouteMessage(str, identity));
                 Thread.Sleep(3000);
 #endif
 

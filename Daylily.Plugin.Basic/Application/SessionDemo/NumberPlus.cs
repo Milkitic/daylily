@@ -39,7 +39,7 @@ namespace Daylily.Plugin.Basic.Application.SessionDemo
                         SessionsList.TryAdd(session, (roomNum, new List<string> { routeMsg.UserId }));
                         try
                         {
-                            SendMessage(routeMsg.ToSource($"创建了房间，房间号：#{roomNum} 正在等待对手..."));
+                            SendMessageAsync(routeMsg.ToSource($"创建了房间，房间号：#{roomNum} 正在等待对手..."));
                             Dictionary<string, string> dic = new Dictionary<string, string>();
                             while (dic.Count < 2)
                             {

@@ -63,7 +63,7 @@ namespace Daylily.Plugin.Basic
                         try
                         {
                             sessionId = groupInfo.GroupId.ToString();
-                            SendMessage(new CoolQRouteMessage(msg, new CoolQIdentity(sessionId, sessionType)));
+                            SendMessageAsync(new CoolQRouteMessage(msg, new CoolQIdentity(sessionId, sessionType)));
                             Thread.Sleep(3000);
                         }
                         catch
@@ -97,7 +97,7 @@ namespace Daylily.Plugin.Basic
             if (DiscussId == null && GroupId == null && UserId == null)
                 return routeMsg.ToSource(Decode(routeMsg.ArgString));
 
-            SendMessage(new CoolQRouteMessage(innerMessage, new CoolQIdentity(sessionId, sessionType)));
+            SendMessageAsync(new CoolQRouteMessage(innerMessage, new CoolQIdentity(sessionId, sessionType)));
             return null;
         }
 

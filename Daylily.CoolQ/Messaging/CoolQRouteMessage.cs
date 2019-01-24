@@ -1,8 +1,8 @@
-﻿using Daylily.Bot.Session;
+﻿using Daylily.Bot.Messaging;
+using Daylily.Bot.Session;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Newtonsoft.Json;
 using System;
-using Daylily.Bot.Messaging;
 
 namespace Daylily.CoolQ.Messaging
 {
@@ -83,6 +83,7 @@ namespace Daylily.CoolQ.Messaging
         {
             return ToSource(new Text(message), enableAt);
         }
+
         public CoolQRouteMessage ToSource(CoolQCode message, bool enableAt = false)
         {
             return ToSource(new CoolQMessage(message), enableAt);
@@ -136,6 +137,24 @@ namespace Daylily.CoolQ.Messaging
         public CoolQRouteMessage Handle()
         {
             Handled = true;
+            return this;
+        }
+
+        public CoolQRouteMessage Cancel()
+        {
+            Canceled = true;
+            return this;
+        }
+
+        public CoolQRouteMessage Delay(TimeSpan delay)
+        {
+            DelayTime = delay;
+            return this;
+        }
+
+        public CoolQRouteMessage ForceToSend()
+        {
+            IsForced = true;
             return this;
         }
 
