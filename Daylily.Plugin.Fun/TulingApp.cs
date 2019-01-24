@@ -1,13 +1,13 @@
 ﻿using Daylily.Bot;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using Daylily.TuLing;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Fun
 {
@@ -82,9 +82,12 @@ namespace Daylily.Plugin.Fun
             var result = response.Results.FirstOrDefault();
             return
                 result != null
-                    ? routeMsg.ToSource(result.Values.Text
-                        .Replace('呢', 'e')
-                        .Trim('。').Trim('?').Trim('!').Trim('～').Trim('~').Trim('？').Trim('！'))
+                    ? routeMsg
+                        .ToSource(result.Values.Text
+                            .Replace('呢', 'e')
+                            .Trim('。').Trim('?').Trim('!').Trim('～').Trim('~').Trim('？').Trim('！')
+                        )
+                        .RandomDelaySeconds(2, 7)
                     : null;
         }
     }
