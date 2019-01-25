@@ -36,12 +36,20 @@ namespace Daylily.Plugin.Basic
             bool isParam2 = int.TryParse(Param2, out int param2);
             bool isCNum = int.TryParse(Count, out int count);
             if (!isParam1)
-                return routeMsg.ToSource(GetRand().ToString(), true);
+                return routeMsg
+                    .ToSource(GetRand().ToString(), true)
+                    .ForceToSend();
             if (!isParam2)
-                return routeMsg.ToSource(GetRand(param1).ToString(), true);
+                return routeMsg
+                    .ToSource(GetRand(param1).ToString(), true)
+                    .ForceToSend();
             if (!isCNum)
-                return routeMsg.ToSource(GetRand(param1, param2).ToString(), true);
-            return routeMsg.ToSource(GetRandMessage(param1, param2, count), true);
+                return routeMsg
+                    .ToSource(GetRand(param1, param2).ToString(), true)
+                    .ForceToSend();
+            return routeMsg
+                .ToSource(GetRandMessage(param1, param2, count), true)
+                .ForceToSend();
         }
 
         private static int GetRand() => StaticRandom.Next(0, 101);

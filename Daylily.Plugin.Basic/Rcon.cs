@@ -64,7 +64,9 @@ namespace Daylily.Plugin.Basic
             {
                 if (!isTaskFree)
                 {
-                    return routeMsg.ToSource($"日程提醒当前已有工作：\r\n{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。", true);
+                    return routeMsg
+                        .ToSource($"日程提醒当前已有工作：\r\n{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。", true)
+                        .ForceToSend();
                 }
 
                 DateTime newTime = DateTime.Now.AddMinutes(SleepMinutes);
@@ -82,9 +84,12 @@ namespace Daylily.Plugin.Basic
                     SendMessage(new CoolQRouteMessage(_message, new CoolQIdentity(userId, MessageType.Private)));
                 });
                 string reply = $"日程提醒已新建，{_newTime:HH:mm:ss}时将会通知你：\"{_message}\"。";
-                return routeMsg.ToSource(reply, true);
+                return routeMsg
+                    .ToSource(reply, true)
+                    .ForceToSend();
             }
-            else if (Stop)
+
+            if (Stop)
             {
                 string reply;
                 if (!isTaskFree)
@@ -96,9 +101,14 @@ namespace Daylily.Plugin.Basic
                 }
                 else
                     reply = "当前没有日程提醒。";
-                return routeMsg.ToSource(reply, true);
+                return routeMsg
+                    .ToSource(reply, true)
+                    .ForceToSend();
             }
-            else return routeMsg.ToSource(DefaultReply.ParamError, true);
+
+            return routeMsg
+                .ToSource(DefaultReply.ParamError, true)
+                .ForceToSend();
         }
     }
 }

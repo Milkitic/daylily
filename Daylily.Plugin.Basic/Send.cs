@@ -45,9 +45,13 @@ namespace Daylily.Plugin.Basic
             if (routeMsg.CurrentAuthority != Authority.Root)
                 return routeMsg.ToSource(DefaultReply.RootOnly);
             if (Message == null)
-                return routeMsg.ToSource("你要说什么……");
+                return routeMsg
+                    .ToSource("你要说什么……")
+                    .ForceToSend();
             if (GroupId != null && DiscussId != null)
-                return routeMsg.ToSource("不能同时选择群和讨论组……");
+                return routeMsg
+                    .ToSource("不能同时选择群和讨论组……")
+                    .ForceToSend();
 
             string innerMessage = Decode(Message);
             if (UseAllGroup)
@@ -72,14 +76,23 @@ namespace Daylily.Plugin.Basic
                         }
                     }
                 else
-                    return routeMsg.ToSource("无有效群。");
+                    return routeMsg
+                        .ToSource("无有效群。")
+                        .ForceToSend();
 
                 SaveLogs(msg, "announcement");
                 if (failedList.Count == 0)
-                    return routeMsg.ToSource("已成功发送至" + list.Count + "个群。");
+                    return routeMsg
+                        .ToSource("已成功发送至" + list.Count + "个群。")
+                        .ForceToSend();
                 else
-                    return routeMsg.ToSource(string.Format("有以下{0}个群未成功发送: {1}{2}", failedList.Count,
-                        Environment.NewLine, string.Join(Environment.NewLine, failedList)));
+                    return routeMsg
+                        .ToSource(string.Format("有以下{0}个群未成功发送: {1}{2}",
+                            failedList.Count,
+                            Environment.NewLine, 
+                            string.Join(Environment.NewLine, failedList))
+                        )
+                        .ForceToSend();
             }
             if (DiscussId != null)
             {
@@ -95,7 +108,9 @@ namespace Daylily.Plugin.Basic
                 sessionId = UserId;
 
             if (DiscussId == null && GroupId == null && UserId == null)
-                return routeMsg.ToSource(Decode(routeMsg.ArgString));
+                return routeMsg
+                    .ToSource(Decode(routeMsg.ArgString))
+                    .ForceToSend();
 
             SendMessage(new CoolQRouteMessage(innerMessage, new CoolQIdentity(sessionId, sessionType)));
             return null;

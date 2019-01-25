@@ -21,9 +21,13 @@ namespace Daylily.Plugin.Basic
             switch (routeMsg.CommandName)
             {
                 case "dice":
-                    return routeMsg.ToSource(new Dice());
+                    return routeMsg
+                        .ToSource(new Dice())
+                        .ForceToSend();
                 case "rps":
-                    return routeMsg.ToSource(new Rps());
+                    return routeMsg
+                        .ToSource(new Rps())
+                        .ForceToSend();
                 default:
                     return null;
             }
