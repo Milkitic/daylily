@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Daylily.Bot.Messaging;
+﻿using Daylily.Bot.Messaging;
 using Daylily.Common;
 using Daylily.Common.IO;
 using Daylily.Common.Logging;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace Daylily.Bot.Backend.Plugin
 {
@@ -32,7 +32,8 @@ namespace Daylily.Bot.Backend.Plugin
 
         public virtual void OnErrorOccured(ExceptionEventArgs args)
         {
-
+            var ex = args.Exception;
+            Logger.Exception(ex.InnerException ?? ex, args.CausedMessage, Name);
         }
 
         public virtual void AllPlugins_Initialized(StartupConfig startup)

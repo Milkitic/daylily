@@ -1,12 +1,13 @@
 ﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Messaging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using Daylily.Osu;
 using Daylily.Osu.Cabbage;
-using OSharp.V1.User;
+using OSharp.Api.V1.User;
 using System;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
+using System.Linq;
 
 namespace Daylily.Plugin.Osu
 {
@@ -25,7 +26,8 @@ namespace Daylily.Plugin.Osu
 
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
-            var routeMsg = scope.RouteMessage;
+            var routeMsg = (CoolQRouteMessage)scope.RouteMessage.Clone();
+            routeMsg.UserId = "451841014";
             string userName = Decode(UserName);
             if (string.IsNullOrEmpty(userName))
                 return routeMsg.ToSource(DefaultReply.ParamMissing);
@@ -61,6 +63,11 @@ namespace Daylily.Plugin.Osu
                 SpeakingCount = 0,
                 Mode = 0,
             };
+            var exist = bllUserRole.GetUserRoleByUid(userObj.UserId);
+            if (exist != null && exist.Count > 0)
+            {
+                return routeMsg.ToSource("这个账号已经被QQ: " + exist.First().QQ + "绑定啦，请联系妈船或对方QQ哦.");
+            }
             int c = bllUserRole.InsertUserRole(newRole);
             return c < 1
                 ? routeMsg.ToSource("由于各种强大的原因，绑定失败..")

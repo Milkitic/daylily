@@ -1,4 +1,4 @@
-﻿namespace Daylily.Common
+﻿namespace Daylily.Bot
 {
     public delegate void ExceptionEventHandler(object sender, ExceptionEventArgs args);
 }

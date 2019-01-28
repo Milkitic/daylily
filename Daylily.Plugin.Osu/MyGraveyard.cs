@@ -5,7 +5,7 @@ using Daylily.CoolQ.Messaging;
 using Daylily.CoolQ.Plugin;
 using Daylily.Osu;
 using Daylily.Osu.Cabbage;
-using OSharp.V1.User;
+using OSharp.Api.V1.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;

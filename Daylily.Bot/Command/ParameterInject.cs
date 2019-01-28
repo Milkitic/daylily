@@ -1,14 +1,16 @@
-﻿using System;
-using System.Reflection;
-using Daylily.Bot.Backend;
+﻿using Daylily.Bot.Backend;
 using Daylily.Common.Logging;
+using System;
+using System.Reflection;
 
 namespace Daylily.Bot.Command
 {
     public static class ParameterInject
     {
-        public static bool TryInjectParameters(this IInjectableBackend backend, ICommand command)
+        public static bool TryInjectParameters(this IInjectableBackend backend, ICommand command, out BindingFailedItem bindingFailedItem)
         {
+            bindingFailedItem = null;
+
             var props = backend.GetType().GetProperties();
             int freeIndex = 0;
             string[] freeArray = command.FreeArgs.ToArray();
@@ -45,7 +47,11 @@ namespace Daylily.Bot.Command
                                     }
                                     else
                                     {
-                                        backend.OnCommandBindingFailed(new BindingFailedEventArgs(null));
+                                        bindingFailedItem = new BindingFailedItem
+                                        {
+                                            Parameter = "sdfg"
+                                        };
+
                                         //SendMessage(
                                         //    routeMsg.ToSource($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。", cm));
                                         return false;
@@ -77,7 +83,11 @@ namespace Daylily.Bot.Command
                                 {
                                     //SendMessage(routeMsg.ToSource($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。",
                                     //    cm));
-                                    backend.OnCommandBindingFailed(new BindingFailedEventArgs(null));
+                                    bindingFailedItem = new BindingFailedItem
+                                    {
+                                        Parameter = "sdfg"
+                                    };
+
                                     return false;
                                 }
                             }
@@ -88,7 +98,10 @@ namespace Daylily.Bot.Command
 
             if (swCount <= 0 && argCount <= 0)
                 return true;
-            backend.OnCommandBindingFailed(new BindingFailedEventArgs(null));
+            bindingFailedItem = new BindingFailedItem
+            {
+                Parameter = "sdfg"
+            };
             //SendMessage(routeMsg.ToSource($"包含多余的参数. 发送 \"/help {cm.Command}\" 了解如何使用。", cm));
             return false;
         }

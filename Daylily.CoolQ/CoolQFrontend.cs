@@ -133,7 +133,7 @@ namespace Daylily.CoolQ
             }
             catch (Exception ex)
             {
-                ErrorOccured?.Invoke(this, new ExceptionEventArgs(ex));
+                ErrorOccured?.Invoke(this, new ExceptionEventArgs(null, ex));
             }
 
             return handled;

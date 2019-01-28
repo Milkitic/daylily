@@ -1,13 +1,34 @@
-﻿using Daylily.Osu.Data;
+﻿using Daylily.Common;
+using Daylily.Common.IO;
+using Daylily.Osu.Data;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 
 namespace Daylily.Osu.Cabbage
 {
     public class BllUserRole
     {
+        private static readonly string CachePath = Path.Combine(Domain.CurrentPath, "osuDb.json");
+        private static readonly ConcurrentDictionary<long, long> UserDictionary;
+
+        static BllUserRole()
+        {
+            try
+            {
+                UserDictionary = Newtonsoft.Json.JsonConvert.DeserializeObject<ConcurrentDictionary<long, long>>(
+                    File.ReadAllText(CachePath)
+                );
+            }
+            catch (Exception e)
+            {
+                UserDictionary = new ConcurrentDictionary<long, long>();
+            }
+        }
+
         public int InsertUserRole(TableUserRole role)
         {
             DbHelper dbCabbage = new DbHelper("cabbage");
@@ -29,6 +50,11 @@ VALUES(@user_id,@role,@qq,@legacy_uname,@current_uname,@is_banned,@repeat_count,
         public List<TableUserRole> GetUserRoleByQq(long qq) =>
             _GetUserRole("SELECT * FROM userrole WHERE qq = @qq",
                 new MySqlParameter("@qq", qq));
+
+        public List<TableUserRole> GetUserRoleByUid(long uid) =>
+            _GetUserRole("SELECT * FROM userrole WHERE user_id = @uid",
+                new MySqlParameter("@uid", uid));
+
 
         private List<TableUserRole> _GetUserRole(string queryString, params MySqlParameter[] param)
         {
@@ -52,7 +78,30 @@ VALUES(@user_id,@role,@qq,@legacy_uname,@current_uname,@is_banned,@repeat_count,
                 });
             }
 
+            if (parsedList.Count > 0)
+            {
+                var first = parsedList[0];
+                if (!UserDictionary.ContainsKey(first.QQ))
+                {
+                    UserDictionary.TryAdd(first.QQ, first.UserId);
+                    SaveCache();
+                }
+                else
+                {
+                    if (UserDictionary[first.QQ] != first.UserId)
+                    {
+                        UserDictionary[first.QQ] = first.UserId;
+                        SaveCache();
+                    }
+                }
+            }
+
             return parsedList;
+        }
+
+        private static void SaveCache()
+        {
+            ConcurrentFile.WriteAllText(CachePath, Newtonsoft.Json.JsonConvert.SerializeObject(UserDictionary, Newtonsoft.Json.Formatting.Indented));
         }
     }
 }

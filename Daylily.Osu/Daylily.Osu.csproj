@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\OSharp\OSharp\OSharp.csproj" />
+    <ProjectReference Include="..\..\..\OSharp\OSharp.Api\OSharp.Api.csproj" />
     <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
   </ItemGroup>
 

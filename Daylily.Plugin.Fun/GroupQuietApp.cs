@@ -1,16 +1,16 @@
-﻿using Daylily.Bot.Backend;
+﻿using Daylily.Bot;
+using Daylily.Bot.Backend;
+using Daylily.Bot.Messaging;
 using Daylily.Common;
 using Daylily.Common.Logging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Daylily.Bot;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Fun
 {
@@ -59,7 +59,7 @@ namespace Daylily.Plugin.Fun
                         SendMessage(new CoolQRouteMessage(new FileImage(file), id));
                     else
                         OnErrorOccured(
-                            new ExceptionEventArgs(new FileNotFoundException("Cannot locate file", file)));
+                            new ExceptionEventArgs(null, new FileNotFoundException("Cannot locate file", file)));
 
                     SaveSettings(_settings);
                 });

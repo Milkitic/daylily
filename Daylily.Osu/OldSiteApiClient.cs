@@ -1,6 +1,6 @@
-﻿using OSharp.V1;
-using OSharp.V1.Beatmap;
-using OSharp.V1.User;
+﻿using OSharp.Api.V1;
+using OSharp.Api.V1.Beatmap;
+using OSharp.Api.V1.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;

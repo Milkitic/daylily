@@ -4,6 +4,7 @@ using Daylily.Bot.Backend.Plugin;
 using Daylily.Bot.Command;
 using Daylily.Bot.Dispatcher;
 using Daylily.Bot.Messaging;
+using Daylily.Common;
 using Daylily.Common.Logging;
 using Daylily.CoolQ.CoolQHttp;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
@@ -186,13 +187,16 @@ namespace Daylily.CoolQ
                     {
                         try
                         {
-                            if (!plugin.TryInjectParameters(scope.RouteMessage))
+                            if (!plugin.TryInjectParameters(scope.RouteMessage, out var bindingFailedItem))
+                            {
+                                plugin.OnCommandBindingFailed(new BindingFailedEventArgs(scope, bindingFailedItem));
                                 return;
+                            }
                             replyObj = plugin.OnMessageReceived(scope);
                         }
                         catch (Exception ex)
                         {
-                            Logger.Exception(ex.InnerException ?? ex, scope.RouteMessage.FullCommand, plugin.Name);
+                            plugin.OnErrorOccured(new ExceptionEventArgs(scope, ex));
                         }
 
                         if (replyObj == null) return;

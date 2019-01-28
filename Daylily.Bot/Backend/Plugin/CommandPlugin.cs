@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using Daylily.Common;
+﻿using Daylily.Common;
 using Daylily.Common.Logging;
+using System;
+using System.Linq;
 
 namespace Daylily.Bot.Backend.Plugin
 {
