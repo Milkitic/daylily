@@ -1,32 +1,27 @@
 ﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Messaging;
 using Daylily.Common.Logging;
 using Daylily.CoolQ;
 using Daylily.CoolQ.CoolQHttp.ResponseModel.Report;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using System;
 using System.Threading;
-using Daylily.Bot.Messaging;
-using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Basic
 {
-    // 激活插件的命令，支持多字符串
-    [Command("demo1")]
-    // 插件名
-    [Name("测试Demo插件")]
-    // 插件作者
-    [Author("yf_extension")]
-    // 插件版本
-    [Version(0, 1, 0, PluginVersion.Stable)]
-    // 插件说明，用于help查询
-    [Help("用于对于插件开发进行Demo演示")]
+    [Command("demo", "test")] // 激活插件的命令，支持多字符串
+    [Name("Demo插件")] // 插件名
+    [Author("yf_extension")] // 插件作者
+    [Version(0, 1, 0, PluginVersion.Stable)] // 插件版本
+    [Help("插件开发的演示插件")] // 插件说明，用于help查询
     class Demo : CoolQCommandPlugin // 继承此类做为命令，此外还有其他两种类型
     {
         public override Guid Guid => new Guid("b5c867e1-0d3d-4efb-ad76-91c3a76100f8");
 
         private static Thread _tThread;
         private static string UserId { get; set; }
-        
+
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;
