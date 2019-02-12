@@ -2,6 +2,7 @@
 {
     public interface IInjectableBackend : ICommandBackend
     {
+        ParameterCollection Parameters { get; }
         void OnCommandBindingFailed(BindingFailedEventArgs args);
     }
 }

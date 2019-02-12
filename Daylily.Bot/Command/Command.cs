@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Daylily.Bot.Backend;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -23,6 +24,7 @@ namespace Daylily.Bot.Command
         public List<string> FreeArgs { get; }
         public List<string> Switches { get; }
         public List<string> SimpleArgs { get; }
+        public ParameterCollection Parameters { get; set; }
         public string FullCommand { get; set; }
         public string CommandName { get; }
     }

@@ -1,4 +1,5 @@
 ﻿using Daylily.Bot.Backend;
+using Daylily.Bot.Messaging;
 using Daylily.Common.Logging;
 using System;
 using System.Reflection;
@@ -7,11 +8,25 @@ namespace Daylily.Bot.Command
 {
     public static class ParameterInject
     {
-        public static bool TryInjectParameters(this IInjectableBackend backend, ICommand command, out BindingFailedItem bindingFailedItem)
+        public static bool TryInjectParameters(this IInjectableBackend backend, IArgument command, out BindingFailedItem bindingFailedItem)
+        {
+            PropertyInfo[] props;
+            if (backend.Parameters == null)
+            {
+                props = backend.GetType().GetProperties();
+                return InnerInject(backend, command, out bindingFailedItem, props);
+            }
+            else
+            {
+                props = backend.Parameters.GetType().GetProperties();
+                return InnerInject(backend.Parameters, command, out bindingFailedItem, props);
+            }
+        }
+
+        private static bool InnerInject(object hostInstance, IArgument command, out BindingFailedItem bindingFailedItem,
+            PropertyInfo[] props)
         {
             bindingFailedItem = null;
-
-            var props = backend.GetType().GetProperties();
             int freeIndex = 0;
             string[] freeArray = command.FreeArgs.ToArray();
             int freeCount = freeArray.Length;
@@ -31,7 +46,7 @@ namespace Daylily.Bot.Command
                             {
                                 if (argAttr.IsSwitch)
                                 {
-                                    prop.SetValue(backend, true);
+                                    prop.SetValue(hostInstance, true);
                                     swCount--;
                                 }
                             }
@@ -42,7 +57,7 @@ namespace Daylily.Bot.Command
                                     if (TryParse(prop, command.Args[argAttr.Name], out var parsed))
                                     {
                                         //dynamic obj = TryParse(prop, cm.Args[argAttrib.Name]);
-                                        prop.SetValue(backend, parsed);
+                                        prop.SetValue(hostInstance, parsed);
                                         argCount--;
                                     }
                                     else
@@ -60,40 +75,39 @@ namespace Daylily.Bot.Command
                             }
                             else if (argAttr.Default != null)
                             {
-                                prop.SetValue(backend, argAttr.Default); //不再转换，提升效率
+                                prop.SetValue(hostInstance, argAttr.Default); //不再转换，提升效率
                             }
 
                             break;
                         case FreeArgAttribute freeArgAttr:
+                        {
+                            if (freeIndex > freeCount - 1)
                             {
-                                if (freeIndex > freeCount - 1)
-                                {
-                                    if (freeArgAttr.Default != null)
-                                        prop.SetValue(backend, freeArgAttr.Default); //不再转换，提升效率
-                                    break;
-                                }
-
-                                if (TryParse(prop, freeArray[freeIndex], out var parsed))
-                                {
-                                    prop.SetValue(backend, parsed);
-                                    freeIndex++;
-                                    break;
-                                }
-                                else
-                                {
-                                    //SendMessage(routeMsg.ToSource($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。",
-                                    //    cm));
-                                    bindingFailedItem = new BindingFailedItem
-                                    {
-                                        Parameter = "sdfg"
-                                    };
-
-                                    return false;
-                                }
+                                if (freeArgAttr.Default != null)
+                                    prop.SetValue(hostInstance, freeArgAttr.Default); //不再转换，提升效率
+                                break;
                             }
+
+                            if (TryParse(prop, freeArray[freeIndex], out var parsed))
+                            {
+                                prop.SetValue(hostInstance, parsed);
+                                freeIndex++;
+                                break;
+                            }
+                            else
+                            {
+                                //SendMessage(routeMsg.ToSource($"参数有误...发送 \"/help {cm.Command}\" 了解如何使用。",
+                                //    cm));
+                                bindingFailedItem = new BindingFailedItem
+                                {
+                                    Parameter = "sdfg"
+                                };
+
+                                return false;
+                            }
+                        }
                     }
                 }
-
             }
 
             if (swCount <= 0 && argCount <= 0)
@@ -102,7 +116,6 @@ namespace Daylily.Bot.Command
             {
                 Parameter = "sdfg"
             };
-            //SendMessage(routeMsg.ToSource($"包含多余的参数. 发送 \"/help {cm.Command}\" 了解如何使用。", cm));
             return false;
         }
 

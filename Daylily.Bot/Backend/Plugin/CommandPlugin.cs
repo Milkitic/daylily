@@ -13,6 +13,8 @@ namespace Daylily.Bot.Backend.Plugin
         public override MiddlewareConfig MiddlewareConfig { get; } = new BackendConfig();
         protected ConcurrentRandom Random { get; } = new ConcurrentRandom();
 
+        public virtual ParameterCollection Parameters { get; }
+
         public virtual void OnCommandBindingFailed(BindingFailedEventArgs args)
         {
 

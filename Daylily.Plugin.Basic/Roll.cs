@@ -1,9 +1,9 @@
 ﻿using Daylily.Bot.Backend;
 using Daylily.CoolQ;
 using Daylily.CoolQ.Messaging;
+using Daylily.CoolQ.Plugin;
 using System;
 using System.Collections.Generic;
-using Daylily.CoolQ.Plugin;
 
 namespace Daylily.Plugin.Basic
 {
@@ -14,27 +14,31 @@ namespace Daylily.Plugin.Basic
     [Command("roll")]
     public class Roll : CoolQCommandPlugin
     {
-        public override Guid Guid => new Guid("bbcfc459-20b2-483b-89be-d7fe3289010d");
+        class Params : ParameterCollection
+        {
+            [Arg("r", IsSwitch = true, Default = false)]
+            [Help("若启用，则使抽取含重复结果。否则结果不包含重复结果。")]
+            public bool Repeat { get; set; }
+            [FreeArg]
+            [Help("当参数(m)为无效参数时，此参数(n)为上界(0~n)。否则此参数为下界(n~m)。")]
+            public string Param1 { get; set; }
+            [FreeArg]
+            [Help("此参数(m)为上界(n~m)。")]
+            public string Param2 { get; set; }
+            [FreeArg]
+            [Help("此参数(c)为抽取的数量。")]
+            public string Count { get; set; }
+        }
 
-        [Arg("r", IsSwitch = true, Default = false)]
-        [Help("若启用，则使抽取含重复结果。否则结果不包含重复结果。")]
-        public bool Repeat { get; set; }
-        [FreeArg]
-        [Help("当参数(m)为无效参数时，此参数(n)为上界(0~n)。否则此参数为下界(n~m)。")]
-        public string Param1 { get; set; }
-        [FreeArg]
-        [Help("此参数(m)为上界(n~m)。")]
-        public string Param2 { get; set; }
-        [FreeArg]
-        [Help("此参数(c)为抽取的数量。")]
-        public string Count { get; set; }
-        
+        public override Guid Guid => new Guid("bbcfc459-20b2-483b-89be-d7fe3289010d");
+        public override ParameterCollection Parameters { get; } = new Params();
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
             var routeMsg = scope.RouteMessage;
-            bool isParam1 = int.TryParse(Param1, out int param1);
-            bool isParam2 = int.TryParse(Param2, out int param2);
-            bool isCNum = int.TryParse(Count, out int count);
+            var parameters = (Params)Parameters;
+            bool isParam1 = int.TryParse(parameters.Param1, out int param1);
+            bool isParam2 = int.TryParse(parameters.Param2, out int param2);
+            bool isCNum = int.TryParse(parameters.Count, out int count);
             if (!isParam1)
                 return routeMsg
                     .ToSource(GetRand().ToString(), true)
@@ -48,7 +52,7 @@ namespace Daylily.Plugin.Basic
                     .ToSource(GetRand(param1, param2).ToString(), true)
                     .ForceToSend();
             return routeMsg
-                .ToSource(GetRandMessage(param1, param2, count), true)
+                .ToSource(GetRandMessage(param1, param2, parameters.Repeat, count), true)
                 .ForceToSend();
         }
 
@@ -58,7 +62,7 @@ namespace Daylily.Plugin.Basic
 
         private static int GetRand(int lBound, int uBound) => StaticRandom.Next(lBound, uBound + 1);
 
-        private string GetRandMessage(int lBound, int uBound, int count)
+        private string GetRandMessage(int lBound, int uBound, bool repeat, int count)
         {
             uBound = uBound + 1;
             if (uBound - lBound > 1000) return "总数只支持1000以内……";
@@ -66,9 +70,9 @@ namespace Daylily.Plugin.Basic
             if (count < 0) return "缩不粗化";
 
             List<int> newList = new List<int>();
-            if (Repeat || count > uBound - lBound)
+            if (repeat || count > uBound - lBound)
             {
-                string repMsg = ((count > uBound - lBound) || Repeat) ? "（包含重复结果）" : "";
+                string repMsg = ((count > uBound - lBound) || repeat) ? "（包含重复结果）" : "";
                 for (int i = 0; i < count; i++)
                 {
                     newList.Add(GetRand(lBound, uBound - 1));
