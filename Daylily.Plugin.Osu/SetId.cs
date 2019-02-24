@@ -26,8 +26,7 @@ namespace Daylily.Plugin.Osu
 
         public override CoolQRouteMessage OnMessageReceived(CoolQScopeEventArgs scope)
         {
-            var routeMsg = (CoolQRouteMessage)scope.RouteMessage.Clone();
-            routeMsg.UserId = "451841014";
+            var routeMsg = scope.RouteMessage;
             string userName = Decode(UserName);
             if (string.IsNullOrEmpty(userName))
                 return routeMsg.ToSource(DefaultReply.ParamMissing);
