@@ -3,43 +3,43 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Basic", "Daylily.Plugin.Basic\Daylily.Plugin.Basic.csproj", "{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Basic", "Plugins\Daylily.Plugin.Basic\Daylily.Plugin.Basic.csproj", "{C09D80E2-F0EA-4BBC-BF2C-CB92DB201DD8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Assist", "Daylily.Assist\Daylily.Assist.csproj", "{1E7A1900-414F-4424-B7E1-13B3A1297DB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Assist", "ExternalInterfaces\Daylily.Assist\Daylily.Assist.csproj", "{1E7A1900-414F-4424-B7E1-13B3A1297DB7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Bot", "Daylily.Bot\Daylily.Bot.csproj", "{133C40AD-9219-4ACF-A2B8-A5D8CE7CE46B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Bot", "Kernal\Daylily.Bot\Daylily.Bot.csproj", "{133C40AD-9219-4ACF-A2B8-A5D8CE7CE46B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.AspNetCore", "Daylily.AspNetCore\Daylily.AspNetCore.csproj", "{5BAB2B81-1E84-41DD-884B-2365495A1356}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendAppDemo", "ExtendAppDemo\ExtendAppDemo.csproj", "{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendAppDemo", "DemoTests\ExtendAppDemo\ExtendAppDemo.csproj", "{DEA7FEAE-D813-4E9B-85E3-BDC78BA4100C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Osu", "Daylily.Plugin.Osu\Daylily.Plugin.Osu.csproj", "{452FC868-4FA2-4955-8D12-DD45C16CE4E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Osu", "Plugins\Daylily.Plugin.Osu\Daylily.Plugin.Osu.csproj", "{452FC868-4FA2-4955-8D12-DD45C16CE4E1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugin", "Plugin", "{210CBD05-D624-4DA0-BF6A-444E4DBD4772}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{A647853D-3BE2-4A06-875C-575E54575E84}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Osu", "Daylily.Osu\Daylily.Osu.csproj", "{C65B49D0-BE66-4E5A-8CAC-8F2B42BADC7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Osu", "ExternalInterfaces\Daylily.Osu\Daylily.Osu.csproj", "{C65B49D0-BE66-4E5A-8CAC-8F2B42BADC7A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Common", "Daylily.Common\Daylily.Common.csproj", "{369AD1D2-F1F5-4DBA-B4DC-A18927A04805}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Common", "Kernal\Daylily.Common\Daylily.Common.csproj", "{369AD1D2-F1F5-4DBA-B4DC-A18927A04805}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.CoolQ", "Daylily.CoolQ\Daylily.CoolQ.csproj", "{F66D342F-EFCF-4067-8157-3BDE850311D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.CoolQ", "ExternalInterfaces\Daylily.CoolQ\Daylily.CoolQ.csproj", "{F66D342F-EFCF-4067-8157-3BDE850311D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Cos", "Daylily.Cos\Daylily.Cos.csproj", "{F639D3EC-B942-465C-8AD5-CD1E5510E50F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Cos", "ExternalInterfaces\Daylily.Cos\Daylily.Cos.csproj", "{F639D3EC-B942-465C-8AD5-CD1E5510E50F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Fun", "Daylily.Plugin.Fun\Daylily.Plugin.Fun.csproj", "{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Fun", "Plugins\Daylily.Plugin.Fun\Daylily.Plugin.Fun.csproj", "{02D93BC8-6B0E-494C-A0C2-0588DF1577C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestMyPlugin", "TestMyPlugin\TestMyPlugin.csproj", "{E8689307-9A94-4809-8F08-EA04E8400969}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestMyPlugin", "DemoTests\TestMyPlugin\TestMyPlugin.csproj", "{E8689307-9A94-4809-8F08-EA04E8400969}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Kernel", "Daylily.Plugin.Kernel\Daylily.Plugin.Kernel.csproj", "{134D841F-6648-4B66-A0D9-42C3336CF28E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.Plugin.Kernel", "Plugins\Daylily.Plugin.Kernel\Daylily.Plugin.Kernel.csproj", "{134D841F-6648-4B66-A0D9-42C3336CF28E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kernel", "Kernel", "{C8E07832-40C8-42B8-8A58-55F8C9A6D3E2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{0E9B6E3C-1F70-4B3F-B074-9846E6D4F245}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "DemoTests\UnitTest\UnitTest.csproj", "{0E9B6E3C-1F70-4B3F-B074-9846E6D4F245}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.TuLing", "Daylily.TuLing\Daylily.TuLing.csproj", "{7F7497FC-29E9-4C2A-8F6D-F774B23439FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daylily.TuLing", "ExternalInterfaces\Daylily.TuLing\Daylily.TuLing.csproj", "{7F7497FC-29E9-4C2A-8F6D-F774B23439FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSharp.Api", "..\..\OSharp\OSharp.Api\OSharp.Api.csproj", "{23AFDA96-D72B-421B-818D-9E43F87B9C03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSharp.Api", "ExternalInterfaces\OSharp.Api\OSharp.Api.csproj", "{384520AF-B8E6-40ED-9310-FDCF7FAB521C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,10 +107,10 @@ Global
 		{7F7497FC-29E9-4C2A-8F6D-F774B23439FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F7497FC-29E9-4C2A-8F6D-F774B23439FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F7497FC-29E9-4C2A-8F6D-F774B23439FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{23AFDA96-D72B-421B-818D-9E43F87B9C03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{23AFDA96-D72B-421B-818D-9E43F87B9C03}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{23AFDA96-D72B-421B-818D-9E43F87B9C03}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{23AFDA96-D72B-421B-818D-9E43F87B9C03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{384520AF-B8E6-40ED-9310-FDCF7FAB521C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{384520AF-B8E6-40ED-9310-FDCF7FAB521C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{384520AF-B8E6-40ED-9310-FDCF7FAB521C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{384520AF-B8E6-40ED-9310-FDCF7FAB521C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -128,7 +128,7 @@ Global
 		{02D93BC8-6B0E-494C-A0C2-0588DF1577C2} = {210CBD05-D624-4DA0-BF6A-444E4DBD4772}
 		{134D841F-6648-4B66-A0D9-42C3336CF28E} = {210CBD05-D624-4DA0-BF6A-444E4DBD4772}
 		{7F7497FC-29E9-4C2A-8F6D-F774B23439FD} = {A647853D-3BE2-4A06-875C-575E54575E84}
-		{23AFDA96-D72B-421B-818D-9E43F87B9C03} = {A647853D-3BE2-4A06-875C-575E54575E84}
+		{384520AF-B8E6-40ED-9310-FDCF7FAB521C} = {A647853D-3BE2-4A06-875C-575E54575E84}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61C8A762-DE94-46FE-8E8D-A5B4F84EA7AE}

@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\OSharp\OSharp.Api\OSharp.Api.csproj" />
-    <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
+    <ProjectReference Include="..\..\Kernal\Daylily.Common\Daylily.Common.csproj" />
+    <ProjectReference Include="..\OSharp.Api\OSharp.Api.csproj" />
   </ItemGroup>
 
 </Project>

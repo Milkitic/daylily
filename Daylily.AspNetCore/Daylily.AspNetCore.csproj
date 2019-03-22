@@ -33,11 +33,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Daylily.Bot\Daylily.Bot.csproj" />
-    <ProjectReference Include="..\Daylily.CoolQ\Daylily.CoolQ.csproj" />
-    <ProjectReference Include="..\Daylily.Cos\Daylily.Cos.csproj" />
-    <ProjectReference Include="..\Daylily.Osu\Daylily.Osu.csproj" />
-    <ProjectReference Include="..\Daylily.TuLing\Daylily.TuLing.csproj" />
+    <ProjectReference Include="..\ExternalInterfaces\Daylily.CoolQ\Daylily.CoolQ.csproj" />
+    <ProjectReference Include="..\ExternalInterfaces\Daylily.Cos\Daylily.Cos.csproj" />
+    <ProjectReference Include="..\ExternalInterfaces\Daylily.Osu\Daylily.Osu.csproj" />
+    <ProjectReference Include="..\ExternalInterfaces\Daylily.TuLing\Daylily.TuLing.csproj" />
+    <ProjectReference Include="..\Kernal\Daylily.Bot\Daylily.Bot.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

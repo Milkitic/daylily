@@ -22,9 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Daylily.Bot\Daylily.Bot.csproj" />
-    <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
-    <ProjectReference Include="..\Daylily.CoolQ\Daylily.CoolQ.csproj" />
+    <ProjectReference Include="..\..\ExternalInterfaces\Daylily.CoolQ\Daylily.CoolQ.csproj" />
+    <ProjectReference Include="..\..\Kernal\Daylily.Bot\Daylily.Bot.csproj" />
+    <ProjectReference Include="..\..\Kernal\Daylily.Common\Daylily.Common.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

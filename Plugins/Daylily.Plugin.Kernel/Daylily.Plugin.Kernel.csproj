@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ExternalInterfaces\Daylily.CoolQ\Daylily.CoolQ.csproj" />
+    <ProjectReference Include="..\..\Kernal\Daylily.Bot\Daylily.Bot.csproj" />
+    <ProjectReference Include="..\..\Kernal\Daylily.Common\Daylily.Common.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,3 @@
+[submodule "ExternalInterfaces/OSharp.Api"]
+	path = ExternalInterfaces/OSharp.Api
+	url = https://github.com/Milkitic/OSharp.Api

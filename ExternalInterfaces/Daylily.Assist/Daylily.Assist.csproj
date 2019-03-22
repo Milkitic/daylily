@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Daylily.Common\Daylily.Common.csproj" />
+    <ProjectReference Include="..\..\Kernal\Daylily.Common\Daylily.Common.csproj" />
   </ItemGroup>
 
 </Project>
