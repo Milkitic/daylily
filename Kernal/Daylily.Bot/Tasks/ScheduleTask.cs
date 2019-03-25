@@ -7,7 +7,7 @@ namespace Daylily.Bot.Tasks
     public class ScheduleTask : ApplicationTask
     {
         public ScheduleTask(ISessionIdentity identity, Action callback, params DateTime[] triggerTime)
-            : base(identity, callback)
+            : base(identity, callback,TaskType.ScheduleTask)
         {
             _triggerTimes = new HashSet<DateTime>(triggerTime);
         }
