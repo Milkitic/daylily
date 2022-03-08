@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using MilkiBotFramework.Aspnetcore;
+﻿using MilkiBotFramework.Aspnetcore;
 using MilkiBotFramework.Platforms.GoCqHttp;
 using NLog.Extensions.Logging;
 

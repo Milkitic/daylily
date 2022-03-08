@@ -2,7 +2,7 @@
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins;
+namespace daylily.Plugins.Services;
 
 [PluginIdentifier("f3561463-fda7-4d97-a899-50f6ba4a36ac")]
 public sealed class FailBindingReplyService : ServicePlugin

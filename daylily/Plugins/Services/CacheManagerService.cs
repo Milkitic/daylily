@@ -4,7 +4,7 @@ using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Tasking;
 
-namespace daylily.Plugins
+namespace daylily.Plugins.Services
 {
     [PluginIdentifier("689efebb-9642-4ba1-bad8-8e74e0f91200", "缓存定时清理")]
     public sealed class CacheManagerService : ServicePlugin

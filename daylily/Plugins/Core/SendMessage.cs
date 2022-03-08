@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using MilkiBotFramework.ContactsManaging;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins.Basic;
+namespace daylily.Plugins.Core;
 
-[PluginIdentifier("09983821-0238-4b0d-b1c1-2921eb7e52d1", "发送自定义消息")]
+[PluginIdentifier("09983821-0238-4b0d-b1c1-2921eb7e52d1", "发送自定义消息", AllowDisable = false)]
 [Author("yf_extension")]
 [Version("3.0.0")]
 [Description("支持发送任意格式的消息（包含cq码）。")]

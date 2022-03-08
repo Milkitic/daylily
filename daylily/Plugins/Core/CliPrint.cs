@@ -4,9 +4,9 @@ using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins.Basic;
+namespace daylily.Plugins.Core;
 
-[PluginIdentifier("9a71f0a2-fd2e-4d7e-abd8-681d14d0d83e", "控制台消息输出")]
+[PluginIdentifier("9a71f0a2-fd2e-4d7e-abd8-681d14d0d83e", "控制台消息输出", AllowDisable = false)]
 [PluginLifetime(PluginLifetime.Singleton)]
 [Author("milkiyf")]
 [Description("用于后台DEBUG")]

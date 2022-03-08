@@ -3,7 +3,7 @@ using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins.Basic;
+namespace daylily.Plugins;
 
 [Author("milkiyf")]
 [Description("ping-pong!")]

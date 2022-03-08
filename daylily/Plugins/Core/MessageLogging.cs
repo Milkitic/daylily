@@ -3,11 +3,11 @@ using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins
+namespace daylily.Plugins.Core
 {
     [PluginIdentifier("4c955ee3-3826-44a0-8c80-8f8507ead572")]
     [PluginLifetime(PluginLifetime.Singleton)]
-    public class MessageLoggingService : BasicPlugin
+    public class MessageLogging : BasicPlugin
     {
         private readonly ConcurrentDictionary<MessageIdentity, List<LightMessageContext>> _identityDictionary = new();
 

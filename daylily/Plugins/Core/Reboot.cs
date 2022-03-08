@@ -4,9 +4,9 @@ using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins.Basic;
+namespace daylily.Plugins.Core;
 
-[PluginIdentifier("ee3fc222-b05d-403b-b8c2-542a61b72a4d", "远程重启")]
+[PluginIdentifier("ee3fc222-b05d-403b-b8c2-542a61b72a4d", "远程重启", AllowDisable = false)]
 [PluginLifetime(PluginLifetime.Singleton)]
 [Author("milkiyf")]
 [Version("1.0.0")]

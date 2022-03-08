@@ -4,7 +4,7 @@ using MilkiBotFramework.Platforms.GoCqHttp.Messaging.CqCodes;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins.Basic;
+namespace daylily.Plugins;
 
 [PluginIdentifier("d6ba1003-4c02-46d6-94c5-52b737f7b967", "猜拳/掷骰子")]
 [Author("yf_extension")]

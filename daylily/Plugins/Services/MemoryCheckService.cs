@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using MilkiBotFramework;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Tasking;
 
-namespace daylily.Plugins
+namespace daylily.Plugins.Services
 {
     [PluginIdentifier("11CCA200-61EF-49DF-9E30-C48C3AD69BE5")]
     public class MemoryCheckService : ServicePlugin
