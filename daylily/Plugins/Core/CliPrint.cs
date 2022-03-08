@@ -6,17 +6,17 @@ using MilkiBotFramework.Plugining.Attributes;
 
 namespace daylily.Plugins.Core;
 
-[PluginIdentifier("9a71f0a2-fd2e-4d7e-abd8-681d14d0d83e", "控制台消息输出", AllowDisable = false)]
+[PluginIdentifier("9a71f0a2-fd2e-4d7e-abd8-681d14d0d83e", "控制台消息输出", AllowDisable = false, Index = -99)]
 [PluginLifetime(PluginLifetime.Singleton)]
 [Author("milkiyf")]
 [Description("用于后台DEBUG")]
 public class CliPrint : BasicPlugin
 {
-    private readonly ILogger<CliPrint> _logger;
+    private readonly ILogger _logger;
 
-    public CliPrint(ILogger<CliPrint> logger)
+    public CliPrint(ILoggerFactory loggerFactory)
     {
-        _logger = logger;
+        _logger = loggerFactory.CreateLogger("raw");
     }
 
     public override IAsyncEnumerable<IResponse> OnMessageReceived(MessageContext context)

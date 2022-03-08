@@ -26,6 +26,7 @@ namespace daylily.Plugins.Services
             await Task.Delay(TimeSpan.FromSeconds(3));
             _taskScheduler.AddTask("内存溢出检测", k => k
                 .AtStartup()
+                .WithoutLogging()
                 .ByInterval(TimeSpan.FromSeconds(5))
                 .Do((context, token) =>
                 {
