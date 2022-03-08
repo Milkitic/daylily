@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining.Configuration;
+using YamlDotNet.Serialization;
 
 // ReSharper disable once CheckNamespace
 namespace daylily;
@@ -9,5 +10,6 @@ namespace daylily;
 public sealed class PluginManagerConfig : ConfigurationBase
 {
     [Description("插件禁用列表")]
-    public ConcurrentDictionary<MessageIdentity, List<Guid>> IdentityDisabledDictionary { get; set; } = new();
+    [YamlMember(Alias = "DisabledList")]
+    public ConcurrentDictionary<MessageIdentity, HashSet<Guid>> IdentityDisabledDictionary { get; set; } = new();
 }
