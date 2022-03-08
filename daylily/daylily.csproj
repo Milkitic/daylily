@@ -8,7 +8,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.0-rc2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\depencencies\MilkiBotFramework\src\MilkiBotFramework.Platforms.GoCqHttp\MilkiBotFramework.Platforms.GoCqHttp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NLog.debug.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
