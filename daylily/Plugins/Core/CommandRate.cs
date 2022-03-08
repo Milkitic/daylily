@@ -23,7 +23,8 @@ public class CommandRate : BasicPlugin
         if (commandLineResult == null) yield break;
 
         var command = commandLineResult.Command.ToString()!;
-        var plugin = context.NextPlugins.FirstOrDefault(k => k.Commands.ContainsKey(command));
+        var plugin = context.NextPlugins.FirstOrDefault(k => k.Commands.ContainsKey(command)) ??
+                     context.ExecutedPlugins.FirstOrDefault(k => k.Commands.ContainsKey(command));
 
         if (plugin == null) yield break;
 

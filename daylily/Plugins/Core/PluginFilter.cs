@@ -76,7 +76,7 @@ public class PluginFilter : BasicPlugin
 
     [CommandHandler(Authority = MessageAuthority.Admin)]
     public async Task<IResponse> Plugin(MessageContext context,
-        [Argument] SubCommand subCommand,
+        [Argument] SubCommand commandType,
         [Option("d")] bool disableOnly = false,
         [Option("e")] bool enableOnly = false,
         [Argument] string? pluginNames = null)
@@ -84,12 +84,12 @@ public class PluginFilter : BasicPlugin
         var identity = context.MessageIdentity!;
         var disabledDictionary = _config.IdentityDisabledDictionary;
         var disabled = disabledDictionary.GetOrAdd(identity, new HashSet<Guid>());
-        return subCommand switch
+        return commandType switch
         {
             SubCommand.Enable => await SwitchPlugin(disabled, pluginNames, true),
             SubCommand.Disable => await SwitchPlugin(disabled, pluginNames, false),
             SubCommand.List => await ListPlugins(context, disabled, enableOnly ? true : disableOnly ? false : null),
-            _ => throw new ArgumentOutOfRangeException(nameof(subCommand), subCommand, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(commandType), commandType, null)
         };
     }
 
