@@ -27,7 +27,7 @@ public sealed class FailBindingReplyService : ServicePlugin
         if (bindingException.BindingFailureType == BindingFailureType.Mismatch)
         {
             GetCommandInfo(bindingException, out var command, out var info, out var type);
-            var message = $"命令缺少{type}：{info}。请使用 \"/help {command}\" 查看说明。";
+            var message = $"指令缺少{type}：{info}。请使用 \"/help {command}\" 查看说明。";
             message = AppendError(bindingException, context, message);
 
             return Reply(message);
@@ -36,7 +36,7 @@ public sealed class FailBindingReplyService : ServicePlugin
         if (bindingException.BindingFailureType == BindingFailureType.ConvertError)
         {
             GetCommandInfo(bindingException, out var command, out var info, out var type);
-            var message = $"命令{type}解析出错：{info}。请使用 \"/help {command}\" 查看说明。";
+            var message = $"指令{type}解析出错：{info}。请使用 \"/help {command}\" 查看说明。";
             message = AppendError(bindingException, context, message);
 
             return Reply(message);
@@ -56,18 +56,17 @@ public sealed class FailBindingReplyService : ServicePlugin
 
     private static string AppendError(BindingException bindingException, MessageContext context, string message)
     {
-        if (context.Authority == MessageAuthority.Root)
-        {
+        if (context.Authority != MessageAuthority.Root) return message;
+
 #if DEBUG
-            if (context.MessageIdentity!.MessageType == MessageType.Private)
-            {
-                message += "错误信息：\r\n" + (bindingException.InnerException ?? bindingException);
-            }
-            else
+        if (context.MessageIdentity!.MessageType == MessageType.Private)
+        {
+            message += "错误信息：\r\n" + (bindingException.InnerException ?? bindingException);
+        }
+        else
 #endif
-            {
-                message += "\r\n错误信息：" + (bindingException.InnerException?.Message ?? bindingException.Message);
-            }
+        {
+            message += "\r\n错误信息：" + (bindingException.InnerException?.Message ?? bindingException.Message);
         }
 
         return message;

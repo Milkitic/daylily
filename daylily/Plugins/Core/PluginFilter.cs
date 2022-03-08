@@ -51,26 +51,37 @@ public class PluginFilter : BasicPlugin
 
     public override async IAsyncEnumerable<IResponse> OnMessageReceived(MessageContext context)
     {
-        var contextCommandLineResult = context.CommandLineResult;
-        if (contextCommandLineResult?.Command == null)
-        {
-            yield break;
-        }
-
-        var command = contextCommandLineResult.Command.ToString()!;
-        if (!_pluginsMapping.TryGetValue(command, out var pluginInfo))
-        {
-            yield break;
-        }
-
         var identity = context.MessageIdentity!;
         var disabledDictionary = _config.IdentityDisabledDictionary;
-        if (disabledDictionary.TryGetValue(identity, out var disabled) &&
-            disabled.Contains(pluginInfo.Metadata.Guid))
+        if (disabledDictionary.TryGetValue(identity, out var disabled))
         {
-            yield return identity.MessageType == MessageType.Private
-                ? Reply("你已禁用此命令.").Handled()
-                : Reply("本群已禁用此命令.").Handled();
+            var allDisabled = disabled
+                .Select(k => _plugins.TryGetValue(k, out var value) ? value : null);
+
+            foreach (var info in allDisabled)
+            {
+                context.NextPlugins.Remove(info);
+            }
+
+            var contextCommandLineResult = context.CommandLineResult;
+            if (contextCommandLineResult?.Command == null)
+            {
+                yield break;
+            }
+
+            var command = contextCommandLineResult.Command.ToString()!;
+            if (!_pluginsMapping.TryGetValue(command, out var pluginInfo))
+            {
+                yield break;
+            }
+
+
+            if (disabled.Contains(pluginInfo.Metadata.Guid))
+            {
+                yield return identity.MessageType == MessageType.Private
+                    ? Reply("你已禁用此命令.")
+                    : Reply("本群已禁用此命令.");
+            }
         }
     }
 
@@ -96,7 +107,7 @@ public class PluginFilter : BasicPlugin
     private async Task<IResponse> SwitchPlugin(HashSet<Guid> disabled, string? pluginNames, bool pluginState)
     {
         if (string.IsNullOrWhiteSpace(pluginNames))
-            return Reply("请指定插件名称或者命令名称。");
+            return Reply("请指定插件名称或者命令名称..请使用 \"/plugin list\" 查看插件列表");
         var inputs = pluginNames.Split(',');
         var sb = new StringBuilder();
         var dict = inputs.Distinct().ToDictionary(k => k, InnerGetPlugin);
@@ -111,11 +122,15 @@ public class PluginFilter : BasicPlugin
             }
 
             if (plugin == null)
-                sb.AppendLine($"指定插件 \"{pluginNames}\" 不存在.");
+            {
+                sb.Append($"指定插件 \"{input}\" 不存在..");
+                if (dict.Count == 1) sb.Append("请使用 \"/plugin list\" 查看插件列表");
+                else sb.AppendLine();
+            }
             else if (pluginState && !disabled.Contains(plugin.Metadata.Guid))
-                sb.AppendLine($"指定插件 \"{GetPluginString(plugin)}\" 未被{targetStateRev}.");
+                sb.AppendLine($"指定插件 \"{GetPluginString(plugin)}\" 未被{targetStateRev}..");
             else if (!pluginState && disabled.Contains(plugin.Metadata.Guid))
-                sb.AppendLine($"指定插件 \"{GetPluginString(plugin)}\" 已被{targetStateName}.");
+                sb.AppendLine($"指定插件 \"{GetPluginString(plugin)}\" 已被{targetStateName}..");
             else
             {
                 if (pluginState)
