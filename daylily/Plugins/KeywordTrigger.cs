@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;
@@ -49,8 +48,7 @@ public class KeywordTrigger : BasicPlugin
         [NotNullWhen(true)] out string? imgP, double chancePercent = 10)
     {
         var chance = chancePercent / 100d;
-        string msg = message.ToLower();
-        if (keywords.Any(msg.Contains))
+        if (keywords.Any(k => message.Contains(k, StringComparison.InvariantCultureIgnoreCase)))
         {
             imgP = pics[Random.Shared.Next(pics.Count)];
             return Random.Shared.NextDouble() < chance;

@@ -6,6 +6,10 @@ public class KeywordTriggerConfig : ConfigurationBase
 {
     public class TriggerObject
     {
+        public TriggerObject()
+        {
+        }
+
         public TriggerObject(List<string> words, List<string> pictures, double chancePercent)
         {
             Words = words;
@@ -17,6 +21,7 @@ public class KeywordTriggerConfig : ConfigurationBase
         public List<string> Pictures { get; set; }
         public double ChancePercent { get; set; }
     }
+
     public List<TriggerObject> UserDictionary { get; set; } = new List<TriggerObject>
     {
         new(new List<string> { "我" },

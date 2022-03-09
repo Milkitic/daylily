@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using MilkiBotFramework.Connecting;
 
 namespace daylily.Moebooru
 {
@@ -20,32 +21,32 @@ namespace daylily.Moebooru
 
         public bool EnableR18 { get; set; } = false;
 
-        private static async Task<T> GetTAsync<T>(string url)
-        {
-            try
-            {
-                using (var client = new HttpClient())
-                {
-                    var s = await client.GetStringAsync(url);
-                    T result = JsonSerializer.Deserialize<T>(s);
-                    return result;
-                }
-            }
-            catch (Exception) { return default(T); }
-        }
+        //private static async Task<T> GetTAsync<T>(string url)
+        //{
+        //    try
+        //    {
+        //        using (var client = new HttpClient())
+        //        {
+        //            var s = await client.GetStringAsync(url);
+        //            T result = JsonSerializer.Deserialize<T>(s);
+        //            return result;
+        //        }
+        //    }
+        //    catch (Exception) { return default(T); }
+        //}
 
-        public async Task<IEnumerable<Post>> PopularRecentAsync()
+        public async Task<IEnumerable<Post>> PopularRecentAsync(LightHttpClient httpClient)
         {
-            IEnumerable<Post> result = await GetTAsync<Post[]>(Popular);
+            IEnumerable<Post> result = await httpClient.HttpGet<Post[]>(Popular);
 
             if (!EnableR18)
                 result = result?.Where(p => p.rating == SafeRating);
             return result;
         }
 
-        internal async Task<(IEnumerable<Post> result, string info)> PopularRecentDebugAsync()
+        internal async Task<(IEnumerable<Post> result, string info)> PopularRecentDebugAsync(LightHttpClient httpClient)
         {
-            IEnumerable<Post> result = await GetTAsync<Post[]>(Popular);
+            IEnumerable<Post> result = await httpClient.HttpGet<Post[]>(Popular);
             var groups = result.GroupBy(p => p.rating);
             var infos = new LinkedList<string>();
             foreach (var group in groups)

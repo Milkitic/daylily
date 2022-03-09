@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using daylily.Moebooru;
+using MilkiBotFramework.Connecting;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;
 using MilkiBotFramework.Plugining;
@@ -11,6 +12,13 @@ namespace daylily.Plugins;
 [Description("设了")]
 public class Konachan : BasicPlugin
 {
+    private readonly LightHttpClient _lightHttpClient;
+
+    public Konachan(LightHttpClient lightHttpClient)
+    {
+        _lightHttpClient = lightHttpClient;
+    }
+
     [CommandHandler("konachan")]
     public async Task<IResponse?> OnKonachan()
     {
@@ -23,10 +31,10 @@ public class Konachan : BasicPlugin
         return await GetResponse("https://yande.re");
     }
 
-    private static async Task<IResponse?> GetResponse(string domain)
+    private async Task<IResponse?> GetResponse(string domain)
     {
         var k = new Api(domain);
-        var result = await k.PopularRecentAsync();
+        var result = await k.PopularRecentAsync(_lightHttpClient);
         var post = result?.FirstOrDefault();
         return post == null ? null : Reply(new LinkImage(post.JpegUrl));
     }
