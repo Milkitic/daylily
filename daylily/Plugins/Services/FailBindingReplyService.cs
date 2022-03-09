@@ -61,7 +61,7 @@ public sealed class FailBindingReplyService : ServicePlugin
 #if DEBUG
         if (context.MessageIdentity!.MessageType == MessageType.Private)
         {
-            message += "错误信息：\r\n" + (bindingException.InnerException ?? bindingException);
+            message += "调试信息：\r\n" + (bindingException.InnerException ?? bindingException);
         }
         else
 #endif

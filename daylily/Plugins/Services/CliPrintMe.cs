@@ -4,7 +4,7 @@ using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Plugining.Loading;
 
-namespace daylily.Plugins.Core;
+namespace daylily.Plugins.Services;
 
 [PluginIdentifier("440f5374-925e-4065-85cd-c06e0175af06", Index = 99)]
 public class CliPrintMe : ServicePlugin

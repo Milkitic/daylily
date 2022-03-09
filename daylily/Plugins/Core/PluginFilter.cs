@@ -9,7 +9,7 @@ using MilkiBotFramework.Plugining.Loading;
 
 namespace daylily.Plugins.Core;
 
-[PluginIdentifier("1888139a-860d-41f6-8684-639b2b6923e9", "插件管理", Index = -20)]
+[PluginIdentifier("1888139a-860d-41f6-8684-639b2b6923e9", "插件管理", Index = -20, AllowDisable = false)]
 [Description("动态管理插件的启用状态（仅限当前群生效）")]
 [PluginLifetime(PluginLifetime.Singleton)]
 public class PluginFilter : BasicPlugin
@@ -72,7 +72,7 @@ public class PluginFilter : BasicPlugin
         {
             yield break;
         }
-        
+
         if (disabled.Contains(pluginInfo.Metadata.Guid))
         {
             yield return identity.MessageType == MessageType.Private

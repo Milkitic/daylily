@@ -5,7 +5,7 @@ using MilkiBotFramework.Plugining.Attributes;
 
 namespace daylily.Plugins.Core;
 
-[PluginIdentifier("4c955ee3-3826-44a0-8c80-8f8507ead572")]
+[PluginIdentifier("4c955ee3-3826-44a0-8c80-8f8507ead572", AllowDisable = false)]
 [PluginLifetime(PluginLifetime.Singleton)]
 public class MessageLogging : BasicPlugin
 {

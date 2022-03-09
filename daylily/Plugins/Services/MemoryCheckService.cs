@@ -35,7 +35,9 @@ namespace daylily.Plugins.Services
                     var mem = proc.PrivateMemorySize64;
                     if (preSize != 0L)
                     {
-                        logger.LogDebug($"Memory changed by {SizeSuffix(mem - preSize)} to {SizeSuffix(mem)} in 3 sec");
+                        var value = mem - preSize;
+                        if (value > 256 * 1024)
+                            logger.LogDebug($"Memory changed by {SizeSuffix(value)} to {SizeSuffix(mem)} in 3 sec");
                     }
 
                     preSize = mem;
