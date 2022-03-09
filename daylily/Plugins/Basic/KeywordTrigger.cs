@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Plugining.Configuration;
 
-namespace daylily.Plugins;
+namespace daylily.Plugins.Basic;
 
 [PluginIdentifier("1abf7c43-bafb-4536-a2be-e9aff8a2fc51", "关键词触发")]
 [Description("收到已给的关键词时，根据已给几率返回一张熊猫图。")]

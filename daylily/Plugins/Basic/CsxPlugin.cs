@@ -7,7 +7,7 @@ using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins;
+namespace daylily.Plugins.Basic;
 
 [PluginIdentifier("77dabbaa-1f4a-49f0-9813-b6071936e7f6", "缩写查询")]
 [Description("缩写查询 (https://github.com/itorr/nbnhhsh)")]

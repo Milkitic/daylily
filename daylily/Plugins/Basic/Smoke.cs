@@ -7,7 +7,7 @@ using MilkiBotFramework.Platforms.GoCqHttp.Connecting;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins;
+namespace daylily.Plugins.Basic;
 
 [PluginIdentifier("4c729d16-3954-4e70-ad4c-8a0ea72efe1a", "自助禁言")]
 [Description("当${BotName}是管理员时，将命令发送者禁言（30分钟到12小时）。")]

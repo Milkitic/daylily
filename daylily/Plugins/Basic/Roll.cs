@@ -3,7 +3,7 @@ using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins;
+namespace daylily.Plugins.Basic;
 
 [PluginIdentifier("bbcfc459-20b2-483b-89be-d7fe3289010d", "获取随机数")]
 [Description("获取一个或多个随机数。")]

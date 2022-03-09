@@ -6,7 +6,7 @@ using MilkiBotFramework.Platforms.GoCqHttp.Messaging.CqCodes;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins;
+namespace daylily.Plugins.Basic;
 
 [PluginIdentifier("e6d765b3-a015-4192-9cc1-0cfa5c13ec55", "@检测")]
 [PluginLifetime(PluginLifetime.Scoped)]

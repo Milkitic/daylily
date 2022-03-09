@@ -6,7 +6,7 @@ using MilkiBotFramework.Messaging.RichMessages;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins;
+namespace daylily.Plugins.Basic;
 
 [PluginIdentifier("a6cbd411-499f-4dde-bdb0-fc17431cb6c9", "konachan", Authors = "bleatingsheep")]
 [Description("设了")]

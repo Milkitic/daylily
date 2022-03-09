@@ -8,7 +8,7 @@ using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Plugining.Configuration;
 using MilkiBotFramework.Tasking;
 
-namespace daylily.Plugins;
+namespace daylily.Plugins.Basic;
 
 [PluginIdentifier("14e60bec-dc11-45da-8654-baed42588745", "图灵")]
 [Description("不时进行成精发言")]

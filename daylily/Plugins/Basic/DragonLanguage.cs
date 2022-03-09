@@ -8,7 +8,7 @@ using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Plugining.Configuration;
 using TinyPinyin.Core;
 
-namespace daylily.Plugins
+namespace daylily.Plugins.Basic
 {
     [PluginIdentifier("33cc804f-1704-4e34-a958-85bd9d1069e1", "龙TimeNo色")]
     [Description("龙语识别。")]
