@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Coosu.Api" Version="2.2.0-alpha.1" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.0.0-rc2" />
   </ItemGroup>
 
