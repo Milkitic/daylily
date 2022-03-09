@@ -26,7 +26,7 @@ namespace daylily.Plugins.Osu
             _config = configuration.Instance;
         }
 
-        // POST api/<go_cqhttpController>
+        // GET api/<AuthenticationController>
         [HttpGet]
         public async Task<IActionResult> Get(string code, string state)
         {
@@ -54,7 +54,7 @@ namespace daylily.Plugins.Osu
             try
             {
                 var authClient = new AuthorizationClient();
-                result = authClient.GetUserToken(5044, new Uri(_config.ServerRedirectUri),
+                result = authClient.GetUserToken(_config.ClientId, new Uri(_config.ServerRedirectUri),
                     _config.ClientSecret, code);
                 if (result == null)
                     throw new Exception("token result为null");
