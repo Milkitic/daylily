@@ -91,7 +91,7 @@ namespace daylily.Plugins
             yield return message;
         }
 
-        private bool Detect(string msg, out (string origin, string mine)[] info)
+        public static bool Detect(string msg, out (string origin, string mine)[] info)
         {
             var dr = new DetectedResults(msg);
             var word = new StringBuilder();
@@ -127,8 +127,7 @@ namespace daylily.Plugins
             return true;
         }
 
-
-        private void DetectWord(int index, DetectedResults dr, StringBuilder word)
+        private static void DetectWord(int index, DetectedResults dr, StringBuilder word)
         {
             if (word.Length == 0) return;
             char[] cs = GetChars(word.ToString(), Templates);
