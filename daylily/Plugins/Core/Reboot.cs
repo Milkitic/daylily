@@ -8,8 +8,6 @@ namespace daylily.Plugins.Core;
 
 [PluginIdentifier("ee3fc222-b05d-403b-b8c2-542a61b72a4d", "远程重启", AllowDisable = false)]
 [PluginLifetime(PluginLifetime.Singleton)]
-[Author("milkiyf")]
-[Version("1.0.0")]
 [Description("允许退出程序或强制关闭进程并重启")]
 public class Reboot : BasicPlugin
 {
@@ -49,7 +47,7 @@ public class Reboot : BasicPlugin
         foreach (var rootAccount in _botOptions.RootAccounts)
         {
             yield return ToPrivate(rootAccount,
-                "20秒后即将重启，发送\"/reboot c\"可取消。\r\n" +
+                "20秒后即将重启，发送 \"/reboot c\" 可取消。\r\n" +
                 "注意：若守护进程没有正确运行，将无法自动启动");
         }
 

@@ -11,8 +11,6 @@ using TinyPinyin.Core;
 namespace daylily.Plugins
 {
     [PluginIdentifier("33cc804f-1704-4e34-a958-85bd9d1069e1", "龙TimeNo色")]
-    [Author("yf_extension")]
-    [Version("2.0.0")]
     [Description("龙语识别。")]
     public class DragonLanguage : BasicPlugin
     {

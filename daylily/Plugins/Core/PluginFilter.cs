@@ -10,8 +10,6 @@ using MilkiBotFramework.Plugining.Loading;
 namespace daylily.Plugins.Core;
 
 [PluginIdentifier("1888139a-860d-41f6-8684-639b2b6923e9", "插件管理", Index = -20)]
-[Author("milkiyf")]
-[Version("3.0.0")]
 [Description("动态管理插件的启用状态（仅限当前群生效）")]
 [PluginLifetime(PluginLifetime.Singleton)]
 public class PluginFilter : BasicPlugin
@@ -53,35 +51,33 @@ public class PluginFilter : BasicPlugin
     {
         var identity = context.MessageIdentity!;
         var disabledDictionary = _config.IdentityDisabledDictionary;
-        if (disabledDictionary.TryGetValue(identity, out var disabled))
+        if (!disabledDictionary.TryGetValue(identity, out var disabled)) yield break;
+
+        var allDisabled = disabled
+            .Select(k => _plugins.TryGetValue(k, out var value) ? value : null);
+
+        foreach (var info in allDisabled)
         {
-            var allDisabled = disabled
-                .Select(k => _plugins.TryGetValue(k, out var value) ? value : null);
+            context.NextPlugins.Remove(info);
+        }
 
-            foreach (var info in allDisabled)
-            {
-                context.NextPlugins.Remove(info);
-            }
+        var contextCommandLineResult = context.CommandLineResult;
+        if (contextCommandLineResult?.Command == null)
+        {
+            yield break;
+        }
 
-            var contextCommandLineResult = context.CommandLineResult;
-            if (contextCommandLineResult?.Command == null)
-            {
-                yield break;
-            }
-
-            var command = contextCommandLineResult.Command.ToString()!;
-            if (!_pluginsMapping.TryGetValue(command, out var pluginInfo))
-            {
-                yield break;
-            }
-
-
-            if (disabled.Contains(pluginInfo.Metadata.Guid))
-            {
-                yield return identity.MessageType == MessageType.Private
-                    ? Reply("你已禁用此命令.")
-                    : Reply("本群已禁用此命令.");
-            }
+        var command = contextCommandLineResult.Command.ToString()!;
+        if (!_pluginsMapping.TryGetValue(command, out var pluginInfo))
+        {
+            yield break;
+        }
+        
+        if (disabled.Contains(pluginInfo.Metadata.Guid))
+        {
+            yield return identity.MessageType == MessageType.Private
+                ? Reply("你已禁用此命令..")
+                : Reply("本群已禁用此命令..");
         }
     }
 

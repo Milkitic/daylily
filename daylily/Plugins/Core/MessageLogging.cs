@@ -3,39 +3,42 @@ using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace daylily.Plugins.Core
+namespace daylily.Plugins.Core;
+
+[PluginIdentifier("4c955ee3-3826-44a0-8c80-8f8507ead572")]
+[PluginLifetime(PluginLifetime.Singleton)]
+public class MessageLogging : BasicPlugin
 {
-    [PluginIdentifier("4c955ee3-3826-44a0-8c80-8f8507ead572")]
-    [PluginLifetime(PluginLifetime.Singleton)]
-    public class MessageLogging : BasicPlugin
-    {
-        private readonly ConcurrentDictionary<MessageIdentity, List<LightMessageContext>> _identityDictionary = new();
+    public ConcurrentDictionary<MessageIdentity, List<LightMessage>> IdentityDictionary { get; } = new();
 
-        public override IAsyncEnumerable<IResponse> OnMessageReceived(MessageContext context)
+    public override IAsyncEnumerable<IResponse> OnMessageReceived(MessageContext context)
+    {
+        var lightMessageContext = new LightMessage
         {
-            var lightMessageContext = new LightMessageContext
+            UserId = context.MessageUserIdentity?.UserId,
+            RawMessage = context.TextMessage,
+            Timestamp = context.ReceivedTime
+        };
+        IdentityDictionary.AddOrUpdate(context.MessageIdentity!,
+            new List<LightMessage>
             {
-                UserId = context.MessageUserIdentity?.UserId,
-                RawMessage = context.TextMessage
-            };
-            _identityDictionary.AddOrUpdate(context.MessageIdentity!,
-                new List<LightMessageContext>
-                {
-                    lightMessageContext
-                }, (_, list) =>
-                {
-                    list.Add(lightMessageContext);
-                    return list;
-                }
-            );
+                lightMessageContext
+            }, (_, list) =>
+            {
+                if (list.Count > 20)
+                    list.RemoveAt(0);
+                list.Add(lightMessageContext);
+                return list;
+            }
+        );
 
-            return base.OnMessageReceived(context);
-        }
+        return base.OnMessageReceived(context);
     }
+}
 
-    internal class LightMessageContext
-    {
-        public string? UserId { get; set; }
-        public string? RawMessage { get; set; }
-    }
+public class LightMessage
+{
+    public string? UserId { get; set; }
+    public string? RawMessage { get; set; }
+    public DateTimeOffset Timestamp { get; set; }
 }

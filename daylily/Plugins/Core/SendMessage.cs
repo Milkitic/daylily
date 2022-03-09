@@ -7,8 +7,6 @@ using MilkiBotFramework.Plugining.Attributes;
 namespace daylily.Plugins.Core;
 
 [PluginIdentifier("09983821-0238-4b0d-b1c1-2921eb7e52d1", "发送自定义消息", AllowDisable = false)]
-[Author("yf_extension")]
-[Version("3.0.0")]
 [Description("支持发送任意格式的消息（包含cq码）。")]
 public class SendMessage : BasicPlugin
 {

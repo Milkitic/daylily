@@ -10,8 +10,6 @@ namespace daylily.Plugins;
 
 [PluginIdentifier("e6d765b3-a015-4192-9cc1-0cfa5c13ec55", "@检测")]
 [PluginLifetime(PluginLifetime.Scoped)]
-[Author("milkiyf")]
-[Version("2.0.2")]
 [Description("当自己被at时回击at对方")]
 public class CheckCqAt : BasicPlugin
 {

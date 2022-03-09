@@ -6,8 +6,6 @@ using MilkiBotFramework.Plugining.Attributes;
 namespace daylily.Plugins;
 
 [PluginIdentifier("bbcfc459-20b2-483b-89be-d7fe3289010d", "获取随机数")]
-[Author("yf_extension")]
-[Version("3.0.0")]
 [Description("获取一个或多个随机数。")]
 public class Roll : BasicPlugin
 {
