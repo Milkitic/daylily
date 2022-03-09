@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Platforms.GoCqHttp.Messaging.CqCodes;
 using MilkiBotFramework.Plugining;
