@@ -77,8 +77,8 @@ public class PowerOff : BasicPlugin
 #endif
     )]
     public async Task<IResponse?> OnPowerOff(MessageContext context,
-        [Argument, Description("关闭的持续时间，最大支持7天，最小支持1分钟（格式：\"00:00:00\"）")]
-        TimeSpan time = default)
+        [Argument, Description("关闭的持续时间，最大支持7天，最小支持1分钟（单位：分钟）")]
+        int elapsingTime = 10)
     {
         using (await _config.AsyncLock.LockAsync())
         {
@@ -94,7 +94,7 @@ public class PowerOff : BasicPlugin
                 return Reply("此功能需要群内管理员权限..").AvoidRepeat();
             }
 
-            if (time == default) time = TimeSpan.FromMinutes(10);
+            var time = TimeSpan.FromMinutes(elapsingTime);
             if (time < TimeSpan.FromMinutes(1) || time > TimeSpan.FromDays(7))
             {
                 return Reply("时间范围设置不对，最大支持7天，最小支持1分钟..").AvoidRepeat();
@@ -149,15 +149,23 @@ public class PowerOff : BasicPlugin
                 if (now < expireTime) continue;
                 modified = true;
                 expireTimeDictionary.TryRemove(messageIdentity, out _);
+                var channelId = messageIdentity.Id;
+                var subChannelId = messageIdentity.SubId;
+
                 if (messageIdentity.MessageType == MessageType.Private)
-                    _messageApi.SendPrivateMessageAsync(messageIdentity.Id, "啊，活过来了").Wait(token);
+                {
+                    _messageApi.SendPrivateMessageAsync(channelId, "啊，活过来了").Wait(token);
+                }
                 else if (messageIdentity.MessageType == MessageType.Channel)
-                    _messageApi.SendChannelMessageAsync(messageIdentity.Id, "啊，活过来了", messageIdentity.SubId)
-                        .Wait(token);
+                {
+                    _messageApi.SendChannelMessageAsync(channelId, "啊，活过来了", subChannelId).Wait(token);
+                }
             }
 
             if (modified)
+            {
                 _config.SaveAsync().Wait(token);
+            }
         }
     }
 }

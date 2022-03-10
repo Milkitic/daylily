@@ -7,11 +7,11 @@ using MilkiBotFramework.Plugining.Loading;
 namespace daylily.Plugins.Core;
 
 [PluginIdentifier("3d5d466c-e52c-4888-950c-5bcc36ac8294")]
-public class PowerOffCheckService : ServicePlugin
+public class PowerOffFilterService : ServicePlugin
 {
     private readonly ShuntDownConfig _config;
 
-    public PowerOffCheckService(IConfiguration<ShuntDownConfig> configuration)
+    public PowerOffFilterService(IConfiguration<ShuntDownConfig> configuration)
     {
         _config = configuration.Instance;
     }
