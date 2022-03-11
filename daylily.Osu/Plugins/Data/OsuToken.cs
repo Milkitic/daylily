@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+namespace daylily.Osu.Plugins.Data;
+
 [Table("tokens")]
 public class OsuToken
 {

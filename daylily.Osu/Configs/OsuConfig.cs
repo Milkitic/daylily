@@ -1,6 +1,6 @@
 ﻿using MilkiBotFramework.Plugining.Configuration;
 
-namespace daylily;
+namespace daylily.Osu.Configs;
 
 public sealed class OsuConfig : ConfigurationBase
 {

@@ -64,7 +64,7 @@ namespace daylily.Plugins.Services
             if (value < 0) { return "-" + SizeSuffix(-value, decimalPlaces); }
 
             int i = 0;
-            decimal dValue = (decimal)value;
+            double dValue = value;
             while (Math.Round(dValue, decimalPlaces) >= 1000)
             {
                 dValue /= 1024;

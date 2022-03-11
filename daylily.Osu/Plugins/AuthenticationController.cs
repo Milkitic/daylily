@@ -1,13 +1,13 @@
 ﻿using Coosu.Api.V2;
 using Coosu.Api.V2.ResponseModels;
-using daylily.Plugins.Osu.Data;
-using daylily.Utils;
+using daylily.Osu.Configs;
+using daylily.Osu.Plugins.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MilkiBotFramework.Plugining.Configuration;
 
-namespace daylily.Plugins.Osu
+namespace daylily.Osu.Plugins
 {
     [Route("api/authentication")]
     [ApiController]
