@@ -1,7 +1,7 @@
 ﻿using Coosu.Api.V2;
 using Coosu.Api.V2.ResponseModels;
 using daylily.Osu.Configs;
-using daylily.Osu.Plugins.Data;
+using daylily.Osu.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

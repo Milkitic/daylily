@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MilkiBotFramework.Plugining.Database;
 
-namespace daylily.Osu.Plugins.Data
+namespace daylily.Osu.Data
 {
     public class OsuDbContext : PluginDbContext
     {
