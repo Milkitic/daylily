@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace daylily.Tuling.RequestModel
+namespace daylily.ThirdParty.Tuling.RequestModel
 {
     internal class Request
     {

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using daylily.Moebooru;
+using daylily.ThirdParty.Moebooru;
 using MilkiBotFramework.Connecting;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;

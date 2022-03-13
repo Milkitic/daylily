@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using ToolGood.Words.internals;
-
-namespace ToolGood.Words
+﻿namespace daylily.ThirdParty.ToolGood.Words
 {
     /// <summary>
     /// 文本搜索（指针版，速度更快） ，如果关键字太多(5W以上)，建议使用 StringSearchEx

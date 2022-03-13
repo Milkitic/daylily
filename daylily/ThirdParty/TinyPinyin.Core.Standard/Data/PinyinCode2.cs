@@ -1,4 +1,4 @@
-﻿namespace TinyPinyin.Core.Data
+﻿namespace daylily.ThirdParty.TinyPinyin.Core.Standard.Data
 {
     public static class PinyinCode2
     {

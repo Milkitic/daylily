@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 using Coosu.Api.V2;
 using Coosu.Api.V2.ResponseModels;
-using daylily.Osu.Configs;
 using Microsoft.Extensions.Logging;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
@@ -14,7 +8,7 @@ using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Plugining.Configuration;
 using MilkiBotFramework.Tasking;
 
-namespace daylily.Osu.Plugins;
+namespace daylily.Plugins.Osu;
 
 [PluginIdentifier("a1332794-448f-4378-a8b4-209428204af1")]
 public class ApiService : ServicePlugin

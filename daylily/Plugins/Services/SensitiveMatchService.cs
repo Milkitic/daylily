@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using daylily.ThirdParty.ToolGood.Words;
 using Microsoft.Extensions.Logging;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Plugining.Loading;
-using ToolGood.Words;
 
 namespace daylily.Plugins.Services
 {

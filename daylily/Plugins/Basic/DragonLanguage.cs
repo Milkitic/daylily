@@ -1,12 +1,12 @@
 ﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Text;
+using daylily.ThirdParty.TinyPinyin.Core.Standard;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Plugining.Configuration;
-using TinyPinyin.Core;
 
 namespace daylily.Plugins.Basic
 {

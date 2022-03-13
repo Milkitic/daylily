@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TinyPinyin.Core
+﻿namespace daylily.ThirdParty.TinyPinyin.Core.Standard
 {
     public interface IPinyinDict
     {

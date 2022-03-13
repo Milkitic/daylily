@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Coosu.Api" Version="2.2.0-alpha.2" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.0.0-rc2" />
   </ItemGroup>
 
@@ -23,10 +24,6 @@
     <None Update="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>

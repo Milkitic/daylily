@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace TinyPinyin.Core
+﻿namespace daylily.ThirdParty.TinyPinyin.Core.Standard
 {
     public abstract class PinyinMapDict : IPinyinDict
     {

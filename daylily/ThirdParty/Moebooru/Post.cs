@@ -2,7 +2,7 @@
 
 #pragma warning disable IDE1006 // 命名样式
 // ReSharper disable InconsistentNaming
-namespace daylily.Moebooru
+namespace daylily.ThirdParty.Moebooru
 {
     public class Post
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace daylily.Tuling.ResponseModel
+namespace daylily.ThirdParty.Tuling.ResponseModel
 {
     /// <summary>
     /// 请求意图

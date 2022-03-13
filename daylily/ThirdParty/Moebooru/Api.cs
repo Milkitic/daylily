@@ -1,7 +1,6 @@
-﻿using System.Text.Json;
-using MilkiBotFramework.Connecting;
+﻿using MilkiBotFramework.Connecting;
 
-namespace daylily.Moebooru
+namespace daylily.ThirdParty.Moebooru
 {
     class Api
     {

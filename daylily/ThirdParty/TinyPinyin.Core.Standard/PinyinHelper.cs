@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using TinyPinyin.Core.Data;
+﻿using daylily.ThirdParty.TinyPinyin.Core.Standard.Data;
 
-namespace TinyPinyin.Core
+namespace daylily.ThirdParty.TinyPinyin.Core.Standard
 {
     public static class PinyinHelper
     {

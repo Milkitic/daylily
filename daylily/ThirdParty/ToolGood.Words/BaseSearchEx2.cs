@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 
-namespace ToolGood.Words.internals
+namespace daylily.ThirdParty.ToolGood.Words
 {
     public abstract class BaseSearchEx2
     {

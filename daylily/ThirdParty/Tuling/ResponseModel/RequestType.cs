@@ -1,4 +1,4 @@
-﻿namespace daylily.Tuling.ResponseModel
+﻿namespace daylily.ThirdParty.Tuling.ResponseModel
 {
     internal enum ResultType
     {

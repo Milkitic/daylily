@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.ComponentModel;
-using daylily.Tuling;
+using daylily.ThirdParty.Tuling;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;
 using MilkiBotFramework.Plugining;

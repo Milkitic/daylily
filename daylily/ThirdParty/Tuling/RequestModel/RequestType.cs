@@ -1,4 +1,4 @@
-﻿namespace daylily.Tuling.RequestModel
+﻿namespace daylily.ThirdParty.Tuling.RequestModel
 {
     internal enum RequestType
     {

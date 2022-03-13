@@ -1,8 +1,8 @@
-﻿using daylily.Tuling.RequestModel;
-using daylily.Tuling.ResponseModel;
+﻿using daylily.ThirdParty.Tuling.RequestModel;
+using daylily.ThirdParty.Tuling.ResponseModel;
 using MilkiBotFramework.Connecting;
 
-namespace daylily.Tuling
+namespace daylily.ThirdParty.Tuling
 {
     public class TulingClient
     {

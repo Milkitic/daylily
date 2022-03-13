@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace daylily.Tuling.RequestModel
+namespace daylily.ThirdParty.Tuling.RequestModel
 {
     /// <summary>
     /// 音频信息

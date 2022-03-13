@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TinyPinyin.Core.Data
+﻿namespace daylily.ThirdParty.TinyPinyin.Core.Standard.Data
 {
     public static class PinyinData
     {

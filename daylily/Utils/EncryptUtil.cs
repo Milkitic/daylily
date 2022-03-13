@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace daylily.Osu;
+namespace daylily.Utils;
 
 public static class EncryptUtil
 {

@@ -1,4 +1,4 @@
-﻿using daylily.Tuling;
+﻿using daylily.ThirdParty.Tuling;
 using Microsoft.Extensions.DependencyInjection;
 using MilkiBotFramework.Aspnetcore;
 using MilkiBotFramework.Platforms.GoCqHttp;

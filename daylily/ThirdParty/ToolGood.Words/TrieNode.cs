@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ToolGood.Words.internals
+﻿namespace daylily.ThirdParty.ToolGood.Words
 {
     public class TrieNode
     {
