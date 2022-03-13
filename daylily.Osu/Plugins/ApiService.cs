@@ -72,8 +72,8 @@ public class ApiService : ServicePlugin
     private void RefreshTokenTask(TaskContext context, CancellationToken token)
     {
         var authClientPub = new AuthorizationClient();
-        var result = authClientPub.GetPublicToken(_config.ClientId, _config.ClientSecret);
+        var result = authClientPub.GetPublicToken(_config.ClientId, _config.ClientSecret).Result;
         this.PublicToken = result;
-        context.Logger.LogInformation("已刷新Osu!PublicToken");
+        context.Logger.LogInformation($"已刷新Osu!PublicToken，将在{DateTime.Now.AddSeconds(result.ExpiresIn)}过期");
     }
 }

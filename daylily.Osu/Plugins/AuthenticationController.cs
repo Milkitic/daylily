@@ -17,12 +17,15 @@ namespace daylily.Osu.Plugins
 #pragma warning restore IDE1006 // 命名样式
     {
         private readonly ILogger _logger;
+        private readonly OsuDbContext _osuDbContext;
         private readonly OsuConfig _config;
 
         public AuthenticationController(ILogger<AuthenticationController> logger,
-            IConfiguration<OsuConfig> configuration)
+            IConfiguration<OsuConfig> configuration, 
+            OsuDbContext osuDbContext)
         {
             _logger = logger;
+            _osuDbContext = osuDbContext;
             _config = configuration.Instance;
         }
 
@@ -54,7 +57,7 @@ namespace daylily.Osu.Plugins
             try
             {
                 var authClient = new AuthorizationClient();
-                result = authClient.GetUserToken(_config.ClientId, new Uri(_config.ServerRedirectUri),
+                result = await authClient.GetUserToken(_config.ClientId, new Uri(_config.ServerRedirectUri),
                     _config.ClientSecret, code);
                 if (result == null)
                     throw new Exception("token result为null");
@@ -66,11 +69,10 @@ namespace daylily.Osu.Plugins
                 return Content("token获取出错，请重试。");
             }
 
-            using var client = new OsuClientV2(result);
-            var user = client.User.GetOwnData();
-
-            await using var ctx = new OsuDbContext();
-            await ctx.AddOrUpdateToken(long.Parse(qq), user.Id.Value, result);
+            var client = new OsuClientV2(result);
+            var user = await client.User.GetOwnData();
+            
+            await _osuDbContext.AddOrUpdateToken(long.Parse(qq), user.Id.Value, result);
 
             return Redirect("https://osu.ppy.sh");
         }
