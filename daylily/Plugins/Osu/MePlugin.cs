@@ -11,7 +11,7 @@ using MilkiBotFramework.Plugining.Attributes;
 
 namespace daylily.Plugins.Osu;
 
-[PluginIdentifier("1d3dce2d-f52d-42ab-97a4-fcf31e11dfbc", "个人名片", Authors = "milkiyf")]
+[PluginIdentifier("1d3dce2d-f52d-42ab-97a4-fcf31e11dfbc", "个人名片", Scope = "osu!")]
 [Description("个人名片查询")]
 public class MePlugin : BasicPlugin
 {

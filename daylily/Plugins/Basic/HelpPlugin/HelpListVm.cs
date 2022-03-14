@@ -4,7 +4,7 @@ namespace daylily.Plugins.Basic.HelpPlugin;
 
 public class HelpListVm
 {
-    public HelpListVm(IReadOnlyList<AssemblyInfoVm> assemblyInfoVms)
+    public HelpListVm(IReadOnlyList<ScopeInfoVm> assemblyInfoVms)
     {
         AssemblyInfoVms = assemblyInfoVms;
     }
@@ -17,5 +17,5 @@ public class HelpListVm
     public string CoreVersionString { get; } = typeof(MilkiBotFramework.Bot).Assembly
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "0.0.1-alpha";
 
-    public IReadOnlyList<AssemblyInfoVm> AssemblyInfoVms { get; }
+    public IReadOnlyList<ScopeInfoVm> AssemblyInfoVms { get; }
 }

@@ -34,11 +34,11 @@ public class Help : BasicPlugin
             plugins = plugins.Where(k => k.Commands.Count != 0);
 
         var assemblyInfoVms = plugins
-            .GroupBy(k => k.Type.Assembly.GetName().Name)
+            .GroupBy(k => k.Metadata.Scope)
             .Where(k => k.Any())
             .Select(pluginInfos =>
             {
-                return new AssemblyInfoVm(pluginInfos.Key, pluginInfos
+                return new ScopeInfoVm(pluginInfos.Key, pluginInfos
                     .Select(k => (pluginInfo: k,
                         commands: k.Commands
                             .Where(o => o.Value.Authority <= context.Authority &&
@@ -52,6 +52,7 @@ public class Help : BasicPlugin
                     .OrderBy(k => k.Commands[0].Command)
                     .ToArray());
             })
+            .OrderBy(k => k.Scope)
             .ToArray();
         var renderer = new WpfDrawingProcessor<HelpListVm, HelpListControl>(true);
 

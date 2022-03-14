@@ -59,7 +59,7 @@
                 </StackPanel>
             </Border>
         </DataTemplate>
-        <DataTemplate x:Key="AssemblyPluginInfoTempl" DataType="local:AssemblyInfoVm">
+        <DataTemplate x:Key="AssemblyPluginInfoTempl" DataType="local:ScopeInfoVm">
             <Grid Margin="5,5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -69,7 +69,7 @@
                     Margin="5,0,0,2"
                     FontSize="14"
                     Foreground="#4070F0"
-                    Text="{Binding Name}" />
+                    Text="{Binding Scope}" />
                 <ItemsControl
                     Grid.Row="1"
                     ItemTemplate="{StaticResource PluginInfoTempl}"
