@@ -29,7 +29,6 @@ public class MePlugin : BasicPlugin
     [CommandHandler("me.osu")]
     public async Task<IResponse> MeOsu(MessageContext messageContext)
     {
-        var str = _dbContext.Database.GetDbConnection().ConnectionString;
         var osuId = await _dbContext.GetUserIdByQQ(Convert.ToInt64(messageContext.MessageUserIdentity.UserId));
         if (osuId == null) return Reply(_apiService.UnbindMessage);
         var result = await _apiService.TryAccessPublicApi(async client =>
