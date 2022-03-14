@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using MilkiBotFramework.ContactsManaging;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;

@@ -12,13 +12,13 @@ public sealed class FailExecuteReplyService : ServicePlugin
         if (context.Authority != MessageAuthority.Root) return null;
 
         var message = "插件执行出错啦！";
-#if DEBUG
-        if (context.MessageIdentity!.MessageType == MessageType.Private)
-        {
-            message += "调试信息：\r\n" + (exception);
-        }
-        else
-#endif
+//#if DEBUG
+//        if (context.MessageIdentity!.MessageType == MessageType.Private)
+//        {
+//            message += "调试信息：\r\n" + (exception);
+//        }
+//        else
+//#endif
         {
             message += "\r\n错误信息：" + (exception?.Message);
         }

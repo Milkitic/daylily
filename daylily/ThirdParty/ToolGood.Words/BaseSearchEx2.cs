@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 
 namespace daylily.ThirdParty.ToolGood.Words
 {
@@ -44,15 +45,18 @@ namespace daylily.ThirdParty.ToolGood.Words
         protected internal virtual void Save(BinaryWriter bw)
         {
             bw.Write(_keywords.Length);
-            foreach (var item in _keywords) {
+            foreach (var item in _keywords)
+            {
                 bw.Write(item);
             }
 
             List<int> guideslist = new List<int>();
             guideslist.Add(_guides.Length);
-            foreach (var guide in _guides) {
+            foreach (var guide in _guides)
+            {
                 guideslist.Add(guide.Length);
-                foreach (var item in guide) {
+                foreach (var item in guide)
+                {
                     guideslist.Add(item);
                 }
             }
@@ -130,20 +134,24 @@ namespace daylily.ThirdParty.ToolGood.Words
         {
             var length = br.ReadInt32();
             _keywords = new string[length];
-            for (int i = 0; i < length; i++) {
+            for (int i = 0; i < length; i++)
+            {
                 _keywords[i] = br.ReadString();
             }
 
             length = br.ReadInt32();
             var bs = br.ReadBytes(length);
-            using (MemoryStream ms = new MemoryStream(bs)) {
+            using (MemoryStream ms = new MemoryStream(bs))
+            {
                 BinaryReader b = new BinaryReader(ms);
                 var length2 = b.ReadInt32();
                 _guides = new int[length2][];
-                for (int i = 0; i < length2; i++) {
+                for (int i = 0; i < length2; i++)
+                {
                     var length3 = b.ReadInt32();
                     _guides[i] = new int[length3];
-                    for (int j = 0; j < length3; j++) {
+                    for (int j = 0; j < length3; j++)
+                    {
                         _guides[i][j] = b.ReadInt32();
                     }
                 }
@@ -208,15 +216,19 @@ namespace daylily.ThirdParty.ToolGood.Words
         {
             var root = new TrieNode();
             Dictionary<int, List<TrieNode>> allNodeLayers = new Dictionary<int, List<TrieNode>>();
-            for (int i = 0; i < _keywords.Length; i++) {
+            for (int i = 0; i < _keywords.Length; i++)
+            {
                 var p = _keywords[i];
                 var nd = root;
-                for (int j = 0; j < p.Length; j++) {
+                for (int j = 0; j < p.Length; j++)
+                {
                     nd = nd.Add((char)p[j]);
-                    if (nd.Layer == 0) {
+                    if (nd.Layer == 0)
+                    {
                         nd.Layer = j + 1;
                         List<TrieNode> trieNodes;
-                        if (allNodeLayers.TryGetValue(nd.Layer, out trieNodes) == false) {
+                        if (allNodeLayers.TryGetValue(nd.Layer, out trieNodes) == false)
+                        {
                             trieNodes = new List<TrieNode>();
                             allNodeLayers[nd.Layer] = trieNodes;
                         }
@@ -228,14 +240,17 @@ namespace daylily.ThirdParty.ToolGood.Words
 
             List<TrieNode> allNode = new List<TrieNode>();
             allNode.Add(root);
-            foreach (var trieNodes in allNodeLayers) {
-                foreach (var nd in trieNodes.Value) {
+            foreach (var trieNodes in allNodeLayers)
+            {
+                foreach (var nd in trieNodes.Value)
+                {
                     allNode.Add(nd);
                 }
             }
             allNodeLayers = null;
 
-            for (int i = 1; i < allNode.Count; i++) {
+            for (int i = 1; i < allNode.Count; i++)
+            {
                 var nd = allNode[i];
                 nd.Index = i;
                 TrieNode r = nd.Parent.Failure;
@@ -243,7 +258,8 @@ namespace daylily.ThirdParty.ToolGood.Words
                 while (r != null && !r.m_values.ContainsKey(c)) r = r.Failure;
                 if (r == null)
                     nd.Failure = root;
-                else {
+                else
+                {
                     nd.Failure = r.m_values[c];
                     foreach (var result in nd.Failure.Results)
                         nd.SetResults(result);
@@ -252,39 +268,48 @@ namespace daylily.ThirdParty.ToolGood.Words
             root.Failure = root;
 
             StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 1; i < allNode.Count; i++) {
+            for (int i = 1; i < allNode.Count; i++)
+            {
                 stringBuilder.Append(allNode[i].Char);
             }
             var length = CreateDict(stringBuilder.ToString());
             stringBuilder = null;
 
             var allNode2 = new List<TrieNodeEx>();
-            for (int i = 0; i < allNode.Count; i++) {
+            for (int i = 0; i < allNode.Count; i++)
+            {
                 allNode2.Add(new TrieNodeEx() { Index = i });
             }
-            for (int i = 0; i < allNode2.Count; i++) {
+            for (int i = 0; i < allNode2.Count; i++)
+            {
                 var oldNode = allNode[i];
                 var newNode = allNode2[i];
                 newNode.Char = _dict[oldNode.Char];
 
-                foreach (var item in oldNode.m_values) {
+                foreach (var item in oldNode.m_values)
+                {
                     var key = _dict[item.Key];
                     var index = item.Value.Index;
                     newNode.Add(key, allNode2[index]);
                 }
-                foreach (var item in oldNode.Results) {
+                foreach (var item in oldNode.Results)
+                {
                     newNode.SetResults(item);
                 }
                 oldNode = oldNode.Failure;
-                while (oldNode != root) {
-                    foreach (var item in oldNode.m_values) {
+                while (oldNode != root)
+                {
+                    foreach (var item in oldNode.m_values)
+                    {
                         var key = _dict[item.Key];
                         var index = item.Value.Index;
-                        if (newNode.HasKey(key) == false) {
+                        if (newNode.HasKey(key) == false)
+                        {
                             newNode.Add(key, allNode2[index]);
                         }
                     }
-                    foreach (var item in oldNode.Results) {
+                    foreach (var item in oldNode.Results)
+                    {
                         newNode.SetResults(item);
                     }
                     oldNode = oldNode.Failure;
@@ -310,7 +335,8 @@ namespace daylily.ThirdParty.ToolGood.Words
             bool[] seats2 = new bool[0x00FFFFFF];
             Int32 start = 1;
             Int32 oneStart = 1;
-            for (int i = 0; i < nodes.Count; i++) {
+            for (int i = 0; i < nodes.Count; i++)
+            {
                 var node = nodes[i];
                 node.Rank(ref oneStart, ref start, seats, seats2, has);
             }
@@ -323,12 +349,14 @@ namespace daylily.ThirdParty.ToolGood.Words
             _check = new Int32[length];
             List<Int32[]> guides = new List<Int32[]>();
             guides.Add(new Int32[] { 0 });
-            for (Int32 i = 0; i < length; i++) {
+            for (Int32 i = 0; i < length; i++)
+            {
                 var item = nodes[has[i]];
                 if (item == null) continue;
                 _key[i] = item.Char;
                 _next[i] = item.Next;
-                if (item.End) {
+                if (item.End)
+                {
                     _check[i] = guides.Count;
                     guides.Add(item.Results.ToArray());
                 }
@@ -343,26 +371,35 @@ namespace daylily.ThirdParty.ToolGood.Words
         private int CreateDict(string keywords)
         {
             Dictionary<char, Int32> dictionary = new Dictionary<char, Int32>();
-            foreach (var item in keywords) {
-                if (dictionary.ContainsKey(item)) {
+            foreach (var item in keywords)
+            {
+                if (dictionary.ContainsKey(item))
+                {
                     dictionary[item] += 1;
-                } else {
+                }
+                else
+                {
                     dictionary[item] = 1;
                 }
             }
             var list = dictionary.OrderByDescending(q => q.Value).Select(q => q.Key).ToList();
             var list2 = new List<char>();
             var sh = false;
-            foreach (var item in list) {
-                if (sh) {
+            foreach (var item in list)
+            {
+                if (sh)
+                {
                     list2.Add(item);
-                } else {
+                }
+                else
+                {
                     list2.Insert(0, item);
                 }
                 sh = !sh;
             }
             _dict = new Int32[char.MaxValue + 1];
-            for (Int32 i = 0; i < list2.Count; i++) {
+            for (Int32 i = 0; i < list2.Count; i++)
+            {
                 _dict[list2[i]] = i + 1;
             }
             return dictionary.Count;

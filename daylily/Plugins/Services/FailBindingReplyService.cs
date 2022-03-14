@@ -58,13 +58,13 @@ public sealed class FailBindingReplyService : ServicePlugin
     {
         if (context.Authority != MessageAuthority.Root) return message;
 
-#if DEBUG
-        if (context.MessageIdentity!.MessageType == MessageType.Private)
-        {
-            message += "调试信息：\r\n" + (bindingException.InnerException ?? bindingException);
-        }
-        else
-#endif
+//#if DEBUG
+//        if (context.MessageIdentity!.MessageType == MessageType.Private)
+//        {
+//            message += "调试信息：\r\n" + (bindingException.InnerException ?? bindingException);
+//        }
+//        else
+//#endif
         {
             message += "\r\n错误信息：" + (bindingException.InnerException?.Message ?? bindingException.Message);
         }
