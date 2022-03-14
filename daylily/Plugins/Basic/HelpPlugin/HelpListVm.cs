@@ -2,7 +2,7 @@
 
 namespace daylily.Plugins.Basic.HelpPlugin;
 
-public class HelpListVm
+public sealed class HelpListVm
 {
     public HelpListVm(IReadOnlyList<ScopeInfoVm> assemblyInfoVms)
     {

@@ -18,22 +18,18 @@ using Image = SixLabors.ImageSharp.Image;
 namespace daylily.Plugins.Basic.HelpPlugin
 {
     /// <summary>
-    /// HelpListControl.xaml 的交互逻辑
+    /// HelpDetailControl.xaml 的交互逻辑
     /// </summary>
-    public sealed partial class HelpListControl : WpfDrawingControl
+    public sealed partial class HelpDetailControl : WpfDrawingControl
     {
-        private readonly HelpListVm _viewModel;
+        private readonly HelpDetailVm _viewModel;
 
-        public HelpListControl(object viewModel, Image? sourceImage = null)
+        public HelpDetailControl(object viewModel, Image? sourceImage = null)
             : base(viewModel, sourceImage)
         {
             InitializeComponent();
             Loaded += async (_, _) => await FinishDrawing();
-            _viewModel = (HelpListVm)ViewModel;
-        }
-
-        private void HelpListControl_OnInitialized(object? sender, EventArgs e)
-        {
+            _viewModel = (HelpDetailVm)ViewModel;
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace daylily.Plugins.Basic.HelpPlugin;
 
-public class PluginInfoVm
+public sealed class PluginInfoVm
 {
     public PluginInfoVm(PluginInfo pluginInfo, IReadOnlyList<CommandInfo> commands)
     {

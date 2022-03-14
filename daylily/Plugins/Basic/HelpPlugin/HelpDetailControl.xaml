@@ -1,0 +1,163 @@
+﻿<wpf:WpfDrawingControl
+    x:Class="daylily.Plugins.Basic.HelpPlugin.HelpDetailControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:loading="clr-namespace:MilkiBotFramework.Plugining.Loading;assembly=MilkiBotFramework"
+    xmlns:local="clr-namespace:daylily.Plugins.Basic.HelpPlugin"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpf="clr-namespace:MilkiBotFramework.Imaging.Wpf;assembly=MilkiBotFramework.Imaging.Wpf"
+    MinWidth="365"
+    d:DataContext="{d:DesignInstance local:HelpDetailVm,
+                                     IsDesignTimeCreatable=False}"
+    FontFamily="Arial,等线"
+    Foreground="#F0F0F0"
+    TextOptions.TextRenderingMode="ClearType"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:ZeroToCollapsedConverter x:Key="ZeroToCollapsedConverter" />
+        <local:String2LowerSnakeConverter x:Key="String2LowerSnakeConverter" />
+        <local:String2DescriptionConverter x:Key="String2DescriptionConverter" />
+    </UserControl.Resources>
+    <Border Padding="5" Background="#181818">
+        <Border.LayoutTransform>
+            <ScaleTransform ScaleX="1.1" ScaleY="1.1" />
+        </Border.LayoutTransform>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" TextBlock.Foreground="#484848">
+                <TextBlock Text="{Binding AppName}" />
+                <TextBlock Text=" " />
+                <TextBlock Text="{Binding VersionString}" />
+                <TextBlock Margin="15,0,0,0" Text="MilkiBotFramework" />
+                <TextBlock Text=" " />
+                <TextBlock Text="{Binding CoreVersionString}" />
+            </StackPanel>
+            <Grid Grid.Row="1" Margin="20,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0">
+                    <TextBlock FontSize="16" Text="{Binding PluginVm.Name, Mode=OneWay}" />
+                    <TextBlock Text="{Binding PluginVm.Description}" />
+                    <StackPanel Margin="5,0" Orientation="Horizontal">
+                        <TextBlock Text="作者：" />
+                        <TextBlock Text="{Binding PluginVm.Authors, Mode=OneWay}" />
+                        <!--<TextBlock Margin="50,0,0,0" Text="版本：" />
+                        <TextBlock Text="{Binding PluginVm.Version}" />
+                        <TextBlock Margin="5,0" Text="{Binding PluginVm.State}" />-->
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Margin="0,20,0,0">
+                    <TextBlock FontSize="14" Text="用法" />
+                    <TextBlock
+                        Margin="5,3"
+                        Foreground="#B0B0B0"
+                        Text="{Binding PluginVm.CurrentCommandUsage, Mode=OneWay}" />
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="0,5,0,0"
+                    Visibility="{Binding PluginVm.Commands.Count, Converter={StaticResource ZeroToCollapsedConverter}, Mode=OneWay}">
+                    <TextBlock FontSize="14" Text="可选命令" />
+                    <ItemsControl Margin="5,3" ItemsSource="{Binding PluginVm.Commands, Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="loading:CommandInfo">
+                                <StackPanel Margin="0,0,0,3" Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="75"
+                                        Margin="0,0,5,0"
+                                        Foreground="#4070F0">
+                                        <Run Text="/" /><Run Text="{Binding Command, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding Description, Converter={StaticResource String2DescriptionConverter}, Mode=OneWay}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="3"
+                    Margin="0,5,0,0"
+                    Visibility="{Binding PluginVm.CurrentOptions.Count, Converter={StaticResource ZeroToCollapsedConverter}, Mode=OneWay}">
+                    <TextBlock FontSize="14" Text="选项" />
+                    <ItemsControl Margin="5,3" ItemsSource="{Binding PluginVm.CurrentOptions, Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="loading:CommandParameterInfo">
+                                <StackPanel Margin="0,0,0,3" Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="75"
+                                        Margin="0,0,5,0"
+                                        Foreground="#F0E030">
+                                        <Run Text="-" /><Run Text="{Binding Name, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding Description, Converter={StaticResource String2DescriptionConverter}, Mode=OneWay}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="4"
+                    Margin="0,5,0,0"
+                    Visibility="{Binding PluginVm.CurrentArguments.Count, Converter={StaticResource ZeroToCollapsedConverter}, Mode=OneWay}">
+                    <TextBlock FontSize="14" Text="参数" />
+                    <ItemsControl Margin="5,3" ItemsSource="{Binding PluginVm.CurrentArguments, Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="loading:CommandParameterInfo">
+                                <StackPanel Margin="0,0,0,3" Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="75"
+                                        Margin="0,0,5,0"
+                                        Foreground="#F0E030"
+                                        Text="{Binding ParameterName, Converter={StaticResource String2LowerSnakeConverter}, Mode=OneWay}" />
+                                    <TextBlock Text="{Binding Description, Converter={StaticResource String2DescriptionConverter}, Mode=OneWay}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <!--<StackPanel
+                    Grid.Row="5"
+                    Margin="0,5,0,0"
+                    Opacity="0.75"
+                    TextBlock.Foreground="#B0B0B0"
+                    Visibility="{Binding PluginVm.Regexes.Count, Converter={StaticResource ZeroToCollapsedConverter}}">
+                    <TextBlock FontSize="14" Text="可选触发条件" />
+                    <ItemsControl Margin="5,3" ItemsSource="{Binding PluginVm.Regexes}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="backend:RegexDefinition">
+                                <StackPanel Margin="0,0,0,3" Orientation="Horizontal">
+                                    <StackPanel
+                                        MinWidth="75"
+                                        Margin="0,0,5,0"
+                                        Orientation="Horizontal">
+                                        <TextBlock Text="{Binding RegexString}" />
+                                        <TextBlock Margin="3,0" Text="-&gt;" />
+                                        <TextBlock Foreground="#4070F0" Text="/" />
+                                        <TextBlock Foreground="#4070F0" Text="{Binding Alias}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>-->
+
+            </Grid>
+        </Grid>
+    </Border>
+</wpf:WpfDrawingControl>

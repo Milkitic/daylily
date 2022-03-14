@@ -1,6 +1,6 @@
 ﻿namespace daylily.Plugins.Basic.HelpPlugin;
 
-public class ScopeInfoVm
+public sealed class ScopeInfoVm
 {
     public ScopeInfoVm(string scope, IReadOnlyList<PluginInfoVm> pluginInfos)
     {
