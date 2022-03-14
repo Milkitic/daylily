@@ -26,15 +26,11 @@ public class RecentPlayPlugin : BasicPlugin
 
     [CommandHandler("r")]
     public async Task<IResponse> Recent(MessageContext context,
-        [Argument, Description("指定最近第n条记录，从1开始")] int? index = null,
-        [Argument, Description("游戏模式, :0-std; :1-taiko; :2-ctb; :3-mania")] GameMode? gameMode = null,
+        [Argument, Description("游戏模式. 0:Osu; 1:Taiko; 2:Fruits; 3:Mania")] GameMode? gameMode = null,
         [Option("qq", Authority = MessageAuthority.Root), Description("指定的qq号")] int? qq = null,
         [Option("id", Authority = MessageAuthority.Root), Description("指定的osu id号")] string? osuId = null,
         [Option("user", Authority = MessageAuthority.Root), Description("指定的用户名")] string? userName = null)
     {
-        bool useSearch = index != null;
-
-        if (index >= 1) index--;
         if (osuId == null)
         {
             if (qq != null)

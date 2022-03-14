@@ -16,7 +16,8 @@ namespace daylily.Plugins.Basic.HelpPlugin;
 public sealed class Help : BasicPlugin
 {
     private readonly PluginManager _pluginManager;
-    private Dictionary<string, (PluginInfo, bool)> _detailMapping = new();
+    private readonly Dictionary<string, (PluginInfo, bool)> _detailMapping = new();
+
     public Help(PluginManager pluginManager)
     {
         _pluginManager = pluginManager;
@@ -111,6 +112,7 @@ public sealed class Help : BasicPlugin
             foreach (var parameterInfo in parameterInfos)
             {
                 if (parameterInfo.IsServiceArgument) continue;
+                if (parameterInfo.Authority > context.Authority) continue;
                 if (parameterInfo.IsArgument)
                 {
                     sbArguments.Append($" [{parameterInfo.ParameterName.ToLowerSnake()}]");
