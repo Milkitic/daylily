@@ -7,7 +7,7 @@ public static class EncryptUtil
 {
     public static string EncryptAes256UseMd5(string sourceStr, string? key = null, string? iv = null)
     {
-        Span<byte> keySpan = stackalloc byte[32];
+        Span<byte> keySpan = stackalloc byte[16];
         FillSpan(key, keySpan);
         Span<byte> ivSpan = stackalloc byte[16];
         FillSpan(iv, ivSpan);
@@ -28,13 +28,13 @@ public static class EncryptUtil
 
     public static string DecryptAes256UseMd5(byte[] encryptedBytes, string? key = null, string? iv = null)
     {
-        Span<byte> keySpan = stackalloc byte[32];
+        Span<byte> keySpan = stackalloc byte[16];
         FillSpan(key, keySpan);
         Span<byte> ivSpan = stackalloc byte[16];
         FillSpan(iv, ivSpan);
 
         using var aes = GetAesProvider(keySpan, ivSpan);
-        using var crypto = aes.CreateEncryptor();
+        using var crypto = aes.CreateDecryptor();
 
         byte[] decrypted = crypto.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
         return Encoding.UTF8.GetString(decrypted);
