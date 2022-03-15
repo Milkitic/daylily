@@ -43,17 +43,33 @@ public class BeatmapStatistics : BasicPlugin
         return subCommand switch
         {
             SubCommand.Map => Reply(await GetMapGraph(context, beatmapsetId, hours)),
-            SubCommand.List => throw new NotImplementedException(),
+            SubCommand.List => Reply(await ListSubscribe(context)),
             SubCommand.Add => Reply(await AddSubscribe(context, beatmapsetId)),
-            SubCommand.Del => throw new NotImplementedException(),
+            SubCommand.Del => Reply(await DelSubscribe(context, beatmapsetId)),
             _ => throw new ArgumentOutOfRangeException(nameof(subCommand), subCommand, null)
         };
     }
 
-    private async Task<string> AddSubscribe(MessageContext context, int? beatmapsetId)
+    private async Task<string> ListSubscribe(MessageContext context)
+    {
+        var userId = context.MessageUserIdentity!.UserId;
+        var all = await _dbContext.BeatmapSubscribes
+            .Include(k => k.BeatmapScan)
+            .Where(k => k.ScribeUserId == userId)
+            .ToListAsync();
+        if (all.Count == 0)
+            return "你未订阅任何谱面..";
+
+        var stringInfos = all.Select(k =>
+            $"{k.BeatmapScan.BeatmapSetId}: {k.BeatmapScan.Artist} - {k.BeatmapScan.Title} by {k.BeatmapScan.Mapper}");
+        return "订阅列表：\r\n" + string.Join("\r\n", stringInfos) +
+               "\r\n使用\"/stats.del {sid}\" 移除订阅。";
+    }
+
+    private async Task<string> AddSubscribe(MessageContext context, int? setId)
     {
         const int userLimitCount = 8;
-        if (beatmapsetId == null)
+        if (setId == null)
             return "请指定谱面sid..";
 
         var userId = context.MessageUserIdentity!.UserId;
@@ -61,26 +77,65 @@ public class BeatmapStatistics : BasicPlugin
         {
             var all = await _dbContext.BeatmapSubscribes
                 .CountAsync(k => k.ScribeUserId == userId);
-            if (all >= userLimitCount) return $"您的订阅数量已达最大值（{userLimitCount}），请使用\"/stats.list\"查看订阅列表。";
+            if (all >= userLimitCount) return $"你的订阅数量已达最大值（{userLimitCount}），请使用\"/stats.list\"查看订阅列表。";
         }
 
-        var setId = beatmapsetId.Value;
-        var first = await _dbContext.BeatmapScans.FirstOrDefaultAsync(k => k.BeatmapSetId == setId);
-        if (first == null)
+        var beatmapSetId = setId.Value;
+        var scan = await _dbContext.BeatmapScans
+            .Include(k => k.BeatmapSubscribes)
+            .FirstOrDefaultAsync(k => k.BeatmapSetId == beatmapSetId);
+
+        var response = await _apiService.TryAccessPublicApi(async client => await client.Beatmap.GetBeatmapset(setId.Value));
+
+        if (!response.Success)
         {
-            _dbContext.BeatmapScans.Add(new BeatmapScan
+            return response.Error!;
+        }
+
+        var setInfo = response.Result!;
+
+        if (scan == null)
+        {
+            _dbContext.BeatmapScans.Add(scan = new BeatmapScan
             {
-                BeatmapSetId = beatmapsetId.Value,
+                BeatmapSetId = setId.Value,
+                Artist = setInfo.ArtistUnicode ?? setInfo.Artist,
+                Title = setInfo.TitleUnicode ?? setInfo.Title,
+                Mapper = setInfo.Creator,
                 BeatmapSubscribes = new List<BeatmapSubscribe> { new() { ScribeUserId = userId, } }
             });
         }
         else
         {
-            first.BeatmapSubscribes.Add(new BeatmapSubscribe { ScribeUserId = userId });
+            if (scan.BeatmapSubscribes.Any(k => k.ScribeUserId == userId))
+                return "你已过订阅该谱面..";
+            scan.BeatmapSubscribes.Add(new BeatmapSubscribe { ScribeUserId = userId });
         }
 
         await _dbContext.SaveChangesAsync();
-        return "命令成功完成。";
+        var description = $"{scan.BeatmapSetId}: {scan.Artist} - {scan.Title} by {scan.Mapper}";
+        return "已成功订阅：" + description;
+    }
+
+    private async Task<string> DelSubscribe(MessageContext context, int? setId)
+    {
+        if (setId == null)
+            return "请指定谱面sid..";
+
+        var userId = context.MessageUserIdentity!.UserId;
+        var subscribe = await _dbContext.BeatmapSubscribes
+            .FirstOrDefaultAsync(k => k.ScribeUserId == userId && k.BeatmapScan.BeatmapSetId == setId);
+
+        if (subscribe == null)
+        {
+            return "你尚未订阅该谱面..";
+        }
+
+        var scan = subscribe.BeatmapScan;
+        var description = $"{scan.BeatmapSetId}: {scan.Artist} - {scan.Title} by {scan.Mapper}";
+        _dbContext.BeatmapSubscribes.Remove(subscribe);
+        await _dbContext.SaveChangesAsync();
+        return "已成功取消订阅：" + description;
     }
 
     private async Task<IRichMessage> GetMapGraph(MessageContext context, int? beatmapsetId, int? hours)
@@ -104,6 +159,7 @@ public class BeatmapStatistics : BasicPlugin
         var existScans = _dbContext
             .BeatmapScans
             .Include(k => k.BeatmapSubscribes)
+            .Include(k => k.BeatmapStats)
             .AsEnumerable()
             .Where(k => k.BeatmapSubscribes.Any());
 
@@ -120,14 +176,18 @@ public class BeatmapStatistics : BasicPlugin
                 continue;
             }
 
-            var result = response.Result!;
+            var setInfo = response.Result!;
             var beatmapStat = new BeatmapStat
             {
-                FavoriteCount = result.FavouriteCount,
-                PlayCount = result.PlayCount,
+                FavoriteCount = setInfo.FavouriteCount,
+                PlayCount = setInfo.PlayCount,
                 Timestamp = DateTime.Now
             };
             beatmapScan.BeatmapStats.Add(beatmapStat);
+
+            beatmapScan.Artist = setInfo.ArtistUnicode ?? setInfo.Artist;
+            beatmapScan.Title = setInfo.TitleUnicode ?? setInfo.Title;
+            beatmapScan.Mapper = setInfo.Creator;
 
             try
             {

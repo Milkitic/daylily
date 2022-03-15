@@ -11,7 +11,7 @@ using daylily.Plugins.Osu.Data;
 namespace daylily.Migrations
 {
     [DbContext(typeof(OsuDbContext))]
-    [Migration("20220315051333_initial")]
+    [Migration("20220315054332_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,12 +25,22 @@ namespace daylily.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Artist")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("BeatmapSetId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Mapper")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("BeatmapSetId");
+                    b.HasIndex("BeatmapSetId")
+                        .IsUnique();
 
                     b.ToTable("BeatmapScans");
                 });
@@ -77,7 +87,8 @@ namespace daylily.Migrations
 
                     b.HasIndex("BeatmapScanId");
 
-                    b.HasIndex("ScribeUserId", "BeatmapScanId");
+                    b.HasIndex("ScribeUserId", "BeatmapScanId")
+                        .IsUnique();
 
                     b.ToTable("BeatmapSubscribes");
                 });

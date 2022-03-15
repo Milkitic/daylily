@@ -34,6 +34,7 @@ public class ApiService : ServicePlugin
 
     private readonly BotTaskScheduler _taskScheduler;
     private readonly OsuConfig _config;
+    private readonly TaskCompletionSource _initialWait;
 
     internal string UnbindMessage => "你还没有绑定账号，请私聊我 \"/set-osuid\" 完成绑定。直接复制引号中的内容即可。";
 
@@ -41,6 +42,13 @@ public class ApiService : ServicePlugin
     {
         _taskScheduler = taskScheduler;
         _config = configuration.Instance;
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        _initialWait = new TaskCompletionSource();
+        cts.Token.Register(() =>
+        {
+            _initialWait.TrySetResult();
+            cts.Dispose();
+        });
     }
 
     public UserToken? PublicToken { get; private set; }
@@ -50,7 +58,9 @@ public class ApiService : ServicePlugin
         try
         {
             if (PublicToken == null)
-                return new ApiResult<T>("osu PublicToken 授权出错");
+                await _initialWait.Task;
+            if (PublicToken == null)
+                return new ApiResult<T>("PublicToken未初始化");
             return new ApiResult<T>(await func.Invoke(new OsuClientV2(PublicToken)));
         }
         catch (HttpRequestException ex)
@@ -105,10 +115,18 @@ public class ApiService : ServicePlugin
     private void RefreshTokenTask(TaskContext context, CancellationToken token)
     {
         var authClientPub = new AuthorizationClient();
-        var result = authClientPub.GetPublicToken(_config.ClientId, _config.ClientSecret).Result;
-        this.PublicToken = result;
-        context.Logger.LogInformation($"已刷新Osu!PublicToken，将在{DateTime.Now.AddSeconds(result.ExpiresIn)}过期");
+        try
+        {
+            var result = authClientPub.GetPublicToken(_config.ClientId, _config.ClientSecret).Result;
+            this.PublicToken = result;
+            context.Logger.LogInformation($"已刷新Osu!PublicToken，将在{DateTime.Now.AddSeconds(result.ExpiresIn)}过期");
+        }
+        finally
+        {
+            _initialWait.TrySetResult();
+        }
     }
+
     private static TokenBase ConvertToken(OsuToken osuToken)
     {
         if (osuToken.IsPublic)

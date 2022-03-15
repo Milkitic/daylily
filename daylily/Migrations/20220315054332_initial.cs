@@ -15,7 +15,10 @@ namespace daylily.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    BeatmapSetId = table.Column<int>(type: "INTEGER", nullable: false)
+                    BeatmapSetId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", nullable: true),
+                    Artist = table.Column<string>(type: "TEXT", nullable: true),
+                    Mapper = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -86,7 +89,8 @@ namespace daylily.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_BeatmapScans_BeatmapSetId",
                 table: "BeatmapScans",
-                column: "BeatmapSetId");
+                column: "BeatmapSetId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_BeatmapStats_BeatmapScanId",
@@ -101,7 +105,8 @@ namespace daylily.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_BeatmapSubscribes_ScribeUserId_BeatmapScanId",
                 table: "BeatmapSubscribes",
-                columns: new[] { "ScribeUserId", "BeatmapScanId" });
+                columns: new[] { "ScribeUserId", "BeatmapScanId" },
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
