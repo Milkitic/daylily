@@ -29,8 +29,7 @@ namespace daylily.Migrations
                 name: "tokens",
                 columns: table => new
                 {
-                    qq = table.Column<long>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    SourceId = table.Column<string>(type: "TEXT", nullable: false),
                     TokenType = table.Column<string>(type: "TEXT", nullable: false),
                     ExpiresIn = table.Column<long>(type: "INTEGER", nullable: false),
                     AccessToken = table.Column<string>(type: "TEXT", nullable: false),
@@ -41,7 +40,7 @@ namespace daylily.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tokens", x => x.qq);
+                    table.PrimaryKey("PK_tokens", x => x.SourceId);
                 });
 
             migrationBuilder.CreateTable(

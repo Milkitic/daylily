@@ -11,7 +11,7 @@ using daylily.Plugins.Osu.Data;
 namespace daylily.Migrations
 {
     [DbContext(typeof(OsuDbContext))]
-    [Migration("20220315054332_initial")]
+    [Migration("20220315085941_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -95,10 +95,8 @@ namespace daylily.Migrations
 
             modelBuilder.Entity("daylily.Plugins.Osu.Data.OsuToken", b =>
                 {
-                    b.Property<long>("QQ")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("qq");
+                    b.Property<string>("SourceId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AccessToken")
                         .IsRequired()
@@ -124,7 +122,7 @@ namespace daylily.Migrations
                     b.Property<long?>("UserId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("QQ");
+                    b.HasKey("SourceId");
 
                     b.ToTable("tokens");
                 });

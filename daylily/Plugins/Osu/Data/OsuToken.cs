@@ -7,8 +7,7 @@ namespace daylily.Plugins.Osu.Data;
 public class OsuToken
 {
     [Key]
-    [Column("qq")]
-    public long QQ { get; set; }
+    public string SourceId { get; set; }
     public string TokenType { get; set; }
     public long ExpiresIn { get; set; }
     public string AccessToken { get; set; }

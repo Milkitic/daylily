@@ -17,7 +17,7 @@ namespace daylily.Plugins.Osu.Data
             return result;
         }
 
-        public async Task AddOrUpdateToken(long qq, long userId, TokenBase token)
+        public async Task AddOrUpdateToken(string sourceId, long userId, TokenBase token)
         {
             var osuToken = new OsuToken
             {
@@ -25,7 +25,7 @@ namespace daylily.Plugins.Osu.Data
                 TokenType = token.TokenType,
                 CreateTime = token.CreateTime,
                 ExpiresIn = token.ExpiresIn,
-                QQ = qq,
+                SourceId = sourceId,
                 UserId = userId
             };
 
@@ -38,7 +38,7 @@ namespace daylily.Plugins.Osu.Data
                 osuToken.IsPublic = true;
             }
 
-            var exist = await Tokens.FindAsync(qq);
+            var exist = await Tokens.FindAsync(sourceId);
             if (exist == null)
             {
                 Tokens.Add(osuToken);
