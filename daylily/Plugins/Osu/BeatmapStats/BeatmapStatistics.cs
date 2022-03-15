@@ -48,7 +48,7 @@ public class BeatmapStatistics : BasicPlugin
 
     [CommandHandler("stats")]
     public async Task<IResponse> Stats(MessageContext context,
-        [Argument] SubCommand subCommand,
+        [Argument, Description("子命令，包含\"map\"、\"list\"、\"add\"、\"del\"")] SubCommand subCommand,
         [Argument, Description("谱面sid")] int? beatmapsetId = null,
         [Option("time"), Description("指定最近的N小时内数据")]
         int? hours = null)
