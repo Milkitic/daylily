@@ -50,6 +50,7 @@ public class SetId : BasicPlugin
         var tcs = new TaskCompletionSource();
         cts.Token.Register(() => tcs.SetCanceled());
         OsuTokenReceivedEvent @event = null!;
+        //todo: concurrent
         _eventBus.Subscribe<OsuTokenReceivedEvent>(e =>
         {
             @event = e;
