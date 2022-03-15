@@ -4,9 +4,11 @@ using System.Windows.Media.Imaging;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
+using Microsoft.Extensions.Logging;
 using MilkiBotFramework;
 using MilkiBotFramework.Connecting;
 using MilkiBotFramework.Imaging.Wpf;
+using MilkiBotFramework.Plugining.Configuration;
 using Image = SixLabors.ImageSharp.Image;
 
 namespace daylily.Plugins.Osu.BeatmapStats;
@@ -16,16 +18,20 @@ namespace daylily.Plugins.Osu.BeatmapStats;
 /// </summary>
 public partial class BeatmapStatsControl : WpfDrawingControl
 {
+    private readonly ILogger _logger;
     private readonly BotOptions _botOptions;
     private readonly LightHttpClient _lightHttpClient;
     private readonly BeatmapStatsVm _viewModel;
 
-    public BeatmapStatsControl(BotOptions botOptions,
+    public BeatmapStatsControl(
+        ILogger logger,
+        BotOptions botOptions,
         LightHttpClient lightHttpClient,
         object viewModel,
         Image? sourceImage = null)
         : base(viewModel, sourceImage)
     {
+        _logger = logger;
         _botOptions = botOptions;
         _lightHttpClient = lightHttpClient;
         _viewModel = (BeatmapStatsVm)ViewModel;
@@ -137,6 +143,7 @@ public partial class BeatmapStatsControl : WpfDrawingControl
         }
         catch (Exception ex)
         {
+            _logger.LogWarning("下载osu!图片时出错：" + ex.Message);
         }
 
         await FinishDrawing();

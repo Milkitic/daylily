@@ -173,12 +173,15 @@ public class BeatmapStatistics : BasicPlugin
             return new Text($"找不到订阅的谱面: {beatmapsetId}");
 
         var renderer = new WpfDrawingProcessor<BeatmapStatsVm, BeatmapStatsControl>((vm, image) =>
-            new BeatmapStatsControl(_botOptions, _lightHttpClient, vm, image), true);
+            new BeatmapStatsControl(_logger, _botOptions, _lightHttpClient, vm, image), true);
 
         var now = DateTime.Now;
         var beatmapStats = hours == null
             ? await _dbContext.BeatmapStats.Where(k => k.BeatmapScan.BeatmapSetId == beatmapsetId).ToListAsync()
             : await _dbContext.BeatmapStats.Where(k => k.Timestamp >= now.AddHours(-hours.Value)).ToListAsync();
+        if (beatmapStats.Count < 2)
+            return new Text("尚无数据，请稍后再试..");
+
         var response =
             await _apiService.TryAccessPublicApi(async client => await client.Beatmap.GetBeatmapset(beatmapsetId.Value));
         if (!response.Success)
@@ -191,6 +194,7 @@ public class BeatmapStatistics : BasicPlugin
             Stats = beatmapStats,
             Beatmapset = response.Result
         };
+
         var image = await renderer.ProcessAsync(vm);
         return new MemoryImage(image, ImageType.Png);
     }
