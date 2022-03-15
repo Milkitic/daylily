@@ -11,7 +11,7 @@ using daylily.Plugins.Osu.Data;
 namespace daylily.Migrations
 {
     [DbContext(typeof(OsuDbContext))]
-    [Migration("20220315085941_initial")]
+    [Migration("20220315135541_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -11,7 +11,7 @@ namespace daylily.Plugins.Osu.Data
         public DbSet<BeatmapStat> BeatmapStats { get; set; }
         public DbSet<BeatmapSubscribe> BeatmapSubscribes { get; set; }
 
-        public async Task<long?> GetUserIdByQQ(long qq)
+        public async Task<long?> GetUserIdBySourceId(string qq)
         {
             var result = (await Tokens.FindAsync(qq))?.UserId;
             return result;

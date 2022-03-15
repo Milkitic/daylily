@@ -29,7 +29,7 @@ public class MePlugin : BasicPlugin
     [CommandHandler("me.osu")]
     public async Task<IResponse> MeOsu(MessageContext messageContext)
     {
-        var osuId = await _dbContext.GetUserIdByQQ(Convert.ToInt64(messageContext.MessageUserIdentity.UserId));
+        var osuId = await _dbContext.GetUserIdBySourceId(messageContext.MessageUserIdentity.UserId);
         if (osuId == null) return Reply(_apiService.UnbindMessage);
         var result = await _apiService.TryAccessPublicApi(async client =>
             await client.User.GetUser(osuId.ToString(), GameMode.Osu));

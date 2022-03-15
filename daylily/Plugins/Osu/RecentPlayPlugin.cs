@@ -28,7 +28,7 @@ public class RecentPlayPlugin : BasicPlugin
     public async Task<IResponse> Recent(MessageContext context,
         [Argument, Description("游戏模式. 0:Osu; 1:Taiko; 2:Fruits; 3:Mania")] GameMode? gameMode = null,
         [Option("all"), Description("包含Fail成绩")] bool all = false,
-        [Option("qq", Authority = MessageAuthority.Root), Description("指定的qq号")] int? qq = null,
+        [Option("qq", Authority = MessageAuthority.Root), Description("指定的qq号")] string? qq = null,
         [Option("id", Authority = MessageAuthority.Root), Description("指定的osu id号")] string? osuId = null,
         [Option("user", Authority = MessageAuthority.Root), Description("指定的用户名")] string? userName = null)
     {
@@ -36,7 +36,7 @@ public class RecentPlayPlugin : BasicPlugin
         {
             if (qq != null)
             {
-                var id = await _dbContext.GetUserIdByQQ(qq.Value);
+                var id = await _dbContext.GetUserIdBySourceId(qq);
                 if (id == null) return Reply($"QQ {qq} 未绑定osu!账号。");
                 osuId = id.Value.ToString();
             }
@@ -52,7 +52,7 @@ public class RecentPlayPlugin : BasicPlugin
             }
             else
             {
-                var id = await _dbContext.GetUserIdByQQ(Convert.ToInt64(context.MessageUserIdentity.UserId));
+                var id = await _dbContext.GetUserIdBySourceId(context.MessageUserIdentity.UserId);
                 if (id == null) return Reply(_apiService.UnbindMessage);
                 osuId = id.Value.ToString();
             }
@@ -61,7 +61,7 @@ public class RecentPlayPlugin : BasicPlugin
         var response = await _apiService.TryAccessPublicApi(async client => await client.User.GetUserScores(osuId,
             ScoreType.Recent, all, gameMode, new Pagination
             {
-                Offset = 1,
+                Offset = 0,
                 Limit = 1
             }));
         if (!response.Success)
@@ -82,7 +82,7 @@ public class RecentPlayPlugin : BasicPlugin
         if (score.Perfect)
             reply += $" 的成绩 FC 了. 🥳\r\n{user.Username}!.jpg";
         else if (score.Statistics.CountMiss == 0)
-            reply += $" 的成绩 断滑条 了. 😏\r\n{user.Username}!.jpg";
+            reply += $" 的成绩 断滑条 了. 😏\r\n";
         else if (score.Passed)
             reply += " 的成绩 PASS 了. 👏👏\r\n";
         else

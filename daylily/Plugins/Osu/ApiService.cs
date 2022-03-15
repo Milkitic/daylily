@@ -94,7 +94,7 @@ public class ApiService : ServicePlugin
     internal async Task<(bool, long? osuId, IResponse? message)> TryGetUserId(
         MessageContext messageContext, OsuDbContext dbContext)
     {
-        var osuId = dbContext.GetUserIdByQQ(Convert.ToInt64(messageContext.MessageUserIdentity.UserId)).Result;
+        var osuId = dbContext.GetUserIdBySourceId(messageContext.MessageUserIdentity.UserId).Result;
         if (osuId == null)
         {
             return (false, null, Reply(UnbindMessage));
