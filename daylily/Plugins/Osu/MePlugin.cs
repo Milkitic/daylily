@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text;
 using Coosu.Api.V2;
-using daylily.Data;
+using daylily.Plugins.Osu.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MilkiBotFramework.Messaging;

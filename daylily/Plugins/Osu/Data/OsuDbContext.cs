@@ -2,11 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using MilkiBotFramework.Plugining.Database;
 
-namespace daylily.Data
+namespace daylily.Plugins.Osu.Data
 {
     public class OsuDbContext : PluginDbContext
     {
         public DbSet<OsuToken> Tokens { get; set; }
+        public DbSet<BeatmapScan> BeatmapScans { get; set; }
+        public DbSet<BeatmapStat> BeatmapStats { get; set; }
+        public DbSet<BeatmapSubscribe> BeatmapSubscribes { get; set; }
 
         public async Task<long?> GetUserIdByQQ(long qq)
         {

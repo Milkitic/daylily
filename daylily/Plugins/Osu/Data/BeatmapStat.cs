@@ -1,0 +1,13 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace daylily.Plugins.Osu.Data;
+
+public class BeatmapStat
+{
+    [Key]
+    public int Id { get; set; }
+    public DateTime Timestamp { get; set; }
+    public long FavoriteCount { get; set; }
+    public long PlayCount { get; set; }
+    public BeatmapScan BeatmapScan { get; set; }
+}
