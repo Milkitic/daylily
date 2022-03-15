@@ -18,13 +18,16 @@ namespace daylily.Plugins.Osu;
 [PluginIdentifier("f159fb01-de65-46e0-818c-b38fdc55eea3", "绑定osu!账号")]
 public class SetId : BasicPlugin
 {
+    private readonly ApiService _apiService;
     private readonly EventBus _eventBus;
     private readonly OsuDbContext _dbContext;
     private readonly OsuConfig _config;
 
-    public SetId(IConfiguration<OsuConfig> configuration, EventBus eventBus, OsuDbContext dbContext)
+    public SetId(IConfiguration<OsuConfig> configuration, ApiService apiService, EventBus eventBus,
+        OsuDbContext dbContext)
     {
         _config = configuration.Instance;
+        _apiService = apiService;
         _eventBus = eventBus;
         _dbContext = dbContext;
     }
@@ -54,6 +57,7 @@ public class SetId : BasicPlugin
         }, guid);
 
         yield return Reply("请点击以下链接完成账号授权，5分钟内有效（请勿分享链接）：");
+        await Task.Delay(300);
         yield return Reply(uri.AbsoluteUri);
         bool timeout;
         try
@@ -79,7 +83,7 @@ public class SetId : BasicPlugin
             yield break;
         }
 
-        await _dbContext.AddOrUpdateToken(@event.SourceId!, @event.OsuId, @event.Token!);
-        yield return Reply(@event.FailReason);
+        await _dbContext.AddOrUpdateToken(@event.SourceId!, @event.User.Id.Value, @event.Token!);
+        yield return Reply($"你已成功绑定osu!id: {@event.User.Username}");
     }
 }

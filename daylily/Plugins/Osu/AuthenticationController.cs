@@ -50,9 +50,12 @@ namespace daylily.Plugins.Osu
             }
             catch (Exception ex)
             {
+                await _eventBus.PublishAsync(new OsuTokenReceivedEvent("QQ号获取错误，请重试.."));
+#if DEBUG
+                throw;
+#endif
                 _logger.LogError(ex, "QQ号获取出错，请重试。");
                 HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-                await _eventBus.PublishAsync(new OsuTokenReceivedEvent("QQ号获取错误，请重试.."));
                 return Content("QQ号获取错误，请重试。");
             }
 
@@ -67,16 +70,19 @@ namespace daylily.Plugins.Osu
             }
             catch (Exception ex)
             {
+                await _eventBus.PublishAsync(new OsuTokenReceivedEvent("token获取出错，请重试.."));
+#if DEBUG
+                throw;
+#endif
                 _logger.LogError(ex, "token获取出错，请重试。");
                 HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-                await _eventBus.PublishAsync(new OsuTokenReceivedEvent("token获取出错，请重试.."));
                 return Content("token获取出错，请重试。");
             }
 
             var client = new OsuClientV2(result);
             var user = await client.User.GetOwnData();
 
-            await _eventBus.PublishAsync(new OsuTokenReceivedEvent(qq, user.Id.Value, result));
+            await _eventBus.PublishAsync(new OsuTokenReceivedEvent(qq, user, result));
             return Redirect($"https://osu.ppy.sh/users/{user.Id}");
         }
     }

@@ -11,16 +11,16 @@ public class OsuTokenReceivedEvent : IEventBusEvent
         FailReason = failReason;
     }
 
-    public OsuTokenReceivedEvent(string sourceId, long osuId, UserToken token)
+    public OsuTokenReceivedEvent(string sourceId, User user, UserToken token)
     {
         SourceId = sourceId;
-        OsuId = osuId;
+        User = user;
         Token = token;
         IsSuccess = true;
     }
 
     public string? SourceId { get; }
-    public long OsuId { get; }
+    public User User { get; }
     public UserToken? Token { get; }
     public bool IsSuccess { get; }
 }
