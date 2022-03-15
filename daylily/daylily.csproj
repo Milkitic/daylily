@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <PackageReference Include="Coosu.Api" Version="2.2.0-alpha.5" />
+    <PackageReference Include="Emoji.Wpf" Version="0.3.3" />
+    <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

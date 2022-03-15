@@ -3,15 +3,19 @@ using System.Text.Json;
 using daylily.Plugins.Osu.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MilkiBotFramework;
+using MilkiBotFramework.Connecting;
+using MilkiBotFramework.Imaging;
+using MilkiBotFramework.Imaging.Wpf;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Tasking;
 
-namespace daylily.Plugins.Osu;
+namespace daylily.Plugins.Osu.BeatmapStats;
 
-[PluginIdentifier("c95a929f-8b4c-42e2-bdec-80498b2c55d5", "地图数据订阅")]
+[PluginIdentifier("c95a929f-8b4c-42e2-bdec-80498b2c55d5", "地图数据订阅", Scope = "osu!")]
 [PluginLifetime(PluginLifetime.Singleton)]
 public class BeatmapStatistics : BasicPlugin
 {
@@ -20,16 +24,25 @@ public class BeatmapStatistics : BasicPlugin
         Map, List, Add, Del
     }
 
+    private readonly ILogger<BeatmapStatistics> _logger;
     private readonly ApiService _apiService;
+    private readonly BotOptions _botOptions;
     private readonly BotTaskScheduler _taskScheduler;
+    private readonly LightHttpClient _lightHttpClient;
     private readonly OsuDbContext _dbContext;
 
-    public BeatmapStatistics(ApiService apiService,
+    public BeatmapStatistics(ILogger<BeatmapStatistics> logger,
+        ApiService apiService,
+        BotOptions botOptions,
         BotTaskScheduler taskScheduler,
+        LightHttpClient lightHttpClient,
         OsuDbContext dbContext)
     {
+        _logger = logger;
         _apiService = apiService;
+        _botOptions = botOptions;
         _taskScheduler = taskScheduler;
+        _lightHttpClient = lightHttpClient;
         _dbContext = dbContext;
     }
 
@@ -58,7 +71,9 @@ public class BeatmapStatistics : BasicPlugin
             .Where(k => k.ScribeUserId == userId)
             .ToListAsync();
         if (all.Count == 0)
+        {
             return "你未订阅任何谱面..";
+        }
 
         var stringInfos = all.Select(k =>
             $"{k.BeatmapScan.BeatmapSetId}: {k.BeatmapScan.Artist} - {k.BeatmapScan.Title} by {k.BeatmapScan.Mapper}");
@@ -70,7 +85,9 @@ public class BeatmapStatistics : BasicPlugin
     {
         const int userLimitCount = 8;
         if (setId == null)
+        {
             return "请指定谱面sid..";
+        }
 
         var userId = context.MessageUserIdentity!.UserId;
         if (context.Authority != MessageAuthority.Root)
@@ -108,7 +125,9 @@ public class BeatmapStatistics : BasicPlugin
         else
         {
             if (scan.BeatmapSubscribes.Any(k => k.ScribeUserId == userId))
+            {
                 return "你已过订阅该谱面..";
+            }
             scan.BeatmapSubscribes.Add(new BeatmapSubscribe { ScribeUserId = userId });
         }
 
@@ -120,7 +139,9 @@ public class BeatmapStatistics : BasicPlugin
     private async Task<string> DelSubscribe(MessageContext context, int? setId)
     {
         if (setId == null)
+        {
             return "请指定谱面sid..";
+        }
 
         var userId = context.MessageUserIdentity!.UserId;
         var subscribe = await _dbContext.BeatmapSubscribes
@@ -142,7 +163,36 @@ public class BeatmapStatistics : BasicPlugin
     {
         if (beatmapsetId == null)
             return new Text("请指定谱面sid.");
-        throw new NotImplementedException();
+
+        var setId = beatmapsetId.Value;
+
+        var scan = await _dbContext.BeatmapScans
+            .FirstOrDefaultAsync(k => k.BeatmapSetId == setId);
+
+        if (scan == null)
+            return new Text($"找不到订阅的谱面: {beatmapsetId}");
+
+        var renderer = new WpfDrawingProcessor<BeatmapStatsVm, BeatmapStatsControl>((vm, image) =>
+            new BeatmapStatsControl(_botOptions, _lightHttpClient, vm, image), true);
+
+        var now = DateTime.Now;
+        var beatmapStats = hours == null
+            ? await _dbContext.BeatmapStats.Where(k => k.BeatmapScan.BeatmapSetId == beatmapsetId).ToListAsync()
+            : await _dbContext.BeatmapStats.Where(k => k.Timestamp >= now.AddHours(-hours.Value)).ToListAsync();
+        var response =
+            await _apiService.TryAccessPublicApi(async client => await client.Beatmap.GetBeatmapset(beatmapsetId.Value));
+        if (!response.Success)
+        {
+            _logger.LogWarning("获取地图数据出错：" + response.Error);
+        }
+
+        var vm = new BeatmapStatsVm
+        {
+            Stats = beatmapStats,
+            Beatmapset = response.Result
+        };
+        var image = await renderer.ProcessAsync(vm);
+        return new MemoryImage(image, ImageType.Png);
     }
 
     protected override async Task OnInitialized()

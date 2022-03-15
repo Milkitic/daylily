@@ -36,7 +36,7 @@ public class ApiService : ServicePlugin
     private readonly OsuConfig _config;
     private readonly TaskCompletionSource _initialWait;
 
-    internal string UnbindMessage => "你还没有绑定账号，请私聊我 \"/set-osuid\" 完成绑定。直接复制引号中的内容即可。";
+    internal string UnbindMessage => "你还没有绑定账号，请私聊我 \"/setid.osu\" 完成绑定。直接复制引号中的内容即可。";
 
     public ApiService(IConfiguration<OsuConfig> configuration, BotTaskScheduler taskScheduler)
     {
