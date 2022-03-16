@@ -15,18 +15,30 @@ public class OsuDbContext : PluginDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .Entity<OsuUserInfo>()
-            .Property(k => k.RequestStatus)
-            .HasConversion(
-                v => (v == null || v.Length == 0) ? default : string.Join(',', v),
-                v => v == default
-                    ? Array.Empty<RequestStatus>()
-                    : v.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                        .Select(Enum.Parse<RequestStatus>)
-                        .ToArray(),
-                new ValueComparer<RequestStatus[]?>(true)
-            );
+        modelBuilder.Entity<OsuUserInfo>(entity =>
+        {
+            entity.Property(k => k.RequestStatus)
+                .HasConversion(
+                    v => (v == null || v.Length == 0) ? default : string.Join(',', v),
+                    v => v == default
+                        ? Array.Empty<RequestStatus>()
+                        : v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(Enum.Parse<RequestStatus>)
+                            .ToArray(),
+                    new ValueComparer<RequestStatus[]?>(true)
+                );
+            entity.Property(k => k.ModeIds)
+                .HasConversion(
+                    v => v.Count == 0 ? default : string.Join(',', v),
+                    v => v == default
+                        ? new HashSet<ModeId>()
+                        : new HashSet<ModeId>(v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(Enum.Parse<ModeId>)),
+                    new ValueComparer<HashSet<ModeId>>(true)
+                );
+            entity.Property(k => k.Id)
+                .HasConversion(v => v, v => v);
+        });
     }
 
     public async Task<long?> GetUserIdBySourceId(string qq)

@@ -1,30 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
 
 namespace daylily.Plugins.Osu.Data;
 
-[Index(nameof(UserId), IsUnique = true)]
 public class OsuUserInfo
 {
     [Key]
-    public int Id { get; set; }
-
     [JsonPropertyName("osuId")]
-    public string UserId { get; set; } = null!;
+    public int Id { get; set; }
 
     [JsonPropertyName("username")]
     public string Username { get; set; } = null!;
 
     [JsonIgnore]
-    public string ModeId { get; set; } = null!;
+    public HashSet<ModeId> ModeIds { get; set; } = new();
 
     [JsonPropertyName("group")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public Group Group { get; set; }
 
     [JsonPropertyName("level")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public Level Level { get; set; }
 
     [JsonPropertyName("requestStatus")]
@@ -37,8 +31,14 @@ public class OsuUserInfo
     public string? UserPageText { get; set; }
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Group { Bn, Nat };
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Level { Full, Probation };
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum RequestStatus { Closed, GameChat, GlobalQueue, PersonalQueue };
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum ModeId { Osu, Catch, Mania, Taiko };

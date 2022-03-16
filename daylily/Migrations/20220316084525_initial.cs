@@ -26,6 +26,24 @@ namespace daylily.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OsuUserInfos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false),
+                    Username = table.Column<string>(type: "TEXT", nullable: false),
+                    ModeIds = table.Column<string>(type: "TEXT", nullable: false),
+                    Group = table.Column<int>(type: "INTEGER", nullable: false),
+                    Level = table.Column<int>(type: "INTEGER", nullable: false),
+                    RequestStatus = table.Column<string>(type: "TEXT", nullable: true),
+                    RequestLink = table.Column<string>(type: "TEXT", nullable: true),
+                    UserPageText = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OsuUserInfos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tokens",
                 columns: table => new
                 {
@@ -115,6 +133,9 @@ namespace daylily.Migrations
 
             migrationBuilder.DropTable(
                 name: "BeatmapSubscribes");
+
+            migrationBuilder.DropTable(
+                name: "OsuUserInfos");
 
             migrationBuilder.DropTable(
                 name: "tokens");

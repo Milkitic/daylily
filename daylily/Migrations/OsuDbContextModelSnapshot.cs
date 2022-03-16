@@ -137,7 +137,7 @@ namespace daylily.Migrations
                     b.Property<int>("Level")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ModeId")
+                    b.Property<string>("ModeIds")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -145,10 +145,6 @@ namespace daylily.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RequestStatus")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserPageText")
@@ -159,9 +155,6 @@ namespace daylily.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("OsuUserInfos");
                 });

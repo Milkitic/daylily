@@ -32,7 +32,7 @@ public class Tuling : BasicPlugin
     {
         _config.ApiInfos ??= new ConcurrentDictionary<string, int>();
         _taskScheduler.AddTask("ResetTuling", k => k
-            .EachDayAt(new DateTime(0, 0, 0, 0, 0, 0, 0))
+            .EachDayAt(new DateTime(1, 1, 1, 0, 0, 0, 0))
             .Do(ResetCount));
     }
 

@@ -11,7 +11,7 @@ using daylily.Plugins.Osu.Data;
 namespace daylily.Migrations
 {
     [DbContext(typeof(OsuDbContext))]
-    [Migration("20220315135541_initial")]
+    [Migration("20220316084525_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -125,6 +125,40 @@ namespace daylily.Migrations
                     b.HasKey("SourceId");
 
                     b.ToTable("tokens");
+                });
+
+            modelBuilder.Entity("daylily.Plugins.Osu.Data.OsuUserInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Group")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModeIds")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RequestLink")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RequestStatus")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserPageText")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OsuUserInfos");
                 });
 
             modelBuilder.Entity("daylily.Plugins.Osu.Data.BeatmapStat", b =>
