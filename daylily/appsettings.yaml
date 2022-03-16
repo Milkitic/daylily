@@ -8,6 +8,13 @@ Connection:
   ServerBindUrl: http://0.0.0.0:2333
   # 服务器绑定的具体路由。当 ConnectionType 为 Http, ReverseWebSocket 时生效
   ServerBindPath: /endpoint
+HttpOptions:
+# 代理服务器地址
+  ProxyUrl: 
+  # 默认超时
+  Timeout: 00:00:08
+  # 自动重试次数
+  RetryCount: 3
 # Root权限账号
 RootAccounts: []
 # 插件目录
