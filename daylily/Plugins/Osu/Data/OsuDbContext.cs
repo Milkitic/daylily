@@ -1,5 +1,6 @@
 ﻿using Coosu.Api.V2.ResponseModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MilkiBotFramework.Plugining.Database;
 
 namespace daylily.Plugins.Osu.Data
@@ -7,6 +8,7 @@ namespace daylily.Plugins.Osu.Data
     public class OsuDbContext : PluginDbContext
     {
         public DbSet<OsuToken> Tokens { get; set; }
+        public DbSet<OsuUserInfo> OsuUserInfos { get; set; }
         public DbSet<BeatmapScan> BeatmapScans { get; set; }
         public DbSet<BeatmapStat> BeatmapStats { get; set; }
         public DbSet<BeatmapSubscribe> BeatmapSubscribes { get; set; }

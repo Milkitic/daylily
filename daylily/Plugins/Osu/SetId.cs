@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using Coosu.Api.V2;
 using daylily.Plugins.Osu.Data;
 using daylily.Utils;
@@ -17,7 +11,7 @@ using MilkiBotFramework.Plugining.Configuration;
 
 namespace daylily.Plugins.Osu;
 
-[PluginIdentifier("f159fb01-de65-46e0-818c-b38fdc55eea3", "绑定osu!账号")]
+[PluginIdentifier("f159fb01-de65-46e0-818c-b38fdc55eea3", "绑定osu!账号", Scope = "osu!")]
 public class SetId : BasicPlugin
 {
     private readonly ApiService _apiService;

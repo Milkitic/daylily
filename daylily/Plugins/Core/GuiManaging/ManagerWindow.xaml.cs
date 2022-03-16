@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MilkiBotFramework;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Loading;
 
@@ -23,17 +24,27 @@ namespace daylily.Plugins.Core.GuiManaging;
 /// </summary>
 internal partial class ManagerWindow : Window
 {
+    private readonly Bot _bot;
     public IReadOnlyList<PluginInfo> Plugins { get; }
 
-    public ManagerWindow(IReadOnlyList<PluginInfo> plugins)
+    public ManagerWindow(Bot bot, IReadOnlyList<PluginInfo> plugins)
     {
+        _bot = bot;
         Plugins = plugins;
         InitializeComponent();
     }
 
-    private void ManagerWindow_OnClosing(object? sender, CancelEventArgs e)
+    private async void ManagerWindow_OnClosing(object? sender, CancelEventArgs e)
     {
-        e.Cancel = true;
+        var yesNo = MessageBox.Show("exit?", "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (yesNo != MessageBoxResult.Yes)
+        {
+            e.Cancel = true;
+        }
+        else
+        {
+            await _bot.StopAsync();
+        }
     }
 
     private void ButtonOpenHome_OnClick(object sender, RoutedEventArgs e)
