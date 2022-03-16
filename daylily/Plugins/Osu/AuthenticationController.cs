@@ -35,22 +35,24 @@ namespace daylily.Plugins.Osu
         public async Task<IActionResult> Get(string code, string state)
         {
             string qq;
+            string sessionToken;
             try
             {
                 var union = EncryptUtil.DecryptAes256UseMd5(state, _config.QQAesKey, _config.QQAesIV);
                 var split = union.Split('|');
                 qq = split[0];
                 var ticks = long.Parse(split[1]);
+                sessionToken = split[2];
                 var time = new DateTime(ticks);
                 if (DateTime.Now - time > TimeSpan.FromMinutes(5))
                 {
-                    await _eventBus.PublishAsync(new OsuTokenReceivedEvent("链接已过期，但这本不应发生.."));
+                    await _eventBus.PublishAsync(new OsuTokenReceivedEvent(sessionToken, "链接已过期，但这本不应发生.."));
                     return Content("链接已过期。");
                 }
             }
             catch (Exception ex)
             {
-                await _eventBus.PublishAsync(new OsuTokenReceivedEvent("QQ号获取错误，请重试.."));
+                //await _eventBus.PublishAsync(new OsuTokenReceivedEvent(guid, "QQ号获取错误，请重试.."));
 #if DEBUG
                 throw;
 #endif
@@ -70,7 +72,7 @@ namespace daylily.Plugins.Osu
             }
             catch (Exception ex)
             {
-                await _eventBus.PublishAsync(new OsuTokenReceivedEvent("token获取出错，请重试.."));
+                await _eventBus.PublishAsync(new OsuTokenReceivedEvent(sessionToken, "token获取出错，请重试.."));
 #if DEBUG
                 throw;
 #endif
@@ -82,7 +84,7 @@ namespace daylily.Plugins.Osu
             var client = new OsuClientV2(result);
             var user = await client.User.GetOwnData();
 
-            await _eventBus.PublishAsync(new OsuTokenReceivedEvent(qq, user, result));
+            await _eventBus.PublishAsync(new OsuTokenReceivedEvent(sessionToken, qq, user, result));
             return Redirect($"https://osu.ppy.sh/users/{user.Id}");
         }
     }

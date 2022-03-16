@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using daylily.Plugins.Osu.Data;
 using daylily.Utils;
 using MilkiBotFramework.Event;
 using MilkiBotFramework.Messaging;
+using MilkiBotFramework.Messaging.RichMessages;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Plugining.Configuration;
@@ -40,26 +42,27 @@ public class SetId : BasicPlugin
         var sb = new AuthorizationLinkBuilder(_config.ClientId,
             new Uri(_config.ServerRedirectUri));
 
-        var state = EncryptUtil.EncryptAes256UseMd5(userId + "|" + DateTime.Now.Ticks,
+        var guid = Guid.NewGuid();
+        var sessionToken = guid.ToString("N");
+        var state = EncryptUtil.EncryptAes256UseMd5(userId + "|" + DateTime.Now.Ticks + "|" + sessionToken,
             _config.QQAesKey,
             _config.QQAesIV);
 
         var uri = sb.BuildAuthorizationLink(state, AuthorizationScope.Identify);
-        var guid = Guid.NewGuid();
         using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
         var tcs = new TaskCompletionSource();
         cts.Token.Register(() => tcs.SetCanceled());
         OsuTokenReceivedEvent @event = null!;
-        //todo: concurrent
         _eventBus.Subscribe<OsuTokenReceivedEvent>(e =>
         {
+            if (e.SessionToken != sessionToken) return;
             @event = e;
             tcs.TrySetResult();
         }, guid);
 
         yield return Reply("请点击以下链接完成账号授权，5分钟内有效（请勿分享链接）：");
         await Task.Delay(300);
-        yield return Reply(uri.AbsoluteUri);
+        yield return Reply(new UriText(uri.AbsoluteUri));
         bool timeout;
         try
         {
@@ -74,7 +77,7 @@ public class SetId : BasicPlugin
         _eventBus.Unsubscribe<OsuTokenReceivedEvent>(guid);
         if (timeout)
         {
-            yield return Reply("超过5分钟未点击链接，操作已取消..");
+            //yield return Reply("超过5分钟未点击链接，操作已取消..");
             yield break;
         }
 
