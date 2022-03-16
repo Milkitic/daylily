@@ -59,9 +59,16 @@ public class SearchBn : BasicPlugin
 
     protected override async Task OnInitialized()
     {
-        _taskScheduler.AddTask("BN列表更新", builder => builder
-            .EachDayAt(DateTime.Parse("04:24:00"))
-            .Do(UpdateList));
+        var count = await _osuDbContext.OsuUserInfos.AsNoTracking().CountAsync();
+        _taskScheduler.AddTask("BN列表更新", builder =>
+        {
+            if (count <= 0)
+            {
+                builder.AtStartup();
+            }
+
+            builder.EachDayAt(DateTime.Parse("04:24:00")).Do(UpdateList);
+        });
     }
 
     private void UpdateList(TaskContext context, CancellationToken token)
