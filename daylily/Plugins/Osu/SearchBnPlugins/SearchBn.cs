@@ -9,9 +9,11 @@ using AngleSharp.Html.Parser;
 using Coosu.Api.V2;
 using Coosu.Api.V2.ResponseModels;
 using daylily.Plugins.Osu.Data;
+using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MilkiBotFramework.Connecting;
+using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Tasking;
@@ -33,6 +35,26 @@ public class SearchBn : BasicPlugin
         _httpClient = httpClient;
         _osuDbContext = osuDbContext;
         _taskScheduler = taskScheduler;
+    }
+
+    [CommandHandler("searchbn")]
+    public async Task<IResponse> SearchBnCore([Argument] string keyword)
+    {
+        if (keyword.AsSpan().Trim().Length < 2)
+            return Reply("请指定大于等于两个字符的关键词..");
+        var result = await _osuDbContext.OsuUserInfos
+            .Where(k => k.UserPageText != null && k.UserPageText.Contains(keyword))
+            .ToListAsync();
+        if (result.Count == 0)
+            return Reply("未查找到相关BN..");
+
+        var details = result
+            .ToDictionary(k => k, k => k.UserPageText
+                .Split('\n')
+                .Where(o => o.Contains(keyword))
+                .ToArray()
+            );
+        throw new NotImplementedException();
     }
 
     protected override async Task OnInitialized()
@@ -98,7 +120,14 @@ public class SearchBn : BasicPlugin
                     NewLine = "\n"
                 });
                 var indentedText = writer.ToString();
-                userInfo.UserPageText = indentedText;
+                var pureText = indentedText.Split('\n').Select(o =>
+                {
+                    var c = new HtmlDocument();
+                    c.LoadHtml(o);
+                    var text = c.DocumentNode.InnerText;
+                    return text.Trim();
+                });
+                userInfo.UserPageText = string.Join('\n', pureText);
             }
 
             try
