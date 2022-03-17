@@ -19,7 +19,7 @@ public partial class SearchBnControl : WpfDrawingControl
 {
     private const string XshdTemplate =
         @"<SyntaxDefinition name=""C#"" xmlns=""http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008"">
-    <Color name=""kw"" fontWeight=""bold"" background=""#E0E0E0"" foreground=""#F02432"" />
+    <Color name=""kw"" fontWeight=""bold"" background=""#F13C52"" foreground=""#E0E0E0"" />
     <RuleSet>
         <Rule color=""kw"">
             {{rep}}

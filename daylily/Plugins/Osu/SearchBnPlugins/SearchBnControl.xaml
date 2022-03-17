@@ -41,7 +41,7 @@
                                 Orientation="Horizontal"
                                 TextBlock.FontSize="13"
                                 TextBlock.FontWeight="Bold"
-                                TextBlock.Foreground="Crimson">
+                                TextBlock.Foreground="YellowGreen">
                                 <TextBlock Text="[" />
                                 <TextBlock Text="{Binding Key.Group, Converter={StaticResource String2LowerSnakeConverter}}" />
                                 <TextBlock Margin="0,0,3,0" Text="]" />
