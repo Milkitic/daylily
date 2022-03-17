@@ -10,7 +10,7 @@
     MinWidth="365"
     d:DataContext="{d:DesignInstance local:HelpDetailVm,
                                      IsDesignTimeCreatable=False}"
-    FontFamily="Arial,等线"
+    FontFamily="{StaticResource SspRegular}"
     Foreground="#F0F0F0"
     TextOptions.TextRenderingMode="ClearType"
     mc:Ignorable="d">

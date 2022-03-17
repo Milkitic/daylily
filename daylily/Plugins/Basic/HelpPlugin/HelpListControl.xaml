@@ -9,7 +9,7 @@
     xmlns:wpf="clr-namespace:MilkiBotFramework.Imaging.Wpf;assembly=MilkiBotFramework.Imaging.Wpf"
     d:DataContext="{d:DesignInstance local:HelpListVm,
                                      IsDesignTimeCreatable=False}"
-    FontFamily="Arial,等线"
+    FontFamily="{StaticResource SspRegular}"
     Foreground="#F0F0F0"
     Initialized="HelpListControl_OnInitialized"
     TextOptions.TextRenderingMode="ClearType"
@@ -32,7 +32,7 @@
         </DataTemplate>
         <DataTemplate x:Key="PluginInfoTempl" DataType="local:PluginInfoVm">
             <Border
-                Height="20"
+                Height="22"
                 Margin="0,3"
                 Padding="7,3"
                 Background="#323232"
@@ -45,7 +45,10 @@
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
-                    <TextBlock Margin="20,0,10,0" Text="{Binding PluginInfo.Metadata.Name}" />
+                    <TextBlock
+                        Margin="20,0,10,0"
+                        FontFamily="{StaticResource SspSemibold}"
+                        Text="{Binding PluginInfo.Metadata.Name}" />
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="11"

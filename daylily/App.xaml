@@ -1,0 +1,13 @@
+﻿<Application
+    x:Class="daylily.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <FontFamily x:Key="SspExtraLight">pack://application:,,,/daylily;component/Resources/Fonts/#Source Sans Pro ExtraLight,pack://application:,,,/daylily;component/Resources/Fonts/#思源屏显臻宋 CN</FontFamily>
+        <FontFamily x:Key="SspLight">pack://application:,,,/daylily;component/Resources/Fonts/#Source Sans Pro Light,pack://application:,,,/daylily;component/Resources/Fonts/#思源屏显臻宋 CN</FontFamily>
+        <FontFamily x:Key="SspRegular">pack://application:,,,/daylily;component/Resources/Fonts/#Source Sans Pro,pack://application:,,,/daylily;component/Resources/Fonts/#思源屏显臻宋 CN</FontFamily>
+        <FontFamily x:Key="SspSemibold">pack://application:,,,/daylily;component/Resources/Fonts/#Source Sans Pro Semibold,pack://application:,,,/daylily;component/Resources/Fonts/#思源屏显臻宋 CN</FontFamily>
+        <FontFamily x:Key="SspBlack">pack://application:,,,/daylily;component/Resources/Fonts/#Source Sans Pro Black,pack://application:,,,/daylily;component/Resources/Fonts/#思源屏显臻宋 CN</FontFamily>
+    </Application.Resources>
+</Application>
