@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel;
 using Coosu.Api.V2;
-using daylily.Plugins.Osu;
 using daylily.Plugins.Osu.Data;
 using Microsoft.Extensions.Logging;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
-namespace Daylily.Plugins.Osu;
+namespace daylily.Plugins.Osu;
 
 [PluginIdentifier("611d6a61-1ccc-4c19-92f3-57976d927655", "成绩查询", Scope = "osu!")]
 [Description("最近成绩查询")]

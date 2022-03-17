@@ -10,7 +10,7 @@ using MilkiBotFramework.Plugining.Attributes;
 namespace daylily.Plugins.Basic;
 
 [PluginIdentifier("4c729d16-3954-4e70-ad4c-8a0ea72efe1a", "自助禁言")]
-[Description("当${BotName}是管理员时，将命令发送者禁言（30分钟到12小时）。")]
+[Description("当${BotNick}是管理员时，将命令发送者禁言（30分钟到12小时）。")]
 public class Smoke : BasicPlugin
 {
     private readonly IContactsManager _contactsManager;
@@ -42,7 +42,7 @@ public class Smoke : BasicPlugin
             {
                 if (groupMember.MemberInfo!.MemberRole == MemberRole.Member)
                 {
-                    return Reply("${BotName}不是管理员，没办法自助禁言o");
+                    return Reply("${BotNick}不是管理员，没办法自助禁言o");
                 }
             }
         }
@@ -77,7 +77,7 @@ public class Smoke : BasicPlugin
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "禁言时出错");
-            return Reply("由于不可抗力，${BotName}没有办法禁言..");
+            return Reply("由于不可抗力，${BotNick}没有办法禁言..");
         }
 
         return Reply($"祝你一觉睡到{DateTime.Now.AddHours(sleepTime):HH:mm} 🙂");
