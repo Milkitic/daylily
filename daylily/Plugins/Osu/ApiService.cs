@@ -91,18 +91,6 @@ public class ApiService : ServicePlugin
         return (true, ConvertToken(osuToken), null);
     }
 
-    internal async Task<(bool, long? osuId, IResponse? message)> TryGetUserId(
-        MessageContext messageContext, OsuDbContext dbContext)
-    {
-        var osuId = dbContext.GetUserIdBySourceId(messageContext.MessageUserIdentity.UserId).Result;
-        if (osuId == null)
-        {
-            return (false, null, Reply(UnbindMessage));
-        }
-
-        return (false, osuId, null);
-    }
-
     protected override async Task OnInitialized()
     {
         _taskScheduler.AddTask("RefreshOsuToken", k => k
