@@ -12,61 +12,65 @@
                                      IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    FontFamily="Calibri,华文中宋"
+    FontFamily="{StaticResource SspRegular}"
     Initialized="SearchBnControl_OnInitialized"
     Loaded="SearchBnControl_OnLoaded"
-    TextOptions.TextHintingMode="Animated"
     TextOptions.TextRenderingMode="ClearType"
     mc:Ignorable="d">
     <UserControl.Resources>
         <helpPlugin:String2LowerSnakeConverter x:Key="String2LowerSnakeConverter" />
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Hidden">
-        <StackPanel x:Name="StackPanel1" Background="#323232">
-            <StackPanel
-                Margin="0,0,0,5"
-                Orientation="Horizontal"
-                TextBlock.FontSize="16"
-                TextBlock.Foreground="White">
-                <TextBlock Text="找到以下" />
-                <TextBlock Text="{Binding Details.Count}" />
-                <TextBlock Text="个结果：" />
-            </StackPanel>
-            <ItemsControl x:Name="ItemsControl" ItemsSource="{Binding Details}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="0,0,0,5">
-                            <StackPanel
-                                HorizontalAlignment="Left"
-                                Orientation="Horizontal"
-                                TextBlock.FontSize="13"
-                                TextBlock.FontWeight="Bold"
-                                TextBlock.Foreground="YellowGreen">
-                                <TextBlock Text="[" />
-                                <TextBlock Text="{Binding Key.Group, Converter={StaticResource String2LowerSnakeConverter}}" />
-                                <TextBlock Margin="0,0,3,0" Text="]" />
-                                <TextBlock Text="{Binding Key.Username}" />
+        <Border
+            x:Name="MainContainer"
+            Padding="8,5"
+            Background="#323232">
+            <StackPanel>
+                <StackPanel
+                    Margin="0,0,0,5"
+                    Orientation="Horizontal"
+                    TextBlock.FontSize="16"
+                    TextBlock.Foreground="White">
+                    <TextBlock Text="找到以下" />
+                    <TextBlock Text="{Binding Details.Count}" />
+                    <TextBlock Text="个结果：" />
+                </StackPanel>
+                <ItemsControl x:Name="ItemsControl" ItemsSource="{Binding Details}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,0,5">
+                                <StackPanel
+                                    HorizontalAlignment="Left"
+                                    Orientation="Horizontal"
+                                    TextBlock.FontSize="13"
+                                    TextBlock.FontWeight="Bold"
+                                    TextBlock.Foreground="YellowGreen">
+                                    <TextBlock Text="[" />
+                                    <TextBlock Text="{Binding Key.Group, Converter={StaticResource String2LowerSnakeConverter}}" />
+                                    <TextBlock Margin="0,0,3,0" Text="]" />
+                                    <TextBlock Text="{Binding Key.Username}" />
+                                </StackPanel>
+                                <avalonedit:TextEditor
+                                    x:Name="TextEditor"
+                                    MaxWidth="800"
+                                    Margin="26,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    Background="#323232"
+                                    FontFamily="Consolas"
+                                    Foreground="#F0F0F0"
+                                    HorizontalScrollBarVisibility="Disabled"
+                                    IsReadOnly="True"
+                                    VerticalScrollBarVisibility="Disabled" />
                             </StackPanel>
-                            <avalonedit:TextEditor
-                                x:Name="TextEditor"
-                                MaxWidth="800"
-                                Margin="26,0,0,0"
-                                HorizontalAlignment="Left"
-                                Background="#323232"
-                                FontFamily="Consolas"
-                                Foreground="#F0F0F0"
-                                HorizontalScrollBarVisibility="Disabled"
-                                IsReadOnly="True"
-                                VerticalScrollBarVisibility="Disabled" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <!--<ItemsControl.ItemsPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <!--<ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="2" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>-->
-            </ItemsControl>
-        </StackPanel>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
     </ScrollViewer>
 </wpf:WpfDrawingControl>

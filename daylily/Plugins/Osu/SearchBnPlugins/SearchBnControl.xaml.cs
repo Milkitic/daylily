@@ -40,8 +40,8 @@ public partial class SearchBnControl : WpfDrawingControl
 
     protected override Visual GetDrawingVisual(out Size size)
     {
-        size = new Size(StackPanel1.ActualWidth, StackPanel1.ActualHeight);
-        return StackPanel1;
+        size = new Size(MainContainer.ActualWidth, MainContainer.ActualHeight);
+        return MainContainer;
     }
 
     private void SearchBnControl_OnInitialized(object? sender, EventArgs e)

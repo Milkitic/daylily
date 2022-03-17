@@ -13,7 +13,7 @@
     d:DataContext="{d:DesignInstance beatmapStats:BeatmapStatsVm,
                                      IsDesignTimeCreatable=False}"
     Background="#242424"
-    TextBlock.FontFamily="Calibri,华文中宋"
+    FontFamily="{StaticResource SspRegular}"
     TextOptions.TextFormattingMode="Ideal"
     TextOptions.TextHintingMode="Fixed"
     TextOptions.TextRenderingMode="ClearType"
@@ -125,7 +125,6 @@
                 Grid.Column="1"
                 Margin="15,41,0,0"
                 HorizontalAlignment="Right"
-                TextBlock.FontFamily="Calibri,等线"
                 TextBlock.FontSize="13">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="上传时间: " />
