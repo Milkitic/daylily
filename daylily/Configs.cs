@@ -97,9 +97,28 @@ public sealed class DragonLanguageConfig : ConfigurationBase
 
     public ConcurrentDictionary<string, List<UserExpression>>? UserDictionary { get; set; } = new();
 }
+
 public sealed class ShuntDownConfig : ConfigurationBase
 {
     [YamlIgnore]
     internal readonly AsyncLock AsyncLock = new();
     public ConcurrentDictionary<MessageIdentity, DateTimeOffset?>? ExpireTimeDictionary { get; set; } = new();
+}
+
+public sealed class WhatToEatConfig : ConfigurationBase
+{
+    public class GroupMeals
+    {
+        [YamlIgnore]
+        public readonly ReaderWriterLockSlim CollectionLock = new();
+
+        [YamlIgnore]
+        public DateTime Cooldown { get; set; } = DateTime.MinValue;
+        [YamlIgnore]
+        public Dictionary<string, List<DateTime>> UserCoolDownList { get; set; } = new();
+        public bool IsSubChannelOnly { get; set; }
+        public List<string> Meals { get; set; } = new();
+    }
+
+    public ConcurrentDictionary<MessageIdentity, GroupMeals> Sessions { get; set; } = new();
 }
