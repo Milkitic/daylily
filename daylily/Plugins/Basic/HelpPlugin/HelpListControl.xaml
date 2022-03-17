@@ -38,19 +38,19 @@
                 Background="#323232"
                 CornerRadius="10">
                 <StackPanel Orientation="Horizontal">
-                    <ItemsControl
-                        Margin="0,0,20,0"
-                        ItemTemplate="{StaticResource CommandTempl}"
-                        ItemsSource="{Binding Commands}">
+                    <ItemsControl ItemTemplate="{StaticResource CommandTempl}" ItemsSource="{Binding Commands}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
-                    <TextBlock Text="{Binding PluginInfo.Metadata.Name}" />
-                    <TextBlock Text=". " />
-                    <TextBlock Text="{Binding PluginInfo.Metadata.Description, Converter={StaticResource String2DescriptionConverter}}" />
+                    <TextBlock Margin="20,0,10,0" Text="{Binding PluginInfo.Metadata.Name}" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="11"
+                        Foreground="#d0d0d0"
+                        Text="{Binding PluginInfo.Metadata.Description}" />
                 </StackPanel>
             </Border>
         </DataTemplate>
@@ -74,7 +74,7 @@
     </UserControl.Resources>
     <Border Padding="5" Background="#181818">
         <Border.LayoutTransform>
-            <ScaleTransform ScaleX="1.1" ScaleY="1.1" />
+            <ScaleTransform ScaleX="1.2" ScaleY="1.2" />
         </Border.LayoutTransform>
         <Grid>
             <Grid.RowDefinitions>

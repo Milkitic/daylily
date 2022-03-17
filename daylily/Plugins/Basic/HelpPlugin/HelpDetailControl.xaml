@@ -21,7 +21,7 @@
     </UserControl.Resources>
     <Border Padding="5" Background="#181818">
         <Border.LayoutTransform>
-            <ScaleTransform ScaleX="1.1" ScaleY="1.1" />
+            <ScaleTransform ScaleX="1.2" ScaleY="1.2" />
         </Border.LayoutTransform>
         <Grid>
             <Grid.RowDefinitions>

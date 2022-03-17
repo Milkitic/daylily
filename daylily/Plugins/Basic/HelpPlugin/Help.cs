@@ -126,7 +126,7 @@ public sealed class Help : BasicPlugin
                     }
                     else
                     {
-                        sbOptions.Append($" [{parameterInfo.Name} {parameterInfo.ParameterName.ToLowerSnake()}]");
+                        sbOptions.Append($" [-{parameterInfo.Name} {parameterInfo.ParameterName.ToLowerSnake()}]");
                     }
 
                     options.Add(parameterInfo);
