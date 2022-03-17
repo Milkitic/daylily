@@ -10,7 +10,7 @@ using MilkiBotFramework.Plugining.Attributes;
 
 namespace daylily.Plugins.Osu.UserPage;
 
-[PluginIdentifier("20e4039e-41fd-4dee-bcaa-12b43dc7e0a6", "个人介绍页面")]
+[PluginIdentifier("20e4039e-41fd-4dee-bcaa-12b43dc7e0a6", "个人介绍页面", Scope = "osu!")]
 [Description("自动生成个人介绍页面截图")]
 public class UserPagePlugin : BasicPlugin
 {
