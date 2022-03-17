@@ -16,6 +16,6 @@ return await new AspnetcoreBotBuilder()
 
     )
     .UseGoCqHttp()
-    .UseCommandLineAnalyzer<MyCommandLineAnalyzer>()
+    .UseCommandLineAnalyzer<MyCommandLineAnalyzer>(new GoCqParameterConverter())
     .Build()
     .RunAsync();
