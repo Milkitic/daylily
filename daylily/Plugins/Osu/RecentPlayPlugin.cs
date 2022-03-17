@@ -24,7 +24,7 @@ public class RecentPlayPlugin : BasicPlugin
         _dbContext = dbContext;
     }
 
-    [CommandHandler("r")]
+    [CommandHandler("recent")]
     public async Task<IResponse> Recent(MessageContext context,
         [Argument, Description("游戏模式. 0:Osu; 1:Taiko; 2:Fruits; 3:Mania")] GameMode? gameMode = null,
         [Option("all"), Description("包含Fail成绩")] bool all = false,

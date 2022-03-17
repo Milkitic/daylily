@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using AngleSharp.Html;
 using AngleSharp.Html.Parser;
 using Coosu.Api.V2;
-using Coosu.Api.V2.ResponseModels;
 using daylily.Plugins.Osu.Data;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MilkiBotFramework.Connecting;
+using MilkiBotFramework.Imaging;
+using MilkiBotFramework.Imaging.Wpf;
 using MilkiBotFramework.Messaging;
+using MilkiBotFramework.Messaging.RichMessages;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 using MilkiBotFramework.Tasking;
@@ -42,6 +39,8 @@ public class SearchBn : BasicPlugin
     {
         if (keyword.AsSpan().Trim().Length < 2)
             return Reply("请指定大于等于两个字符的关键词..");
+
+        keyword = keyword.Trim();
         var result = await _osuDbContext.OsuUserInfos
             .Where(k => k.UserPageText != null && k.UserPageText.Contains(keyword))
             .ToListAsync();
@@ -49,12 +48,18 @@ public class SearchBn : BasicPlugin
             return Reply("未查找到相关BN..");
 
         var details = result
-            .ToDictionary(k => k, k => k.UserPageText
-                .Split('\n')
-                .Where(o => o.Contains(keyword))
-                .ToArray()
-            );
-        throw new NotImplementedException();
+            .Select(k => new KeyValuePair<OsuUserInfo, string>(k,
+                string.Join('\n', k.UserPageText!
+                    .Split('\n')
+                    .Where(o => o.Contains(keyword))
+                )
+            ))
+            .ToArray();
+
+        var renderer = new WpfDrawingProcessor<SearchBnVm, SearchBnControl>();
+        var vm = new SearchBnVm(details, keyword);
+        var image = await renderer.ProcessAsync(vm);
+        return Reply(new MemoryImage(image, ImageType.Png));
     }
 
     protected override async Task OnInitialized()

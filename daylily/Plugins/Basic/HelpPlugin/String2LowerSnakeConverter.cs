@@ -6,11 +6,11 @@ namespace daylily.Plugins.Basic.HelpPlugin;
 
 public class String2LowerSnakeConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is string str)
             return str.ToLowerSnake();
-        return value?.ToString();
+        return value?.ToString()?.ToLowerSnake();
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
