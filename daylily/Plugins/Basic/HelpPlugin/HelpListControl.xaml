@@ -33,7 +33,7 @@
         <DataTemplate x:Key="PluginInfoTempl" DataType="local:PluginInfoVm">
             <Border
                 Height="22"
-                Margin="0,3"
+                Margin="0,2"
                 Padding="7,3"
                 Background="#323232"
                 CornerRadius="10">
