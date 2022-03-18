@@ -3,7 +3,6 @@ using System.IO;
 using MilkiBotFramework.ContactsManaging;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;
-using MilkiBotFramework.Platforms.GoCqHttp.Messaging.CqCodes;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
 
@@ -12,11 +11,11 @@ namespace daylily.Plugins.Basic;
 [PluginIdentifier("e6d765b3-a015-4192-9cc1-0cfa5c13ec55", "@检测")]
 [PluginLifetime(PluginLifetime.Scoped)]
 [Description("当自己被at时回击at对方")]
-public class CheckCqAt : BasicPlugin
+public class CheckAt : BasicPlugin
 {
     private readonly IContactsManager _contactsManager;
 
-    public CheckCqAt(IContactsManager contactsManager)
+    public CheckAt(IContactsManager contactsManager)
     {
         _contactsManager = contactsManager;
     }
@@ -26,8 +25,8 @@ public class CheckCqAt : BasicPlugin
         if (context.MessageIdentity?.MessageType != MessageType.Channel) yield break;
         var richMsg = context.GetRichMessage();
         var allAts = richMsg
-            .Where(k => k is CQAt)
-            .Select(k => ((CQAt)k).UserId)
+            .Where(k => k is At)
+            .Select(k => ((At)k).UserId)
             .ToHashSet();
         var result = await _contactsManager.TryGetOrUpdateSelfInfo();
         if (!result.IsSuccess) yield break;
