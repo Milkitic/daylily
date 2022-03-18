@@ -11,7 +11,7 @@ using MilkiBotFramework.Plugining.Loading;
 
 namespace daylily.Plugins.Basic.HelpPlugin;
 
-[PluginIdentifier("641dbf44-4a1b-4444-907e-c608ac2b1cfc", "Help选单")]
+[PluginIdentifier("641dbf44-4a1b-4444-907e-c608ac2b1cfc", "${BotNick}帮助")]
 [PluginLifetime(PluginLifetime.Singleton)]
 public sealed class Help : BasicPlugin
 {
@@ -63,8 +63,9 @@ public sealed class Help : BasicPlugin
                 return new ScopeInfoVm(pluginInfos.Key, pluginInfos
                     .Select(k => (pluginInfo: k,
                         commands: k.Commands
-                            .Where(o => o.Value.Authority <= context.Authority &&
-                                        o.Value.MessageType.HasFlag(context.MessageIdentity!.MessageType))
+                            .Where(o => o.Value.Authority <= context.Authority
+                                        //&& o.Value.MessageType.HasFlag(context.MessageIdentity!.MessageType)
+                            )
                             .Select(o => o.Value)
                             .OrderBy(o => o.Command)
                             .ToArray())

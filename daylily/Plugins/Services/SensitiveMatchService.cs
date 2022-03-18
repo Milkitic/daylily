@@ -9,7 +9,7 @@ using MilkiBotFramework.Plugining.Loading;
 
 namespace daylily.Plugins.Services
 {
-    [PluginIdentifier("13432984-2A24-4691-9C0C-DE98B7B70F9A")]
+    [PluginIdentifier("13432984-2A24-4691-9C0C-DE98B7B70F9A", "敏感词屏蔽")]
     public class SensitiveMatchService : ServicePlugin
     {
         private readonly ILogger<SensitiveMatchService> _logger;

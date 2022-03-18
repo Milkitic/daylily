@@ -7,7 +7,7 @@ using MilkiBotFramework.Tasking;
 
 namespace daylily.Plugins.Services
 {
-    [PluginIdentifier("11CCA200-61EF-49DF-9E30-C48C3AD69BE5")]
+    [PluginIdentifier("11CCA200-61EF-49DF-9E30-C48C3AD69BE5", "内存溢出检测")]
     public class MemoryCheckService : ServicePlugin
     {
         private readonly Bot _bot;
