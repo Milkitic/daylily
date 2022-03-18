@@ -1,0 +1,118 @@
+﻿<wpf:WpfDrawingControl
+    x:Class="daylily.Plugins.Basic.HelpPlugin.HelpListControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:loading="clr-namespace:MilkiBotFramework.Plugining.Loading;assembly=MilkiBotFramework"
+    xmlns:local="clr-namespace:daylily.Plugins.Basic.HelpPlugin"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpf="clr-namespace:MilkiBotFramework.Imaging.Wpf;assembly=MilkiBotFramework.Imaging.Wpf"
+    d:DataContext="{d:DesignInstance local:HelpListVm,
+                                     IsDesignTimeCreatable=False}"
+    FontFamily="{StaticResource SspRegular}"
+    Foreground="#F0F0F0"
+    Initialized="HelpListControl_OnInitialized"
+    TextOptions.TextRenderingMode="ClearType"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:String2DescriptionConverter x:Key="String2DescriptionConverter" />
+        <DataTemplate x:Key="CommandTempl" DataType="loading:CommandInfo">
+            <StackPanel
+                Margin="0,0,5,0"
+                Orientation="Horizontal"
+                TextBlock.Foreground="#F0E030">
+                <TextBlock Text="/" />
+                <TextBlock Text="{Binding Command}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="HelpTempl">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="PluginInfoTempl" DataType="local:PluginInfoVm">
+            <Border
+                Height="22"
+                Margin="0,2"
+                Padding="7,3"
+                Background="#323232"
+                CornerRadius="10">
+                <StackPanel Orientation="Horizontal">
+                    <ItemsControl ItemTemplate="{StaticResource CommandTempl}" ItemsSource="{Binding Commands}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    <TextBlock
+                        Margin="20,0,10,0"
+                        FontFamily="{StaticResource SspSemibold}"
+                        Text="{Binding PluginInfo.Metadata.Name}" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="11"
+                        Foreground="#d0d0d0"
+                        Text="{Binding PluginInfo.Metadata.Description}" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="AssemblyPluginInfoTempl" DataType="local:ScopeInfoVm">
+            <Grid Margin="5,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Margin="5,0,0,2"
+                    FontSize="14"
+                    Foreground="#4070F0"
+                    Text="{Binding Scope}" />
+                <ItemsControl
+                    Grid.Row="1"
+                    ItemTemplate="{StaticResource PluginInfoTempl}"
+                    ItemsSource="{Binding PluginInfos}" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Border Padding="5" Background="#181818">
+        <Border.LayoutTransform>
+            <ScaleTransform ScaleX="1.2" ScaleY="1.2" />
+        </Border.LayoutTransform>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" TextBlock.Foreground="#484848">
+                <TextBlock Text="{Binding AppName}" />
+                <TextBlock Text=" " />
+                <TextBlock Text="{Binding VersionString}" />
+                <TextBlock Margin="15,0,0,0" Text="MilkiBotFramework" />
+                <TextBlock Text=" " />
+                <TextBlock Text="{Binding CoreVersionString}" />
+            </StackPanel>
+            <Grid Grid.Row="1" Margin="20,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    FontSize="16"
+                    Text="插件列表" />
+                <TextBlock
+                    Grid.Row="1"
+                    Margin="0,3"
+                    Foreground="#B0B0B0"
+                    Text="（使用&quot;/help [-命令]&quot;或&quot;/help [插件名]&quot;查询某个插件的详情）" />
+                <ItemsControl
+                    Grid.Row="2"
+                    ItemTemplate="{StaticResource AssemblyPluginInfoTempl}"
+                    ItemsSource="{Binding AssemblyInfoVms}" />
+            </Grid>
+        </Grid>
+    </Border>
+</wpf:WpfDrawingControl>

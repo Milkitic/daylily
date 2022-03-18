@@ -1,0 +1,38 @@
+﻿<Window
+    x:Class="daylily.Plugins.Core.GuiManaging.ManagerWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:loading="clr-namespace:MilkiBotFramework.Plugining.Loading;assembly=MilkiBotFramework"
+    xmlns:local="clr-namespace:daylily.Plugins.Core.GuiManaging"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Self"
+    Title="Bot控制台"
+    Width="800"
+    Height="450"
+    x:ClassModifier="internal"
+    Closing="ManagerWindow_OnClosing"
+    mc:Ignorable="d">
+    <Grid>
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding ElementName=Self, Path=Plugins}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="loading:PluginInfo">
+                        <StackPanel Margin="5" Orientation="Horizontal">
+                            <TextBlock
+                                MinWidth="200"
+                                VerticalAlignment="Center"
+                                Text="{Binding Metadata.Name}" />
+                            <Button
+                                Width="70"
+                                Height="20"
+                                Click="ButtonOpenHome_OnClick"
+                                Content="主目录..."
+                                Tag="{Binding PluginHome}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Window>

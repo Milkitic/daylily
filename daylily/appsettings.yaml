@@ -1,0 +1,33 @@
+﻿# go-cqhttp连接设置
+Connection:
+# 连接方式，支持: Http, WebSocket, ReverseWebSocket
+  ConnectionType: WebSocket
+  # 目标接口链接。当 ConnectionType 为 Http, WebSocket 时生效
+  TargetUri: ws://127.0.0.1:5700
+  # 服务器绑定Url。当 ConnectionType 为 Http, ReverseWebSocket 时生效
+  ServerBindUrl: http://0.0.0.0:2333
+  # 服务器绑定的具体路由。当 ConnectionType 为 Http, ReverseWebSocket 时生效
+  ServerBindPath: /endpoint
+HttpOptions:
+# 代理服务器地址
+  ProxyUrl: 
+  # 默认超时
+  Timeout: 00:00:08
+  # 自动重试次数
+  RetryCount: 3
+# Root权限账号
+RootAccounts: []
+# 插件目录
+PluginBaseDir: ./plugins
+# 插件资源目录
+PluginHomeDir: ./homes
+# 插件数据库目录
+PluginDatabaseDir: ./databases
+# 插件配置目录
+PluginConfigurationDir: ./configurations
+# 缓存图片目录
+CacheImageDir: ./caches/images
+# gifsicle插件位置
+GifSiclePath: 
+# ffmpeg插件位置
+FfMpegPath: 

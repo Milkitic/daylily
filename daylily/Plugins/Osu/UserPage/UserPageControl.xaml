@@ -1,0 +1,16 @@
+﻿<wpf:WpfDrawingControl
+    x:Class="daylily.Plugins.Osu.UserPage.UserPageControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:daylily.Plugins.Osu.UserPage"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpf="clr-namespace:MilkiBotFramework.Imaging.Wpf;assembly=MilkiBotFramework.Imaging.Wpf"
+    d:DataContext="{d:DesignInstance local:UserPageVm,
+                                     IsDesignTimeCreatable=False}"
+    Initialized="UserPageControl_OnInitialized"
+    mc:Ignorable="d">
+    <Canvas>
+        <WebBrowser x:Name="WebBrowser" />
+    </Canvas>
+</wpf:WpfDrawingControl>
