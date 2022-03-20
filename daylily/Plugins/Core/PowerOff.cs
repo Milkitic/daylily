@@ -11,7 +11,7 @@ using MilkiBotFramework.Tasking;
 namespace daylily.Plugins.Core;
 
 [PluginIdentifier("32d3ca82-969e-4757-8575-7ab11371766a", "关机", AllowDisable = false, Index = -30)]
-[Description("可将bot关闭一段时间，支持自定义时间")]
+[Description("可将${BotNick}关闭一段时间，支持自定义时间")]
 [PluginLifetime(PluginLifetime.Singleton)]
 public class PowerOff : BasicPlugin
 {
