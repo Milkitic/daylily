@@ -3,7 +3,7 @@ using MilkiBotFramework.Plugining.CommandLine;
 
 namespace daylily;
 
-internal sealed class MyCommandLineAnalyzer : CommandLineAnalyzer
+public class MyCommandLineAnalyzer : CommandLineAnalyzer
 {
     public override bool TryAnalyze(string input,
         [NotNullWhen(true)] out CommandLineResult? result,
