@@ -9,19 +9,13 @@ public sealed class FailExecuteReplyService : ServicePlugin
 {
     public override async Task<IResponse?> OnPluginException(Exception exception, MessageContext context)
     {
-        if (context.Authority != MessageAuthority.Root) return null;
-
-        var message = "插件执行出错啦！";
-//#if DEBUG
-//        if (context.MessageIdentity!.MessageType == MessageType.Private)
-//        {
-//            message += "调试信息：\r\n" + (exception);
-//        }
-//        else
-//#endif
+        if (context.Authority != MessageAuthority.Root)
         {
-            message += "\r\n错误信息：" + (exception?.Message);
+            return Reply("指令执行出错，错误代码：" + exception.HResult);
         }
+
+        var message = "指令执行出错！" +
+                      "\r\n错误信息：" + (exception?.Message);
 
         return Reply(message);
     }

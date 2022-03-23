@@ -7,7 +7,7 @@ public static class EncryptUtil
 {
     public static string EncryptAes256UseMd5(string sourceStr, string? key = null, string? iv = null)
     {
-        Span<byte> keySpan = stackalloc byte[16];
+        Span<byte> keySpan = stackalloc byte[32];
         FillSpan(key, keySpan);
         Span<byte> ivSpan = stackalloc byte[16];
         FillSpan(iv, ivSpan);
@@ -28,7 +28,7 @@ public static class EncryptUtil
 
     public static string DecryptAes256UseMd5(byte[] encryptedBytes, string? key = null, string? iv = null)
     {
-        Span<byte> keySpan = stackalloc byte[16];
+        Span<byte> keySpan = stackalloc byte[32];
         FillSpan(key, keySpan);
         Span<byte> ivSpan = stackalloc byte[16];
         FillSpan(iv, ivSpan);
