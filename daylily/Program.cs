@@ -7,7 +7,7 @@ using MilkiBotFramework.Imaging.Wpf.Internal;
 using MilkiBotFramework.Platforms.GoCqHttp;
 using NLog.Extensions.Logging;
 
-UiThreadHelper.GetApplication = () =>
+UiThreadHelper.GetApplicationFunc = () =>
 {
     var application = new App();
     var resourceLocater = new Uri("/daylily;component/app.xaml", UriKind.Relative);
