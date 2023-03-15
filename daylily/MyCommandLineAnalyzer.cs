@@ -19,6 +19,15 @@ public class MyCommandLineAnalyzer : CommandLineAnalyzer
         {
             input = $"{GetCommandFlag()}help";
         }
+        else if (source.Contains("吃啥", StringComparison.InvariantCulture) ||
+             source.Contains("吃什么", StringComparison.InvariantCulture))
+        {
+            input = $"{GetCommandFlag()}what2eat";
+        }
+        else if (source.Equals("摆酒席", StringComparison.InvariantCulture))
+        {
+            input = $"{GetCommandFlag()}what2eat10";
+        }
 
         return base.TryAnalyze(input, out result, out exception);
     }
