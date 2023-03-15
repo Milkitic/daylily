@@ -1,9 +1,14 @@
 ﻿using System.ComponentModel;
 using System.Text;
 using Coosu.Api.V2;
+using daylily.Plugins.Osu.BeatmapStats;
 using daylily.Plugins.Osu.Data;
-using Microsoft.EntityFrameworkCore;
+using daylily.Plugins.Osu.Me;
 using Microsoft.Extensions.Logging;
+using MilkiBotFramework;
+using MilkiBotFramework.Connecting;
+using MilkiBotFramework.Imaging;
+using MilkiBotFramework.Imaging.Wpf;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Messaging.RichMessages;
 using MilkiBotFramework.Plugining;
@@ -17,12 +22,17 @@ public class MePlugin : BasicPlugin
 {
     private readonly ILogger<MePlugin> _logger;
     private readonly ApiService _apiService;
+    private readonly LightHttpClient _lightHttpClient;
     private readonly OsuDbContext _dbContext;
 
-    public MePlugin(ILogger<MePlugin> logger, ApiService apiService, OsuDbContext dbContext)
+    public MePlugin(ILogger<MePlugin> logger,
+        ApiService apiService,
+        LightHttpClient lightHttpClient,
+        OsuDbContext dbContext)
     {
         _logger = logger;
         _apiService = apiService;
+        _lightHttpClient = lightHttpClient;
         _dbContext = dbContext;
     }
 
@@ -40,32 +50,13 @@ public class MePlugin : BasicPlugin
 
         var user = result.Result;
 
-        var sb = new StringBuilder();
-        sb.AppendLine(user.Username + "  " +
-                      (string.IsNullOrWhiteSpace(user.Location) ? "" : (user.Location + ", ")) +
-                      user.Country?.Name);
-        if (!string.IsNullOrWhiteSpace(user.Discord)) sb.AppendLine("Discord: " + user.Discord);
-        if (!string.IsNullOrWhiteSpace(user.Title)) sb.AppendLine("职位: " + user.Title);
-        sb.AppendLine("好友关注: " + user.FollowerCount);
-        sb.AppendLine("Rank图: " + user.RankedAndApprovedBeatmapsetCount);
-        sb.AppendLine("Pending图: " + user.UnrankedBeatmapsetCount);
-        sb.AppendLine("坟图: " + user.GraveyardBeatmapsetCount);
-        if (user.Badges is { Length: > 0 })
+        var renderer = new WpfDrawingProcessor<MeOsuControlVm, MeControl>((vm, image) =>
+            new MeControl(_lightHttpClient, vm, image), true);
+        var vm = new MeOsuControlVm
         {
-            sb.AppendLine("狗牌: ");
-            var richMessage = new RichMessage(new Text(sb.ToString()));
-            foreach (var badge in user.Badges)
-            {
-                _logger.LogDebug(badge.ImageUrl);
-                richMessage.RichMessages.Add(new LinkImage(badge.ImageUrl));
-            }
-
-            return Reply(richMessage);
-        }
-        else
-        {
-            return Reply(sb.ToString().Trim('\n', '\r'));
-        }
-
+            User = user
+        };
+        var image = await renderer.ProcessAsync(vm);
+        return Reply(new MemoryImage(image, ImageType.Png));
     }
 }

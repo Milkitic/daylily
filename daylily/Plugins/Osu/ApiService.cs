@@ -3,6 +3,7 @@ using Coosu.Api.V2;
 using Coosu.Api.V2.ResponseModels;
 using daylily.Plugins.Osu.Data;
 using Microsoft.Extensions.Logging;
+using MilkiBotFramework;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
 using MilkiBotFramework.Plugining.Attributes;
@@ -32,14 +33,16 @@ public class ApiService : ServicePlugin
         public string? Error { get; set; }
     }
 
+    private readonly BotOptions _botOptions;
     private readonly BotTaskScheduler _taskScheduler;
     private readonly OsuConfig _config;
     private readonly TaskCompletionSource _initialWait;
 
-    internal string UnbindMessage => "你还没有绑定账号，请私聊我 \"/setid.osu\" 完成绑定。直接复制引号中的内容即可。";
+    internal string UnbindMessage => $"你还没有绑定账号，请私聊我 \"{_botOptions.CommandFlag}setid.osu\" 完成绑定。直接复制引号中的内容即可。";
 
-    public ApiService(IConfiguration<OsuConfig> configuration, BotTaskScheduler taskScheduler)
+    public ApiService(IConfiguration<OsuConfig> configuration, BotOptions botOptions, BotTaskScheduler taskScheduler)
     {
+        _botOptions = botOptions;
         _taskScheduler = taskScheduler;
         _config = configuration.Instance;
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
