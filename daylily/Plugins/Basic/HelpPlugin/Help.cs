@@ -16,11 +16,13 @@ namespace daylily.Plugins.Basic.HelpPlugin;
 public sealed class Help : BasicPlugin
 {
     private readonly PluginManager _pluginManager;
+    private readonly BotOptions _botOptions;
     private readonly Dictionary<string, (PluginInfo, bool)> _detailMapping = new();
 
-    public Help(PluginManager pluginManager)
+    public Help(PluginManager pluginManager, BotOptions botOptions)
     {
         _pluginManager = pluginManager;
+        _botOptions = botOptions;
     }
 
     protected override async Task OnInitialized()
@@ -64,7 +66,7 @@ public sealed class Help : BasicPlugin
                     .Select(k => (pluginInfo: k,
                         commands: k.Commands
                             .Where(o => o.Value.Authority <= context.Authority
-                                        //&& o.Value.MessageType.HasFlag(context.MessageIdentity!.MessageType)
+                            //&& o.Value.MessageType.HasFlag(context.MessageIdentity!.MessageType)
                             )
                             .Select(o => o.Value)
                             .OrderBy(o => o.Command)
@@ -79,7 +81,7 @@ public sealed class Help : BasicPlugin
             .ToArray();
         var renderer = new WpfDrawingProcessor<HelpListVm, HelpListControl>(true);
 
-        var helpViewModel = new HelpListVm(assemblyInfoVms);
+        var helpViewModel = new HelpListVm(assemblyInfoVms, _botOptions.CommandFlag);
         var image = await renderer.ProcessAsync(helpViewModel);
         return new MemoryImage(image, ImageType.Png);
     }
@@ -134,14 +136,14 @@ public sealed class Help : BasicPlugin
                 }
             }
 
-            pluginDetailVm.CurrentCommandUsage = $"/{pluginName}{sbOptions}{sbArguments}{sbOptionsSwitch}";
+            pluginDetailVm.CurrentCommandUsage = _botOptions.CommandFlag + $"{pluginName}{sbOptions}{sbArguments}{sbOptionsSwitch}";
             pluginDetailVm.CurrentArguments = arguments;
             pluginDetailVm.CurrentOptions = options;
         }
 
         var renderer = new WpfDrawingProcessor<HelpDetailVm, HelpDetailControl>(true);
 
-        var helpViewModel = new HelpDetailVm(pluginDetailVm);
+        var helpViewModel = new HelpDetailVm(pluginDetailVm, _botOptions.CommandFlag);
         var image = await renderer.ProcessAsync(helpViewModel);
         return new MemoryImage(image, ImageType.Png);
     }

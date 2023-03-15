@@ -4,9 +4,10 @@ namespace daylily.Plugins.Basic.HelpPlugin;
 
 public sealed class HelpListVm
 {
-    public HelpListVm(IReadOnlyList<ScopeInfoVm> assemblyInfoVms)
+    public HelpListVm(IReadOnlyList<ScopeInfoVm> assemblyInfoVms, char commandFlag)
     {
         AssemblyInfoVms = assemblyInfoVms;
+        CommandFlag = commandFlag;
     }
 
     public string AppName { get; } = Assembly.GetEntryAssembly()?.GetName().Name ?? "DynamicBot";
@@ -18,4 +19,6 @@ public sealed class HelpListVm
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "0.0.1-alpha";
 
     public IReadOnlyList<ScopeInfoVm> AssemblyInfoVms { get; }
+
+    public char CommandFlag { get; }
 }

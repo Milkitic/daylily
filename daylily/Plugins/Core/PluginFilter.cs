@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Text;
+using MilkiBotFramework;
 using MilkiBotFramework.ContactsManaging;
 using MilkiBotFramework.Messaging;
 using MilkiBotFramework.Plugining;
@@ -16,6 +17,7 @@ public class PluginFilter : BasicPlugin
 {
     private readonly IContactsManager _contactsManager;
     private readonly PluginManager _pluginManager;
+    private readonly BotOptions _botOptions;
     private readonly PluginManagerConfig _config;
 
     private Dictionary<Guid, PluginInfo> _plugins;
@@ -23,10 +25,12 @@ public class PluginFilter : BasicPlugin
 
     public PluginFilter(IConfiguration<PluginManagerConfig> configuration,
         IContactsManager contactsManager,
-        PluginManager pluginManager)
+        PluginManager pluginManager,
+        BotOptions botOptions)
     {
         _contactsManager = contactsManager;
         _pluginManager = pluginManager;
+        _botOptions = botOptions;
         _config = configuration.Instance;
     }
 
@@ -103,7 +107,7 @@ public class PluginFilter : BasicPlugin
     private async Task<IResponse> SwitchPlugin(HashSet<Guid> disabled, string? pluginNames, bool pluginState)
     {
         if (string.IsNullOrWhiteSpace(pluginNames))
-            return Reply("请指定插件名称或者命令名称..请使用 \"/plugin list\" 查看插件列表");
+            return Reply($"请指定插件名称或者命令名称..请使用 \"{_botOptions.CommandFlag}plugin list\" 查看插件列表");
         var inputs = pluginNames.Split(',');
         var sb = new StringBuilder();
         var dict = inputs.Distinct().ToDictionary(k => k, InnerGetPlugin);
@@ -120,7 +124,7 @@ public class PluginFilter : BasicPlugin
             if (plugin == null)
             {
                 sb.Append($"指定插件 \"{input}\" 不存在..");
-                if (dict.Count == 1) sb.Append("请使用 \"/plugin list\" 查看插件列表");
+                if (dict.Count == 1) sb.Append($"请使用 \"{_botOptions.CommandFlag}plugin list\" 查看插件列表");
                 else sb.AppendLine();
             }
             else if (pluginState && !disabled.Contains(plugin.Metadata.Guid))

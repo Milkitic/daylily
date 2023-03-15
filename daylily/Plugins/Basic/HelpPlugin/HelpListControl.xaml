@@ -21,7 +21,7 @@
                 Margin="0,0,5,0"
                 Orientation="Horizontal"
                 TextBlock.Foreground="#F0E030">
-                <TextBlock Text="/" />
+                <TextBlock Text="{Binding ElementName=Self, Path=DataContext.CommandFlag}" />
                 <TextBlock Text="{Binding Command}" />
             </StackPanel>
         </DataTemplate>
@@ -75,7 +75,10 @@
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
-    <Border Padding="5" Background="#181818">
+    <Border
+        x:Name="Self"
+        Padding="5"
+        Background="#181818">
         <Border.LayoutTransform>
             <ScaleTransform ScaleX="1.2" ScaleY="1.2" />
         </Border.LayoutTransform>
@@ -106,8 +109,9 @@
                 <TextBlock
                     Grid.Row="1"
                     Margin="0,3"
-                    Foreground="#B0B0B0"
-                    Text="（使用&quot;/help [-命令]&quot;或&quot;/help [插件名]&quot;查询某个插件的详情）" />
+                    Foreground="#B0B0B0">
+                    <Run Text="（使用&quot;" /><Run Text="{Binding CommandFlag, Mode=OneWay}" /><Run Text="help [-命令]&quot;或&quot;" /><Run Text="{Binding CommandFlag, Mode=OneWay}" /><Run Text="help [插件名]&quot;查询某个插件的详情）" />
+                </TextBlock>
                 <ItemsControl
                     Grid.Row="2"
                     ItemTemplate="{StaticResource AssemblyPluginInfoTempl}"

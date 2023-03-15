@@ -19,7 +19,10 @@
         <local:String2LowerSnakeConverter x:Key="String2LowerSnakeConverter" />
         <local:String2DescriptionConverter x:Key="String2DescriptionConverter" />
     </UserControl.Resources>
-    <Border Padding="5" Background="#181818">
+    <Border
+        x:Name="Self"
+        Padding="5"
+        Background="#181818">
         <Border.LayoutTransform>
             <ScaleTransform ScaleX="1.2" ScaleY="1.2" />
         </Border.LayoutTransform>
@@ -79,7 +82,7 @@
                                         MinWidth="75"
                                         Margin="0,0,5,0"
                                         Foreground="#4070F0">
-                                        <Run Text="/" /><Run Text="{Binding Command, Mode=OneWay}" />
+                                        <Run Text="{Binding ElementName=Self, Path=Command, Mode=OneWay}" /><Run Text="{Binding Command, Mode=OneWay}" />
                                     </TextBlock>
                                     <TextBlock Text="{Binding Description, Converter={StaticResource String2DescriptionConverter}, Mode=OneWay}" />
                                 </StackPanel>

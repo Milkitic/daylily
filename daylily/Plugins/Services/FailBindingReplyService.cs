@@ -8,6 +8,13 @@ namespace daylily.Plugins.Services;
 [PluginIdentifier("f3561463-fda7-4d97-a899-50f6ba4a36ac")]
 public sealed class FailBindingReplyService : ServicePlugin
 {
+    private readonly BotOptions _botOptions;
+
+    public FailBindingReplyService(BotOptions botOptions)
+    {
+        _botOptions = botOptions;
+    }
+
     public override async Task<IResponse?> OnBindingFailed(BindingException bindingException, MessageContext context)
     {
         if (bindingException.BindingFailureType == BindingFailureType.AuthenticationFailed)
@@ -27,7 +34,7 @@ public sealed class FailBindingReplyService : ServicePlugin
         if (bindingException.BindingFailureType == BindingFailureType.Mismatch)
         {
             GetCommandInfo(bindingException, out var command, out var info, out var type);
-            var message = $"指令缺少{type}：{info}。请使用 \"/help {command}\" 查看说明。";
+            var message = $"指令缺少{type}：{info}。请使用 \"{_botOptions.CommandFlag}help {command}\" 查看说明。";
             message = AppendError(bindingException, context, message);
 
             return Reply(message);
@@ -36,7 +43,7 @@ public sealed class FailBindingReplyService : ServicePlugin
         if (bindingException.BindingFailureType == BindingFailureType.ConvertError)
         {
             GetCommandInfo(bindingException, out var command, out var info, out var type);
-            var message = $"指令{type}解析出错：{info}。请使用 \"/help {command}\" 查看说明。";
+            var message = $"指令{type}解析出错：{info}。请使用 \"{_botOptions.CommandFlag}help {command}\" 查看说明。";
             message = AppendError(bindingException, context, message);
 
             return Reply(message);

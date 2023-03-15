@@ -4,9 +4,10 @@ namespace daylily.Plugins.Basic.HelpPlugin;
 
 public sealed class HelpDetailVm
 {
-    public HelpDetailVm(PluginDetailVm pluginVm)
+    public HelpDetailVm(PluginDetailVm pluginVm,char commandFlag)
     {
         PluginVm = pluginVm;
+        CommandFlag = commandFlag;
     }
 
     public string AppName { get; } = Assembly.GetEntryAssembly()?.GetName().Name ?? "DynamicBot";
@@ -18,6 +19,8 @@ public sealed class HelpDetailVm
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "0.0.1-alpha";
 
     public PluginDetailVm PluginVm { get; }
+
+    public char CommandFlag { get; }
     //= new()
     //{
     //    Name = "那没事了",

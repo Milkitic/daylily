@@ -35,6 +35,7 @@ public class WhatToEat : BasicPlugin
     }
 
     [CommandHandler("what2eat")]
+    [Description("端1道菜。可用\"吃啥\"或\"吃什么\"触发")]
     public async Task<IResponse> What2EatCore(MessageContext context)
     {
         var (groupMeals, response) = await AutoGetGroupMeal(context);
@@ -56,6 +57,7 @@ public class WhatToEat : BasicPlugin
     }
 
     [CommandHandler("what2eat10")]
+    [Description("端10道菜。可用\"摆酒席\"触发")]
     public async Task<IResponse> What2Eat10Core(MessageContext context)
     {
         var (groupMeals, response) = await AutoGetGroupMeal(context);
@@ -72,7 +74,7 @@ public class WhatToEat : BasicPlugin
             return Reply("条目列表为空。");
 
         groupMeals.Cooldown = DateTime.Now;
-        for (int i = 0; i < Math.Min(11, groupMeals.Meals.Count); i++)
+        for (int i = 0; i < Math.Min(10, groupMeals.Meals.Count); i++)
         {
             int randomIndex = Random.Shared.Next(0, groupMeals.Meals.Count);
             sb.AppendLine($"第 {i + 1} 道菜：{groupMeals.Meals[randomIndex]}");
@@ -83,6 +85,7 @@ public class WhatToEat : BasicPlugin
     }
 
     [CommandHandler("addmeal")]
+    [Description("炒1道菜")]
     public async Task<IResponse> AddMeal(MessageContext context,
         [Description("菜肴"), Argument] string? mealName = null)
     {
@@ -117,6 +120,7 @@ public class WhatToEat : BasicPlugin
     }
 
     [CommandHandler("removemeal")]
+    [Description("扔1道菜")]
     public async Task<IResponse> RemoveMeal(MessageContext context,
         [Description("菜肴"), Argument] string? mealName = null)
     {
@@ -149,6 +153,7 @@ public class WhatToEat : BasicPlugin
     }
 
     [CommandHandler("wtemode")]
+    [Description("切换插件模式（QQ频道专用）")]
     public async Task<IResponse> WteMode(MessageContext context)
     {
         var messageIdentity = context.MessageIdentity!;
@@ -267,9 +272,13 @@ public class WhatToEat : BasicPlugin
         public void Dispose()
         {
             if (_readOrWrite)
+            {
                 _lock.ExitReadLock();
+            }
             else
+            {
                 _lock.ExitWriteLock();
+            }
         }
     }
 }

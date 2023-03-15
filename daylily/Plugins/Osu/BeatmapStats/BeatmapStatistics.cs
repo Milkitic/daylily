@@ -77,8 +77,8 @@ public class BeatmapStatistics : BasicPlugin
 
         var stringInfos = all.Select(k =>
             $"{k.BeatmapScan.BeatmapSetId}: {k.BeatmapScan.Artist} - {k.BeatmapScan.Title} by {k.BeatmapScan.Mapper}");
-        return "订阅列表：\r\n" + string.Join("\r\n", stringInfos) +
-               "\r\n使用\"/stats.del {sid}\" 移除订阅。";
+        return $"订阅列表：\r\n{string.Join("\r\n", stringInfos)}\r\n" +
+               $"使用\"{_botOptions.CommandFlag}stats.del {{sid}}\" 移除订阅。";
     }
 
     private async Task<string> AddSubscribe(MessageContext context, int? setId)
@@ -94,7 +94,7 @@ public class BeatmapStatistics : BasicPlugin
         {
             var all = await _dbContext.BeatmapSubscribes
                 .CountAsync(k => k.ScribeUserId == userId);
-            if (all >= userLimitCount) return $"你的订阅数量已达最大值（{userLimitCount}），请使用\"/stats.list\"查看订阅列表。";
+            if (all >= userLimitCount) return $"你的订阅数量已达最大值（{userLimitCount}），请使用\"{_botOptions.CommandFlag}stats.list\"查看订阅列表。";
         }
 
         var beatmapSetId = setId.Value;
