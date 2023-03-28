@@ -16,12 +16,12 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.1" />
-    <PackageReference Include="AvalonEdit" Version="6.2.0.78" />
+    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="Coosu.Api" Version="2.3.36" />
     <PackageReference Include="Emoji.Wpf" Version="0.3.4" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
