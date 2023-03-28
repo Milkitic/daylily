@@ -36,8 +36,9 @@ internal partial class ManagerWindow : Window
 
     private async void ManagerWindow_OnClosing(object? sender, CancelEventArgs e)
     {
-        var yesNo = MessageBox.Show("exit?", "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-        if (yesNo != MessageBoxResult.Yes)
+        var messageBoxResult = MessageBox.Show("退出Bot？", "退出确认", 
+            MessageBoxButton.OKCancel, MessageBoxImage.Question);
+        if (messageBoxResult != MessageBoxResult.OK)
         {
             e.Cancel = true;
         }

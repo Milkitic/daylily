@@ -222,6 +222,11 @@ public class WhatToEat : BasicPlugin
 
         // rate limit
         var limit = 5;
+        if (!excludeMeals.UserCoolDownList.ContainsKey(userId))
+        {
+            excludeMeals.UserCoolDownList.Add(userId, new List<DateTime>());
+        }
+
         var list = excludeMeals.UserCoolDownList[userId]
             .Where(k => k >= DateTime.Now.AddMinutes(-10) && k < DateTime.Now)
             .ToList();

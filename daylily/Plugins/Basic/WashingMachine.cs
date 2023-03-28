@@ -41,7 +41,7 @@ public class WashingMachine : BasicPlugin
         return Green(68, 24, linkImage);
     }
 
-    [CommandHandler("lightgreen")]
+    [CommandHandler("淡绿")]
     [Description("轻度烘焙")]
     public IAsyncEnumerable<IResponse?> LightGreen(
         [Argument, Description("图片")] LinkImage? linkImage = null)
@@ -49,7 +49,7 @@ public class WashingMachine : BasicPlugin
         return Green(75, 8, linkImage);
     }
 
-    [CommandHandler("green")]
+    [CommandHandler("绿")]
     [Description("包浆图片")]
     public async IAsyncEnumerable<IResponse?> Green(
         [Description("质量"), Option("q")] int quality = 75,
@@ -86,7 +86,17 @@ public class WashingMachine : BasicPlugin
         yield return Reply(new MemoryImage(processedImage, ImageType.Jpeg));
     }
 
-    [CommandHandler("rotate")]
+    [CommandHandler("逆时针转")]
+    [Description("转动图片")]
+    public IAsyncEnumerable<IResponse?> RevRotate(
+        [Description("帧总数"), Option("f")] uint frames = 4,
+        [Description("帧间延时（毫秒）"), Option("d")] uint delay = 800,
+        [Description("图片"), Argument] LinkImage? linkImage = null)
+    {
+        return Rotate(frames, delay, true, linkImage);
+    }
+
+    [CommandHandler("转")]
     [Description("转动图片")]
     public async IAsyncEnumerable<IResponse?> Rotate(
         [Description("帧总数"), Option("f")] uint frames = 4,
@@ -133,7 +143,7 @@ public class WashingMachine : BasicPlugin
         yield return Reply(new FileImage(processedPath));
     }
 
-    [CommandHandler("shake")]
+    [CommandHandler("抖")]
     [Description("抖动图片")]
     public async IAsyncEnumerable<IResponse?> Shake(
         [Description("抖动X范围"), Option("x")] uint xRange = 2,
@@ -181,7 +191,7 @@ public class WashingMachine : BasicPlugin
         yield return Reply(new FileImage(processedPath));
     }
 
-    [CommandHandler("reverse")]
+    [CommandHandler("倒")]
     [Description("Gif倒放")]
     public async IAsyncEnumerable<IResponse?> Reverse(
         [Description("图片"), Argument] LinkImage? linkImage = null)
