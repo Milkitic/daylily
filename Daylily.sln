@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "daylily", "daylily\daylily.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dependencies", "dependencies", "{CAD00200-1E33-4ECF-BDB0-E4C44BAFD280}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MilkiBotFramework.Platforms.GoCqHttp", "depencencies\MilkiBotFramework\src\MilkiBotFramework.Platforms.GoCqHttp\MilkiBotFramework.Platforms.GoCqHttp.csproj", "{8C17608C-3B49-4B08-B174-8696A1B1480D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MilkiBotFramework.Aspnetcore", "depencencies\MilkiBotFramework\src\MilkiBotFramework.Aspnetcore\MilkiBotFramework.Aspnetcore.csproj", "{5B90A1C7-04E1-428D-9212-2A26124CE6E6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MilkiBotFramework", "depencencies\MilkiBotFramework\src\MilkiBotFramework\MilkiBotFramework.csproj", "{5732688A-40D5-4FD1-812D-09242527E059}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MilkiBotFramework.Imaging.Wpf", "depencencies\MilkiBotFramework\src\MilkiBotFramework.Imaging.Wpf\MilkiBotFramework.Imaging.Wpf.csproj", "{805400BF-AB0C-4D4F-925A-456A3680FC45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MilkiBotFramework.Platforms.GoCqHttp", "depencencies\MilkiBotFramework\src\Platforms\MilkiBotFramework.Platforms.GoCqHttp\MilkiBotFramework.Platforms.GoCqHttp.csproj", "{B35D87B8-FA4F-438C-A5D7-20CBDF8E5F78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,6 @@ Global
 		{DB9E989D-D1E8-49B8-861C-93294AA62758}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB9E989D-D1E8-49B8-861C-93294AA62758}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB9E989D-D1E8-49B8-861C-93294AA62758}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C17608C-3B49-4B08-B174-8696A1B1480D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C17608C-3B49-4B08-B174-8696A1B1480D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C17608C-3B49-4B08-B174-8696A1B1480D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C17608C-3B49-4B08-B174-8696A1B1480D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5B90A1C7-04E1-428D-9212-2A26124CE6E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5B90A1C7-04E1-428D-9212-2A26124CE6E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B90A1C7-04E1-428D-9212-2A26124CE6E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,15 +37,19 @@ Global
 		{805400BF-AB0C-4D4F-925A-456A3680FC45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{805400BF-AB0C-4D4F-925A-456A3680FC45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{805400BF-AB0C-4D4F-925A-456A3680FC45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B35D87B8-FA4F-438C-A5D7-20CBDF8E5F78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B35D87B8-FA4F-438C-A5D7-20CBDF8E5F78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B35D87B8-FA4F-438C-A5D7-20CBDF8E5F78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B35D87B8-FA4F-438C-A5D7-20CBDF8E5F78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{8C17608C-3B49-4B08-B174-8696A1B1480D} = {CAD00200-1E33-4ECF-BDB0-E4C44BAFD280}
 		{5B90A1C7-04E1-428D-9212-2A26124CE6E6} = {CAD00200-1E33-4ECF-BDB0-E4C44BAFD280}
 		{5732688A-40D5-4FD1-812D-09242527E059} = {CAD00200-1E33-4ECF-BDB0-E4C44BAFD280}
 		{805400BF-AB0C-4D4F-925A-456A3680FC45} = {CAD00200-1E33-4ECF-BDB0-E4C44BAFD280}
+		{B35D87B8-FA4F-438C-A5D7-20CBDF8E5F78} = {CAD00200-1E33-4ECF-BDB0-E4C44BAFD280}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6BCFAD8-B150-476D-A331-F6289BBF956B}

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <UseWpf>true</UseWpf>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -15,23 +15,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="1.0.1" />
+    <PackageReference Include="AngleSharp" Version="1.1.2" />
     <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
-    <PackageReference Include="Coosu.Api" Version="2.3.36" />
+    <PackageReference Include="Coosu.Api" Version="2.3.40" />
     <PackageReference Include="Emoji.Wpf" Version="0.3.4" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
-    <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.65" />
+    <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NLog.Extensions.Logging" Version="5.2.2" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.3.13" />
     <PackageReference Include="Unofficial.Microsoft.mshtml.NetStandard" Version="7.0.3300.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\depencencies\MilkiBotFramework\src\MilkiBotFramework.Imaging.Wpf\MilkiBotFramework.Imaging.Wpf.csproj" />
-    <ProjectReference Include="..\depencencies\MilkiBotFramework\src\MilkiBotFramework.Platforms.GoCqHttp\MilkiBotFramework.Platforms.GoCqHttp.csproj" />
+    <ProjectReference Include="..\depencencies\MilkiBotFramework\src\Platforms\MilkiBotFramework.Platforms.GoCqHttp\MilkiBotFramework.Platforms.GoCqHttp.csproj" />
   </ItemGroup>
 
   <ItemGroup>

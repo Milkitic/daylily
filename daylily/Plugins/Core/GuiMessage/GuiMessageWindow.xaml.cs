@@ -132,7 +132,7 @@ public partial class GuiMessageWindow : Window
         var message = TbMessage.Text;
         if (string.IsNullOrEmpty(message)) return;
         if (_viewModel.SelectedChannel is not { } channelInfo) return;
-        await _messageApi.SendChannelMessageAsync(channelInfo.ChannelId, message, null);
+        await _messageApi.SendChannelMessageAsync(channelInfo.ChannelId, message, null, null, null);
         TbMessage.Text = "";
     }
 }

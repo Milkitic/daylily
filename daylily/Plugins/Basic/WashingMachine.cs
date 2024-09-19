@@ -268,7 +268,7 @@ public class WashingMachine : BasicPlugin
                 }
 
                 //list = ImageHelper.CompressSerial(list);
-                return await ImageHelper.CreateGifByImagesAsync(list, source.Size(), true);
+                return await ImageHelper.CreateGifByImagesAsync(list, source.Size, true);
             }
             finally
             {
@@ -304,7 +304,7 @@ public class WashingMachine : BasicPlugin
                     .ToArray();
 
                 //list = ImageHelper.CompressSerial(list);
-                return await ImageHelper.CreateGifByImagesAsync(arr, interval, source.Size());
+                return await ImageHelper.CreateGifByImagesAsync(arr, interval, source.Size);
             }
             finally
             {
@@ -341,7 +341,7 @@ public class WashingMachine : BasicPlugin
 
                 //list = ImageHelper.CompressSerial(list);
                 return await ImageHelper.CreateGifByImagesAsync(arr, TimeSpan.FromMilliseconds(actualInterval),
-                    source.Size());
+                    source.Size);
             }
             finally
             {
@@ -406,7 +406,7 @@ public class WashingMachine : BasicPlugin
                 await imageI.SaveAsJpegAsync(ms, new JpegEncoder
                 {
                     Quality = quality,
-                    ColorType = JpegColorType.Rgb
+                    ColorType = JpegEncodingColor.Rgb
                 });
             }
 

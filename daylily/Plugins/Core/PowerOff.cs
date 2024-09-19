@@ -154,11 +154,11 @@ public class PowerOff : BasicPlugin
 
                 if (messageIdentity.MessageType == MessageType.Private)
                 {
-                    _messageApi.SendPrivateMessageAsync(channelId, "啊，活过来了").Wait(token);
+                    _messageApi.SendPrivateMessageAsync(channelId, "啊，活过来了", null, null).Wait(token);
                 }
                 else if (messageIdentity.MessageType == MessageType.Channel)
                 {
-                    _messageApi.SendChannelMessageAsync(channelId, "啊，活过来了", subChannelId).Wait(token);
+                    _messageApi.SendChannelMessageAsync(channelId, "啊，活过来了", null, null, subChannelId).Wait(token);
                 }
             }
 
